@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>aijar-reports</artifactId>
+	<artifactId>aijarreports</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Uganda EMR Reports Module</name>
@@ -46,11 +46,14 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.8.2</openMRSVersion>
+		<openMRSVersion>1.11.5</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- module version defeinitions -->
-		<reportingVersion>0.9.8.1</reportingVersion>
+		<calculationVersion>1.1</calculationVersion>
+		<patientSummaryVersion>2.1</patientSummaryVersion>
+		<reportingVersion>0.9.9</reportingVersion>
+		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -114,11 +117,31 @@
 			<!-- End OpenMRS core -->
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
+				<artifactId>calculation-api</artifactId>
+				<version>${calculationVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>patientsummary-api</artifactId>
+				<version>${patientSummaryVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
 				<artifactId>reporting-api</artifactId>
 				<version>${reportingVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>serialization.xstream-api</artifactId>
+				<version>${serialization.xstreamVersion}</version>
+				<scope>provided</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

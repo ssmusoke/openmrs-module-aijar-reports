@@ -7,7 +7,6 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
-	<author>ssmusoke</author>
 	<description>
 		${project.parent.description}
 	</description>
@@ -17,12 +16,24 @@
 
 	
 	<!-- Module Activator -->
-	<activator>${project.parent.groupId}.${project.parent.artifactId}.UgandaEMRReportsActivator</activator>
+	<activator>${project.parent.groupId}.${project.parent.artifactId}.activator.AijarReportsActivator</activator>
+
+	<require_modules>
+		<require_module>
+			org.openmrs.module.patientsummary
+		</require_module>
+		<require_module>
+			org.openmrs.module.reporting
+		</require_module>
+		<require_module>
+			org.openmrs.module.serialization.xstream
+		</require_module>
+	</require_modules>
 	
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
-				
+
 	</mappingFiles>
 
 	<!-- Internationalization -->
