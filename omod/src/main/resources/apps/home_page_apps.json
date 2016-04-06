@@ -1,0 +1,17 @@
+[
+  {
+    "id": "aijarreports.referenceapplication.reports",
+    "extensions": [
+      {
+        "id": "aijarreports.referenceapplication.reports.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "aijarreports.app.report.list.label",
+        "url": "module/reporting/dashboard/index.form",
+        "icon": "icon-book",
+        "order": 110,
+        "requiredPrivilege": "Manage Reports"
+      }
+    ]
+  }
+]

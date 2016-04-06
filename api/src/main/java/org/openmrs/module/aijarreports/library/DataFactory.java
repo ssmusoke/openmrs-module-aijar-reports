@@ -1,4 +1,5 @@
 package org.openmrs.module.aijarreports.library;
+
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PatientProgram;
 import org.openmrs.PatientState;
 import org.openmrs.api.PatientSetService;
+import org.openmrs.module.aijarreports.metadata.HIVMetadata;
+import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
@@ -41,17 +44,21 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DataFactory {
 
+	@Autowired
+	HIVMetadata hivMetadata;
+
 	public Parameter getStartDateParameter() {
-		return new Parameter("startDate", "Start Date", Date.class);
+		return ReportingConstants.START_DATE_PARAMETER;
 	}
 
 	public Parameter getEndDateParameter() {
-		return new Parameter("endDate", "End Date", Date.class);
+		return ReportingConstants.END_DATE_PARAMETER;
 	}
 
 	public CohortDefinition getPatientsWhoseObsValueDateIsOnSpecifiedDate(Concept dateConcept, List<EncounterType> types) {

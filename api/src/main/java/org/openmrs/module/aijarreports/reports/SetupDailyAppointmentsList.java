@@ -60,7 +60,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 
 	@Override
 	public String getName() {
-		return "Daily Appointment List";
+		return "Daily Appointments List";
 	}
 
 	@Override

@@ -9,7 +9,6 @@
 	</parent>
 
 	<artifactId>aijarreports-omod</artifactId>
-	<packaging>jar</packaging>
 	<name>Uganda EMR Reports Module OMOD</name>
 	<description>OMOD project for UgandaEMRReports</description>
 

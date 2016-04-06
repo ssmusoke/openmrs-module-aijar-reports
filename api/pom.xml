@@ -8,7 +8,6 @@
 	</parent>
 
 	<artifactId>aijarreports-api</artifactId>
-	<packaging>jar</packaging>
 	<name>Uganda EMR Reports Module API</name>
 	<description>API project for UgandaEMR distribution</description>
 
@@ -67,6 +66,24 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>calculation-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatadeploy-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatamapping-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatasharing-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 

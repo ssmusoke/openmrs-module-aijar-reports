@@ -74,7 +74,6 @@ public abstract class AijarReportManager extends BaseReportManager {
 
 	protected ReportDesign createExcelTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition, String templatePath) {
 		String resourcePath = ReportUtil.getPackageAsPath(getClass()) + "/" + templatePath;
-		System.out.println("The path to the Excel template is " + resourcePath);
 		return ReportManagerUtil.createExcelTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
 	}
 

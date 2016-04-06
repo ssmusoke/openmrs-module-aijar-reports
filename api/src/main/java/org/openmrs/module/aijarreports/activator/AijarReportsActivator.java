@@ -30,6 +30,7 @@ public class AijarReportsActivator extends BaseModuleActivator {
 	public List<Initializer> getInitializers() {
 		List<Initializer> l = new ArrayList<Initializer>();
 		l.add(new ReportInitializer());
+		l.add(new DefinitionLibraryInitializer());
 		return l;
 	}
 

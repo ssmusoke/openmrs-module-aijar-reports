@@ -12,19 +12,7 @@
 	
 	<developers>
 		<developer>
-			<name>Charles Olupot</name>
-		</developer>
-		<developer>
-			<name>Jonathan Mpango</name>
-		</developer>
-		<developer>
-			<name>Samuel Lubwama</name>
-		</developer>
-		<developer>
-			<name>Simon Peter Muwanga</name>
-		</developer>
-		<developer>
-			<name>Stephen S. Musoke</name>
+			<name>METS Programme</name>
 		</developer>
 	</developers>
 
@@ -51,6 +39,9 @@
 
 		<!-- module version defeinitions -->
 		<calculationVersion>1.1</calculationVersion>
+		<metadatadeployVersion>1.6</metadatadeployVersion>
+		<metadatamappingVersion>1.0.2</metadatamappingVersion>
+		<metadatasharingVersion>1.1.9</metadatasharingVersion>
 		<patientSummaryVersion>2.1</patientSummaryVersion>
 		<reportingVersion>0.9.9</reportingVersion>
 		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
@@ -119,6 +110,30 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>calculation-api</artifactId>
 				<version>${calculationVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatadeploy-api</artifactId>
+				<version>${metadatadeployVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatamapping-api</artifactId>
+				<version>${metadatamappingVersion}</version>
+				<type>jar</type>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>metadatasharing-api</artifactId>
+				<version>${metadatasharingVersion}</version>
+				<type>jar</type>
 				<scope>provided</scope>
 			</dependency>
 
