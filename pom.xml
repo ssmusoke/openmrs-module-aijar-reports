@@ -38,6 +38,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- module version defeinitions -->
+		<aijarVersion>1.0.3-SNAPSHOT</aijarVersion>
 		<calculationVersion>1.1</calculationVersion>
 		<metadatadeployVersion>1.6</metadatadeployVersion>
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
@@ -106,6 +107,13 @@
 			</dependency>
 						
 			<!-- End OpenMRS core -->
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>aijar-api</artifactId>
+				<version>${aijarVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>calculation-api</artifactId>

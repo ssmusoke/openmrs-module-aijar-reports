@@ -29,8 +29,5 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
 		return PatientDataDefinition.class;
 	}
 
-	@DocumentedDefinition(value="birthdate", name="Birth Date")
-	public PatientDataDefinition getBirthdate() {
-		return df.convert(new BirthdateDataDefinition(), new PropertyConverter(Birthdate.class, "birthdate"));
-	}
+
 }

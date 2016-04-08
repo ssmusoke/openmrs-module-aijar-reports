@@ -20,6 +20,9 @@
 
 	<require_modules>
 		<require_module>
+			org.openmrs.module.aijar
+		</require_module>
+		<require_module>
 			org.openmrs.module.metadatadeploy
 		</require_module>
 		<require_module>

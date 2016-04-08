@@ -11,8 +11,6 @@ import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.PatientProgram;
-import org.openmrs.PatientState;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
@@ -35,9 +33,11 @@ import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -74,6 +74,14 @@ public class DataFactory {
 		PatientIdentifierDataDefinition def = new PatientIdentifierDataDefinition();
 		def.setTypes(Arrays.asList(pit));
 		return new ConvertedPatientDataDefinition(def, converter);
+	}
+
+	public PatientDataDefinition getFirstEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
+		EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+		def.setWhich(TimeQualifier.FIRST);
+		def.setTypes(Arrays.asList(type));
+		def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+		return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
 	}
 
 	// Converters
@@ -129,37 +137,6 @@ public class DataFactory {
 		return new PropertyConverter(Obs.class, "valueText");
 	}
 
-	public DataConverter getProgramEnrollmentDateConverter() {
-		return new PropertyConverter(PatientProgram.class, "dateEnrolled");
-	}
-
-	public DataConverter getStateNameConverter() {
-		return new ChainedConverter(new PropertyConverter(PatientState.class, "state.concept"), getObjectFormatter());
-	}
-
-	public DataConverter getStateStartDateConverter() {
-		return new PropertyConverter(PatientState.class, "startDate");
-	}
-
-	public DataConverter getStateLocationConverter() {
-		return new ChainedConverter(new PropertyConverter(PatientState.class, "patientProgram.location"), new ObjectFormatter());
-	}
-
-	public DataConverter getStateProgramEnrollmentDateConverter() {
-		return new PropertyConverter(PatientState.class, "patientProgram.dateEnrolled");
-	}
-
-	public DataConverter getStateNameAndDateFormatter() {
-		return new ObjectFormatter("{patientProgram.program}: {state} (since {startDate|yyyy-MM-dd})");
-	}
-
-	public DataConverter getActiveStatesAsStringConverter() {
-		ChainedConverter converter = new ChainedConverter();
-		converter.addConverter(new CollectionConverter(getStateNameAndDateFormatter(), false, null));
-		converter.addConverter(new ObjectFormatter("; "));
-		return converter;
-	}
-
 	public DataConverter getObsValueCodedPresentConverter(Concept valueCoded) {
 		ChainedConverter converter = new ChainedConverter();
 		converter.addConverter(new CollectionConverter(getObsValueCodedConverter(), false, null));
@@ -210,6 +187,18 @@ public class DataFactory {
 	}
 
 	// Convenience methods
+
+	public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
+		return getMostRecentObsByEndDate(question, null);
+	}
+
+	public PatientDataDefinition getMostRecentObsByEndDate(Concept question, DataConverter converter) {
+		ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+		def.setWhich(TimeQualifier.LAST);
+		def.setQuestion(question);
+		def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+		return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+	}
 
 	public PatientDataDefinition convert(PatientDataDefinition pdd, Map<String, String> renamedParameters, DataConverter converter) {
 		ConvertedPatientDataDefinition convertedDefinition = new ConvertedPatientDataDefinition();

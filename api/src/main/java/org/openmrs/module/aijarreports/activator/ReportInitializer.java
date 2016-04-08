@@ -49,7 +49,7 @@ public class ReportInitializer implements Initializer {
 	}
 
 	private void removeOldReports() {
-		String gpVal = Context.getAdministrationService().getGlobalProperty("aijar.oldReportsRemoved");
+		String gpVal = Context.getAdministrationService().getGlobalProperty("aijarreports.oldReportsRemoved");
 		if (ObjectUtil.isNull(gpVal)) {
 			AdministrationService as = Context.getAdministrationService();
 			log.warn("Removing all reports");
@@ -57,7 +57,7 @@ public class ReportInitializer implements Initializer {
 			as.executeSQL("delete from reporting_report_design;", false);
 			as.executeSQL("delete from reporting_report_request;", false);
 			as.executeSQL("delete from serialized_object;", false);
-			ReportUtil.updateGlobalProperty("aijar.oldReportsRemoved", "true");
+			ReportUtil.updateGlobalProperty("aijarreports.oldReportsRemoved", "true");
 		}
 	}
 }

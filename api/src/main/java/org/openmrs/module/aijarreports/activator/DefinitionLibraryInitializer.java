@@ -11,10 +11,8 @@ import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.definition.library.DefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.LibraryDefinitionSummary;
-import org.openmrs.module.reporting.report.util.ReportUtil;
 
 /**
  * Initializes library definitions and serializes them to the database so that they are available via the reportingui
@@ -22,6 +20,7 @@ import org.openmrs.module.reporting.report.util.ReportUtil;
 public class DefinitionLibraryInitializer implements Initializer {
 
 	protected static final Log log = LogFactory.getLog(ReportInitializer.class);
+
 	/**
 	 * Run during the activator started method
 	 */
@@ -33,16 +32,11 @@ public class DefinitionLibraryInitializer implements Initializer {
 		// add new defintions
 		CohortDefinitionService cohortDefinitionService = Context.getService(CohortDefinitionService.class);
 
-
 		// Load cohort definitions
-		ARTClinicCohortDefinitionLibrary artlib = Context.getRegisteredComponents(ARTClinicCohortDefinitionLibrary.class)
-				.get(0);
-		EIDCohortDefinitionLibrary eidlib = Context.getRegisteredComponents(EIDCohortDefinitionLibrary.class).get(0);
-		List<DefinitionLibrary> libs = new ArrayList<DefinitionLibrary>();
-		libs.add(artlib);
-		libs.add(eidlib);
 
-		for(DefinitionLibrary<CohortDefinition> aLib : libs) {
+		List<DefinitionLibrary> cohortLibs = getCohortLibraryDefinitions();
+
+		for (DefinitionLibrary<CohortDefinition> aLib : cohortLibs) {
 
 			// now save the cohorts
 			for (LibraryDefinitionSummary cohortDefinitionSummary : aLib.getDefinitionSummaries()) {
@@ -53,7 +47,6 @@ public class DefinitionLibraryInitializer implements Initializer {
 				cohortDefinitionService.saveDefinition(aLib.getDefinition(cohortDefinitionSummary.getKey()));
 			}
 		}
-
 
 		// Patient data definitions
 
@@ -75,13 +68,19 @@ public class DefinitionLibraryInitializer implements Initializer {
 	}
 
 	private void removeOldDefinitions() {
-		String gpVal = Context.getAdministrationService().getGlobalProperty("aijar.oldDefintionsRemoved");
-		if (ObjectUtil.isNull(gpVal)) {
-			AdministrationService as = Context.getAdministrationService();
-			log.warn("Removing all definitions");
-			as.executeSQL("delete from serialized_object WHERE serialized_data LIKE '%aijar.%';", false);
-			ReportUtil.updateGlobalProperty("aijar.oldDefintionsRemoved", "true");
-		}
+		AdministrationService as = Context.getAdministrationService();
+		log.warn("Removing all serialized aijar report definitions");
+		// reset the versions of the reports to 0 to enable them to be reinstalled
+		as.executeSQL("DELETE FROM global_property WHERE property LIKE 'reporting.reportManager.%';", false);
+		// remove any serialized report objects
+		as.executeSQL("delete from serialized_object WHERE serialized_data LIKE '%aijar.%';", false);
+	}
+
+	private List<DefinitionLibrary> getCohortLibraryDefinitions() {
+		List<DefinitionLibrary> l = new ArrayList<DefinitionLibrary>();
+		l.add(Context.getRegisteredComponents(ARTClinicCohortDefinitionLibrary.class).get(0));
+		l.add(Context.getRegisteredComponents(EIDCohortDefinitionLibrary.class).get(0));
+		return l;
 	}
 	
 	/**

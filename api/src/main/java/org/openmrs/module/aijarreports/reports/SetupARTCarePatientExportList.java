@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.aijarreports.library.BasePatientDataLibrary;
 import org.openmrs.module.aijarreports.library.DataFactory;
 import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.aijarreports.library.BasePatientDataLibrary;
 import org.openmrs.module.aijarreports.metadata.CommonReportMetadata;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -16,6 +16,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,7 @@ import org.springframework.stereotype.Component;
  * Daily Appointments List report
  */
 @Component
-public class SetupDailyAppointmentsList extends AijarDataExportManager {
+public class SetupARTCarePatientExportList extends AijarDataExportManager {
 	@Autowired
 	private DataFactory df;
 
@@ -50,22 +51,22 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "98e9202d-8c00-415f-9882-43917181f08d";
+		return "d8b3db94-f36e-4dcd-b58e-f7197d2a9dce";
 	}
 
 	@Override
 	public String getUuid() {
-		return "9c85e206-c3cd-4dc1-b332-13f1d02f1ccc";
+		return "0272907f-f2bf-437f-8bf9-8c4cb0a983fa";
 	}
 
 	@Override
 	public String getName() {
-		return "Daily Appointments List";
+		return "ART Care Patient List";
 	}
 
 	@Override
 	public String getDescription() {
-		return "A list of clients expected for appointments in the ART clinic on the specified date";
+		return "A cumulative list of patients who are enrolled into care at the clinic to the specified dates";
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls"));
+		l.add(ReportManagerUtil.createCsvReportDesign(getExcelDesignUuid(), reportDefinition));
 		return l;
 	}
 
@@ -101,10 +102,13 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 
 		// columns to include
 		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
-		addColumn(dsd, "familyName", builtInPatientData.getPreferredFamilyName());
-		addColumn(dsd, "givenName", builtInPatientData.getPreferredGivenName());
-		addColumn(dsd, "Sex", builtInPatientData.getGender());
-		addColumn(dsd, "Birthdate", builtInPatientData.getBirthdate());
+		addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
+		addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
+		addColumn(dsd, "Gender", builtInPatientData.getGender());
+		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
+		addColumn(dsd, "Current Age", builtInPatientData.getAgeAtEnd());
+		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
+		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
 
 		return rd;
 	}

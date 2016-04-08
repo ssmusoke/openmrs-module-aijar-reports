@@ -18,6 +18,10 @@ public class HIVMetadata extends Metadata {
 		return getConcept("5096");
 	}
 
+	public Concept getARTStartDate() {
+		return getConcept("99161");
+	}
+
 	public List<EncounterType> getARTSummaryPageEncounterType() {
 		List<EncounterType> l = new ArrayList<EncounterType>();
 		l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));
