@@ -28,15 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class CBSEIDReport extends AijarReportManager {
+public class SetupCBSEIDReport extends AijarDataExportManager {
 
-    public static final String EXCEL_REPORT_DESIGN_UUID = "b98ab976-9c9d-4a28-9760-ac3119cbef58";
-    public static final String EXCEL_REPORT_RESOURCE_NAME = "CBSEIDReport.xls";
-
-    protected String reportTag = "cbsreport";
-
-
-    public CBSEIDReport() {
+    public SetupCBSEIDReport() {
     }
 
     @Override
@@ -46,12 +40,12 @@ public class CBSEIDReport extends AijarReportManager {
 
     @Override
     public String getName() {
-        return "CBS Report";
+        return "CBS EID Indicators";
     }
 
     @Override
     public String getDescription() {
-        return "";
+        return "CBS indicators for HIV Exposed Infants";
     }
 
     @Override
@@ -94,14 +88,19 @@ public class CBSEIDReport extends AijarReportManager {
     }
 
     @Override
+    public String getExcelDesignUuid() {
+        return "b98ab976-9c9d-4a28-9760-ac3119cbef58";
+    }
+
+    @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        ReportDesign design = createExcelTemplateDesign(EXCEL_REPORT_DESIGN_UUID, reportDefinition, EXCEL_REPORT_RESOURCE_NAME);
+        ReportDesign design = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CBSEIDReport.xls");
         design.addPropertyValue("repeatingSections", "sheet:1,column:5,dataset:EID_Services");
         return Arrays.asList(design);
     }
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "0.1";
     }
 }
