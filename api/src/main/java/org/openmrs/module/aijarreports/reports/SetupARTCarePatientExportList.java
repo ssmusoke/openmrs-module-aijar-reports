@@ -111,6 +111,15 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 		addColumn(dsd, "Current Age", builtInPatientData.getAgeAtEnd());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
+		addColumn(dsd, "Last ART Date", hivPatientData.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those not in ART
+		addColumn(dsd, "ARVs for X days", hivPatientData.getARVDuration());
+		addColumn(dsd, "Expected Return Date", hivPatientData.getExpectedReturnDate());
+		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
+		addColumn(dsd, "Start Regimen", hivPatientData.getStartRegimen());
+		addColumn(dsd, "Start Regimen Date", hivPatientData.getStartRegimenDate());
+
+
 
 		return rd;
 	}
