@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class SetupCBSEIDCohortReport extends AijarDataExportManager {
+public class SetupCBSEIDReport extends AijarDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -44,7 +44,7 @@ public class SetupCBSEIDCohortReport extends AijarDataExportManager {
     private BuiltInCohortDefinitionLibrary builtInCohorts;
 
 
-    public SetupCBSEIDCohortReport() {
+    public SetupCBSEIDReport() {
     }
 
     @Override
