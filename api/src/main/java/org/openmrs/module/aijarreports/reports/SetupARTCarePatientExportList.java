@@ -10,6 +10,7 @@ import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.aijarreports.metadata.CommonReportMetadata;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.library.BuiltInCohortDefinitionLibrary;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -97,6 +98,7 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(dsd));
 
 		// rows are patients with a next appointment date obs in the given date range
+
 		CohortDefinition rowFilter = hivCohorts.getPatientsWithAppointmentOnDate();
 		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter)) ;
 
