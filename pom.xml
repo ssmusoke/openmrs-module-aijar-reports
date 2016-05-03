@@ -200,7 +200,6 @@
 					</configuration>
 				</plugin>
 			</plugins>
-		</pluginManagement>
 	</build>
 
 	<distributionManagement>
