@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.aijarreports.reports;
 
-import org.openmrs.logic.op.In;
 import org.openmrs.module.aijarreports.library.DataFactory;
 import org.openmrs.module.aijarreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -79,17 +78,93 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(eidCohorts.getAllEIDPatients()));
+
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(eidCohorts.getPatientsWithAnEIDNumber()));
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("cohort", Mapped.mapStraightThrough(dsd));
 
+        CohortDefinition allEIDPatients = eidCohorts.getAllEIDPatients();
+        CohortDefinition getTransferIns = eidCohorts.getEIDTransferIns();
+        CohortDefinition getTransferOuts = eidCohorts.getEIDPatientsFinallyTransferredOut();
+
+        CohortDefinition netCurrentCohort = df.getPatientsInAny(allEIDPatients, df.getPatientsNotIn(getTransferIns, getTransferOuts));
+
         CohortDefinition males = builtInCohorts.getMales();
         CohortDefinition females = builtInCohorts.getFemales();
-        addIndicator(dsd, "1m", "Males", males);
-        addIndicator(dsd, "1f", "Females", females);
 
+        CohortDefinition givenNVPAtBirth = eidCohorts.getEIDPatientsGivenNVP();
+        CohortDefinition initiatedOnCPT = eidCohorts.getEIDPatientsInitiatedOnCPT();
+
+        CohortDefinition testedUsingFirstDNAPCR = eidCohorts.getEIDPatientsTestedUsingFirstDNAPCR();
+        CohortDefinition testedUsingSecondDNAPCR = eidCohorts.getEIDPatientsTestedUsingSecondDNAPCR();
+        CohortDefinition testedUsingABTest = eidCohorts.getEIDPatientsTestedUsingABTest();
+
+        CohortDefinition getEIDWHODiedDied = eidCohorts.getEIDPatientsWhoDied();
+
+        CohortDefinition getEIDPatientsFinallyPositive = eidCohorts.getEIDPatientsFinallyPositive();
+
+        CohortDefinition getEIDPatientsFinallyNegative = eidCohorts.getEIDPatientsFinallyNegative();
+
+        CohortDefinition getFinallyPositiveWhoDied = df.getPatientsInAll(getEIDPatientsFinallyPositive, getEIDWHODiedDied);
+        CohortDefinition getFinallyNegativeWhoDied = df.getPatientsInAll(getEIDPatientsFinallyNegative, getEIDWHODiedDied);
+        CohortDefinition getOthersWhoDied = df.getPatientsNotIn(getEIDWHODiedDied, df.getPatientsInAny(getEIDPatientsFinallyPositive, getEIDPatientsFinallyNegative));
+
+        CohortDefinition getFinallyTransferredOut = eidCohorts.getEIDPatientsFinallyTransferredOut();
+
+        CohortDefinition firstDNAPCRWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingFirstDNAPCRWhoseResultsGivenToCareGiver();
+        CohortDefinition secondDNAPCRWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingSecondDNAPCRWhoseResultsGivenToCareGiver();
+        CohortDefinition aBTestWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingABTestWhoseResultsGivenToCareGiver();
+
+        CohortDefinition testedPositiveUsingFirstDNAPCR = eidCohorts.getEIDPatientsTestedPositiveUsingFirstDNAPCR();
+        CohortDefinition testedPositiveUsingSecondDNAPCR = eidCohorts.getEIDPatientsTestedPositiveUsingSecondDNAPCR();
+        CohortDefinition testedPositiveUsingABTest = eidCohorts.getEIDPatientsTestedPositiveUsingABTest();
+
+        CohortDefinition getLostToFollowup = eidCohorts.getEIDLostToFollowup();
+
+
+        addIndicator(dsd, "1m", "Original Cohort Males", df.getPatientsInAll(allEIDPatients, males));
+        addIndicator(dsd, "2m", "Males transferred in", df.getPatientsInAll(getTransferIns, males));
+        addIndicator(dsd, "3m", "Males transferred out", df.getPatientsInAll(getTransferOuts, males));
+        addIndicator(dsd, "4m", "Males net current cohort", df.getPatientsInAll(netCurrentCohort, males));
+        addIndicator(dsd, "5m", "Males give NVP", df.getPatientsInAll(netCurrentCohort, givenNVPAtBirth, males));
+        addIndicator(dsd, "6m", "Males initiated on CPT", df.getPatientsInAll(netCurrentCohort, initiatedOnCPT, males));
+        addIndicator(dsd, "7m", "Males tested using first DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedUsingFirstDNAPCR, males));
+        addIndicator(dsd, "8m", "Males tested using first DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, firstDNAPCRWhoseResultsGivenToCareGiver, males));
+        addIndicator(dsd, "9m", "Males tested positive using first DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingFirstDNAPCR, males));
+        addIndicator(dsd, "10m", "Males tested using second DNA PCR Test", df.getPatientsInAll(netCurrentCohort, testedUsingSecondDNAPCR, males));
+        addIndicator(dsd, "11m", "Males tested using second DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, secondDNAPCRWhoseResultsGivenToCareGiver, males));
+        addIndicator(dsd, "12m", "Males tested positive using second DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingSecondDNAPCR, males));
+        addIndicator(dsd, "13m", "Males tested using AB Test", df.getPatientsInAll(netCurrentCohort, testedUsingABTest, males));
+        addIndicator(dsd, "14m", "Males tested using second AB test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, aBTestWhoseResultsGivenToCareGiver, males));
+        addIndicator(dsd, "15m", "Males tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, males));
+        addIndicator(dsd, "16m", "Males", males);
+        addIndicator(dsd, "17m", "Males", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, males));
+        addIndicator(dsd, "18m", "Males", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, males));
+        addIndicator(dsd, "19m", "Males", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, males));
+        addIndicator(dsd, "20m", "Males", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, males));
+
+        addIndicator(dsd, "1f", "Original Cohort Males", df.getPatientsInAll(allEIDPatients, females));
+        addIndicator(dsd, "2f", "Females transferred in", df.getPatientsInAll(getTransferIns, females));
+        addIndicator(dsd, "3f", "Females transferred out", df.getPatientsInAll(getTransferOuts, females));
+        addIndicator(dsd, "4f", "Females net current cohort", df.getPatientsInAll(netCurrentCohort, females));
+        addIndicator(dsd, "5f", "Females give NVP", df.getPatientsInAll(netCurrentCohort, givenNVPAtBirth, females));
+        addIndicator(dsd, "6f", "Females initiated on CPT", df.getPatientsInAll(netCurrentCohort, initiatedOnCPT, females));
+        addIndicator(dsd, "7f", "Females tested using first DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedUsingFirstDNAPCR, females));
+        addIndicator(dsd, "8f", "Females tested using first DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, firstDNAPCRWhoseResultsGivenToCareGiver, females));
+        addIndicator(dsd, "9f", "Females tested positive using first DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingFirstDNAPCR, females));
+        addIndicator(dsd, "10f", "Females tested using second DNA PCR Test", df.getPatientsInAll(netCurrentCohort, testedUsingSecondDNAPCR, females));
+        addIndicator(dsd, "11f", "Females tested using second DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, secondDNAPCRWhoseResultsGivenToCareGiver, females));
+        addIndicator(dsd, "12f", "Females tested positive using second DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingSecondDNAPCR, females));
+        addIndicator(dsd, "13f", "Females tested using AB Test", df.getPatientsInAll(netCurrentCohort, testedUsingABTest, females));
+        addIndicator(dsd, "14f", "Females tested using second AB test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, aBTestWhoseResultsGivenToCareGiver, females));
+        addIndicator(dsd, "15f", "Females tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, females));
+        addIndicator(dsd, "16f", "Females", females);
+        addIndicator(dsd, "17f", "Females", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, females));
+        addIndicator(dsd, "18f", "Females", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, females));
+        addIndicator(dsd, "19f", "Females", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, females));
+        addIndicator(dsd, "20f", "Females", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, females));
         return rd;
     }
 
