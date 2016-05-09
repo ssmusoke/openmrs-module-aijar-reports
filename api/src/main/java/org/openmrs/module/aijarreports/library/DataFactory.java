@@ -4,6 +4,7 @@ import org.openmrs.*;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.definition.cohort.definition.InAgeRangeAtCohortDefinition;
 import org.openmrs.module.aijarreports.definition.cohort.definition.InEncounterCohortDefinition;
+import org.openmrs.module.aijarreports.definition.cohort.definition.ObsWithEncountersCohortDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.*;
@@ -171,6 +172,24 @@ public class DataFactory {
         return ret;
     }
 
+    public CompositionCohortDefinition getPatientsInAny(CohortDefinition... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromQueries(BooleanOperator.OR, elements);
+        return cd;
+    }
+
+    public CompositionCohortDefinition getPatientsNotIn(CohortDefinition... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromQueries(BooleanOperator.NOT, elements);
+        return cd;
+    }
+
+    public CompositionCohortDefinition createPatientComposition(Object... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromElements(elements);
+        return cd;
+    }
+
     // Convenience methods
 
     public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
@@ -267,4 +286,44 @@ public class DataFactory {
         cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
         return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
     }
+
+    public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types) {
+        ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
+        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
+        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
+        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+    }
+
+    public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types, List<Concept> answers) {
+        ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.setAnswers(answers);
+        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
+        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
+        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
+        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+    }
+
+    public CohortDefinition getPatients(Concept question) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setQuestion(question);
+        //        cd.setEncounterTypeList(encounterTypes);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithIdentifierOfType(PatientIdentifierType... types) {
+        PatientIdentifierCohortDefinition cd = new PatientIdentifierCohortDefinition();
+        for (PatientIdentifierType type : types) {
+            cd.addTypeToMatch(type);
+        }
+        return cd;
+    }
+
 }
