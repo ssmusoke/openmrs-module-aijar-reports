@@ -33,10 +33,10 @@ public class ObsWithEncountersCohortDefinitionEvaluator implements CohortDefinit
         EvaluatedCohort ret = new EvaluatedCohort(cohortDefinition, context);
         ObsWithEncountersCohortDefinition cd = (ObsWithEncountersCohortDefinition) cohortDefinition;
 
-        Integer months = cd.getStartMonth() - cd.getMonthsBefore();
-        Date beginning = DateUtil.getDateTime(cd.getStartYear(), months, 1);
+        Date beginning = DateUtil.getStartOfMonth(cd.getStartDate());
+        Date ending = DateUtil.getEndOfMonth(cd.getStartDate());
 
-        Date ending = DateUtil.getEndOfMonth(beginning);
+        Date endingOfEnding = DateUtil.getEndOfMonth(cd.getEndDate());
 
         HqlQueryBuilder encQuery = new HqlQueryBuilder();
         encQuery.select(new String[]{"e.patient.patientId, e.encounterId"});
@@ -49,20 +49,21 @@ public class ObsWithEncountersCohortDefinitionEvaluator implements CohortDefinit
             encQuery.orderDesc("e.encounterDatetime").orderDesc("e.dateCreated");
         }
 
-        HashSet encountersToInclude = new HashSet();
+        HashSet personsToInclude = new HashSet();
         if (cd.getWhichEncounter() != TimeQualifier.LAST && cd.getWhichEncounter() != TimeQualifier.FIRST) {
             List q1 = this.evaluationService.evaluateToList(encQuery, Integer.class, context);
-            encountersToInclude.addAll(q1);
+            personsToInclude.addAll(q1);
         } else {
             Map q = this.evaluationService.evaluateToMap(encQuery, Integer.class, Integer.class, context);
-            encountersToInclude.addAll(q.values());
+            personsToInclude.addAll(q.values());
         }
 
         HqlQueryBuilder q2 = new HqlQueryBuilder();
         q2.select(new String[]{"o.personId"});
         q2.from(Obs.class, "o");
         q2.whereEqual("o.concept", cd.getQuestion());
-        q2.whereIdIn("o.encounter.encounterId", encountersToInclude);
+        q2.whereIdIn("o.person", personsToInclude);
+        q2.whereBetweenInclusive("o.encounter.encounterDatetime", beginning, endingOfEnding);
 
         if (cd.getAnswers() != null) {
             q2.whereIn("o.valueCoded", cd.getAnswers());

@@ -281,10 +281,9 @@ public class DataFactory {
     public CohortDefinition getAnyEncounterOfType(List<EncounterType> types) {
         InEncounterCohortDefinition cd = new InEncounterCohortDefinition();
         cd.setEncounterTypes(types);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types) {
@@ -292,10 +291,9 @@ public class DataFactory {
         cd.setEncounterTypes(types);
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types, List<Concept> answers) {
@@ -304,10 +302,9 @@ public class DataFactory {
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setAnswers(answers);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getPatients(Concept question) {

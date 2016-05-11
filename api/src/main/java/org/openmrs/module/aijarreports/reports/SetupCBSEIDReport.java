@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -64,9 +65,8 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
-        l.add(new Parameter("startYear", "Start Year", Integer.class));
-        l.add(new Parameter("startMonth", "Start Month", Integer.class));
-        l.add(new Parameter("monthsBefore", "Finishing", Integer.class));
+        l.add(new Parameter("startDate", "Cohort starting", Date.class));
+        l.add(new Parameter("endDate", "Cohort end date", Date.class));
         return l;
     }
 
@@ -111,8 +111,6 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
         CohortDefinition getFinallyNegativeWhoDied = df.getPatientsInAll(getEIDPatientsFinallyNegative, getEIDWHODiedDied);
         CohortDefinition getOthersWhoDied = df.getPatientsNotIn(getEIDWHODiedDied, df.getPatientsInAny(getEIDPatientsFinallyPositive, getEIDPatientsFinallyNegative));
 
-        CohortDefinition getFinallyTransferredOut = eidCohorts.getEIDPatientsFinallyTransferredOut();
-
         CohortDefinition firstDNAPCRWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingFirstDNAPCRWhoseResultsGivenToCareGiver();
         CohortDefinition secondDNAPCRWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingSecondDNAPCRWhoseResultsGivenToCareGiver();
         CohortDefinition aBTestWhoseResultsGivenToCareGiver = eidCohorts.getEIDPatientsTestedUsingABTestWhoseResultsGivenToCareGiver();
@@ -122,6 +120,8 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
         CohortDefinition testedPositiveUsingABTest = eidCohorts.getEIDPatientsTestedPositiveUsingABTest();
 
         CohortDefinition getLostToFollowup = eidCohorts.getEIDLostToFollowup();
+
+        CohortDefinition getEIDPatientsOnART = eidCohorts.getEIDOnART();
 
 
         addIndicator(dsd, "1m", "Original Cohort Males", df.getPatientsInAll(allEIDPatients, males));
@@ -137,15 +137,16 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
         addIndicator(dsd, "11m", "Males tested using second DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, secondDNAPCRWhoseResultsGivenToCareGiver, males));
         addIndicator(dsd, "12m", "Males tested positive using second DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingSecondDNAPCR, males));
         addIndicator(dsd, "13m", "Males tested using AB Test", df.getPatientsInAll(netCurrentCohort, testedUsingABTest, males));
-        addIndicator(dsd, "14m", "Males tested using second AB test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, aBTestWhoseResultsGivenToCareGiver, males));
-        addIndicator(dsd, "15m", "Males tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, males));
-        addIndicator(dsd, "16m", "Males", males);
-        addIndicator(dsd, "17m", "Males", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, males));
-        addIndicator(dsd, "18m", "Males", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, males));
-        addIndicator(dsd, "19m", "Males", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, males));
-        addIndicator(dsd, "20m", "Males", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, males));
+        addIndicator(dsd, "14m", "Males tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, males));
+        addIndicator(dsd, "15m", "Males HIV positive babies initiated on ART", df.getPatientsInAll(netCurrentCohort, getEIDPatientsOnART, males));
+        addIndicator(dsd, "16m", "Males HIV positive HEI who died", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, males));
+        addIndicator(dsd, "17m", "Males HIV negative HEI who died", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, males));
+        addIndicator(dsd, "18m", "Males unknown status HEI who died", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, males));
+        addIndicator(dsd, "19m", "Males discharged as negative", df.getPatientsInAll(netCurrentCohort, getEIDPatientsFinallyNegative, males));
+        addIndicator(dsd, "20m", "Males lost to followup", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, males));
 
-        addIndicator(dsd, "1f", "Original Cohort Males", df.getPatientsInAll(allEIDPatients, females));
+
+        addIndicator(dsd, "1f", "Original Cohort Females", df.getPatientsInAll(allEIDPatients, females));
         addIndicator(dsd, "2f", "Females transferred in", df.getPatientsInAll(getTransferIns, females));
         addIndicator(dsd, "3f", "Females transferred out", df.getPatientsInAll(getTransferOuts, females));
         addIndicator(dsd, "4f", "Females net current cohort", df.getPatientsInAll(netCurrentCohort, females));
@@ -158,13 +159,14 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
         addIndicator(dsd, "11f", "Females tested using second DNA PCR test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, secondDNAPCRWhoseResultsGivenToCareGiver, females));
         addIndicator(dsd, "12f", "Females tested positive using second DNA PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingSecondDNAPCR, females));
         addIndicator(dsd, "13f", "Females tested using AB Test", df.getPatientsInAll(netCurrentCohort, testedUsingABTest, females));
-        addIndicator(dsd, "14f", "Females tested using second AB test whose result where given to the caregiver", df.getPatientsInAll(netCurrentCohort, aBTestWhoseResultsGivenToCareGiver, females));
-        addIndicator(dsd, "15f", "Females tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, females));
-        addIndicator(dsd, "16f", "Females", females);
-        addIndicator(dsd, "17f", "Females", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, females));
-        addIndicator(dsd, "18f", "Females", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, females));
-        addIndicator(dsd, "19f", "Females", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, females));
-        addIndicator(dsd, "20f", "Females", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, females));
+        addIndicator(dsd, "14f", "Females tested positive using second AB PCR test", df.getPatientsInAll(netCurrentCohort, testedPositiveUsingABTest, females));
+        addIndicator(dsd, "15f", "Females HIV positive babies initiated on ART", df.getPatientsInAll(netCurrentCohort, getEIDPatientsOnART, females));
+        addIndicator(dsd, "16f", "Females HIV positive HEI who died", df.getPatientsInAll(netCurrentCohort, getFinallyPositiveWhoDied, females));
+        addIndicator(dsd, "17f", "Females HIV negative HEI who died", df.getPatientsInAll(netCurrentCohort, getFinallyNegativeWhoDied, females));
+        addIndicator(dsd, "18f", "Females unknown status HEI who died", df.getPatientsInAll(netCurrentCohort, getOthersWhoDied, females));
+        addIndicator(dsd, "19f", "Females discharged as negative", df.getPatientsInAll(netCurrentCohort, getEIDPatientsFinallyNegative, females));
+        addIndicator(dsd, "20f", "Females lost to followup", df.getPatientsInAll(netCurrentCohort, getLostToFollowup, females));
+
         return rd;
     }
 
