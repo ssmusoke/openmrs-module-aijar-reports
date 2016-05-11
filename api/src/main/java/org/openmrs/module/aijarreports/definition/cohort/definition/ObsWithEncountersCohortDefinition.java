@@ -37,30 +37,6 @@ public class ObsWithEncountersCohortDefinition extends BaseCohortDefinition {
         super();
     }
 
-    /*public Integer getStartYear() {
-        return startYear;
-    }
-
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
-    }
-
-    public Integer getStartMonth() {
-        return startMonth;
-    }
-
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getMonthsBefore() {
-        return monthsBefore;
-    }
-
-    public void setMonthsBefore(Integer monthsBefore) {
-        this.monthsBefore = monthsBefore;
-    }*/
-
     public Date getStartDate() {
         return startDate;
     }

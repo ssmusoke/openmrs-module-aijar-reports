@@ -34,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Expects that the SQL query returns two columns:
  *   the first should be an Integer returning the obsId
  *   the second should be the data you wish to retrieve for each Obs
- * Expects that you use "obsIds" within your query to limit by the base id set in the evaluation context:
+ * Expects that you use "obsIds" within your query to limit by the base id set in the evaluator context:
  *   eg. "select obs_datetime from obs where obs_id in (:obsIds)"
  */
 @Handler(supports=SqlObsDataDefinition.class)

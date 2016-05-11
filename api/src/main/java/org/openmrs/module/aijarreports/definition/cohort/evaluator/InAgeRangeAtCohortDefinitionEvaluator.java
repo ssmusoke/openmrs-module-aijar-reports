@@ -11,7 +11,7 @@
  * <p>
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.aijarreports.definition.cohort.evaluation;
+package org.openmrs.module.aijarreports.definition.cohort.evaluator;
 
 import org.openmrs.Cohort;
 import org.openmrs.Patient;

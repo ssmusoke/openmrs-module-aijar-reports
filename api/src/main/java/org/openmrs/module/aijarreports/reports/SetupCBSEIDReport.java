@@ -65,8 +65,8 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
-        l.add(new Parameter("startDate", "Cohort starting", Date.class));
-        l.add(new Parameter("endDate", "Cohort end date", Date.class));
+        l.add(df.getStartDateParameter());
+        l.add(df.getEndDateParameter());
         return l;
     }
 

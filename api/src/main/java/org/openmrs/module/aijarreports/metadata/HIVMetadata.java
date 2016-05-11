@@ -127,6 +127,10 @@ public class HIVMetadata extends Metadata {
         return getPatientIdentifierType("2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe");
     }
 
+    public PatientIdentifierType getHIVIdentifier() {
+        return getPatientIdentifierType("e1731641-30ab-102d-86b0-7a5022ba4115");
+    }
+
     public List<EncounterType> getARTSummaryPageEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));

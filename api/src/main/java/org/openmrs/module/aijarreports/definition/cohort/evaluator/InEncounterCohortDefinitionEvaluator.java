@@ -1,4 +1,4 @@
-package org.openmrs.module.aijarreports.definition.cohort.evaluation;
+package org.openmrs.module.aijarreports.definition.cohort.evaluator;
 
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
