@@ -16,12 +16,6 @@ public class ObsWithEncountersCohortDefinition extends BaseCohortDefinition {
     private static final long serialVersionUID = 1L;
     @ConfigurationProperty
     private TimeQualifier whichEncounter;
-    /*@ConfigurationProperty
-    private Integer startYear;
-    @ConfigurationProperty
-    private Integer startMonth;
-    @ConfigurationProperty
-    private Integer monthsBefore;*/
     @ConfigurationProperty
     private Date startDate;
     @ConfigurationProperty

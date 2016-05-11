@@ -103,6 +103,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getEIDPatientsTestedUsingABTestWhoseResultsGivenToCareGiver() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestResultGivenToCareProviderDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
+
     @DocumentedDefinition(value = "1DnaPCRPositive")
     public CohortDefinition getEIDPatientsTestedPositiveUsingFirstDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getFirstPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));

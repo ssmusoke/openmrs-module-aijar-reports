@@ -70,13 +70,6 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
-    // Converters
-
-	/*public DataConverter getIdentifierCollectionConverter() {
-        CollectionConverter collectionConverter = new CollectionConverter(new PatientIdentifierConverter(), true, null);
-		return new ChainedConverter(collectionConverter, new ObjectFormatter(" "));
-	}*/
-
     public DataConverter getIdentifierConverter() {
         return new PropertyConverter(PatientIdentifier.class, "identifier");
     }
@@ -274,7 +267,6 @@ public class DataFactory {
         cd.setMinAgeUnit(minAgeUnit);
         cd.setMaxAge(maxAge);
         cd.setMaxAgeUnit(maxAgeUnit);
-        //        return convert(cd, ObjectUtil.toMap("startedOnOrBefore=endDate"));
         return cd;
     }
 
@@ -311,7 +303,6 @@ public class DataFactory {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
         cd.setQuestion(question);
-        //        cd.setEncounterTypeList(encounterTypes);
         return cd;
     }
 
