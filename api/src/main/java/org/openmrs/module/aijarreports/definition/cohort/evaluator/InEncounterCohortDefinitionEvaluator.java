@@ -1,4 +1,4 @@
-package org.openmrs.module.aijarreports.definition.cohort.evaluation;
+package org.openmrs.module.aijarreports.definition.cohort.evaluator;
 
 import org.openmrs.Cohort;
 import org.openmrs.Encounter;
@@ -28,10 +28,8 @@ public class InEncounterCohortDefinitionEvaluator implements CohortDefinitionEva
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) throws EvaluationException {
         InEncounterCohortDefinition cd = (InEncounterCohortDefinition) cohortDefinition;
 
-        Integer months = cd.getStartMonth() - cd.getMonthsBefore();
-        Date beginning = DateUtil.getDateTime(cd.getStartYear(), months, 1);
-
-        Date ending = DateUtil.getEndOfMonth(beginning);
+        Date beginning = DateUtil.getStartOfMonth(cd.getStartDate());
+        Date ending = DateUtil.getEndOfMonth(cd.getStartDate());
 
         HqlQueryBuilder q = new HqlQueryBuilder();
         q.select(new String[]{"distinct e.patient.patientId"});

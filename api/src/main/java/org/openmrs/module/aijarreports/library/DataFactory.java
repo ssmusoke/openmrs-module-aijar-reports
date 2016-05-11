@@ -70,13 +70,6 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
-    // Converters
-
-	/*public DataConverter getIdentifierCollectionConverter() {
-        CollectionConverter collectionConverter = new CollectionConverter(new PatientIdentifierConverter(), true, null);
-		return new ChainedConverter(collectionConverter, new ObjectFormatter(" "));
-	}*/
-
     public DataConverter getIdentifierConverter() {
         return new PropertyConverter(PatientIdentifier.class, "identifier");
     }
@@ -274,17 +267,15 @@ public class DataFactory {
         cd.setMinAgeUnit(minAgeUnit);
         cd.setMaxAge(maxAge);
         cd.setMaxAgeUnit(maxAgeUnit);
-        //        return convert(cd, ObjectUtil.toMap("startedOnOrBefore=endDate"));
         return cd;
     }
 
     public CohortDefinition getAnyEncounterOfType(List<EncounterType> types) {
         InEncounterCohortDefinition cd = new InEncounterCohortDefinition();
         cd.setEncounterTypes(types);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types) {
@@ -292,10 +283,9 @@ public class DataFactory {
         cd.setEncounterTypes(types);
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types, List<Concept> answers) {
@@ -304,17 +294,15 @@ public class DataFactory {
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setAnswers(answers);
-        cd.addParameter(new Parameter("startYear", "Start Year", Integer.class));
-        cd.addParameter(new Parameter("startMonth", "Start Month", Integer.class));
-        cd.addParameter(new Parameter("monthsBefore", "Month Before", Integer.class));
-        return convert(cd, ObjectUtil.toMap("startYear=startYear,startMonth=startMonth,monthsBefore=monthsBefore"));
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getPatients(Concept question) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
         cd.setQuestion(question);
-        //        cd.setEncounterTypeList(encounterTypes);
         return cd;
     }
 

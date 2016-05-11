@@ -4,6 +4,7 @@ import org.openmrs.EncounterType;
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,11 +13,9 @@ import java.util.List;
 public class InEncounterCohortDefinition extends BaseCohortDefinition {
     private static final long serialVersionUID = 1L;
     @ConfigurationProperty
-    private Integer startYear;
+    private Date startDate;
     @ConfigurationProperty
-    private Integer startMonth;
-    @ConfigurationProperty
-    private Integer monthsBefore;
+    private Date endDate;
     @ConfigurationProperty
     private List<EncounterType> encounterTypes;
 
@@ -24,28 +23,20 @@ public class InEncounterCohortDefinition extends BaseCohortDefinition {
         super();
     }
 
-    public Integer getStartYear() {
-        return startYear;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Integer getStartMonth() {
-        return startMonth;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getMonthsBefore() {
-        return monthsBefore;
-    }
-
-    public void setMonthsBefore(Integer monthsBefore) {
-        this.monthsBefore = monthsBefore;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public List<EncounterType> getEncounterTypes() {

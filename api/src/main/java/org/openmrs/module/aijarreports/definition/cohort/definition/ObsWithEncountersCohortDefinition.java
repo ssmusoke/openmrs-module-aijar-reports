@@ -6,6 +6,7 @@ import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -16,11 +17,9 @@ public class ObsWithEncountersCohortDefinition extends BaseCohortDefinition {
     @ConfigurationProperty
     private TimeQualifier whichEncounter;
     @ConfigurationProperty
-    private Integer startYear;
+    private Date startDate;
     @ConfigurationProperty
-    private Integer startMonth;
-    @ConfigurationProperty
-    private Integer monthsBefore;
+    private Date endDate;
     @ConfigurationProperty
     private List<EncounterType> encounterTypes;
     @ConfigurationProperty
@@ -32,28 +31,20 @@ public class ObsWithEncountersCohortDefinition extends BaseCohortDefinition {
         super();
     }
 
-    public Integer getStartYear() {
-        return startYear;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setStartYear(Integer startYear) {
-        this.startYear = startYear;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public Integer getStartMonth() {
-        return startMonth;
+    public Date getEndDate() {
+        return endDate;
     }
 
-    public void setStartMonth(Integer startMonth) {
-        this.startMonth = startMonth;
-    }
-
-    public Integer getMonthsBefore() {
-        return monthsBefore;
-    }
-
-    public void setMonthsBefore(Integer monthsBefore) {
-        this.monthsBefore = monthsBefore;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public List<EncounterType> getEncounterTypes() {

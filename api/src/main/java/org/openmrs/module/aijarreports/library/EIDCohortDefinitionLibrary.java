@@ -48,7 +48,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsWithObsValueAtArtInitiationAtLocationByEnd(Concept question, Concept... values) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setEncounterTypeList(hivMetadata.getEIDSummaryPageEncounterType());
-        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setTimeModifier(PatientSetService.TimeModifier.FIRST);
         cd.setQuestion(question);
         cd.setOperator(SetComparator.IN);
         cd.setValueList(Arrays.asList(values));
@@ -59,97 +59,102 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoStartedStateWhenInAgeRangeAtLocationByEndDate(0, Age.Unit.YEARS, 100, Age.Unit.YEARS);
     }
 
-    @DocumentedDefinition(value = "allEidPatients")
+    @DocumentedDefinition(value = "allPatients")
     public CohortDefinition getAllEIDPatients() {
         return df.getAnyEncounterOfType(hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients1")
+    @DocumentedDefinition(value = "givenNvp")
     public CohortDefinition getEIDPatientsGivenNVP() {
         return df.getObsWithEncounters(hivMetadata.getDateOfNVP(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients2")
+    @DocumentedDefinition(value = "initiatedOnCpt")
     public CohortDefinition getEIDPatientsInitiatedOnCPT() {
         return df.getObsWithEncounters(hivMetadata.getDateOfCPT(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients3")
+    @DocumentedDefinition(value = "testedWith1DnaPcr")
     public CohortDefinition getEIDPatientsTestedUsingFirstDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getFirstPCRTestDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients4")
+    @DocumentedDefinition(value = "testedWith2DnaPcr")
     public CohortDefinition getEIDPatientsTestedUsingSecondDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getSecondPCRTestDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients5")
+    @DocumentedDefinition(value = "testedWithAbTest")
     public CohortDefinition getEIDPatientsTestedUsingABTest() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients6")
+    @DocumentedDefinition(value = "1DnaPcr2CareGiver")
     public CohortDefinition getEIDPatientsTestedUsingFirstDNAPCRWhoseResultsGivenToCareGiver() {
         return df.getObsWithEncounters(hivMetadata.getFirstPCRTestResultGivenToCareProviderDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients7")
+    @DocumentedDefinition(value = "2DnaPcr2CareGiver")
     public CohortDefinition getEIDPatientsTestedUsingSecondDNAPCRWhoseResultsGivenToCareGiver() {
         return df.getObsWithEncounters(hivMetadata.getSecondPCRTestResultGivenToCareProviderDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients8")
+    @DocumentedDefinition(value = "abResults2CareGiver")
     public CohortDefinition getEIDPatientsTestedUsingABTestWhoseResultsGivenToCareGiver() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestResultGivenToCareProviderDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    @DocumentedDefinition(value = "eidPatients9")
+    @DocumentedDefinition(value = "1DnaPCRPositive")
     public CohortDefinition getEIDPatientsTestedPositiveUsingFirstDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getFirstPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
     }
 
-    @DocumentedDefinition(value = "eidPatients10")
+    @DocumentedDefinition(value = "2DnaPcrPositive")
     public CohortDefinition getEIDPatientsTestedPositiveUsingSecondDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getSecondPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
     }
 
-    @DocumentedDefinition(value = "eidPatients11")
+    @DocumentedDefinition(value = "abPositive")
     public CohortDefinition getEIDPatientsTestedPositiveUsingABTest() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
     }
 
-    @DocumentedDefinition(value = "eidPatients12")
+    @DocumentedDefinition(value = "died")
     public CohortDefinition getEIDPatientsWhoDied() {
         return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getFinalOutcomeDied()));
     }
 
-    @DocumentedDefinition(value = "eidPatients13")
+    @DocumentedDefinition(value = "finallyPositive")
     public CohortDefinition getEIDPatientsFinallyPositive() {
         return df.getObsWithEncounters(hivMetadata.getFinalStatus(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
     }
 
-    @DocumentedDefinition(value = "eidPatients14")
+    @DocumentedDefinition(value = "finallyNegative")
     public CohortDefinition getEIDPatientsFinallyNegative() {
         return df.getObsWithEncounters(hivMetadata.getFinalStatus(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getNegativeResult()));
     }
 
-    @DocumentedDefinition(value = "eidPatients15")
+    @DocumentedDefinition(value = "transferredOut")
     public CohortDefinition getEIDPatientsFinallyTransferredOut() {
         return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getFinalOutcomeTransferred()));
     }
 
-    @DocumentedDefinition(value = "eidPatients16")
+    @DocumentedDefinition(value = "transferredIn")
     public CohortDefinition getEIDTransferIns() {
         return df.getObsWithEncounters(hivMetadata.getTransferIn(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()));
     }
 
-    @DocumentedDefinition(value = "eidPatients17")
+    @DocumentedDefinition(value = "lostTofollowup")
     public CohortDefinition getEIDLostToFollowup() {
         return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getFinalOutcomeLost()));
     }
 
-    @DocumentedDefinition(value = "hasAnEIDNumber")
+    @DocumentedDefinition(value = "onArt")
+    public CohortDefinition getEIDOnART() {
+        return df.getObsWithEncounters(hivMetadata.getARTStartDate(), hivMetadata.getEIDSummaryPageEncounterType());
+    }
+
+    @DocumentedDefinition(value = "hasNumber")
     public CohortDefinition getPatientsWithAnEIDNumber() {
         return df.getPatientsWithIdentifierOfType(hivMetadata.getPatientsWithEIDIdentifier());
     }
