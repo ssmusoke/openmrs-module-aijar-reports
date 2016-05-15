@@ -13,64 +13,59 @@
  */
 package org.openmrs.module.aijarreports.definition.cohort.definition;
 
-import org.openmrs.Location;
-import org.openmrs.ProgramWorkflowState;
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
-import java.util.Date;
-
 public class InAgeRangeAtCohortDefinition extends BaseCohortDefinition {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    @ConfigurationProperty(required = false)
-    private Integer minAge;
+	@ConfigurationProperty(required = false)
+	private Integer minAge;
 
-    @ConfigurationProperty(required = false)
-    private Age.Unit minAgeUnit = Age.Unit.YEARS;
+	@ConfigurationProperty(required = false)
+	private Age.Unit minAgeUnit = Age.Unit.YEARS;
 
-    @ConfigurationProperty(required = false)
-    private Integer maxAge;
+	@ConfigurationProperty(required = false)
+	private Integer maxAge;
 
-    @ConfigurationProperty(required = false)
-    private Age.Unit maxAgeUnit = Age.Unit.YEARS;
+	@ConfigurationProperty(required = false)
+	private Age.Unit maxAgeUnit = Age.Unit.YEARS;
 
+	public InAgeRangeAtCohortDefinition() {
+		super();
+	}
 
-    public InAgeRangeAtCohortDefinition() {
-        super();
-    }
+	public Integer getMinAge() {
+		return minAge;
+	}
 
-    public Integer getMinAge() {
-        return minAge;
-    }
+	public void setMinAge(Integer minAge) {
+		this.minAge = minAge;
+	}
 
-    public void setMinAge(Integer minAge) {
-        this.minAge = minAge;
-    }
+	public Age.Unit getMinAgeUnit() {
+		return minAgeUnit;
+	}
 
-    public Age.Unit getMinAgeUnit() {
-        return minAgeUnit;
-    }
+	public void setMinAgeUnit(Age.Unit minAgeUnit) {
+		this.minAgeUnit = minAgeUnit;
+	}
 
-    public void setMinAgeUnit(Age.Unit minAgeUnit) {
-        this.minAgeUnit = minAgeUnit;
-    }
+	public Integer getMaxAge() {
+		return maxAge;
+	}
 
-    public Integer getMaxAge() {
-        return maxAge;
-    }
+	public void setMaxAge(Integer maxAge) {
+		this.maxAge = maxAge;
+	}
 
-    public void setMaxAge(Integer maxAge) {
-        this.maxAge = maxAge;
-    }
+	public Age.Unit getMaxAgeUnit() {
+		return maxAgeUnit;
+	}
 
-    public Age.Unit getMaxAgeUnit() {
-        return maxAgeUnit;
-    }
-
-    public void setMaxAgeUnit(Age.Unit maxAgeUnit) {
-        this.maxAgeUnit = maxAgeUnit;
-    }
+	public void setMaxAgeUnit(Age.Unit maxAgeUnit) {
+		this.maxAgeUnit = maxAgeUnit;
+	}
 }

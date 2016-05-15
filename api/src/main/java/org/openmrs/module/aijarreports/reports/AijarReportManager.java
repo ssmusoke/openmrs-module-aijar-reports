@@ -60,51 +60,55 @@ public abstract class AijarReportManager extends BaseReportManager {
 		dsd.addColumn(columnName, edd, ObjectUtil.toString(Mapped.straightThroughMappings(edd), "=", ","));
 	}
 
-    protected void addColumn(ObsDataSetDefinition dsd, String columnName, PatientDataDefinition pdd) {
-        addColumn(dsd, columnName, new PatientToObsDataDefinition(pdd));
-    }
+	protected void addColumn(ObsDataSetDefinition dsd, String columnName, PatientDataDefinition pdd) {
+		addColumn(dsd, columnName, new PatientToObsDataDefinition(pdd));
+	}
 
-    protected void addColumn(ObsDataSetDefinition dsd, String columnName, EncounterDataDefinition edd) {
-        addColumn(dsd, columnName, new EncounterToObsDataDefinition(edd));
-    }
+	protected void addColumn(ObsDataSetDefinition dsd, String columnName, EncounterDataDefinition edd) {
+		addColumn(dsd, columnName, new EncounterToObsDataDefinition(edd));
+	}
 
-    protected void addColumn(ObsDataSetDefinition dsd, String columnName, ObsDataDefinition odd) {
-        dsd.addColumn(columnName, odd, ObjectUtil.toString(Mapped.straightThroughMappings(odd), "=", ","));
-    }
+	protected void addColumn(ObsDataSetDefinition dsd, String columnName, ObsDataDefinition odd) {
+		dsd.addColumn(columnName, odd, ObjectUtil.toString(Mapped.straightThroughMappings(odd), "=", ","));
+	}
 
-	protected ReportDesign createExcelTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition, String templatePath) {
+	protected ReportDesign createExcelTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition,
+	                                                 String templatePath) {
 		String resourcePath = ReportUtil.getPackageAsPath(getClass()) + "/" + templatePath;
 		return ReportManagerUtil.createExcelTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
 	}
 
-    protected ReportDesign createExcelDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
+	protected ReportDesign createExcelDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
 		return AijarReportUtil.createExcelDesign(reportDesignUuid, reportDefinition);
 	}
 
-    protected ReportRequest createMonthlyScheduledReportRequest(String requestUuid, String reportDesignUuid, Map<String, Object> parameters, ReportDefinition reportDefinition) {
-        try {
-            ReportRequest rr = new ReportRequest();
-            rr.setUuid(requestUuid);
-            rr.setReportDefinition(new Mapped<ReportDefinition>(reportDefinition, parameters));
-            rr.setPriority(ReportRequest.Priority.NORMAL);
-            rr.setProcessAutomatically(true);
-            rr.setRenderingMode(new RenderingMode(XlsReportRenderer.class.newInstance(), "Excel", reportDesignUuid, Integer.MAX_VALUE));
-            rr.setSchedule("0 0 4 1 * ?"); // Run monthly on the first of the month at 4:00am
-            rr.setMinimumDaysToPreserve(45);
-            return rr;
-        }
-        catch (Exception e) {
-            throw new IllegalStateException("Error constructing scheduled report", e);
-        }
-    }
+	protected ReportRequest createMonthlyScheduledReportRequest(String requestUuid, String reportDesignUuid,
+	                                                            Map<String, Object> parameters,
+	                                                            ReportDefinition reportDefinition) {
+		try {
+			ReportRequest rr = new ReportRequest();
+			rr.setUuid(requestUuid);
+			rr.setReportDefinition(new Mapped<ReportDefinition>(reportDefinition, parameters));
+			rr.setPriority(ReportRequest.Priority.NORMAL);
+			rr.setProcessAutomatically(true);
+			rr.setRenderingMode(
+					new RenderingMode(XlsReportRenderer.class.newInstance(), "Excel", reportDesignUuid, Integer.MAX_VALUE));
+			rr.setSchedule("0 0 4 1 * ?"); // Run monthly on the first of the month at 4:00am
+			rr.setMinimumDaysToPreserve(45);
+			return rr;
+		}
+		catch (Exception e) {
+			throw new IllegalStateException("Error constructing scheduled report", e);
+		}
+	}
 
-    public <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
-        if (parameterizable == null) {
-            throw new NullPointerException("Programming error: missing parameterizable");
-        }
-        if (mappings == null) {
-            mappings = ""; // probably not necessary, just to be safe
-        }
-        return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
-    }
+	public <T extends Parameterizable> Mapped<T> map(T parameterizable, String mappings) {
+		if (parameterizable == null) {
+			throw new NullPointerException("Programming error: missing parameterizable");
+		}
+		if (mappings == null) {
+			mappings = ""; // probably not necessary, just to be safe
+		}
+		return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
+	}
 }

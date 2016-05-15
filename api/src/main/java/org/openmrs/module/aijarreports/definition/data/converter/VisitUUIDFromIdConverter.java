@@ -10,15 +10,16 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  */
 public class VisitUUIDFromIdConverter implements DataConverter {
 
-	public VisitUUIDFromIdConverter() { }
+	public VisitUUIDFromIdConverter() {
+	}
 
 	@Override
 	public Object convert(Object original) {
-		if( original != null){
-			VisitService vs  = Context.getVisitService();
+		if (original != null) {
+			VisitService vs = Context.getVisitService();
 			Visit v = vs.getVisit((Integer) original);
-			return (v == null)? "": v.getUuid();
-		}else{
+			return (v == null) ? "" : v.getUuid();
+		} else {
 			return "";
 		}
 	}

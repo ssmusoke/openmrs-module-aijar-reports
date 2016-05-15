@@ -38,11 +38,17 @@ import org.openmrs.module.reporting.indicator.dimension.CohortIndicatorAndDimens
 public class ExcelBuilder {
 
 	protected static Log log = LogFactory.getLog(ExcelBuilder.class);
+
 	private Workbook workbook;
+
 	private Sheet currentSheet = null;
+
 	private List<String> sheetNames = new ArrayList<String>();
+
 	private Row currentRow = null;
+
 	private int currentRowNum = 0;
+
 	private int currentColNum = 0;
 
 	private Map<String, CellStyle> styleCache = new HashMap<String, CellStyle>();
@@ -71,7 +77,6 @@ public class ExcelBuilder {
 		return this;
 	}
 
-
 	public ExcelBuilder goToPosition(Properties properties) {
 		this.currentSheet = workbook.getSheetAt(getDesginProperty(properties.getProperty("renderToTemplateSheet")));
 		this.currentRowNum = getDesginProperty(properties.getProperty("renderToTemplateRow"));
@@ -99,26 +104,19 @@ public class ExcelBuilder {
 		Cell cell;
 		if (cellValue == null) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_BLANK);
-		} 
-		else if (cellValue instanceof Number) {
+		} else if (cellValue instanceof Number) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_NUMERIC);
-		} 
-		else if (cellValue instanceof Date) {
+		} else if (cellValue instanceof Date) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_NUMERIC);
-		}
-		else if (cellValue instanceof Boolean) {
+		} else if (cellValue instanceof Boolean) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_BOOLEAN);
-		} 
-		else if (cellValue instanceof Cohort) {
+		} else if (cellValue instanceof Cohort) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_NUMERIC);
-		} 
-		else if (cellValue instanceof CohortIndicatorResult) {
+		} else if (cellValue instanceof CohortIndicatorResult) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_NUMERIC);
-		} 
-		else if (cellValue instanceof CohortIndicatorAndDimensionResult) {
+		} else if (cellValue instanceof CohortIndicatorAndDimensionResult) {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_NUMERIC);
-		} 
-		else {
+		} else {
 			cell = currentRow.createCell(currentColNum, Cell.CELL_TYPE_STRING);
 		}
 
@@ -162,8 +160,7 @@ public class ExcelBuilder {
 	public void write(OutputStream out, String password) throws IOException {
 		if (StringUtils.isBlank(password)) {
 			workbook.write(out);
-		}
-		else {
+		} else {
 			POIFSFileSystem fs = new POIFSFileSystem();
 			EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
 			Encryptor enc = info.getEncryptor();
@@ -194,12 +191,12 @@ public class ExcelBuilder {
 		}
 	}
 	
-	public void setWorkbook(Workbook workbook){
-		this.workbook = workbook;
-	}
-
 	public Workbook getWorkbook() {
 		return workbook;
+	}
+
+	public void setWorkbook(Workbook workbook) {
+		this.workbook = workbook;
 	}
 
 	public Sheet getCurrentSheet() {
@@ -210,13 +207,13 @@ public class ExcelBuilder {
 		return currentRow;
 	}
 	
-	public int getDesginProperty(String property){
+	public int getDesginProperty(String property) {
 		try {
-	       return Integer.parseInt(property);
-        }
-        catch (NumberFormatException e) {
-	        log.error("Invalid value for property "+property+" : "+e);
-	        }
+			return Integer.parseInt(property);
+		}
+		catch (NumberFormatException e) {
+			log.error("Invalid value for property " + property + " : " + e);
+		}
 		return 0;
-	}	
+	}
 }

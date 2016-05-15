@@ -23,25 +23,25 @@ import org.openmrs.module.reporting.evaluation.caching.Caching;
 /**
  *
  */
-@Caching(strategy=ConfigurationPropertyCachingStrategy.class)
+@Caching(strategy = ConfigurationPropertyCachingStrategy.class)
 public class SqlObsDataDefinition extends BaseDataDefinition implements ObsDataDefinition {
 
-    public static final long serialVersionUID = 1L;
+	public static final long serialVersionUID = 1L;
 
-    @ConfigurationProperty
-    private String sql;
+	@ConfigurationProperty
+	private String sql;
 
-    @Override
-    public Class<?> getDataType() {
-        return Object.class;
-    }
+	@Override
+	public Class<?> getDataType() {
+		return Object.class;
+	}
 
-    public String getSql() {
-        return sql;
-    }
+	public String getSql() {
+		return sql;
+	}
 
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
+	public void setSql(String sql) {
+		this.sql = sql;
+	}
 
 }

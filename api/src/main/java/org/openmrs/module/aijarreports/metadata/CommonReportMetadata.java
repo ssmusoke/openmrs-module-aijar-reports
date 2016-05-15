@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 public class CommonReportMetadata extends Metadata {
 
 	public PatientIdentifierType getARTClinicNumber() {
-			return getPatientIdentifierType("e1731641-30ab-102d-86b0-7a5022ba4115");
+		return getPatientIdentifierType("e1731641-30ab-102d-86b0-7a5022ba4115");
 	}
 }

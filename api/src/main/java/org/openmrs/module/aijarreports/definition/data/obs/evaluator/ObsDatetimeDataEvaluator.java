@@ -20,7 +20,7 @@ import org.openmrs.module.reporting.data.obs.evaluator.ObsPropertyDataEvaluator;
 /**
  * Evaluates a ObsDatetimeDataDefinition to produce a ObsData
  */
-@Handler(supports=ObsDatetimeDataDefinition.class, order=50)
+@Handler(supports = ObsDatetimeDataDefinition.class, order = 50)
 public class ObsDatetimeDataEvaluator extends ObsPropertyDataEvaluator {
 
 	@Override

@@ -18,7 +18,7 @@ public class VisitTypeFromIdConverter implements DataConverter {
 		if (original != null) {
 			VisitService vs = Context.getVisitService();
 			Visit v = vs.getVisit((Integer) original);
-			return (v.getVisitType() == null)? "": v.getVisitType().getName();
+			return (v.getVisitType() == null) ? "" : v.getVisitType().getName();
 		} else {
 			return "";
 		}
