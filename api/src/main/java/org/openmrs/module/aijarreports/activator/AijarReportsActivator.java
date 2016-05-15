@@ -44,7 +44,7 @@ public class AijarReportsActivator extends BaseModuleActivator {
 
 	@Override
 	public void stopped() {
-		for (int i=getInitializers().size()-1; i>=0; i--) {
+		for (int i = getInitializers().size() - 1; i >= 0; i--) {
 			getInitializers().get(i).stopped();
 		}
 		log.info("Aijar Reports module stopped");

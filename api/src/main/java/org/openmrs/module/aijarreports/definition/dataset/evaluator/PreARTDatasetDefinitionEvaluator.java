@@ -1,5 +1,8 @@
 package org.openmrs.module.aijarreports.definition.dataset.evaluator;
 
+import java.util.Date;
+import java.util.List;
+
 import org.openmrs.Cohort;
 import org.openmrs.EncounterType;
 import org.openmrs.Patient;
@@ -20,60 +23,58 @@ import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluato
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * Created by carapai on 11/05/2016.
  */
-@Handler(supports = {PreARTDatasetDefinition.class})
+@Handler(supports = { PreARTDatasetDefinition.class })
 public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
-    @Override
-    public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
-        SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
-        PreARTDatasetDefinition definition = (PreARTDatasetDefinition) dataSetDefinition;
 
-        PatientIdentifierType patientIdentifierType = definition.getPatientIdentifierType();
-        List<EncounterType> ets = definition.getEncounterTypes();
+	@Override
+	public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
+		SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
+		PreARTDatasetDefinition definition = (PreARTDatasetDefinition) dataSetDefinition;
 
-        context = ObjectUtil.nvl(context, new EvaluationContext());
-        Cohort cohort = context.getBaseCohort();
+		PatientIdentifierType patientIdentifierType = definition.getPatientIdentifierType();
+		List<EncounterType> ets = definition.getEncounterTypes();
 
-        Date endDateParameter = (Date) context.getParameterValue("endDate");
-        if (endDateParameter == null) {
-            endDateParameter = new Date();
-        }
-        Date startDateParameter = (Date) context.getParameterValue("startDate");
-        if (startDateParameter == null) {
-            startDateParameter = new Date(0);
-        }
+		context = ObjectUtil.nvl(context, new EvaluationContext());
+		Cohort cohort = context.getBaseCohort();
 
-        if (cohort == null) {
-            cohort = Context.getPatientSetService().getAllPatients();
-        }
+		Date endDateParameter = (Date) context.getParameterValue("endDate");
+		if (endDateParameter == null) {
+			endDateParameter = new Date();
+		}
+		Date startDateParameter = (Date) context.getParameterValue("startDate");
+		if (startDateParameter == null) {
+			startDateParameter = new Date(0);
+		}
 
-        if (context.getLimit() != null) {
-            CohortUtil.limitCohort(cohort, context.getLimit());
-        }
+		if (cohort == null) {
+			cohort = Context.getPatientSetService().getAllPatients();
+		}
 
-        List<Patient> patients = Context.getPatientSetService().getPatients(cohort.getMemberIds());
+		if (context.getLimit() != null) {
+			CohortUtil.limitCohort(cohort, context.getLimit());
+		}
 
-        PatientDataHelper pdh = new PatientDataHelper();
-        HIVMetadata hivMetadata = new HIVMetadata();
-        CommonReportMetadata commonMetadata = new CommonReportMetadata();
+		List<Patient> patients = Context.getPatientSetService().getPatients(cohort.getMemberIds());
 
-        for (Patient p : patients) {
-            DataSetRow row = new DataSetRow();
+		PatientDataHelper pdh = new PatientDataHelper();
+		HIVMetadata hivMetadata = new HIVMetadata();
+		CommonReportMetadata commonMetadata = new CommonReportMetadata();
 
-            pdh.addCol(row, "ID", p.getPatientId());
-            pdh.addCol(row, "givenName", pdh.getGivenName(p));
-            pdh.addCol(row, "familyName", pdh.getFamilyName(p));
-            pdh.addCol(row, "birthDate", p.getBirthdate());
-            pdh.addCol(row, "gender", pdh.getGender(p));
+		for (Patient p : patients) {
+			DataSetRow row = new DataSetRow();
 
-            dataSet.addRow(row);
-        }
+			pdh.addCol(row, "ID", p.getPatientId());
+			pdh.addCol(row, "givenName", pdh.getGivenName(p));
+			pdh.addCol(row, "familyName", pdh.getFamilyName(p));
+			pdh.addCol(row, "birthDate", p.getBirthdate());
+			pdh.addCol(row, "gender", pdh.getGender(p));
 
-        return dataSet;
-    }
+			dataSet.addRow(row);
+		}
+
+		return dataSet;
+	}
 }

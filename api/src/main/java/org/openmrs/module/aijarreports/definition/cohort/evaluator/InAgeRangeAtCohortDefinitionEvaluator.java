@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.aijarreports.definition.cohort.evaluator;
 
+import java.util.Date;
+
 import org.openmrs.Cohort;
 import org.openmrs.Patient;
 import org.openmrs.annotation.Handler;
@@ -27,35 +29,33 @@ import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
-
-@Handler(supports = {InAgeRangeAtCohortDefinition.class})
+@Handler(supports = { InAgeRangeAtCohortDefinition.class })
 public class InAgeRangeAtCohortDefinitionEvaluator implements CohortDefinitionEvaluator {
 
-    @Autowired
-    EvaluationService evaluationService;
+	@Autowired
+	EvaluationService evaluationService;
 
-    public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) {
+	public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) {
 
-        InAgeRangeAtCohortDefinition cd = (InAgeRangeAtCohortDefinition) cohortDefinition;
+		InAgeRangeAtCohortDefinition cd = (InAgeRangeAtCohortDefinition) cohortDefinition;
 
-        HqlQueryBuilder q = new HqlQueryBuilder();
-        q.select("p.patientId, p.birthdate");
-        q.from(Patient.class, "p");
-        q.whereEqual("p.voided", false);
-        Cohort c = new Cohort();
+		HqlQueryBuilder q = new HqlQueryBuilder();
+		q.select("p.patientId, p.birthdate");
+		q.from(Patient.class, "p");
+		q.whereEqual("p.voided", false);
+		Cohort c = new Cohort();
 
-        AgeRange ageRange = new AgeRange(cd.getMinAge(), cd.getMinAgeUnit(), cd.getMaxAge(), cd.getMaxAgeUnit(), "");
+		AgeRange ageRange = new AgeRange(cd.getMinAge(), cd.getMinAgeUnit(), cd.getMaxAge(), cd.getMaxAgeUnit(), "");
 
-        for (Object[] row : evaluationService.evaluateToList(q, context)) {
-            Integer pId = (Integer) row[0];
-            Date bd = (Date) row[1];
-            Age age = new Age(bd);
-            if (ageRange.isInRange(age)) {
-                c.addMember(pId);
-            }
-        }
+		for (Object[] row : evaluationService.evaluateToList(q, context)) {
+			Integer pId = (Integer) row[0];
+			Date bd = (Date) row[1];
+			Age age = new Age(bd);
+			if (ageRange.isInRange(age)) {
+				c.addMember(pId);
+			}
+		}
 
-        return new EvaluatedCohort(c, cd, context);
-    }
+		return new EvaluatedCohort(c, cd, context);
+	}
 }
