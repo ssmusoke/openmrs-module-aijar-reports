@@ -39,14 +39,7 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         context = ObjectUtil.nvl(context, new EvaluationContext());
         Cohort cohort = context.getBaseCohort();
 
-        Date endDateParameter = (Date) context.getParameterValue("endDate");
-        if (endDateParameter == null) {
-            endDateParameter = new Date();
-        }
-        Date startDateParameter = (Date) context.getParameterValue("startDate");
-        if (startDateParameter == null) {
-            startDateParameter = new Date(0);
-        }
+        Date  endDateParameter = (Date) context.getParameterValue("startDate");
 
         if (cohort == null) {
             cohort = Context.getPatientSetService().getAllPatients();

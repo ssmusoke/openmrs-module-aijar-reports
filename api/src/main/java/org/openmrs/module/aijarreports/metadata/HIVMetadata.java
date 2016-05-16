@@ -162,4 +162,107 @@ public class HIVMetadata extends Metadata {
     public Concept getYes() {
         return getConcept("90003");
     }
+
+    public Concept getEntryPoint() {
+        return getConcept("90200");
+    }
+
+    public Concept getPCRAtEnrollment() {
+        return getConcept("99149");
+    }
+
+    public Concept getLactatingAtEnrollment() {
+        return getConcept("99601");
+    }
+
+    public Concept getTBAtEnrollment() {
+        return getConcept("99600");
+    }
+
+    public Concept getPregnantAtEnrollment() {
+        return getConcept("99602");
+    }
+
+    public Concept getTransferInAtEnrollment() {
+        return getConcept("99110");
+    }
+
+    public Concept getCPTDosage() {
+        return getConcept("99037");
+    }
+
+    public Concept getINHDosage() {
+        return getConcept("99604");
+    }
+
+    public Concept getTBStartDate() {
+        return getConcept("90217");
+    }
+
+    public Concept getTBStopDate() {
+        return getConcept("90310");
+    }
+
+
+    public Concept getWHOClinicalStage() {
+        return getConcept("90203");
+    }
+
+    public Concept getWHOClinicalStage1() {
+        return getConcept("90033");
+    }
+
+    public Concept getWHOClinicalStage2() {
+        return getConcept("90034");
+    }
+
+    public Concept getWHOClinicalStage3() {
+        return getConcept("90035");
+    }
+
+    public Concept getWHOClinicalStage4() {
+        return getConcept("90036");
+    }
+
+
+    public Concept getDateEligibleForART() {
+        return getConcept("90297");
+    }
+
+    public Concept getDateEligibleAndReadyForART() {
+        return getConcept("90299");
+    }
+
+
+    public Concept getDateEligibilityWHOStage() {
+        return getConcept("99083");
+    }
+
+    public Concept getDateEligibilityCD4() {
+        return getConcept("99082");
+    }
+
+    public Concept getDateEligibilityTB() {
+        return getConcept("99600");
+    }
+
+    public Concept getDateEligibilityBreastFeeding() {
+        return getConcept("99601");
+    }
+
+    public Concept getDateEligibilityPregnant() {
+        return getConcept("99602");
+    }
+
+
+
+    public EncounterType getARTSummaryEncounter() {
+        return getEncounterType("8d5b27bc-c2cc-11de-8d13-0010c6dffd0f");
+    }
+
+    public EncounterType getARTEncounterEncounterType() {
+        return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
+    }
+
+
 }

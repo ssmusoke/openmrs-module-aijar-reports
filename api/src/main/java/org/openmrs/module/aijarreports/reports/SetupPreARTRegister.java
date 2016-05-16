@@ -1,14 +1,11 @@
 package org.openmrs.module.aijarreports.reports;
 
-import org.openmrs.module.aijarreports.definition.dataset.definition.PreARTDatasetDefinition;
-import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.aijarreports.library.BasePatientDataLibrary;
-import org.openmrs.module.aijarreports.library.DataFactory;
-import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.aijarreports.library.*;
 import org.openmrs.module.aijarreports.metadata.CommonReportMetadata;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +22,7 @@ import java.util.List;
  */
 @Component
 public class SetupPreARTRegister extends AijarDataExportManager {
+
     @Autowired
     private DataFactory df;
 
@@ -32,6 +31,9 @@ public class SetupPreARTRegister extends AijarDataExportManager {
 
     @Autowired
     private CommonReportMetadata commonMetadata;
+
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
     private HIVMetadata hivMetadata;
@@ -72,15 +74,13 @@ public class SetupPreARTRegister extends AijarDataExportManager {
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
-        l.add(df.getEndDateParameter());
         return l;
     }
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        List<ReportDesign> l = new ArrayList<ReportDesign>();
-        l.add(createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls"));
-        return l;
+        ReportDesign design = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls");
+        return Arrays.asList(design);
     }
 
     @Override
@@ -92,11 +92,36 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        CohortDefinition everEnrolledCare = hivPatientData.getEverEnrolledInCare();
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(everEnrolledCare));
+        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+        dsd.setName(getName());
+        dsd.setParameters(getParameters());
+        rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(dsd));
 
-        PreARTDatasetDefinition dsd = new PreARTDatasetDefinition();
-        rd.addDataSetDefinition("patients", Mapped.mapStraightThrough(dsd));
+        CohortDefinition everEnrolledCare = hivCohortDefinitionLibrary.getYearlyPatientsOnCare();
+        dsd.addRowFilter(Mapped.mapStraightThrough(everEnrolledCare));
+
+        addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
+        addColumn(dsd, "Unique ID no", hivPatientData.getClinicNumber());
+        addColumn(dsd, "Patient Clinic ID", builtInPatientData.getPatientId());
+        addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
+        addColumn(dsd, "Gender", builtInPatientData.getGender());
+        addColumn(dsd, "Age", builtInPatientData.getAgeAtEnd());
+        addColumn(dsd, "Address", basePatientData.getTraditionalAuthority());
+        addColumn(dsd, "Entry Point", hivPatientData.getEntryPoint());
+        addColumn(dsd, "Status at enrollment", hivPatientData.getStatusAtEnrollment());
+        addColumn(dsd, "CPT Start Date", hivPatientData.getCPTStartDate());
+        addColumn(dsd, "INH Start Date", hivPatientData.getINHStartDate());
+        addColumn(dsd, "TB Start Date", hivPatientData.getTBStartDate());
+        addColumn(dsd, "TB Stop Date", hivPatientData.getTBStopDate());
+        addColumn(dsd, "1", hivPatientData.getWHOStage1Date());
+        addColumn(dsd, "2", hivPatientData.getWHOStage2Date());
+        addColumn(dsd, "3", hivPatientData.getWHOStage3Date());
+        addColumn(dsd, "4", hivPatientData.getWHOStage4Date());
+        addColumn(dsd, "Date Eligible for ART", hivPatientData.getARTEligibilityDate());
+        addColumn(dsd, "Why Eligible", hivPatientData.getWhyEligibleForART());
+        addColumn(dsd, "Date Eligible and Ready", hivPatientData.getARTEligibilityAndReadyDate());
+        addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
 
         return rd;
     }
