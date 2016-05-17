@@ -17,6 +17,7 @@ import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -39,19 +40,10 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PersonDataEv
 
         Period period = def.getPeriod();
         Date beginPeriod = def.getStartDate();
+        Date startDate = null;
+        Date stopDate = null;
 
-        Date beginning = null;
-        Date ending = null;
-
-        if (period == Period.MONTHLY) {
-            beginning = DateUtil.getStartOfMonth(beginPeriod);
-            ending = DateUtil.getEndOfMonth(beginPeriod);
-        } else if (period == period.QUARTERLY) {
-            // dd
-        } else if (period == period.YEARLY) {
-            beginning = DateUtil.getStartOfYear(beginPeriod);
-            ending = DateUtil.getEndOfYear(beginPeriod);
-        }
+        Date beginning = DateUtil.getStartOfMonth(beginPeriod);
 
 
         HqlQueryBuilder q = new HqlQueryBuilder();
@@ -62,10 +54,20 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PersonDataEv
         q.whereIn("o.encounter.encounterType", def.getEncounterTypes());
 
 
-        if (beginning != null) {
-            q.whereGreaterOrEqualTo("o.obsDatetime", beginning);
-        } else {
-            q.whereLessOrEqualTo("o.obsDatetime", ending);
+        if (def.isCompareDates()) {
+            if (period == Period.MONTHLY) {
+                Date realDate = DateUtil.adjustDate(DateUtil.adjustDate(beginning, def.getYearsToAdd(), Calendar.YEAR), def.getMonthsToAdd(), Calendar.MONTH);
+                startDate = DateUtil.getStartOfMonth(realDate);
+                stopDate = DateUtil.getEndOfMonth(realDate);
+
+            } else if (period == Period.QUARTERLY) {
+                Date realDate = DateUtil.adjustDate(DateUtil.adjustDate(beginning, def.getYearsToAdd(), Calendar.YEAR), (def.getQuartersToAdd() * 3) - 1, Calendar.MONTH);
+
+                if (def.getQuartersToAdd() == 1) {
+
+                }
+
+            }
         }
 
         if (def.getAnswers() != null) {

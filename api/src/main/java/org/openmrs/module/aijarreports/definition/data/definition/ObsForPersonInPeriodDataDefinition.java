@@ -41,6 +41,14 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
     private Double valueNumeric;
     @ConfigurationProperty
     private RangeComparator rangeComparator;
+    @ConfigurationProperty
+    private int monthsToAdd = 0;
+    @ConfigurationProperty
+    private int quartersToAdd = 0;
+    @ConfigurationProperty
+    private int yearsToAdd = 0;
+    @ConfigurationProperty
+    private boolean compareDates = false;
 
 
     public ObsForPersonInPeriodDataDefinition() {
@@ -136,5 +144,37 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
 
     public void setRangeComparator(RangeComparator rangeComparator) {
         this.rangeComparator = rangeComparator;
+    }
+
+    public int getMonthsToAdd() {
+        return monthsToAdd;
+    }
+
+    public void setMonthsToAdd(int monthsToAdd) {
+        this.monthsToAdd = monthsToAdd;
+    }
+
+    public int getQuartersToAdd() {
+        return quartersToAdd;
+    }
+
+    public void setQuartersToAdd(int quartersToAdd) {
+        this.quartersToAdd = quartersToAdd;
+    }
+
+    public int getYearsToAdd() {
+        return yearsToAdd;
+    }
+
+    public void setYearsToAdd(int yearsToAdd) {
+        this.yearsToAdd = yearsToAdd;
+    }
+
+    public boolean isCompareDates() {
+        return compareDates;
+    }
+
+    public void setCompareDates(boolean compareDates) {
+        this.compareDates = compareDates;
     }
 }
