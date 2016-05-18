@@ -60,25 +60,24 @@ public class Helper {
 		}
 		catch (Exception e) {
 			SerializedDefinitionService s = (SerializedDefinitionService) Context
-			        .getService(SerializedDefinitionService.class);
+					.getService(SerializedDefinitionService.class);
 			s.saveDefinition(rd);
 		}
 	}
 	
-	
-
-	
 	/**
 	 * @return a new ReportDesign for a standard Excel output
 	 */
-	public static ReportDesign createExcelDesign(ReportDefinition reportDefinition, String reportDesignName, boolean includeParameters) {
+	public static ReportDesign createExcelDesign(ReportDefinition reportDefinition, String reportDesignName,
+	                                             boolean includeParameters) {
 		ReportDesign design = new ReportDesign();
 		design.setName(reportDesignName);
 		design.setReportDefinition(reportDefinition);
 		
 		design.setRendererType(XlsReportRenderer.class);
-		if(includeParameters)
-		   design.addPropertyValue(XlsReportRenderer.INCLUDE_DATASET_NAME_AND_PARAMETERS_PROPERTY, "true");
+		if (includeParameters) {
+			design.addPropertyValue(XlsReportRenderer.INCLUDE_DATASET_NAME_AND_PARAMETERS_PROPERTY, "true");
+		}
 		return design;
 	}
 
@@ -93,7 +92,6 @@ public class Helper {
 		return design;
 	}
 
-	
 	public static void saveReportDesign(ReportDesign design) {
 		ReportService rs = Context.getService(ReportService.class);
 		rs.saveReportDesign(design);
@@ -116,8 +114,10 @@ public class Helper {
 		}
 	}
 
-	public static ReportDesign createRowPerPatientXlsOverviewReportDesign(ReportDefinition rd, String resourceName, String name,
-	                                                                      Map<? extends Object, ? extends Object> properties)
+	public static ReportDesign createRowPerPatientXlsOverviewReportDesign(ReportDefinition rd, String resourceName,
+	                                                                      String name,
+	                                                                      Map<? extends Object, ? extends Object>
+			                                                                      properties)
 			throws IOException {
 
 		ReportService rs = Context.getService(ReportService.class);

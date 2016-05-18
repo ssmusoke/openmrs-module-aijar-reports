@@ -8,6 +8,7 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.aijarreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
@@ -80,6 +81,7 @@ public class DefinitionLibraryInitializer implements Initializer {
 		List<DefinitionLibrary> l = new ArrayList<DefinitionLibrary>();
 		l.add(Context.getRegisteredComponents(ARTClinicCohortDefinitionLibrary.class).get(0));
 		l.add(Context.getRegisteredComponents(EIDCohortDefinitionLibrary.class).get(0));
+		l.add(Context.getRegisteredComponents(CommonCohortDefinitionLibrary.class).get(0));
 		return l;
 	}
 	

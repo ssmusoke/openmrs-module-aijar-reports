@@ -1,45 +1,46 @@
 package org.openmrs.module.aijarreports.definition.dataset.definition;
 
+import java.util.List;
+
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.reporting.dataset.definition.BaseDataSetDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
-import java.util.List;
-
 /**
  * Created by carapai on 06/04/2016.
  */
 public class PreARTDatasetDefinition extends BaseDataSetDefinition {
-    private static final long serialVersionUID = 6405583324151111487L;
 
-    @ConfigurationProperty
-    PatientIdentifierType patientIdentifierType = null;
+	private static final long serialVersionUID = 6405583324151111487L;
 
-    @ConfigurationProperty
-    List<EncounterType> encounterTypes = null;
+	@ConfigurationProperty
+	PatientIdentifierType patientIdentifierType = null;
 
-    public PreARTDatasetDefinition() {
-        super();
-    }
+	@ConfigurationProperty
+	List<EncounterType> encounterTypes = null;
 
-    public PreARTDatasetDefinition(String name, String description) {
-        super(name, description);
-    }
+	public PreARTDatasetDefinition() {
+		super();
+	}
 
-    public PatientIdentifierType getPatientIdentifierType() {
-        return patientIdentifierType;
-    }
+	public PreARTDatasetDefinition(String name, String description) {
+		super(name, description);
+	}
 
-    public void setPatientIdentifierType(PatientIdentifierType patientIdentifierType) {
-        this.patientIdentifierType = patientIdentifierType;
-    }
+	public PatientIdentifierType getPatientIdentifierType() {
+		return patientIdentifierType;
+	}
 
-    public List<EncounterType> getEncounterTypes() {
-        return encounterTypes;
-    }
+	public void setPatientIdentifierType(PatientIdentifierType patientIdentifierType) {
+		this.patientIdentifierType = patientIdentifierType;
+	}
 
-    public void setEncounterTypes(List<EncounterType> encounterTypes) {
-        this.encounterTypes = encounterTypes;
-    }
+	public List<EncounterType> getEncounterTypes() {
+		return encounterTypes;
+	}
+
+	public void setEncounterTypes(List<EncounterType> encounterTypes) {
+		this.encounterTypes = encounterTypes;
+	}
 }

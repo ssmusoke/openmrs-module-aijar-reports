@@ -10,7 +10,6 @@ import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.aijarreports.metadata.CommonReportMetadata;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.library.BuiltInCohortDefinitionLibrary;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -26,11 +25,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class SetupARTCarePatientExportList extends AijarDataExportManager {
-	@Autowired
-	private DataFactory df;
 
 	@Autowired
 	ARTClinicCohortDefinitionLibrary hivCohorts;
+
+	@Autowired
+	private DataFactory df;
 
 	@Autowired
 	private CommonReportMetadata commonMetadata;
@@ -100,7 +100,7 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 		// rows are patients with a next appointment date obs in the given date range
 
 		CohortDefinition rowFilter = hivCohorts.getPatientsWithAppointmentOnDate();
-		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter)) ;
+		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
 
 		// columns to include
 		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
@@ -111,15 +111,21 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 		addColumn(dsd, "Current Age", builtInPatientData.getAgeAtEnd());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
-		addColumn(dsd, "Last ART Date", hivPatientData.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those not in ART
+		addColumn(dsd, "Last ART Date", hivPatientData
+				.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those
+		// not in ART
 		addColumn(dsd, "ARVs for X days", hivPatientData.getARVDuration());
 		addColumn(dsd, "Expected Return Date", hivPatientData.getExpectedReturnDate());
 		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
 		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
 		addColumn(dsd, "Start Regimen", hivPatientData.getStartRegimen());
 		addColumn(dsd, "Start Regimen Date", hivPatientData.getStartRegimenDate());
-
-
+		addColumn(dsd, "CD4 at Enrollment", hivPatientData.getCD4AtEnrollment());
+		addColumn(dsd, "Baseline CD4", hivPatientData.getBaselineCD4());
+		addColumn(dsd, "CD4 at 6 months", hivPatientData.getCD4At6months());
+		/*addColumn(dsd, "Date of CD4 at 6 months", hivPatientData.getDateofCD4At6months());
+		addColumn(dsd, "CD4 at 12 months", hivPatientData.getCD4At12months());
+		addColumn(dsd, "Date of CD4 at 12 months", hivPatientData.getDateofCD4At12months());*/
 
 		return rd;
 	}

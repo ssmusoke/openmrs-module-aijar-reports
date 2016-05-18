@@ -12,25 +12,26 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  */
 public class ObsProviderFromIdConverter implements DataConverter {
 
-    public ObsProviderFromIdConverter() { }
+	public ObsProviderFromIdConverter() {
+	}
 
-    @Override
-    public Object convert(Object original) {
+	@Override
+	public Object convert(Object original) {
 		Obs o = (Obs) Context.getObsService().getObs((Integer) original);
 		if (o == null) {
 			return null;
 		}
 		User provider = o.getChangedBy() != null ? o.getChangedBy() : o.getCreator();
 		return provider.getPersonName().getFullName();
-    }
+	}
 
-    @Override
-    public Class<?> getInputDataType() {
-        return Integer.class;
-    }
+	@Override
+	public Class<?> getInputDataType() {
+		return Integer.class;
+	}
 
-    @Override
-    public Class<?> getDataType() {
-        return Object.class;
-    }
+	@Override
+	public Class<?> getDataType() {
+		return Object.class;
+	}
 }

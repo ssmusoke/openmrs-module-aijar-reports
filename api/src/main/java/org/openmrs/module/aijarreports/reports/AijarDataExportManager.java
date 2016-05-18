@@ -28,20 +28,20 @@ import org.springframework.beans.factory.annotation.Qualifier;
  */
 public abstract class AijarDataExportManager extends AijarReportManager {
 
-    @Qualifier("commonReportMetadata")
-    @Autowired
-    CommonReportMetadata metadata;
+	@Qualifier("commonReportMetadata")
+	@Autowired
+	CommonReportMetadata metadata;
 
-    /**
-     * @return the uuid for the report design for exporting to Excel
-     */
-    public abstract String getExcelDesignUuid();
+	/**
+	 * @return the uuid for the report design for exporting to Excel
+	 */
+	public abstract String getExcelDesignUuid();
 
-    @Override
-    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        List<ReportDesign> l = new ArrayList<ReportDesign>();
-        ReportDesign excelDesign = createExcelDesign(getExcelDesignUuid(), reportDefinition);
-        l.add(excelDesign);
-        return l;
-    }
+	@Override
+	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+		List<ReportDesign> l = new ArrayList<ReportDesign>();
+		ReportDesign excelDesign = createExcelDesign(getExcelDesignUuid(), reportDefinition);
+		l.add(excelDesign);
+		return l;
+	}
 }

@@ -10,23 +10,24 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
  */
 public class ConceptNameConverter implements DataConverter {
 
-    public ConceptNameConverter() { }
+	public ConceptNameConverter() {
+	}
 
-    @Override
-    public Object convert(Object original) {
-    	ConceptService cs  = Context.getConceptService();
+	@Override
+	public Object convert(Object original) {
+		ConceptService cs = Context.getConceptService();
 		Concept c = cs.getConcept((Integer) original);
 		//Think of i18n'd name
 		return c.getName(Context.getLocale());
-    }
+	}
 
-    @Override
-    public Class<?> getInputDataType() {
-        return Integer.class;
-    }
+	@Override
+	public Class<?> getInputDataType() {
+		return Integer.class;
+	}
 
-    @Override
-    public Class<?> getDataType() {
-        return Object.class;
-    }
+	@Override
+	public Class<?> getDataType() {
+		return Object.class;
+	}
 }
