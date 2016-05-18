@@ -1,53 +1,30 @@
 package org.openmrs.module.aijarreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.openmrs.Concept;
-import org.openmrs.Encounter;
-import org.openmrs.EncounterType;
-import org.openmrs.Obs;
-import org.openmrs.PatientIdentifier;
-import org.openmrs.PatientIdentifierType;
+import org.openmrs.*;
 import org.openmrs.api.PatientSetService;
+import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.cohort.definition.InAgeRangeAtCohortDefinition;
 import org.openmrs.module.aijarreports.definition.cohort.definition.InEncounterCohortDefinition;
 import org.openmrs.module.aijarreports.definition.cohort.definition.ObsWithEncountersCohortDefinition;
+import org.openmrs.module.aijarreports.definition.cohort.definition.PatientsInPeriodCohortDefinition;
+import org.openmrs.module.aijarreports.definition.data.converter.PatientIdentifierConverter;
+import org.openmrs.module.aijarreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.PatientIdentifierCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.common.BooleanOperator;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.ConvertedDataDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.ChainedConverter;
-import org.openmrs.module.reporting.data.converter.CollectionConverter;
-import org.openmrs.module.reporting.data.converter.CollectionElementConverter;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.DataSetRowConverter;
-import org.openmrs.module.reporting.data.converter.ListConverter;
-import org.openmrs.module.reporting.data.converter.NullValueConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.converter.PropertyConverter;
+import org.openmrs.module.reporting.data.converter.*;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.*;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
@@ -56,292 +33,406 @@ import org.openmrs.module.reporting.query.encounter.definition.MappedParametersE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 @Component
 public class DataFactory {
 
-	@Autowired
-	HIVMetadata hivMetadata;
+    @Autowired
+    HIVMetadata hivMetadata;
 
-	public Parameter getStartDateParameter() {
-		return ReportingConstants.START_DATE_PARAMETER;
-	}
+    public Parameter getStartDateParameter() {
+        return ReportingConstants.START_DATE_PARAMETER;
+    }
 
-	public Parameter getEndDateParameter() {
-		return ReportingConstants.END_DATE_PARAMETER;
-	}
+    public Parameter getEndDateParameter() {
+        return ReportingConstants.END_DATE_PARAMETER;
+    }
 
-	public CohortDefinition getPatientsWhoseObsValueDateIsOnSpecifiedDate(Concept dateConcept, List<EncounterType> types) {
-		DateObsCohortDefinition cd = new DateObsCohortDefinition();
-		cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
-		cd.setQuestion(dateConcept);
-		cd.setEncounterTypeList(types);
-		cd.addParameter(new Parameter("onDate", "onDate", Date.class));
-		return convert(cd, ObjectUtil.toMap("onDate=onDate"));
-	}
+    // Data Converters
+    public DataConverter getIdentifierConverter() {
+        return new PropertyConverter(PatientIdentifier.class, "identifier");
+    }
 
-	public PatientDataDefinition getAllIdentifiersOfType(PatientIdentifierType pit, DataConverter converter) {
-		PatientIdentifierDataDefinition def = new PatientIdentifierDataDefinition();
-		def.setTypes(Arrays.asList(pit));
-		return new ConvertedPatientDataDefinition(def, converter);
-	}
+    public DataConverter getEncounterDatetimeConverter() {
+        return new PropertyConverter(Encounter.class, "encounterDatetime");
+    }
 
-	public PatientDataDefinition getFirstEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
-		EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
-		def.setWhich(TimeQualifier.FIRST);
-		def.setTypes(Arrays.asList(type));
-		def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-		return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-	}
+    public DataConverter getEncounterLocationNameConverter() {
+        return new ChainedConverter(new PropertyConverter(Encounter.class, "location"), new ObjectFormatter());
+    }
 
-	public DataConverter getIdentifierConverter() {
-		return new PropertyConverter(PatientIdentifier.class, "identifier");
-	}
+    public DataConverter getEncounterTypeNameConverter() {
+        return new ChainedConverter(new PropertyConverter(Encounter.class, "type"), new ObjectFormatter());
+    }
 
-	public DataConverter getEncounterDatetimeConverter() {
-		return new PropertyConverter(Encounter.class, "encounterDatetime");
-	}
+    public DataConverter getObsDatetimeConverter() {
+        return new PropertyConverter(Obs.class, "obsDatetime");
+    }
 
-	public DataConverter getEncounterLocationNameConverter() {
-		return new ChainedConverter(new PropertyConverter(Encounter.class, "location"), new ObjectFormatter());
-	}
+    public DataConverter getObsValueNumericConverter() {
+        return new PropertyConverter(Obs.class, "valueNumeric");
+    }
 
-	public DataConverter getEncounterTypeNameConverter() {
-		return new ChainedConverter(new PropertyConverter(Encounter.class, "type"), new ObjectFormatter());
-	}
+    public DataConverter getObsValueDatetimeConverter() {
+        return new PropertyConverter(Obs.class, "valueDatetime");
+    }
 
-	public DataConverter getObsDatetimeConverter() {
-		return new PropertyConverter(Obs.class, "obsDatetime");
-	}
+    public DataConverter getObsValueDatetimeCollectionConverter() {
+        ChainedConverter itemConverter = new ChainedConverter(getObsValueDatetimeConverter(), getObjectFormatter());
+        CollectionConverter collectionConverter = new CollectionConverter(itemConverter, true, null);
+        return new ChainedConverter(collectionConverter, new ObjectFormatter(" "));
+    }
 
-	public DataConverter getObsValueNumericConverter() {
-		return new PropertyConverter(Obs.class, "valueNumeric");
-	}
+    public DataConverter getObsValueCodedConverter() {
+        return new PropertyConverter(Obs.class, "valueCoded");
+    }
 
-	public DataConverter getObsValueDatetimeConverter() {
-		return new PropertyConverter(Obs.class, "valueDatetime");
-	}
+    public DataConverter getObsValueCodedNameConverter() {
+        return new ChainedConverter(getObsValueCodedConverter(), new ObjectFormatter());
+    }
 
-	public DataConverter getObsValueDatetimeCollectionConverter() {
-		ChainedConverter itemConverter = new ChainedConverter(getObsValueDatetimeConverter(), getObjectFormatter());
-		CollectionConverter collectionConverter = new CollectionConverter(itemConverter, true, null);
-		return new ChainedConverter(collectionConverter, new ObjectFormatter(" "));
-	}
+    public DataConverter getObsValueTextConverter() {
+        return new PropertyConverter(Obs.class, "valueText");
+    }
 
-	public DataConverter getObsValueCodedConverter() {
-		return new PropertyConverter(Obs.class, "valueCoded");
-	}
+    public DataConverter getObsValueCodedPresentConverter(Concept valueCoded) {
+        ChainedConverter converter = new ChainedConverter();
+        converter.addConverter(new CollectionConverter(getObsValueCodedConverter(), false, null));
+        converter.addConverter(new CollectionElementConverter(valueCoded, "true", ""));
+        return converter;
+    }
 
-	public DataConverter getObsValueCodedNameConverter() {
-		return new ChainedConverter(getObsValueCodedConverter(), new ObjectFormatter());
-	}
+    public DataConverter getObjectFormatter() {
+        return new ObjectFormatter();
+    }
 
-	public DataConverter getObsValueTextConverter() {
-		return new PropertyConverter(Obs.class, "valueText");
-	}
+    public DataConverter getListItemConverter(Integer index, DataConverter... converters) {
+        ChainedConverter ret = new ChainedConverter();
+        ret.addConverter(new ListConverter(index, Object.class));
+        for (DataConverter converter : converters) {
+            ret.addConverter(converter);
+        }
+        return ret;
+    }
 
-	public DataConverter getObsValueCodedPresentConverter(Concept valueCoded) {
-		ChainedConverter converter = new ChainedConverter();
-		converter.addConverter(new CollectionConverter(getObsValueCodedConverter(), false, null));
-		converter.addConverter(new CollectionElementConverter(valueCoded, "true", ""));
-		return converter;
-	}
+    public DataConverter getLastListItemConverter(DataConverter... converters) {
+        ChainedConverter ret = new ChainedConverter();
+        ret.addConverter(new ListConverter(TimeQualifier.LAST, 1, Object.class));
+        for (DataConverter converter : converters) {
+            ret.addConverter(converter);
+        }
+        return ret;
+    }
 
-	public DataConverter getObjectFormatter() {
-		return new ObjectFormatter();
-	}
+    public DataConverter getDataSetItemConverter(Integer index, String columnName, Object nullReplacement) {
+        ChainedConverter ret = new ChainedConverter();
+        ret.addConverter(new ListConverter(index, DataSetRow.class));
+        ret.addConverter(new DataSetRowConverter(columnName));
+        if (nullReplacement != null) {
+            ret.addConverter(new NullValueConverter(nullReplacement));
+        }
+        return ret;
+    }
 
-	public DataConverter getListItemConverter(Integer index, DataConverter... converters) {
-		ChainedConverter ret = new ChainedConverter();
-		ret.addConverter(new ListConverter(index, Object.class));
-		for (DataConverter converter : converters) {
-			ret.addConverter(converter);
-		}
-		return ret;
-	}
+    public DataConverter getLastDataSetItemConverter(String columnName, Object nullReplacement) {
+        ChainedConverter ret = new ChainedConverter();
+        ret.addConverter(new ListConverter(TimeQualifier.LAST, 1, DataSetRow.class));
+        ret.addConverter(new DataSetRowConverter(columnName));
+        if (nullReplacement != null) {
+            ret.addConverter(new NullValueConverter(nullReplacement));
+        }
+        return ret;
+    }
 
-	public DataConverter getLastListItemConverter(DataConverter... converters) {
-		ChainedConverter ret = new ChainedConverter();
-		ret.addConverter(new ListConverter(TimeQualifier.LAST, 1, Object.class));
-		for (DataConverter converter : converters) {
-			ret.addConverter(converter);
-		}
-		return ret;
-	}
+    // Convenience converter methods
 
-	public DataConverter getDataSetItemConverter(Integer index, String columnName, Object nullReplacement) {
-		ChainedConverter ret = new ChainedConverter();
-		ret.addConverter(new ListConverter(index, DataSetRow.class));
-		ret.addConverter(new DataSetRowConverter(columnName));
-		if (nullReplacement != null) {
-			ret.addConverter(new NullValueConverter(nullReplacement));
-		}
-		return ret;
-	}
+    public DataConverter getIdentifierCollectionConverter() {
+        CollectionConverter collectionConverter = new CollectionConverter(new PatientIdentifierConverter(), true, null);
+        return new ChainedConverter(collectionConverter, new ObjectFormatter(" "));
+    }
 
-	public DataConverter getLastDataSetItemConverter(String columnName, Object nullReplacement) {
-		ChainedConverter ret = new ChainedConverter();
-		ret.addConverter(new ListConverter(TimeQualifier.LAST, 1, DataSetRow.class));
-		ret.addConverter(new DataSetRowConverter(columnName));
-		if (nullReplacement != null) {
-			ret.addConverter(new NullValueConverter(nullReplacement));
-		}
-		return ret;
-	}
+    public CohortDefinition convert(CohortDefinition cd, Map<String, String> renamedParameters) {
+        return new MappedParametersCohortDefinition(cd, renamedParameters);
+    }
 
-	public CompositionCohortDefinition getPatientsInAny(CohortDefinition... elements) {
-		CompositionCohortDefinition cd = new CompositionCohortDefinition();
-		cd.initializeFromQueries(BooleanOperator.OR, elements);
-		return cd;
-	}
+    public EncounterQuery convert(EncounterQuery query, Map<String, String> renamedParameters) {
+        return new MappedParametersEncounterQuery(query, renamedParameters);
+    }
 
-	public CompositionCohortDefinition getPatientsNotIn(CohortDefinition... elements) {
-		CompositionCohortDefinition cd = new CompositionCohortDefinition();
-		cd.initializeFromQueries(BooleanOperator.NOT, elements);
-		return cd;
-	}
+    public PatientDataDefinition convert(PatientDataDefinition pdd, Map<String, String> renamedParameters, DataConverter converter) {
+        ConvertedPatientDataDefinition convertedDefinition = new ConvertedPatientDataDefinition();
+        addAndConvertMappings(pdd, convertedDefinition, renamedParameters, converter);
+        return convertedDefinition;
+    }
 
-	public CompositionCohortDefinition createPatientComposition(Object... elements) {
-		CompositionCohortDefinition cd = new CompositionCohortDefinition();
-		cd.initializeFromElements(elements);
-		return cd;
-	}
+    public PatientDataDefinition convert(PatientDataDefinition pdd, DataConverter converter) {
+        return convert(pdd, null, converter);
+    }
 
-	// Convenience methods
+    public PatientDataDefinition convert(PersonDataDefinition pdd, Map<String, String> renamedParameters, DataConverter converter) {
+        return convert(new PersonToPatientDataDefinition(pdd), renamedParameters, converter);
+    }
 
-	public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
-		return getMostRecentObsByEndDate(question, null);
-	}
+    public PatientDataDefinition convert(PersonDataDefinition pdd, DataConverter converter) {
+        return convert(pdd, null, converter);
+    }
 
-	public PatientDataDefinition getMostRecentObsByEndDate(Concept question, DataConverter converter) {
-		ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-		def.setWhich(TimeQualifier.LAST);
-		def.setQuestion(question);
-		def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-		return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-	}
+    public EncounterDataDefinition convert(EncounterDataDefinition pdd, Map<String, String> renamedParameters, DataConverter converter) {
+        ConvertedEncounterDataDefinition convertedDefinition = new ConvertedEncounterDataDefinition();
+        addAndConvertMappings(pdd, convertedDefinition, renamedParameters, converter);
+        return convertedDefinition;
+    }
 
-	public PatientDataDefinition convert(PatientDataDefinition pdd, Map<String, String> renamedParameters,
-	                                     DataConverter converter) {
-		ConvertedPatientDataDefinition convertedDefinition = new ConvertedPatientDataDefinition();
-		addAndConvertMappings(pdd, convertedDefinition, renamedParameters, converter);
-		return convertedDefinition;
-	}
+    public EncounterDataDefinition convert(EncounterDataDefinition pdd, DataConverter converter) {
+        return convert(pdd, null, converter);
+    }
 
-	public PatientDataDefinition convert(PatientDataDefinition pdd, DataConverter converter) {
-		return convert(pdd, null, converter);
-	}
+    protected <T extends DataDefinition> void addAndConvertMappings(T copyFrom, ConvertedDataDefinition<T> copyTo, Map<String, String> renamedParameters, DataConverter converter) {
+        copyTo.setDefinitionToConvert(ParameterizableUtil.copyAndMap(copyFrom, copyTo, renamedParameters));
+        if (converter != null) {
+            copyTo.setConverters(Arrays.asList(converter));
+        }
+    }
 
-	public PatientDataDefinition convert(PersonDataDefinition pdd, Map<String, String> renamedParameters,
-	                                     DataConverter converter) {
-		return convert(new PersonToPatientDataDefinition(pdd), renamedParameters, converter);
-	}
+    // Composition Cohorts
 
-	public PatientDataDefinition convert(PersonDataDefinition pdd, DataConverter converter) {
-		return convert(pdd, null, converter);
-	}
+    public CompositionCohortDefinition getPatientsInAny(CohortDefinition... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromQueries(BooleanOperator.OR, elements);
+        return cd;
+    }
 
-	public EncounterDataDefinition convert(EncounterDataDefinition pdd, Map<String, String> renamedParameters,
-	                                       DataConverter converter) {
-		ConvertedEncounterDataDefinition convertedDefinition = new ConvertedEncounterDataDefinition();
-		addAndConvertMappings(pdd, convertedDefinition, renamedParameters, converter);
-		return convertedDefinition;
-	}
+    public CompositionCohortDefinition getPatientsNotIn(CohortDefinition... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromQueries(BooleanOperator.NOT, elements);
+        return cd;
+    }
 
-	public EncounterDataDefinition convert(EncounterDataDefinition pdd, DataConverter converter) {
-		return convert(pdd, null, converter);
-	}
+    public CompositionCohortDefinition createPatientComposition(Object... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromElements(elements);
+        return cd;
+    }
 
-	public EncounterQuery convert(EncounterQuery query, Map<String, String> renamedParameters) {
-		return new MappedParametersEncounterQuery(query, renamedParameters);
-	}
+    // Patient Data Definitions
 
-	public CohortDefinition convert(CohortDefinition cd, Map<String, String> renamedParameters) {
-		return new MappedParametersCohortDefinition(cd, renamedParameters);
-	}
 
-	protected <T extends DataDefinition> void addAndConvertMappings(T copyFrom, ConvertedDataDefinition<T> copyTo,
-	                                                                Map<String, String> renamedParameters,
-	                                                                DataConverter converter) {
-		copyTo.setDefinitionToConvert(ParameterizableUtil.copyAndMap(copyFrom, copyTo, renamedParameters));
-		if (converter != null) {
-			copyTo.setConverters(Arrays.asList(converter));
-		}
-	}
+    public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
+        return getMostRecentObsByEndDate(question, null);
+    }
 
-	// Cohorts
-	public CohortDefinition getAnyEncounterOfTypesWithinMonthsByEndDate(List<EncounterType> types, int numMonths) {
-		EncounterCohortDefinition cd = new EncounterCohortDefinition();
-		cd.setEncounterTypeList(types);
-		cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-		return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
-	}
+    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, DataConverter converter) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(TimeQualifier.LAST);
+        def.setQuestion(question);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    }
 
-	public CohortDefinition getAnyEncounterOfTypesWithinMonthsBeforeEndDate(List<EncounterType> types, int numMonths) {
-		EncounterCohortDefinition cd = new EncounterCohortDefinition();
-		cd.setEncounterTypeList(types);
-		cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-		return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
-	}
 
-	public CompositionCohortDefinition getPatientsInAll(CohortDefinition... elements) {
-		CompositionCohortDefinition cd = new CompositionCohortDefinition();
-		cd.initializeFromQueries(BooleanOperator.AND, elements);
-		return cd;
-	}
+    public PatientDataDefinition getAllIdentifiersOfType(PatientIdentifierType pit, DataConverter converter) {
+        PatientIdentifierDataDefinition def = new PatientIdentifierDataDefinition();
+        def.setTypes(Arrays.asList(pit));
+        return new ConvertedPatientDataDefinition(def, converter);
+    }
 
-	public CohortDefinition getPatientsWhoStartedStateWhenInAgeRangeAtLocationByEndDate(Integer minAge, Age.Unit minAgeUnit,
-	                                                                                    Integer maxAge,
-	                                                                                    Age.Unit maxAgeUnit) {
-		InAgeRangeAtCohortDefinition cd = new InAgeRangeAtCohortDefinition();
-		cd.setMinAge(minAge);
-		cd.setMinAgeUnit(minAgeUnit);
-		cd.setMaxAge(maxAge);
-		cd.setMaxAgeUnit(maxAgeUnit);
-		return cd;
-	}
+    public PatientDataDefinition getFirstEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
+        EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+        def.setWhich(TimeQualifier.FIRST);
+        def.setTypes(Arrays.asList(type));
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    }
 
-	public CohortDefinition getAnyEncounterOfType(List<EncounterType> types) {
-		InEncounterCohortDefinition cd = new InEncounterCohortDefinition();
-		cd.setEncounterTypes(types);
-		cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-		cd.addParameter(new Parameter("endDate", "End Date", Date.class));
-		return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
-	}
+    public PatientDataDefinition getPreferredAddress(String property) {
+        PreferredAddressDataDefinition d = new PreferredAddressDataDefinition();
+        PropertyConverter converter = new PropertyConverter(PersonAddress.class, property);
+        return convert(d, converter);
+    }
 
-	public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types) {
-		ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
-		cd.setEncounterTypes(types);
-		cd.setQuestion(question);
-		cd.setWhichEncounter(TimeQualifier.FIRST);
-		cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-		cd.addParameter(new Parameter("endDate", "End Date", Date.class));
-		return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
-	}
+    public PatientDataDefinition getFirstObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(TimeQualifier.FIRST);
+        def.setQuestion(question);
+        def.setEncounterTypeList(encounterTypes);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    }
 
-	public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types, List<Concept> answers) {
-		ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
-		cd.setEncounterTypes(types);
-		cd.setQuestion(question);
-		cd.setWhichEncounter(TimeQualifier.FIRST);
-		cd.setAnswers(answers);
-		cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-		cd.addParameter(new Parameter("endDate", "End Date", Date.class));
-		return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
-	}
+    public PatientDataDefinition getFirstObBetweenDates(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(TimeQualifier.FIRST);
+        def.setQuestion(question);
+        def.setEncounterTypeList(encounterTypes);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
+    }
 
-	public CohortDefinition getPatients(Concept question) {
-		CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
-		cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
-		cd.setQuestion(question);
-		return cd;
-	}
+    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(TimeQualifier.LAST);
+        def.setQuestion(question);
+        def.setEncounterTypeList(encounterTypes);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    }
 
-	public CohortDefinition getPatientsWithIdentifierOfType(PatientIdentifierType... types) {
-		PatientIdentifierCohortDefinition cd = new PatientIdentifierCohortDefinition();
-		for (PatientIdentifierType type : types) {
-			cd.addTypeToMatch(type);
-		}
-		return cd;
-	}
+    public PatientDataDefinition getAllObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setQuestion(question);
+        def.setEncounterTypeList(encounterTypes);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    }
+
+    public PatientDataDefinition getCodedObsPresentByEndDate(Concept question, Concept answer, List<EncounterType> encounterTypes) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setQuestion(question);
+        def.setEncounterTypeList(encounterTypes);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), getObsValueCodedPresentConverter(answer));
+    }
+
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setQuestion(question);
+        def.setEncounterTypes(encounterTypes);
+        def.setWhichEncounter(TimeQualifier.FIRST);
+        def.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes,List<Concept> answers, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setAnswers(answers);
+        def.setQuestion(question);
+        def.setEncounterTypes(encounterTypes);
+        def.setWhichEncounter(TimeQualifier.FIRST);
+        def.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
+    }
+
+    // Cohorts Definitions
+
+    public CohortDefinition getPatientsWhoseObsValueDateIsOnSpecifiedDate(Concept dateConcept, List<EncounterType> types) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onDate", "onDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("onDate=onDate"));
+    }
+
+    public CohortDefinition getAnyEncounterOfTypesWithinMonthsByEndDate(List<EncounterType> types, int numMonths) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
+    }
+
+    public CohortDefinition getAnyEncounterOfTypesWithinMonthsBeforeEndDate(List<EncounterType> types, int numMonths) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
+    }
+
+    public CompositionCohortDefinition getPatientsInAll(CohortDefinition... elements) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.initializeFromQueries(BooleanOperator.AND, elements);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWhoStartedStateWhenInAgeRangeAtLocationByEndDate(Integer minAge, Age.Unit minAgeUnit, Integer maxAge, Age.Unit maxAgeUnit) {
+        InAgeRangeAtCohortDefinition cd = new InAgeRangeAtCohortDefinition();
+        cd.setMinAge(minAge);
+        cd.setMinAgeUnit(minAgeUnit);
+        cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(maxAgeUnit);
+        return cd;
+    }
+
+    public CohortDefinition getAnyEncounterOfType(List<EncounterType> types) {
+        InEncounterCohortDefinition cd = new InEncounterCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types) {
+        ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getObsWithEncounters(Concept question, List<EncounterType> types, List<Concept> answers) {
+        ObsWithEncountersCohortDefinition cd = new ObsWithEncountersCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.setAnswers(answers);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Period period) {
+        PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.setPeriod(period);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, Period period) {
+        PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setIncludeObs(true);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.setPeriod(period);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, List<Concept> answers, Period period) {
+        PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
+        cd.setEncounterTypes(types);
+        cd.setQuestion(question);
+        cd.setIncludeObs(true);
+        cd.setWhichEncounter(TimeQualifier.FIRST);
+        cd.setPeriod(period);
+        cd.setAnswers(answers);
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+
+    public CohortDefinition getPatients(Concept question) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setQuestion(question);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithIdentifierOfType(PatientIdentifierType... types) {
+        PatientIdentifierCohortDefinition cd = new PatientIdentifierCohortDefinition();
+        for (PatientIdentifierType type : types) {
+            cd.addTypeToMatch(type);
+        }
+        return cd;
+    }
 
 }
