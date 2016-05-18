@@ -254,6 +254,14 @@ public class HIVMetadata extends Metadata {
         return getConcept("99602");
     }
 
+    public Concept getCD4AtEnrollment() {
+        return getConcept("99082");
+    }
+
+    public Concept getBaselineCD4() {
+        return getConcept("99071");
+    }  // CD4 at ART start
+
 
 
     public EncounterType getARTSummaryEncounter() {

@@ -194,7 +194,32 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         MapConverter c = new MapConverter(": ", ", ", null, new ObjectFormatter());
         return df.convert(def, c);
     }
+    @DocumentedDefinition(value = "cd4atenrollment", name = "CD4 at Enrollment")
+    public PatientDataDefinition getCD4AtEnrollment() {
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getCD4AtEnrollment()), df.getObsValueNumericConverter());
+    }
 
+    @DocumentedDefinition(value = "baselinecd4", name = "Baseline CD4")
+    public PatientDataDefinition getBaselineCD4() {
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getBaselineCD4()), df.getObsValueNumericConverter());
+    }
+
+    @DocumentedDefinition(value = "cd4At6months", name = "CD4 at 6 months")
+    public PatientDataDefinition getCD4At6months() {
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getBaselineCD4()), df.getObsValueNumericConverter());
+    }
+
+    /*@DocumentedDefinition(value = "cd4At6monthsdate", name = "Date of CD4 at 6 months")
+    public PatientDataDefinition getDateofCD4At6months() {
+    }
+
+    @DocumentedDefinition(value = "cd4At12months", name = "CD4 at 12 months")
+    public PatientDataDefinition getCD4At12months() {
+    }
+
+    @DocumentedDefinition(value = "cd4At12monthsdate", name = "Date of CD4 at 12 months")
+    public PatientDataDefinition getDateofCD4At12months() {
+    }*/
 
     // ***** CONVENIENCE METHODS
 
