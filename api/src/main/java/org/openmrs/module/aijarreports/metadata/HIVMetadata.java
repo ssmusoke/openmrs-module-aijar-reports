@@ -1,13 +1,13 @@
 package org.openmrs.module.aijarreports.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Metadata definitions for the HIV related reporting
@@ -134,6 +134,12 @@ public class HIVMetadata extends Metadata {
     public List<EncounterType> getARTSummaryPageEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));
+        return l;
+    }
+
+    public List<EncounterType> getARTEncounterPageEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"));
         return l;
     }
 
