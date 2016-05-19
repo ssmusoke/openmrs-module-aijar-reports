@@ -214,8 +214,19 @@ public class SetupCBSEIDReport extends AijarDataExportManager {
 
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-		ReportDesign design = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CBSEIDCohortReport.xls");
-		return Arrays.asList(design);
+		return Arrays.asList(buildReportDesign(reportDefinition));
+	}
+
+	/**
+	 * Build the report design for the specified report, this allows a user to override the report design by adding
+	 * properties and other metadata to the report design
+	 *
+	 * @param reportDefinition
+	 * @return The report design
+	 */
+	@Override
+	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+		return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CBSEIDCohortReport.xls");
 	}
 
 	@Override

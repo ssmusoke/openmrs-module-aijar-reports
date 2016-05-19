@@ -2,6 +2,7 @@ package org.openmrs.module.aijarreports.reports;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.BasePatientDataLibrary;
@@ -37,6 +38,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Autowired
 	private HIVMetadata hivMetadata;
 
+	@Autowired
 	private BuiltInPatientDataLibrary builtInPatientData;
 
 	@Autowired
@@ -78,8 +80,25 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls"));
+		l.add(buildReportDesign(reportDefinition));
 		return l;
+	}
+
+	/**
+	 * Build the report design for the specified report, this allows a user to override the report design by adding
+	 * properties and other metadata to the report design
+	 *
+	 * @return The report design
+	 */
+	@Override
+	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls");
+		Properties props = new Properties();
+		props.put("repeatingSections", "sheet:1,row:9,dataset:DAL");
+		props.put("sortWeight","5000");
+
+		rd.setProperties(props);
+		return rd;
 	}
 
 	@Override

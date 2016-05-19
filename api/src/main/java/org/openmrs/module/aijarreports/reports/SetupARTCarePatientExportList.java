@@ -84,6 +84,18 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 		return l;
 	}
 
+	/**
+	 * Build the report design for the specified report, this allows a user to override the report design by adding
+	 * properties and other metadata to the report design
+	 *
+	 * @param reportDefinition
+	 * @return The report design
+	 */
+	@Override
+	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+		return null;
+	}
+
 	@Override
 	public ReportDefinition constructReportDefinition() {
 		ReportDefinition rd = new ReportDefinition();
