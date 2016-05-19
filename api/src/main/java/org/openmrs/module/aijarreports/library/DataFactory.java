@@ -1,6 +1,17 @@
 package org.openmrs.module.aijarreports.library;
 
-import org.openmrs.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAddress;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.cohort.definition.InAgeRangeAtCohortDefinition;
@@ -11,17 +22,35 @@ import org.openmrs.module.aijarreports.definition.data.converter.PatientIdentifi
 import org.openmrs.module.aijarreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.*;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.PatientIdentifierCohortDefinition;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.common.BooleanOperator;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.ConvertedDataDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.*;
+import org.openmrs.module.reporting.data.converter.ChainedConverter;
+import org.openmrs.module.reporting.data.converter.CollectionConverter;
+import org.openmrs.module.reporting.data.converter.CollectionElementConverter;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.DataSetRowConverter;
+import org.openmrs.module.reporting.data.converter.ListConverter;
+import org.openmrs.module.reporting.data.converter.NullValueConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.*;
+import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
@@ -32,11 +61,6 @@ import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class DataFactory {
@@ -50,6 +74,10 @@ public class DataFactory {
 
     public Parameter getEndDateParameter() {
         return ReportingConstants.END_DATE_PARAMETER;
+    }
+
+    public Parameter getOnDateParameter() {
+	    return new Parameter("onDate", "On Date", Date.class);
     }
 
     // Data Converters
@@ -248,6 +276,14 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
+	public PatientDataDefinition getLastEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
+		EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+		def.setWhich(TimeQualifier.LAST);
+		def.setTypes(Arrays.asList(type));
+		def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+		return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+	}
+
     public PatientDataDefinition getPreferredAddress(String property) {
         PreferredAddressDataDefinition d = new PreferredAddressDataDefinition();
         PropertyConverter converter = new PropertyConverter(PersonAddress.class, property);
@@ -325,7 +361,7 @@ public class DataFactory {
         cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        cd.addParameter(new Parameter("onDate", "onDate", Date.class));
+        cd.addParameter(getOnDateParameter());
         return convert(cd, ObjectUtil.toMap("onDate=onDate"));
     }
 
@@ -361,8 +397,8 @@ public class DataFactory {
     public CohortDefinition getAnyEncounterOfType(List<EncounterType> types) {
         InEncounterCohortDefinition cd = new InEncounterCohortDefinition();
         cd.setEncounterTypes(types);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addParameter(getStartDateParameter());
+        cd.addParameter(getEndDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
@@ -371,8 +407,8 @@ public class DataFactory {
         cd.setEncounterTypes(types);
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addParameter(getStartDateParameter());
+        cd.addParameter(getEndDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
@@ -382,8 +418,8 @@ public class DataFactory {
         cd.setQuestion(question);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setAnswers(answers);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addParameter(getStartDateParameter());
+        cd.addParameter(getEndDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
@@ -392,7 +428,7 @@ public class DataFactory {
         cd.setEncounterTypes(types);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setPeriod(period);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(getStartDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
@@ -403,7 +439,7 @@ public class DataFactory {
         cd.setIncludeObs(true);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setPeriod(period);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(getStartDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
@@ -415,7 +451,7 @@ public class DataFactory {
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setPeriod(period);
         cd.setAnswers(answers);
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(getStartDateParameter());
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
