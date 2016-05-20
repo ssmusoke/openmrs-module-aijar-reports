@@ -258,7 +258,8 @@ public class DataFactory {
         def.setWhich(TimeQualifier.LAST);
         def.setQuestion(question);
         def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+	    def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate,onOrAfter=endDate"), converter);
     }
 
 
@@ -361,8 +362,9 @@ public class DataFactory {
         cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        cd.addParameter(getOnDateParameter());
-        return convert(cd, ObjectUtil.toMap("onDate=onDate"));
+	    cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+	    //cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onDate=endDate"));
     }
 
     public CohortDefinition getAnyEncounterOfTypesWithinMonthsByEndDate(List<EncounterType> types, int numMonths) {
@@ -439,7 +441,7 @@ public class DataFactory {
         cd.setIncludeObs(true);
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setPeriod(period);
-        cd.addParameter(getStartDateParameter());
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
@@ -451,7 +453,7 @@ public class DataFactory {
         cd.setWhichEncounter(TimeQualifier.FIRST);
         cd.setPeriod(period);
         cd.setAnswers(answers);
-        cd.addParameter(getStartDateParameter());
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
