@@ -74,7 +74,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
 		// TODO: What parameters will cause the cohorts to show only obs on a specific day
-		l.add(df.getOnDateParameter());
+		l.add(df.getEndDateParameter());
 		return l;
 	}
 
@@ -125,6 +125,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		addColumn(dsd, "Sex", builtInPatientData.getGender());
 		addColumn(dsd, "Birthdate", builtInPatientData.getBirthdate());
 		addColumn(dsd, "LastVisitDate", hivPatientData.getLastVisitDate());
+		addColumn(dsd, "NextAppointmentDate", hivPatientData.getExpectedReturnDate());
 
 		rd.addDataSetDefinition("DAL", Mapped.mapStraightThrough(dsd));
 
