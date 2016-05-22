@@ -111,7 +111,7 @@ public class SetupARTCarePatientExportList extends AijarDataExportManager {
 
 		// rows are patients with a next appointment date obs in the given date range
 
-		CohortDefinition rowFilter = hivCohorts.getPatientsWithAppointmentOnDate();
+		CohortDefinition rowFilter = hivCohorts.getPatientsWithReturnVisitDateOnEndDate();
 		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
 
 		// columns to include

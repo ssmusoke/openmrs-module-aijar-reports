@@ -1,7 +1,11 @@
 package org.openmrs.module.aijarreports.reports;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
@@ -108,14 +112,14 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		rd.setUuid(getUuid());
 		rd.setName(getName());
 		rd.setDescription(getDescription());
-		rd.setParameters(getParameters());
+		rd.setParameters(Arrays.asList(new Parameter("endDate", "End Date", Date.class)));
 
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName(getName());
-		dsd.setParameters(getParameters());
+		dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 		// rows are patients with a next appointment date obs in the given date range
-		CohortDefinition rowFilter = hivCohorts.getPatientsWithAppointmentOnDate();
+		CohortDefinition rowFilter = hivCohorts.getPatientsWithReturnVisitDateOnEndDate();
 		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
 
 		// columns to include
@@ -127,7 +131,10 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		addColumn(dsd, "LastVisitDate", hivPatientData.getLastVisitDate());
 		addColumn(dsd, "NextAppointmentDate", hivPatientData.getExpectedReturnDate());
 
-		rd.addDataSetDefinition("DAL", Mapped.mapStraightThrough(dsd));
+		Map<String, Object> mappings = new HashMap<String, Object>();
+		mappings.put("endDate", "${endDate}");
+
+		rd.addDataSetDefinition("DAL", dsd, mappings);
 
 		return rd;
 	}

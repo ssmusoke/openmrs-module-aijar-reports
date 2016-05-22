@@ -362,9 +362,9 @@ public class DataFactory {
         cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-	    cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+	    cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
 	    //cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(cd, ObjectUtil.toMap("onDate=endDate"));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=endDate"));
     }
 
     public CohortDefinition getAnyEncounterOfTypesWithinMonthsByEndDate(List<EncounterType> types, int numMonths) {
