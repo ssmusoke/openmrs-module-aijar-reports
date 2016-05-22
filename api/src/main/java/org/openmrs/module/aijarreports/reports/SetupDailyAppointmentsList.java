@@ -19,6 +19,7 @@ import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibra
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,8 +120,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 		// rows are patients with a next appointment date obs in the given date range
-		CohortDefinition rowFilter = hivCohorts.getPatientsWithReturnVisitDateOnEndDate();
-		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
+		rd.setBaseCohortDefinition(hivCohorts.getPatientsWithReturnVisitDateOnEndDate(), ParameterizableUtil.createParameterMappings("onOrAfter=${endDate},onOrBefore=${endDate}"));
 
 		// columns to include
 		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
