@@ -37,6 +37,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Autowired
 	private HIVMetadata hivMetadata;
 
+	@Autowired
 	private BuiltInPatientDataLibrary builtInPatientData;
 
 	@Autowired

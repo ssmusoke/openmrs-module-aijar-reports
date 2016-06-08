@@ -308,7 +308,7 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
     }
 
-    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes,List<Concept> answers, DataConverter converter) {
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, List<Concept> answers, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setAnswers(answers);
         def.setQuestion(question);
@@ -334,6 +334,21 @@ public class DataFactory {
         cd.setEncounterTypeList(types);
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
+    }
+
+    public CohortDefinition getAnyEncounterOfTypesByEndOfPreviousDate(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
+    }
+
+    public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
     public CohortDefinition getAnyEncounterOfTypesWithinMonthsBeforeEndDate(List<EncounterType> types, int numMonths) {

@@ -38,4 +38,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getYearlyPatientsOnCare() {
         return df.getPatientsInPeriod(hivMetadata.getARTSummaryPageEncounterType(), Period.YEARLY);
     }
+
+    public CohortDefinition getEnrolledInCareByEndOfPreviousDate(){
+        return df.getAnyEncounterOfTypesByEndOfPreviousDate(hivMetadata.getARTSummaryPageEncounterType());
+    }
+
+    public CohortDefinition getEnrolledInCareBetweenDates(){
+        return df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getARTSummaryPageEncounterType());
+    }
 }
