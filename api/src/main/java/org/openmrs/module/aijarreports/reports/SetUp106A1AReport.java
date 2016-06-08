@@ -1,6 +1,7 @@
 package org.openmrs.module.aijarreports.reports;
 
 import org.openmrs.module.aijarreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.aijarreports.library.CommonDimensionLibrary;
 import org.openmrs.module.aijarreports.library.DataFactory;
 import org.openmrs.module.aijarreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.reporting.ReportingConstants;
@@ -26,16 +27,11 @@ import java.util.List;
 @Component
 
 public class SetUp106A1AReport extends AijarDataExportManager {
-
-    @Autowired
-    private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
-
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
-    @Autowired
-    private DataFactory df;
-
+@Autowired
+    private CommonDimensionLibrary commonDimensionLibrary;
     @Override
     public String getExcelDesignUuid() {
         return "b98ab976-9c9d-4a28-9760-ac3119c8ef34";
@@ -66,8 +62,12 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        ReportDesign design = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls");
-        return Arrays.asList(design);
+        return Arrays.asList(buildReportDesign(reportDefinition));
+    }
+
+    @Override
+    public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1AReport.xls");
     }
 
     @Override
@@ -82,65 +82,33 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension ageDimension = new CohortDefinitionDimension();
-
-        CohortDefinition below2Years = cohortDefinitionLibrary.below2Years();
-        CohortDefinition between2And4Years = cohortDefinitionLibrary.between2And5Years();
-        CohortDefinition between5And14Years = cohortDefinitionLibrary.between5And14Years();
-        CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
-
-        CohortDefinition males = cohortDefinitionLibrary.males();
-        CohortDefinition females = cohortDefinitionLibrary.females();
-
-
-        CohortDefinition a = df.getPatientsInAll(below2Years, males);
-        CohortDefinition b = df.getPatientsInAll(below2Years, females);
-        CohortDefinition c = df.getPatientsInAll(between2And4Years, males);
-        CohortDefinition d = df.getPatientsInAll(between2And4Years, females);
-
-        CohortDefinition e = df.getPatientsInAll(between5And14Years, males);
-        CohortDefinition f = df.getPatientsInAll(between5And14Years, females);
-        CohortDefinition g = df.getPatientsInAll(above15Years, males);
-        CohortDefinition h = df.getPatientsInAll(above15Years, females);
-
-        ageDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
-        ageDimension.addCohortDefinition("below2male", Mapped.mapStraightThrough(a));
-        ageDimension.addCohortDefinition("below2female", Mapped.mapStraightThrough(b));
-        ageDimension.addCohortDefinition("between2and5male", Mapped.mapStraightThrough(c));
-        ageDimension.addCohortDefinition("between2and5female", Mapped.mapStraightThrough(d));
-        ageDimension.addCohortDefinition("between5and14male", Mapped.mapStraightThrough(e));
-        ageDimension.addCohortDefinition("between5and14female", Mapped.mapStraightThrough(f));
-        ageDimension.addCohortDefinition("above15male", Mapped.mapStraightThrough(g));
-        ageDimension.addCohortDefinition("above15female", Mapped.mapStraightThrough(h));
-        ageDimension.addCohortDefinition("child", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedBetween(0, 14)));
-        ageDimension.addCohortDefinition("adult", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedAtLeast(15)));
+        CohortDefinitionDimension ageDimension = commonDimensionLibrary.get106aAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition allOnCare = hivCohortDefinitionLibrary.getEverEnrolledInCare();
         CohortDefinition getEnrolledBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition getEnrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
 
-        addAgeGender(dsd, "All HIV Patients", "Patients who are on care", allOnCare);
-        addAgeGender(dsd, "Ever enrolled by previous quarter", "Patients enrolled by previous quarter", getEnrolledBeforeQuarter);
-        addAgeGender(dsd, "Ever enrolled in the quarter", "Patients enrolled during quarter", getEnrolledInTheQuarter);
+        addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", getEnrolledBeforeQuarter);
+        addAgeGender(dsd, "2", "New patients enrolled during quarter", getEnrolledInTheQuarter);
 
         return rd;
     }
 
     public void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "_a", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
-        addIndicator(dsd, key + "_b", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
-        addIndicator(dsd, key + "_c", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
-        addIndicator(dsd, key + "_d", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
-        addIndicator(dsd, key + "_e", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
-        addIndicator(dsd, key + "_f", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
-        addIndicator(dsd, key + "_g", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
-        addIndicator(dsd, key + "_h", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
+        addIndicator(dsd, key + "a", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
+        addIndicator(dsd, key + "b", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
+        addIndicator(dsd, key + "c", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
+        addIndicator(dsd, key + "d", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
+        addIndicator(dsd, key + "e", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
+        addIndicator(dsd, key + "f", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
+        addIndicator(dsd, key + "g", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
+        addIndicator(dsd, key + "h", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
+        addIndicator(dsd, key + "i", label + " Total", cohortDefinition,"");
     }
 
     public void addAge(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "_j", label + " (Between 0 and 15 years)", cohortDefinition, "age=child");
-        addIndicator(dsd, key + "_k", label + " (Above 15 years)", cohortDefinition, "age=adult");
+        addIndicator(dsd, key + "j", label + " (Between 0 and 15 years)", cohortDefinition, "age=child");
+        addIndicator(dsd, key + "k", label + " (Above 15 years)", cohortDefinition, "age=adult");
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
