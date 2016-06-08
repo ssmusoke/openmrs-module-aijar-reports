@@ -100,7 +100,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
 	@DocumentedDefinition(value = "age.below2yrs", name = "< 2 years")
 	public CohortDefinition below2Years() {
-		return agedAtMost(2);
+		return agedAtMost(1);
 	}
 
 	@DocumentedDefinition(value = "age.6to59mths", name = "6 - 59 months")
@@ -118,7 +118,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
 	@DocumentedDefinition(value = "age.btn2and5yrs", name = "2 - <5 years")
 	public CohortDefinition between2And5Years() {
-		return agedBetween(2, 5);
+		return agedBetween(2, 4);
 	}
 
 	@DocumentedDefinition(value = "age.btn5and14yrs", name = "5 - 14 years")
@@ -128,7 +128,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
 	@DocumentedDefinition(value = "age.btn15and49yrs", name = "15 - 49 years")
 	public CohortDefinition between15And49Years() {
-		return agedBetween(15, 49);
+		return agedBetween(14, 49);
 	}
 
 	@DocumentedDefinition(value = "age.over15yrs", name = "Over 15 years")
