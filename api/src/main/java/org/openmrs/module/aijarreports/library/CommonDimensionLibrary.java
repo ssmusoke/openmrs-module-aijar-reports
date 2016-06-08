@@ -3,6 +3,8 @@ package org.openmrs.module.aijarreports.library;
 import java.util.Date;
 
 import org.openmrs.module.aijarreports.AijarReportUtil;
+import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -19,6 +21,10 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     @Autowired
     private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
+
+    @Autowired
+    private DataFactory df;
+
 
     @Override
     public Class<? super CohortDefinitionDimension> getDefinitionType() {
@@ -59,6 +65,48 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         dimAges.addCohortDefinition("15+ years", AijarReportUtil.map(cohortDefinitionLibrary.above15Years(), "effectiveDate=${effectiveDate}"));
 
         return dimAges;
+    }
+
+
+    /**
+     * Dimension of age using the standard age and gender groups
+     * @return the dimension
+     */
+    @DocumentedDefinition(value = "age.gender.106a-1A", name = "Age Gender - 106a 1A")
+    public CohortDefinitionDimension get106aAgeGenderGroup() {
+        CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
+
+        CohortDefinition below2Years = cohortDefinitionLibrary.below2Years();
+        CohortDefinition between2And4Years = cohortDefinitionLibrary.between2And5Years();
+        CohortDefinition between5And14Years = cohortDefinitionLibrary.between5And14Years();
+        CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
+
+        CohortDefinition males = cohortDefinitionLibrary.males();
+        CohortDefinition females = cohortDefinitionLibrary.females();
+
+
+        CohortDefinition a = df.getPatientsInAll(below2Years, males);
+        CohortDefinition b = df.getPatientsInAll(below2Years, females);
+        CohortDefinition c = df.getPatientsInAll(between2And4Years, males);
+        CohortDefinition d = df.getPatientsInAll(between2And4Years, females);
+
+        CohortDefinition e = df.getPatientsInAll(between5And14Years, males);
+        CohortDefinition f = df.getPatientsInAll(between5And14Years, females);
+        CohortDefinition g = df.getPatientsInAll(above15Years, males);
+        CohortDefinition h = df.getPatientsInAll(above15Years, females);
+
+        ageGenderDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ageGenderDimension.addCohortDefinition("below2male", Mapped.mapStraightThrough(a));
+        ageGenderDimension.addCohortDefinition("below2female", Mapped.mapStraightThrough(b));
+        ageGenderDimension.addCohortDefinition("between2and5male", Mapped.mapStraightThrough(c));
+        ageGenderDimension.addCohortDefinition("between2and5female", Mapped.mapStraightThrough(d));
+        ageGenderDimension.addCohortDefinition("between5and14male", Mapped.mapStraightThrough(e));
+        ageGenderDimension.addCohortDefinition("between5and14female", Mapped.mapStraightThrough(f));
+        ageGenderDimension.addCohortDefinition("above15male", Mapped.mapStraightThrough(g));
+        ageGenderDimension.addCohortDefinition("above15female", Mapped.mapStraightThrough(h));
+        ageGenderDimension.addCohortDefinition("child", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedBetween(0, 14)));
+        ageGenderDimension.addCohortDefinition("adult", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedAtLeast(15)));
+        return ageGenderDimension;
     }
 
 
