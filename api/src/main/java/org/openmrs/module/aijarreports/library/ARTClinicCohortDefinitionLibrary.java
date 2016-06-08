@@ -39,9 +39,9 @@ public class ARTClinicCohortDefinitionLibrary extends BaseDefinitionLibrary<Coho
 		return q;
 	}
 
-	@DocumentedDefinition(value = "withappointment", name = "Patients with appointment on date")
-	public CohortDefinition getPatientsWithAppointmentOnDate() {
-		return df.getPatientsWhoseObsValueDateIsOnSpecifiedDate(hivMetadata.getReturnVisitDate(), null);
+	@DocumentedDefinition(value = "returnvisitdate", name = "Patients with return visit on date")
+	public CohortDefinition getPatientsWithReturnVisitDateOnEndDate() {
+		return df.getPatientsWhoseObsValueDateIsOnSpecifiedDate(hivMetadata.getReturnVisitDate(), hivMetadata.getARTEncounterPageEncounterType());
 	}
 
 	/*@DocumentedDefinition(value = "startedARTBetweenStartAndEndDate")

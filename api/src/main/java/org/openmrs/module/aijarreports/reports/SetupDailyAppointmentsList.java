@@ -1,7 +1,12 @@
 package org.openmrs.module.aijarreports.reports;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.BasePatientDataLibrary;
@@ -14,6 +19,7 @@ import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibra
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,6 +78,7 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		// TODO: What parameters will cause the cohorts to show only obs on a specific day
 		l.add(df.getEndDateParameter());
 		return l;
 	}
@@ -79,8 +86,25 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls"));
+		l.add(buildReportDesign(reportDefinition));
 		return l;
+	}
+
+	/**
+	 * Build the report design for the specified report, this allows a user to override the report design by adding
+	 * properties and other metadata to the report design
+	 *
+	 * @return The report design
+	 */
+	@Override
+	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls");
+		Properties props = new Properties();
+		props.put("repeatingSections", "sheet:1,row:9,dataset:DAL");
+		props.put("sortWeight","5000");
+
+		rd.setProperties(props);
+		return rd;
 	}
 
 	@Override
@@ -89,15 +113,14 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		rd.setUuid(getUuid());
 		rd.setName(getName());
 		rd.setDescription(getDescription());
-		rd.setParameters(getParameters());
+		rd.setParameters(Arrays.asList(new Parameter("endDate", "End Date", Date.class)));
 
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-		dsd.setName("DAL");
-		dsd.setParameters(getParameters());
+		dsd.setName(getName());
+		dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 		// rows are patients with a next appointment date obs in the given date range
-		CohortDefinition rowFilter = hivCohorts.getPatientsWithAppointmentOnDate();
-		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
+		rd.setBaseCohortDefinition(hivCohorts.getPatientsWithReturnVisitDateOnEndDate(), ParameterizableUtil.createParameterMappings("onOrAfter=${endDate},onOrBefore=${endDate}"));
 
 		// columns to include
 		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
@@ -105,8 +128,13 @@ public class SetupDailyAppointmentsList extends AijarDataExportManager {
 		addColumn(dsd, "givenName", builtInPatientData.getPreferredGivenName());
 		addColumn(dsd, "Sex", builtInPatientData.getGender());
 		addColumn(dsd, "Birthdate", builtInPatientData.getBirthdate());
+		addColumn(dsd, "LastVisitDate", hivPatientData.getLastVisitDate());
+		addColumn(dsd, "NextAppointmentDate", hivPatientData.getExpectedReturnDate());
 
-		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(dsd));
+		Map<String, Object> mappings = new HashMap<String, Object>();
+		mappings.put("endDate", "${endDate}");
+
+		rd.addDataSetDefinition("DAL", dsd, mappings);
 
 		return rd;
 	}

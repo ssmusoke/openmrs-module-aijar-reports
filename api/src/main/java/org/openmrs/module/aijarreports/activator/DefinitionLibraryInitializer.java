@@ -9,11 +9,14 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.aijarreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.aijarreports.library.CommonDimensionLibrary;
 import org.openmrs.module.aijarreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.definition.library.DefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.LibraryDefinitionSummary;
+import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
+import org.openmrs.module.reporting.indicator.dimension.service.DimensionService;
 
 /**
  * Initializes library definitions and serializes them to the database so that they are available via the reportingui
@@ -32,9 +35,9 @@ public class DefinitionLibraryInitializer implements Initializer {
 
 		// add new defintions
 		CohortDefinitionService cohortDefinitionService = Context.getService(CohortDefinitionService.class);
+		DimensionService dimensionService = Context.getService(DimensionService.class);
 
 		// Load cohort definitions
-
 		List<DefinitionLibrary> cohortLibs = getCohortLibraryDefinitions();
 
 		for (DefinitionLibrary<CohortDefinition> aLib : cohortLibs) {
@@ -46,6 +49,21 @@ public class DefinitionLibraryInitializer implements Initializer {
 						.getDescription());
 				// save the definition
 				cohortDefinitionService.saveDefinition(aLib.getDefinition(cohortDefinitionSummary.getKey()));
+			}
+		}
+
+		// Load Dimension
+		List<DefinitionLibrary> dimensionLibs = getDimensionLibraryDefinitions();
+
+		for (DefinitionLibrary<CohortDefinitionDimension> aDimLib : dimensionLibs) {
+
+			// now save the cohorts
+			for (LibraryDefinitionSummary dimensionDefinitionSummary : aDimLib.getDefinitionSummaries()) {
+				System.out.println("Persisting Dimension definition key " + dimensionDefinitionSummary.getKey() + " name "
+						+ dimensionDefinitionSummary.getName() + " description " + dimensionDefinitionSummary
+						.getDescription());
+				// save the definition
+				dimensionService.saveDefinition(aDimLib.getDefinition(dimensionDefinitionSummary.getKey()));
 			}
 		}
 
@@ -82,6 +100,12 @@ public class DefinitionLibraryInitializer implements Initializer {
 		l.add(Context.getRegisteredComponents(ARTClinicCohortDefinitionLibrary.class).get(0));
 		l.add(Context.getRegisteredComponents(EIDCohortDefinitionLibrary.class).get(0));
 		l.add(Context.getRegisteredComponents(CommonCohortDefinitionLibrary.class).get(0));
+		return l;
+	}
+
+	private List<DefinitionLibrary> getDimensionLibraryDefinitions() {
+		List<DefinitionLibrary> l = new ArrayList<DefinitionLibrary>();
+		l.add(Context.getRegisteredComponents(CommonDimensionLibrary.class).get(0));
 		return l;
 	}
 	

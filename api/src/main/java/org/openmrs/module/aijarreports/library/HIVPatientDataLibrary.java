@@ -1,5 +1,9 @@
 package org.openmrs.module.aijarreports.library;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
@@ -21,10 +25,6 @@ import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Attributes of a person not defined within the core OpenMRS definition
@@ -57,6 +57,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     @DocumentedDefinition(value = "enrollmentdate", name = "Enrollment Date")
     public PatientDataDefinition getEnrollmentDate() {
         return getFirstArtInitialEncounterByEndDate(df.getEncounterDatetimeConverter());
+    }
+
+    @DocumentedDefinition(value = "lastvisitdate", name = "Last Visit Date")
+    public PatientDataDefinition getLastVisitDate() {
+        return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
 
     @DocumentedDefinition(value = "artstartdate", name = "ART Start Date")
@@ -102,6 +107,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     protected PatientDataDefinition getFirstArtInitialEncounterByEndDate(DataConverter converter) {
         EncounterType arvInitial = hivMetadata.getARTSummaryPageEncounterType().get(0);
         return df.getFirstEncounterOfTypeByEndDate(arvInitial, converter);
+    }
+
+    protected PatientDataDefinition getLastARTVisitEncounterByEndDate(DataConverter converter) {
+        EncounterType arvInitial = hivMetadata.getARTEncounterPageEncounterType().get(0);
+        return df.getLastEncounterOfTypeByEndDate(arvInitial, converter);
     }
 
     @DocumentedDefinition("allArtNumbers")

@@ -44,4 +44,10 @@ public abstract class AijarDataExportManager extends AijarReportManager {
 		l.add(excelDesign);
 		return l;
 	}
+
+	/**
+	 * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
+	 * @return The report design
+	 */
+	public abstract ReportDesign buildReportDesign(ReportDefinition reportDefinition);
 }
