@@ -242,9 +242,8 @@ public class DataFactory {
         ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
         def.setWhich(TimeQualifier.LAST);
         def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-	    def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate,onOrAfter=endDate"), converter);
+        def.addParameter(getEndDateParameter());
+        return convert(def, ObjectUtil.toMap("endDate=endDate"), converter);
     }
 
 
