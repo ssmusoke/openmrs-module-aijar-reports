@@ -66,7 +66,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     @DocumentedDefinition(value = "artstartdate", name = "ART Start Date")
     public PatientDataDefinition getARTStartDate() {
-        return convert(df.getMostRecentObsByEndDate(hivMetadata.getARTStartDate()), df.getObsValueDatetimeConverter());
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getArtStartDate()), df.getObsValueDatetimeConverter());
     }
 
     @DocumentedDefinition(value = "lastregimenpickupdate", name = "Last Regimen Pickup Date")
@@ -96,12 +96,12 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     @DocumentedDefinition(value = "startregimen", name = "Start Regimen")
     public PatientDataDefinition getStartRegimen() {
-        return convert(df.getMostRecentObsByEndDate(hivMetadata.getStartRegimen()), df.getObsValueCodedConverter());
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getArtStartRegimen()), df.getObsValueCodedConverter());
     }
 
     @DocumentedDefinition(value = "startregimendate", name = "Start Regimen Date")
     public PatientDataDefinition getStartRegimenDate() {
-        return convert(df.getMostRecentObsByEndDate(hivMetadata.getStartRegimenDate()), df.getObsValueDatetimeConverter());
+        return convert(df.getMostRecentObsByEndDate(hivMetadata.getArtStartDate()), df.getObsValueDatetimeConverter());
     }
 
     protected PatientDataDefinition getFirstArtInitialEncounterByEndDate(DataConverter converter) {

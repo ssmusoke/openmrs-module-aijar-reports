@@ -1,13 +1,13 @@
 package org.openmrs.module.aijarreports.metadata;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Metadata definitions for the HIV related reporting
@@ -19,16 +19,28 @@ public class HIVMetadata extends Metadata {
         return getConcept("5096");
     }
 
-    public Concept getARTStartDate() {
+    public Concept getArtStartDate() {
         return getConcept("99161");
     }
 
-    public Concept getStartRegimen() {
+    public Concept getArtRegimenTransferInDate() {
+        return getConcept("99160");
+    }
+
+    public Concept getArtStartRegimen() {
         return getConcept("99061");
     }
 
-    public Concept getStartRegimenDate() {
-        return getConcept("99161");
+    public Concept getOtherArtStartRegimen() {
+        return getConcept("99268");
+    }
+
+    public Concept getArtTransferInRegimen() {
+        return getConcept("99064");
+    }
+
+    public Concept getOtherArtTransferInRegimen() {
+        return getConcept("99269");
     }
 
     public Concept getDateOfNVP() {
@@ -209,7 +221,6 @@ public class HIVMetadata extends Metadata {
         return getConcept("90310");
     }
 
-
     public Concept getWHOClinicalStage() {
         return getConcept("90203");
     }
@@ -230,7 +241,6 @@ public class HIVMetadata extends Metadata {
         return getConcept("90036");
     }
 
-
     public Concept getDateEligibleForART() {
         return getConcept("90297");
     }
@@ -238,7 +248,6 @@ public class HIVMetadata extends Metadata {
     public Concept getDateEligibleAndReadyForART() {
         return getConcept("90299");
     }
-
 
     public Concept getDateEligibilityWHOStage() {
         return getConcept("99083");
@@ -268,8 +277,6 @@ public class HIVMetadata extends Metadata {
         return getConcept("99071");
     }  // CD4 at ART start
 
-
-
     public EncounterType getARTSummaryEncounter() {
         return getEncounterType("8d5b27bc-c2cc-11de-8d13-0010c6dffd0f");
     }
@@ -278,5 +285,88 @@ public class HIVMetadata extends Metadata {
         return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
     }
 
+    public Concept getTBStatus() {
+        return getConcept("90216");
+    }
+
+    public Concept getTBStatusDiagnosed() {
+        return getConcept("90078");
+    }
+
+    public Concept getTBStatusRx() {
+        return getConcept("90071");
+    }
+
+    public Concept getMalnutrition() {
+        return getConcept("68");
+    }
+
+    public Concept getMUAC() {
+        return getConcept("99030");
+    }
+
+    public Concept getBodyWeight() {
+        return getConcept("90236");
+    }
+
+    public Concept getBaselineBodyWeight() {
+        return getConcept("99069");
+    }
+
+    public Concept getBodyHeight() {
+        return getConcept("5090");
+    }
+
+    public Concept getOedema() {
+        return getConcept("460");
+    }
+
+    public Concept getMUACRed() {
+        return getConcept("99028");
+    }
+
+    public Concept getMUACYellow() {
+        return getConcept("99029");
+    }
+
+    public Concept getPregnantAtArtStart() {
+        return getConcept("99072");
+    }
+
+    public Concept getLactatingAtArtStart() {
+        return getConcept("99603");
+    }
+
+    public Concept getAdherence() {
+        return getConcept("90221");
+    }
+
+    public Concept getGoodAdherence() {
+        return getConcept("90156");
+    }
+
+    public List<Concept> getMalnutritionYes() {
+        return getConceptList("99271,99272,99273");
+    }
+
+    public List<Concept> getFirstLineDrugsChildren() {
+        return getConceptList("99015,99016,99005,99006");
+    }
+
+    public List<Concept> getFirstLineDrugsAdults() {
+        return getConceptList("99015,99016,99005,99006,99041,99042,99039,99040,163017,99884,99885,99143");
+    }
+
+    public List<Concept> getSecondLineDrugsChildren() {
+        return getConceptList("99017,99018,99019,99044,99043,99045,99284,99286,99285");
+    }
+
+    public List<Concept> getSecondLineDrugsAdults() {
+        return getConceptList("99007,99008,99044,99043,99282,99283,163028,99046,99887,99888,99144");
+    }
+
+    public List<Concept> getThirdLineDrugs() {
+        return getConceptList("162986,90002,162987");
+    }
 
 }
