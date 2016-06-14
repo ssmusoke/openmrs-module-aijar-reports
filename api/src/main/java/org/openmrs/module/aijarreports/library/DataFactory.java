@@ -64,6 +64,12 @@ public class DataFactory {
     public Parameter getOnDateParameter() {
 	    return new Parameter("onDate", "On Date", Date.class);
     }
+	public Parameter getOnOrBeforeDateParameter() {
+		return new Parameter("OnOrBefore", "On or Before", Date.class);
+	}
+	public Parameter getOnOrAfterDateParameter() {
+		return new Parameter("OnOrAfter", "On or After", Date.class);
+	}
 
     // Data Converters
     public DataConverter getIdentifierConverter() {
@@ -234,17 +240,7 @@ public class DataFactory {
     // Patient Data Definitions
 
 
-    public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
-        return getMostRecentObsByEndDate(question, null);
-    }
 
-    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, DataConverter converter) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(TimeQualifier.LAST);
-        def.setQuestion(question);
-        def.addParameter(getEndDateParameter());
-        return convert(def, ObjectUtil.toMap("endDate=endDate"), converter);
-    }
 
 
     public PatientDataDefinition getAllIdentifiersOfType(PatientIdentifierType pit, DataConverter converter) {
@@ -292,6 +288,10 @@ public class DataFactory {
         def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         return convert(def, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
+    }
+
+    public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
+        return getMostRecentObsByEndDate(question, null, null);
     }
 
     public PatientDataDefinition getMostRecentObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
