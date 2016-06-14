@@ -133,7 +133,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getEIDOnART() {
-        return df.getObsWithEncounters(hivMetadata.getARTStartDate(), hivMetadata.getEIDSummaryPageEncounterType());
+        return df.getObsWithEncounters(hivMetadata.getArtStartDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
     public CohortDefinition getPatientsWithAnEIDNumber() {
