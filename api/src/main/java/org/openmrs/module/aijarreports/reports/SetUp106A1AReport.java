@@ -213,7 +213,7 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
 
-        CohortDefinition enrolledWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter,startedArtDuringQuarter);
+        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, startedArtDuringQuarter);
 
         addIndicator(dsd, "T1", "ever enrolled before quarter", enrolledBeforeQuarter, "");
         addIndicator(dsd, "T2", "this quarter", enrolledInTheQuarter, "");
@@ -238,7 +238,7 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", beenOnArtBeforeQuarter);
         addAgeGender(dsd, "16", "Started Art during the quarter", startedArtDuringQuarter);
         addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
-        addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", enrolledWhenPregnant);
+        addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", startedArtWhenPregnant);
         addAgeGender(dsd, "19", "Ever enrolled", cumulativeOnArt);
         addAgeGender(dsd, "20", "First Line Regimen", onFirstLineRegimen);
         addAgeGender(dsd, "21", "Second Line Regimen", onSecondLineRegimen);
