@@ -1,5 +1,6 @@
 package org.openmrs.module.aijarreports.reports;
 
+import org.openmrs.module.aijarreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.CommonDimensionLibrary;
 import org.openmrs.module.aijarreports.library.DataFactory;
 import org.openmrs.module.aijarreports.library.HIVCohortDefinitionLibrary;
@@ -31,6 +32,9 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
+
+    @Autowired
+    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
 
     @Autowired
     private DataFactory df;
@@ -82,6 +86,7 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         rd.setParameters(getParameters());
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
 
@@ -90,6 +95,8 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition enrolledBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
+
+        CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
         CohortDefinition transferredInBeforeQuarter = hivCohortDefinitionLibrary.getTransferredInToCareBeforePeriod();
@@ -103,13 +110,9 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
         CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod();
 
-        CohortDefinition transferInRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingTransferInRegimenBeforePeriod();
-        CohortDefinition transferInRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingTransferInRegimenDuringPeriod();
-
-        CohortDefinition transferInRegimenDateBeforeQuarter = hivCohortDefinitionLibrary.getArtRegimenTransferInDateBeforePeriod();
-        CohortDefinition transferInRegimenDateDuringQuarter = hivCohortDefinitionLibrary.getArtRegimenTransferInDateBetweenPeriod();
-
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getEnrolledInCareToCareWhenPregnantOrLactating();
+
+        CohortDefinition pregnantAtFirstEncounter = hivCohortDefinitionLibrary.getPatientsPregnantAtFirstEncounter();
 
         CohortDefinition onINHDuringQuarter = hivCohortDefinitionLibrary.getOnINHDuringPeriod();
         CohortDefinition onINHBeforeQuarter = hivCohortDefinitionLibrary.getOnINHDuringBeforePeriod();
@@ -119,7 +122,6 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         CohortDefinition assessedForTBDuringQuarter = hivCohortDefinitionLibrary.getAccessedForTBDuringPeriod();
 
         CohortDefinition diagnosedWithTBDuringQuarter = hivCohortDefinitionLibrary.getDiagnosedWithTBDuringPeriod();
-
 
         CohortDefinition onTBRxDuringQuarter = hivCohortDefinitionLibrary.getStartedTBRxDuringPeriod();
         CohortDefinition onTBRxBeforeQuarter = hivCohortDefinitionLibrary.getStartedTBRxBeforePeriod();
@@ -144,11 +146,13 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition onArtBasedOnCD4 = hivCohortDefinitionLibrary.getPatientsStartedArtBasedOnCD4();
 
-        CohortDefinition childrenOnFirstLineDuringQuarter = hivCohortDefinitionLibrary.getChildrenOnFirstLineRegimenDuringPeriod();
-        CohortDefinition childrenOnSecondLineDuringQuarter = hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod();
+        CohortDefinition eligibleByEndOfQuarter = hivCohortDefinitionLibrary.getEligibleAndReadyByEndOfQuarter();
 
-        CohortDefinition adultsOnFirstLineDuringQuarter = hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimenDuringPeriod();
-        CohortDefinition adultsOnSecondLineDuringQuarter = hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimenDuringPeriod();
+        CohortDefinition childrenOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.between0And10years(), hivCohortDefinitionLibrary.getChildrenOnFirstLineRegimenDuringPeriod());
+        CohortDefinition childrenOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.between0And10years(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod());
+
+        CohortDefinition adultsOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.above10years(), hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimenDuringPeriod());
+        CohortDefinition adultsOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.above10years(), hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimenDuringPeriod());
 
         CohortDefinition onThirdLineRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
 
@@ -160,15 +164,15 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, transferredInBeforeQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
 
-        CohortDefinition allEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
+        CohortDefinition pregnantAndLactatingEnrolledDuringQuarterAndNew = df.getPatientsInAll(enrolledDuringTheQuarter, enrolledWhenPregnantOrLactating);
 
-        CohortDefinition pregnantAndLactatingEnrolledDuringQuarter = df.getPatientsInAll(enrolledDuringTheQuarter, enrolledWhenPregnantOrLactating);
+        CohortDefinition startedINHDuringQuarter = df.getPatientsNotIn(onINHDuringQuarter, onINHBeforeQuarter);
 
-        CohortDefinition startedINHDuringQuarter = df.getPatientsInAll(df.getPatientsNotIn(onINHDuringQuarter, onINHBeforeQuarter), enrolledDuringTheQuarter);
+        // CohortDefinition startedINHDuringQuarterAndNew = df.getPatientsInAll(startedINHDuringQuarter, enrolledDuringTheQuarter);
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
-        CohortDefinition onPreArt = df.getPatientsNotIn(cumulativeEverEnrolled, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
+        CohortDefinition onPreArt = df.getPatientsNotIn(hadEncounterInQuarter, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
 
         CohortDefinition onPreArtWhoReceivedCPT = df.getPatientsInAll(onPreArt, onCPTDuringQuarter);
 
@@ -193,8 +197,8 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition cumulativeOnArt = df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter);
 
-        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter,df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
-        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter,df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
+        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
+        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
 
         CohortDefinition activeOnArtOnCPT = df.getPatientsInAll(beenOnArtDuringQuarter, onCPTDuringQuarter);
         CohortDefinition activeOnArtAssessedForTB = df.getPatientsInAll(beenOnArtDuringQuarter, assessedForTBDuringQuarter);
@@ -207,12 +211,21 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition activeOnArtWhoAreMalnourished = df.getPatientsInAll(beenOnArtDuringQuarter, whoAreMalnourished);
 
+        CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
+
+        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, startedArtDuringQuarter);
+
+        addIndicator(dsd, "T1", "ever enrolled before quarter", enrolledBeforeQuarter, "");
+        addIndicator(dsd, "T2", "this quarter", enrolledInTheQuarter, "");
+
+        addIndicator(dsd, "T3", "transfer in before quarter", transferredInBeforeQuarter, "");
+        addIndicator(dsd, "T4", "transfer in this quarter", transferredInTheQuarter, "");
 
         addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
         addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
-        addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", pregnantAndLactatingEnrolledDuringQuarter);
+        addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", enrolledWhenPregnantOrLactating);
         addIndicator(dsd, "4i", "INH During Quarter", startedINHDuringQuarter, "");
-        addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", allEnrolled);
+        addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
         addIndicator(dsd, "6i", "Transfer In", transferredInTheQuarter, "");
         addAge(dsd, "7", "On Pre-ART", onPreArt);
         addAge(dsd, "8", "On Pre-ART CPT", onPreArtWhoReceivedCPT);
@@ -221,10 +234,11 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         addIndicator(dsd, "11i", "On Pre-ART started TB Rx", onPreArtStartedTBRx, "");
         addIndicator(dsd, "12i", "On Pre-ART Assessed for Malnutrition", onPreArtAssessedForMalnutrition, "");
         addIndicator(dsd, "13i", "On Pre-ART those who are Malnourished", onPreArtWhoAreMalnourished, "");
-
+        addIndicator(dsd, "14i", "Eligible but not started on art", eligibleButNotStartedByQuarter, "");
         addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", beenOnArtBeforeQuarter);
         addAgeGender(dsd, "16", "Started Art during the quarter", startedArtDuringQuarter);
         addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
+        addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", startedArtWhenPregnant);
         addAgeGender(dsd, "19", "Ever enrolled", cumulativeOnArt);
         addAgeGender(dsd, "20", "First Line Regimen", onFirstLineRegimen);
         addAgeGender(dsd, "21", "Second Line Regimen", onSecondLineRegimen);

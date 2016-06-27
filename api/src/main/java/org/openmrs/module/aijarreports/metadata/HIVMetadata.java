@@ -161,6 +161,14 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getArtEncounterTypes() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));
+        l.add(MetadataUtils.existing(EncounterType.class, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"));
+        return l;
+    }
+
+
     public Concept getARVDuration() {
         return getConcept("99036");
     }
@@ -191,6 +199,10 @@ public class HIVMetadata extends Metadata {
 
     public Concept getLactatingAtEnrollment() {
         return getConcept("99601");
+    }
+
+    public Concept getEMTCTAtEnrollment() {
+        return getConcept("90012");
     }
 
     public Concept getTBAtEnrollment() {
@@ -251,10 +263,6 @@ public class HIVMetadata extends Metadata {
 
     public Concept getDateEligibilityWHOStage() {
         return getConcept("99083");
-    }
-
-    public Concept getDateEligibilityCD4() {
-        return getConcept("99082");
     }
 
     public Concept getDateEligibilityTB() {
@@ -369,4 +377,27 @@ public class HIVMetadata extends Metadata {
         return getConceptList("162986,90002,162987");
     }
 
+    public Concept getTransferredOut() {
+        return getConcept("90306");
+    }
+
+    public Concept getArtInterruption() {
+        return getConcept("99132");
+    }
+
+    public Concept getArtInterruptionStopped() {
+        return getConcept("1363");
+    }
+
+    public Concept getDead() {
+        return getConcept("90211");
+    }
+
+    public Concept getVisitDate() {
+        return getConcept("5096");
+    }
+    public Concept getYesPregnant() {
+        return getConcept("1065");
+    }
+    public  Concept getPregnant(){return getConcept("90041");}
 }
