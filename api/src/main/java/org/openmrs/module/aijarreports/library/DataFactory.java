@@ -650,6 +650,14 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
     }
 
+    public CohortDefinition getPatientsWhoseObs(Concept dateConcept, List<EncounterType> types) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        return cd;
+    }
+
     public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, PatientSetService.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -705,13 +713,35 @@ public class DataFactory {
         return convert(cd, params);
     }
 
-    public CohortDefinition getLastVisitInTheQuarter(Concept question,PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getLastVisitInTheQuarter(Concept question, PatientSetService.TimeModifier timeModifier) {
         HavingVisitCohortDefinition cd = new HavingVisitCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
+
+    public CohortDefinition getLostToFollowUp() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(90);
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+
+    public CohortDefinition getLost() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(7);
+        cd.setMaximumDays(89);
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+
+    public CohortDefinition getTextBasedObs(Concept question) {
+        TextObsCohortDefinition cd = new TextObsCohortDefinition();
+        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setQuestion(question);
+        return cd;
     }
 
 

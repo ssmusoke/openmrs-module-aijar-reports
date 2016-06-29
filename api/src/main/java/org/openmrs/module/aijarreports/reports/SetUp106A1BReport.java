@@ -7,6 +7,7 @@ import org.openmrs.module.aijarreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -30,6 +31,9 @@ import java.util.List;
 public class SetUp106A1BReport extends AijarDataExportManager {
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+    @Autowired
+    private CohortDefinitionService cohortDefinitionService;
 
     @Autowired
     private HIVMetadata hivMetadata;
@@ -90,39 +94,104 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators_106a1b", Mapped.mapStraightThrough(dsd));
+        String olderThan = "y";
 
-        CohortDefinition transferredOut = hivCohortDefinitionLibrary.getTransferredOut();
-        addIndicator(dsd, "123", "Transferred", transferredOut);
+        CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getPregnantOrLactating();
+        CohortDefinition transferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtTransferInRegimen(), PatientSetService.TimeModifier.ANY);
+        CohortDefinition transferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), PatientSetService.TimeModifier.ANY);
+        CohortDefinition transferInRegimenDate = df.getPatientsWhoseObs(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType());
+        CohortDefinition patientsWithCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), PatientSetService.TimeModifier.LAST);
+        CohortDefinition patientsHavingCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, PatientSetService.TimeModifier.LAST);
+        CohortDefinition patientsOlderThan4Years = commonCohortDefinitionLibrary.agedAtLeast(5);
+        CohortDefinition transferInFrom = hivCohortDefinitionLibrary.getPatientsWithTransferInPlace();
+        CohortDefinition patientsTransferredIn = df.getPatientsInAny(transferInRegimen, transferInRegimenOther, transferInRegimenDate, transferInFrom);
+        CohortDefinition medicallyInterrupted = hivCohortDefinitionLibrary.getInterruptedMedically();
+        CohortDefinition deadPatients = hivCohortDefinitionLibrary.gePatientsWhoDied();
+        CohortDefinition transferOut = hivCohortDefinitionLibrary.getTransferredOut();
+        CohortDefinition lostToFollow = df.getLostToFollowUp();
+        CohortDefinition lost = df.getLost();
 
-        for (int i = 1; i <= 6; i++) {
+        for (int i = 1; i <= 7; i++) {
 
-            CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(i + "y");
-            CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(i + "y-1d");
+            if (i == 1) {
+                olderThan = "6m";
+            }
 
-            CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(i + "y-1d");
-            CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(i + "y-1d");
+            CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(i + olderThan);
+            CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(i + olderThan + "-1d");
 
-            CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(i + "y");
-            CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod(i + "y-1d");
+            CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(i + olderThan + "-1d");
+            CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(i + olderThan + "-1d");
+
+            CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(i + olderThan);
+            CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod(i + olderThan + "-1d");
 
             CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
             CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
 
             CohortDefinition startedArtDuringQuarter = df.getPatientsNotIn(beenOnArtDuringQuarter, beenOnArtBeforeQuarter);
 
-            CohortDefinition patientsHavingCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, i + "y", PatientSetService.TimeModifier.FIRST);
-            CohortDefinition patientsOlderThan4Years = commonCohortDefinitionLibrary.agedAtLeast(5);
-            CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod(i + "y");
-            CohortDefinition medicallyInterrupted = hivCohortDefinitionLibrary.getInterruptedMedically();
-            CohortDefinition deadPatients = hivCohortDefinitionLibrary.gePatientsWhoDied();
-            CohortDefinition appointments = hivCohortDefinitionLibrary.getAppointments();
+            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTEncounterPageEncounterType(), i + olderThan, PatientSetService.TimeModifier.LAST);
+            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, i + olderThan, PatientSetService.TimeModifier.FIRST);
+
+            CohortDefinition netTransferIn = df.getPatientsInAll(patientsTransferredIn, havingArtStartDateDuringQuarter);
+            CohortDefinition startedArtInFacility = df.getPatientsNotIn(startedArtDuringQuarter, patientsTransferredIn);
+            CohortDefinition patientsOver4YearsWithBaseCD4 = df.getPatientsInAll(startedArtInFacility, patientsOlderThan4Years, patientsWithBaseCD4);
+            CohortDefinition patientsOver4YearsWithBaseCD4LessThan250 = df.getPatientsInAll(startedArtInFacility, patientsOlderThan4Years, patientsHavingBaseCD4LessThan250);
+            CohortDefinition netTransferredOut = df.getPatientsInAll(startedArtInFacility, transferOut);
+            CohortDefinition netCurrentCohort = df.createPatientComposition("(", startedArtInFacility, "OR", netTransferIn, ") AND NOT ", netTransferredOut);
+            CohortDefinition netStopped = df.getPatientsInAll(netCurrentCohort, medicallyInterrupted);
+            CohortDefinition netDied = df.getPatientsInAll(netCurrentCohort, deadPatients);
+            CohortDefinition netLostToFollowUp = df.getPatientsInAll(netCurrentCohort, lostToFollow);
+            CohortDefinition netLost = df.getPatientsInAll(netCurrentCohort, lost);
+            CohortDefinition patientsOver4YearsWithCD4 = df.getPatientsInAll(netCurrentCohort, patientsOlderThan4Years, patientsWithCD4);
+            CohortDefinition patientsOver4YearsWithCD4LessThan250 = df.getPatientsInAll(netCurrentCohort, patientsOlderThan4Years, patientsHavingCD4LessThan250);
+            CohortDefinition netCurrentCohortAlive = df.createPatientComposition(netCurrentCohort, "AND NOT", df.getPatientsInAny(netStopped, netDied, netLostToFollowUp));
+
+            CohortDefinition netTransferInMothers = df.getPatientsInAll(netTransferIn, enrolledWhenPregnantOrLactating);
+            CohortDefinition startedArtInFacilityMothers = df.getPatientsInAll(startedArtInFacility, enrolledWhenPregnantOrLactating);
+            CohortDefinition patientsOver4YearsWithBaseCD4Mothers = df.getPatientsInAll(patientsOver4YearsWithBaseCD4, enrolledWhenPregnantOrLactating);
+            CohortDefinition patientsOver4YearsWithBaseCD4LessThan250Mothers = df.getPatientsInAll(patientsOver4YearsWithBaseCD4LessThan250, enrolledWhenPregnantOrLactating);
+            CohortDefinition netTransferredOutMothers = df.getPatientsInAll(netTransferredOut, enrolledWhenPregnantOrLactating);
+            CohortDefinition netCurrentCohortMothers = df.getPatientsInAll(netCurrentCohort, enrolledWhenPregnantOrLactating);
+            CohortDefinition netStoppedMothers = df.getPatientsInAll(netStopped, enrolledWhenPregnantOrLactating);
+            CohortDefinition netDiedMothers = df.getPatientsInAll(netDied, enrolledWhenPregnantOrLactating);
+            CohortDefinition netLostToFollowUpMothers = df.getPatientsInAll(netLostToFollowUp, enrolledWhenPregnantOrLactating);
+            CohortDefinition netLostMothers = df.getPatientsInAll(netLost, enrolledWhenPregnantOrLactating);
+            CohortDefinition patientsOver4YearsWithCD4Mothers = df.getPatientsInAll(patientsOver4YearsWithCD4, enrolledWhenPregnantOrLactating);
+            CohortDefinition patientsOver4YearsWithCD4LessThan250Mothers = df.getPatientsInAll(patientsOver4YearsWithCD4LessThan250, enrolledWhenPregnantOrLactating);
+            CohortDefinition netCurrentCohortAliveMothers = df.getPatientsInAll(netCurrentCohortAlive, enrolledWhenPregnantOrLactating);
 
 
-            addIndicator(dsd, String.valueOf(i) + "3", "3", startedArtDuringQuarter);
-            addIndicator(dsd, String.valueOf(i) + "4", "4", patientsHavingCD4LessThan250);
-            addIndicator(dsd, String.valueOf(i) + "5", "5", patientsOlderThan4Years);
-            addIndicator(dsd, String.valueOf(i) + "6", "6", appointments);
+            addIndicator(dsd, String.valueOf(i) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);
+            // addIndicator(dsd, String.valueOf(i) + "5", "Median base CD4", patientsOlderThan4Years);
+            addIndicator(dsd, String.valueOf(i) + "6", "TI", netTransferIn);
+            addIndicator(dsd, String.valueOf(i) + "7", "TO", netTransferredOut);
+            addIndicator(dsd, String.valueOf(i) + "8", "Net current Cohort", netCurrentCohort);
+            addIndicator(dsd, String.valueOf(i) + "9", "Stopped", netStopped);
+            addIndicator(dsd, String.valueOf(i) + "10", "Died", netDied);
+            addIndicator(dsd, String.valueOf(i) + "11", "Lost", netLost);
+            addIndicator(dsd, String.valueOf(i) + "12", "Lost to follow up", netLostToFollowUp);
+            addIndicator(dsd, String.valueOf(i) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "14", "Percentage alive and on art", netCurrentCohortAlive, netCurrentCohort);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "15", "Fraction of clients and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250, patientsOver4YearsWithCD4);
+            // addIndicator(dsd, String.valueOf(i) + "16", "Median CD4", patientsOlderThan4Years);
 
+            addIndicator(dsd, String.valueOf(i) + "3f", "Mothers started ART in this clinic original cohort", startedArtInFacilityMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "4f", "Fraction of mothers and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250Mothers, patientsOver4YearsWithBaseCD4Mothers);
+            // addIndicator(dsd, String.valueOf(i) + "5f", "Median base CD4 for mothers", patientsOlderThan4Years);
+            addIndicator(dsd, String.valueOf(i) + "6f", "Mothers TI", netTransferInMothers);
+            addIndicator(dsd, String.valueOf(i) + "7f", "Mothers TO", netTransferredOutMothers);
+            addIndicator(dsd, String.valueOf(i) + "8f", "Mothers Net current Cohort", netCurrentCohortMothers);
+            addIndicator(dsd, String.valueOf(i) + "9f", "Mothers Stopped", netStoppedMothers);
+            addIndicator(dsd, String.valueOf(i) + "10f", "Mothers Died", netDiedMothers);
+            addIndicator(dsd, String.valueOf(i) + "11f", "Mothers Lost", netLostMothers);
+            addIndicator(dsd, String.valueOf(i) + "12f", "Mothers Lost to follow up", netLostToFollowUpMothers);
+            addIndicator(dsd, String.valueOf(i) + "13f", "Mothers Net current cohort alive and on art", netCurrentCohortAliveMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "14f", "Percentage of mothers alive and on art", netCurrentCohortAliveMothers, netCurrentCohortMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i) + "15f", "Fraction of mothers and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250Mothers, patientsOver4YearsWithCD4Mothers);
+            // addIndicator(dsd, String.valueOf(i) + "16f", "Median CD4 for mothers", patientsOlderThan4Years);
 
         }
         return rd;
@@ -133,6 +202,16 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
         ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
         ci.setType(CohortIndicator.IndicatorType.COUNT);
+        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
+        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
+    }
+
+    public void addIndicatorPercentage(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, CohortDefinition denominator) {
+        CohortIndicator ci = new CohortIndicator();
+        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ci.setType(CohortIndicator.IndicatorType.FRACTION);
+        ci.setDenominator(Mapped.mapStraightThrough(denominator));
         ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
     }

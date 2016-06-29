@@ -168,7 +168,6 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
-
     public Concept getARVDuration() {
         return getConcept("99036");
     }
@@ -396,8 +395,20 @@ public class HIVMetadata extends Metadata {
     public Concept getVisitDate() {
         return getConcept("5096");
     }
+
     public Concept getYesPregnant() {
         return getConcept("1065");
     }
-    public  Concept getPregnant(){return getConcept("90041");}
+
+    public Concept getPregnant() {
+        return getConcept("90041");
+    }
+
+    public Concept getCD4() {
+        return getConcept("5497");
+    }
+
+    public Concept getTransferInPlace() {
+        return getConcept("90206");
+    }
 }

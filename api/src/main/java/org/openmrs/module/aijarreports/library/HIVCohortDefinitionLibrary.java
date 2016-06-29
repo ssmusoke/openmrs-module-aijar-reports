@@ -75,8 +75,16 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObs(hivMetadata.getArtInterruption(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getArtInterruptionStopped()), PatientSetService.TimeModifier.ANY);
     }
 
+    public CohortDefinition getInterruptedMedically(String olderThan) {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtInterruption(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getArtInterruptionStopped()), olderThan, PatientSetService.TimeModifier.ANY);
+    }
+
     public CohortDefinition gePatientsWhoDied() {
         return df.getPatientsWithCodedObs(hivMetadata.getDead(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), PatientSetService.TimeModifier.ANY);
+    }
+
+    public CohortDefinition gePatientsWhoDied(String olderThan) {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getDead(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, PatientSetService.TimeModifier.ANY);
     }
 
     public CohortDefinition getTransferredInToCareBeforePeriod() {
@@ -85,6 +93,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getEnrolledInCareToCareWhenPregnantOrLactating() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEntryPoint(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getEMTCTAtEnrollment()), PatientSetService.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPregnantOrLactating() {
+        return df.getPatientsWithCodedObs(hivMetadata.getEntryPoint(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getEMTCTAtEnrollment()), PatientSetService.TimeModifier.FIRST);
     }
 
     public CohortDefinition getOnINHDuringPeriod() {
@@ -276,5 +288,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), PatientSetService.TimeModifier.ANY);
     }
 
-
+    public CohortDefinition getPatientsWithTransferInPlace() {
+        return df.getTextBasedObs(hivMetadata.getTransferInPlace());
+    }
 }

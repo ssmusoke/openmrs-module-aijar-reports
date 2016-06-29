@@ -163,12 +163,8 @@ public class SetUp106A1AReport extends AijarDataExportManager {
 
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, transferredInBeforeQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
-
-        CohortDefinition pregnantAndLactatingEnrolledDuringQuarterAndNew = df.getPatientsInAll(enrolledDuringTheQuarter, enrolledWhenPregnantOrLactating);
-
+        
         CohortDefinition startedINHDuringQuarter = df.getPatientsNotIn(onINHDuringQuarter, onINHBeforeQuarter);
-
-        // CohortDefinition startedINHDuringQuarterAndNew = df.getPatientsInAll(startedINHDuringQuarter, enrolledDuringTheQuarter);
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
@@ -214,12 +210,6 @@ public class SetUp106A1AReport extends AijarDataExportManager {
         CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
 
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, startedArtDuringQuarter);
-
-        addIndicator(dsd, "T1", "ever enrolled before quarter", enrolledBeforeQuarter, "");
-        addIndicator(dsd, "T2", "this quarter", enrolledInTheQuarter, "");
-
-        addIndicator(dsd, "T3", "transfer in before quarter", transferredInBeforeQuarter, "");
-        addIndicator(dsd, "T4", "transfer in this quarter", transferredInTheQuarter, "");
 
         addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
         addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
