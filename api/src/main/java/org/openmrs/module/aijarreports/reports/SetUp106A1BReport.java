@@ -94,7 +94,7 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators_106a1b", Mapped.mapStraightThrough(dsd));
-        String olderThan = "y";
+        String olderThan;
 
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getPregnantOrLactating();
         CohortDefinition transferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtTransferInRegimen(), PatientSetService.TimeModifier.ANY);
@@ -111,28 +111,31 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         CohortDefinition lostToFollow = df.getLostToFollowUp();
         CohortDefinition lost = df.getLost();
 
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 0; i <= 6; i++) {
 
-            if (i == 1) {
+            if (i == 0) {
                 olderThan = "6m";
+            } else {
+                olderThan = i + "y";
             }
 
-            CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(i + olderThan);
-            CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(i + olderThan + "-1d");
+            CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(olderThan);
+            CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(olderThan + "-1d");
 
-            CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(i + olderThan + "-1d");
-            CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(i + olderThan + "-1d");
+            CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(olderThan);
+            CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(olderThan + "-1d");
 
-            CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(i + olderThan);
-            CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod(i + olderThan + "-1d");
+            CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(olderThan);
+            CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod(olderThan + "-1d");
+
+            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, PatientSetService.TimeModifier.LAST);
+            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, olderThan, PatientSetService.TimeModifier.FIRST);
+
 
             CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
             CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
 
             CohortDefinition startedArtDuringQuarter = df.getPatientsNotIn(beenOnArtDuringQuarter, beenOnArtBeforeQuarter);
-
-            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTEncounterPageEncounterType(), i + olderThan, PatientSetService.TimeModifier.LAST);
-            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, i + olderThan, PatientSetService.TimeModifier.FIRST);
 
             CohortDefinition netTransferIn = df.getPatientsInAll(patientsTransferredIn, havingArtStartDateDuringQuarter);
             CohortDefinition startedArtInFacility = df.getPatientsNotIn(startedArtDuringQuarter, patientsTransferredIn);
@@ -162,36 +165,45 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             CohortDefinition patientsOver4YearsWithCD4LessThan250Mothers = df.getPatientsInAll(patientsOver4YearsWithCD4LessThan250, enrolledWhenPregnantOrLactating);
             CohortDefinition netCurrentCohortAliveMothers = df.getPatientsInAll(netCurrentCohortAlive, enrolledWhenPregnantOrLactating);
 
+            // For Debugging
+            addIndicator(dsd, String.valueOf(i + 1) + "A1", "On ART This Quarter", onArtDuringQuarter);
+            addIndicator(dsd, String.valueOf(i + 1) + "A2", "On ART Before Quarter", onArtBeforeQuarter);
+            addIndicator(dsd, String.valueOf(i + 1) + "A3", "Having Base Regimen in the Quarter", havingBaseRegimenDuringQuarter);
+            addIndicator(dsd, String.valueOf(i + 1) + "A4", "Having Base Regimen Before Quarter", havingBaseRegimenBeforeQuarter);
+            addIndicator(dsd, String.valueOf(i + 1) + "A5", "Art Start During Quarter", havingArtStartDateDuringQuarter);
+            addIndicator(dsd, String.valueOf(i + 1) + "A6", "Art Start Before Quarter", havingArtStartDateBeforeQuarter);
 
-            addIndicator(dsd, String.valueOf(i) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);
-            // addIndicator(dsd, String.valueOf(i) + "5", "Median base CD4", patientsOlderThan4Years);
-            addIndicator(dsd, String.valueOf(i) + "6", "TI", netTransferIn);
-            addIndicator(dsd, String.valueOf(i) + "7", "TO", netTransferredOut);
-            addIndicator(dsd, String.valueOf(i) + "8", "Net current Cohort", netCurrentCohort);
-            addIndicator(dsd, String.valueOf(i) + "9", "Stopped", netStopped);
-            addIndicator(dsd, String.valueOf(i) + "10", "Died", netDied);
-            addIndicator(dsd, String.valueOf(i) + "11", "Lost", netLost);
-            addIndicator(dsd, String.valueOf(i) + "12", "Lost to follow up", netLostToFollowUp);
-            addIndicator(dsd, String.valueOf(i) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "14", "Percentage alive and on art", netCurrentCohortAlive, netCurrentCohort);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "15", "Fraction of clients and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250, patientsOver4YearsWithCD4);
-            // addIndicator(dsd, String.valueOf(i) + "16", "Median CD4", patientsOlderThan4Years);
+            // End Debugging
 
-            addIndicator(dsd, String.valueOf(i) + "3f", "Mothers started ART in this clinic original cohort", startedArtInFacilityMothers);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "4f", "Fraction of mothers and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250Mothers, patientsOver4YearsWithBaseCD4Mothers);
-            // addIndicator(dsd, String.valueOf(i) + "5f", "Median base CD4 for mothers", patientsOlderThan4Years);
-            addIndicator(dsd, String.valueOf(i) + "6f", "Mothers TI", netTransferInMothers);
-            addIndicator(dsd, String.valueOf(i) + "7f", "Mothers TO", netTransferredOutMothers);
-            addIndicator(dsd, String.valueOf(i) + "8f", "Mothers Net current Cohort", netCurrentCohortMothers);
-            addIndicator(dsd, String.valueOf(i) + "9f", "Mothers Stopped", netStoppedMothers);
-            addIndicator(dsd, String.valueOf(i) + "10f", "Mothers Died", netDiedMothers);
-            addIndicator(dsd, String.valueOf(i) + "11f", "Mothers Lost", netLostMothers);
-            addIndicator(dsd, String.valueOf(i) + "12f", "Mothers Lost to follow up", netLostToFollowUpMothers);
-            addIndicator(dsd, String.valueOf(i) + "13f", "Mothers Net current cohort alive and on art", netCurrentCohortAliveMothers);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "14f", "Percentage of mothers alive and on art", netCurrentCohortAliveMothers, netCurrentCohortMothers);
-            addIndicatorPercentage(dsd, String.valueOf(i) + "15f", "Fraction of mothers and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250Mothers, patientsOver4YearsWithCD4Mothers);
-            // addIndicator(dsd, String.valueOf(i) + "16f", "Median CD4 for mothers", patientsOlderThan4Years);
+            addIndicator(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);
+            // addIndicator(dsd, String.valueOf(i + 1) + "5", "Median base CD4", patientsOlderThan4Years);
+            addIndicator(dsd, String.valueOf(i + 1) + "6", "TI", netTransferIn);
+            addIndicator(dsd, String.valueOf(i + 1) + "7", "TO", netTransferredOut);
+            addIndicator(dsd, String.valueOf(i + 1) + "8", "Net current Cohort", netCurrentCohort);
+            addIndicator(dsd, String.valueOf(i + 1) + "9", "Stopped", netStopped);
+            addIndicator(dsd, String.valueOf(i + 1) + "10", "Died", netDied);
+            addIndicator(dsd, String.valueOf(i + 1) + "11", "Lost", netLost);
+            addIndicator(dsd, String.valueOf(i + 1) + "12", "Lost to follow up", netLostToFollowUp);
+            addIndicator(dsd, String.valueOf(i + 1) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14", "Percentage alive and on art", netCurrentCohortAlive, netCurrentCohort);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15", "Fraction of clients and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250, patientsOver4YearsWithCD4);
+            // addIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", patientsOlderThan4Years);
+
+            addIndicator(dsd, String.valueOf(i + 1) + "3f", "Mothers started ART in this clinic original cohort", startedArtInFacilityMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4f", "Fraction of mothers and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250Mothers, patientsOver4YearsWithBaseCD4Mothers);
+            // addIndicator(dsd, String.valueOf(i + 1) + "5f", "Median base CD4 for mothers", patientsOlderThan4Years);
+            addIndicator(dsd, String.valueOf(i + 1) + "6f", "Mothers TI", netTransferInMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "7f", "Mothers TO", netTransferredOutMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "8f", "Mothers Net current Cohort", netCurrentCohortMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "9f", "Mothers Stopped", netStoppedMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "10f", "Mothers Died", netDiedMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "11f", "Mothers Lost", netLostMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "12f", "Mothers Lost to follow up", netLostToFollowUpMothers);
+            addIndicator(dsd, String.valueOf(i + 1) + "13f", "Mothers Net current cohort alive and on art", netCurrentCohortAliveMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14f", "Percentage of mothers alive and on art", netCurrentCohortAliveMothers, netCurrentCohortMothers);
+            addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15f", "Fraction of mothers and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250Mothers, patientsOver4YearsWithCD4Mothers);
+            // addIndicator(dsd, String.valueOf(i + 1) + "16f", "Median CD4 for mothers", patientsOlderThan4Years);
 
         }
         return rd;
