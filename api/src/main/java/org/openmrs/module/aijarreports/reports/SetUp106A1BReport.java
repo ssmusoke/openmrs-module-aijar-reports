@@ -4,15 +4,18 @@ import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.DataFactory;
 import org.openmrs.module.aijarreports.library.HIVCohortDefinitionLibrary;
+import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
+import org.openmrs.module.reporting.indicator.aggregation.MedianAggregator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,9 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
     @Autowired
     private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
+
+    @Autowired
+    private HIVPatientDataLibrary hivPatientDataLibrary;
 
     @Autowired
     private DataFactory df;
@@ -111,6 +117,8 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         CohortDefinition lostToFollow = df.getLostToFollowUp();
         CohortDefinition lost = df.getLost();
 
+        PatientDataDefinition latestCD4 = hivPatientDataLibrary.getRecentCD4();
+
         for (int i = 0; i <= 6; i++) {
 
             if (i == 0) {
@@ -121,6 +129,8 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
             CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(olderThan);
             CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(olderThan + "-1d");
+
+            PatientDataDefinition baseCD4 = hivPatientDataLibrary.getBaselineCD4(olderThan);
 
             CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(olderThan);
             CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(olderThan + "-1d");
@@ -177,7 +187,7 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
             addIndicator(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);
-            // addIndicator(dsd, String.valueOf(i + 1) + "5", "Median base CD4", patientsOlderThan4Years);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "5", "Median base CD4", baseCD4);
             addIndicator(dsd, String.valueOf(i + 1) + "6", "TI", netTransferIn);
             addIndicator(dsd, String.valueOf(i + 1) + "7", "TO", netTransferredOut);
             addIndicator(dsd, String.valueOf(i + 1) + "8", "Net current Cohort", netCurrentCohort);
@@ -188,11 +198,11 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             addIndicator(dsd, String.valueOf(i + 1) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14", "Percentage alive and on art", netCurrentCohortAlive, netCurrentCohort);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15", "Fraction of clients and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250, patientsOver4YearsWithCD4);
-            // addIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", patientsOlderThan4Years);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", latestCD4);
 
             addIndicator(dsd, String.valueOf(i + 1) + "3f", "Mothers started ART in this clinic original cohort", startedArtInFacilityMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4f", "Fraction of mothers and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250Mothers, patientsOver4YearsWithBaseCD4Mothers);
-            // addIndicator(dsd, String.valueOf(i + 1) + "5f", "Median base CD4 for mothers", patientsOlderThan4Years);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "5f", "Median base CD4 for mothers", baseCD4);
             addIndicator(dsd, String.valueOf(i + 1) + "6f", "Mothers TI", netTransferInMothers);
             addIndicator(dsd, String.valueOf(i + 1) + "7f", "Mothers TO", netTransferredOutMothers);
             addIndicator(dsd, String.valueOf(i + 1) + "8f", "Mothers Net current Cohort", netCurrentCohortMothers);
@@ -203,7 +213,7 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             addIndicator(dsd, String.valueOf(i + 1) + "13f", "Mothers Net current cohort alive and on art", netCurrentCohortAliveMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14f", "Percentage of mothers alive and on art", netCurrentCohortAliveMothers, netCurrentCohortMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15f", "Fraction of mothers and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250Mothers, patientsOver4YearsWithCD4Mothers);
-            // addIndicator(dsd, String.valueOf(i + 1) + "16f", "Median CD4 for mothers", patientsOlderThan4Years);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "16f", "Median CD4 for mothers", latestCD4);
 
         }
         return rd;
@@ -225,6 +235,16 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         ci.setType(CohortIndicator.IndicatorType.FRACTION);
         ci.setDenominator(Mapped.mapStraightThrough(denominator));
         ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
+        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
+    }
+
+    public void addMedianIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, PatientDataDefinition data) {
+        CohortIndicator ci = new CohortIndicator();
+        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ci.setAggregator(MedianAggregator.class);
+        ci.setDataToAggregate(Mapped.mapStraightThrough(data));
+        // ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
     }
 

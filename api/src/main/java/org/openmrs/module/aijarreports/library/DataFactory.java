@@ -219,17 +219,42 @@ public class DataFactory {
     // Patient Data Definitions
 
 
-    public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
-        return getMostRecentObsByEndDate(question, null);
+    //    public PatientDataDefinition getMostRecentObsByEndDate(Concept question) {
+    //        return getMostRecentObsByEndDate(question);
+    //    }
+
+    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
-    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, DataConverter converter) {
+    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
         ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(TimeQualifier.LAST);
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrBefore=endDate-" + olderThan), converter);
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter,TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
         def.setQuestion(question);
         def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate,onOrAfter=endDate"), converter);
+        return convert(def, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return convert(def, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan), converter);
     }
 
 
