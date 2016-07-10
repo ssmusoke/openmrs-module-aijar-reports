@@ -1,7 +1,9 @@
 package org.openmrs.module.aijarreports.definition.data.evaluator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.aijarreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
+import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.PatientData;
@@ -19,11 +21,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by carapai on 16/05/2016.
+ * Created by carapai on 05/07/2016.
  */
-@Handler(supports = StatusAtEnrollmentPatientDatasetDefinition.class, order = 50)
-
-public class StatusAtEnrollmentPatientDatasetDefinitionEvaluator implements PatientDataEvaluator {
+@Handler(supports = FUStatusPatientDataDefinition.class, order = 50)
+public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvaluator {
+    protected static final Log log = LogFactory.getLog(FUStatusPatientDataDefinition.class);
 
     @Autowired
     private HIVPatientDataLibrary hivLibrary;
@@ -33,16 +35,13 @@ public class StatusAtEnrollmentPatientDatasetDefinitionEvaluator implements Pati
 
     @Override
     public EvaluatedPatientData evaluate(PatientDataDefinition definition, EvaluationContext context) throws EvaluationException {
-
         EvaluatedPatientData pd = new EvaluatedPatientData(definition, context);
+        FUStatusPatientDataDefinition d = (FUStatusPatientDataDefinition) definition;
+
 
         Map<String, PatientDataDefinition> m = new LinkedHashMap<String, PatientDataDefinition>();
-        m.put("TI", hivLibrary.getFirstTransferIn());
-        m.put("PREGNANT", hivLibrary.getFirstPregnant());
-        m.put("TB", hivLibrary.getFirstTB());
-        m.put("LACTATING", hivLibrary.getFirstLactating());
-        m.put("EID", hivLibrary.getFirstEID());
 
+        m.put("hadVisit", hivLibrary.havingVisitDuringQuarter(d.getPeriodToAdd()));
         for (String questionKey : m.keySet()) {
             PatientDataDefinition def = m.get(questionKey);
             def.addParameter(new Parameter("onDate", "On Date", Date.class));

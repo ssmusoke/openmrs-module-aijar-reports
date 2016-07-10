@@ -22,7 +22,7 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupPreARTRegister extends AijarDataExportManager {
+public class SetupARTRegister extends AijarDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -53,22 +53,22 @@ public class SetupPreARTRegister extends AijarDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "98e9202d-8c00-415f-9882-43917181f087";
+        return "98e9202d-8c00-415f-9882-43917181f023";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e206-c3cd-4dc1-b332-13f1d02f1cc2";
+        return "9c85e206-c3cd-4dc1-b332-13f1d02f1c54";
     }
 
     @Override
     public String getName() {
-        return "Pre-ART Register";
+        return "ART Register";
     }
 
     @Override
     public String getDescription() {
-        return "Pre-ART Register";
+        return "ART Register";
     }
 
     @Override
@@ -93,10 +93,11 @@ public class SetupPreARTRegister extends AijarDataExportManager {
      * @return The report design
      */
     @Override
+
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:6,dataset:PRE_ART");
+        props.put("repeatingSections", "sheet:1,row:4,dataset:ART");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -114,13 +115,13 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("PRE_ART", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("ART", Mapped.mapStraightThrough(dsd));
 
         dsd.addSortCriteria("Date Enrolled", SortCriteria.SortDirection.ASC);
+        dsd.addSortCriteria("Unique ID no", SortCriteria.SortDirection.ASC);
 
         CohortDefinition everEnrolledCare = Cohorts.getPatientsWhoEnrolledInCareInYear();
         dsd.addRowFilter(Mapped.mapStraightThrough(everEnrolledCare));
-
 
         addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "Unique ID no", hivPatientData.getClinicNumber());
@@ -128,16 +129,8 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Gender", builtInPatientData.getGender());
-        /*addColumn(dsd, "Age", builtInPatientData.getAgeAtEnd());*/
         addColumn(dsd, "Address", basePatientData.getTraditionalAuthority());
         addColumn(dsd, "Entry Point", hivPatientData.getEntryPoint());
-
-        addColumn(dsd, "TI", hivPatientData.getFirstTransferIn());
-        addColumn(dsd, "PREGNANT", hivPatientData.getFirstPregnant());
-        addColumn(dsd, "TB", hivPatientData.getFirstTB());
-        addColumn(dsd, "LACTATING", hivPatientData.getFirstLactating());
-        addColumn(dsd, "EID", hivPatientData.getFirstEID());
-
         addColumn(dsd, "CPT Start Date", hivPatientData.getCPTStartDate());
         addColumn(dsd, "INH Start Date", hivPatientData.getINHStartDate());
         addColumn(dsd, "TB Start Date", hivPatientData.getTBStartDate());
@@ -147,25 +140,8 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         addColumn(dsd, "3", hivPatientData.getWHOStage3Date());
         addColumn(dsd, "4", hivPatientData.getWHOStage4Date());
         addColumn(dsd, "Date Eligible for ART", hivPatientData.getARTEligibilityDate());
-
-        addColumn(dsd, "PREGNANT", hivPatientData.getFirstPregnant());
-        addColumn(dsd, "TB", hivPatientData.getFirstTB());
-        addColumn(dsd, "LACTATING", hivPatientData.getFirstLactating());
-        addColumn(dsd, "CD4", hivPatientData.getARTEligibilityCD4());
-        addColumn(dsd, "WHO", hivPatientData.getARTEligibilityWHOStage());
-
         addColumn(dsd, "Date Eligible and Ready", hivPatientData.getARTEligibilityAndReadyDate());
         addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
-
-        for (int i = 0; i <= 15; i++) {
-            addColumn(dsd, "CPT" + (i + 1), hivPatientData.getCPTStatusDuringQuarter(i));
-            addColumn(dsd, "INH" + (i + 1), hivPatientData.getINHStatusDuringQuarter(i));
-            addColumn(dsd, "DEAD" + (i + 1), hivPatientData.getDeadStatusDuringQuarter(i));
-            addColumn(dsd, "TO" + (i + 1), hivPatientData.getTOStatusDuringQuarter(i));
-            addColumn(dsd, "TB" + (i + 1), hivPatientData.getTBStatusDuringQuarter(i));
-            addColumn(dsd, "CD4" + (i + 1), hivPatientData.getCD4DuringQuarter(i));
-            addColumn(dsd, "NUTRITION" + (i + 1), hivPatientData.getNutritionalStatusDuringQuarter(i));
-        }
 
         return rd;
     }
