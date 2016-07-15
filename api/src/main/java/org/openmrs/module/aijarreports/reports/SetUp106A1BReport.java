@@ -187,7 +187,7 @@ public class SetUp106A1BReport extends AijarDataExportManager {
 
             addIndicator(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);
-            addMedianIndicator(dsd, String.valueOf(i + 1) + "5", "Median base CD4", baseCD4);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "5", "Median base CD4", baseCD4, startedArtInFacility);
             addIndicator(dsd, String.valueOf(i + 1) + "6", "TI", netTransferIn);
             addIndicator(dsd, String.valueOf(i + 1) + "7", "TO", netTransferredOut);
             addIndicator(dsd, String.valueOf(i + 1) + "8", "Net current Cohort", netCurrentCohort);
@@ -198,11 +198,11 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             addIndicator(dsd, String.valueOf(i + 1) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14", "Percentage alive and on art", netCurrentCohortAlive, netCurrentCohort);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15", "Fraction of clients and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250, patientsOver4YearsWithCD4);
-            addMedianIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", latestCD4);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", latestCD4, netCurrentCohortAlive);
 
             addIndicator(dsd, String.valueOf(i + 1) + "3f", "Mothers started ART in this clinic original cohort", startedArtInFacilityMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4f", "Fraction of mothers and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250Mothers, patientsOver4YearsWithBaseCD4Mothers);
-            addMedianIndicator(dsd, String.valueOf(i + 1) + "5f", "Median base CD4 for mothers", baseCD4);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "5f", "Median base CD4 for mothers", baseCD4, startedArtInFacilityMothers);
             addIndicator(dsd, String.valueOf(i + 1) + "6f", "Mothers TI", netTransferInMothers);
             addIndicator(dsd, String.valueOf(i + 1) + "7f", "Mothers TO", netTransferredOutMothers);
             addIndicator(dsd, String.valueOf(i + 1) + "8f", "Mothers Net current Cohort", netCurrentCohortMothers);
@@ -213,7 +213,7 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             addIndicator(dsd, String.valueOf(i + 1) + "13f", "Mothers Net current cohort alive and on art", netCurrentCohortAliveMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "14f", "Percentage of mothers alive and on art", netCurrentCohortAliveMothers, netCurrentCohortMothers);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "15f", "Fraction of mothers and above with cd4 < 250", patientsOver4YearsWithCD4LessThan250Mothers, patientsOver4YearsWithCD4Mothers);
-            addMedianIndicator(dsd, String.valueOf(i + 1) + "16f", "Median CD4 for mothers", latestCD4);
+            addMedianIndicator(dsd, String.valueOf(i + 1) + "16f", "Median CD4 for mothers", latestCD4, netCurrentCohortAliveMothers);
 
         }
         return rd;
@@ -238,13 +238,14 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
     }
 
-    public void addMedianIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, PatientDataDefinition data) {
+    public void addMedianIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, PatientDataDefinition data, CohortDefinition cohortDefinition) {
         CohortIndicator ci = new CohortIndicator();
         ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
         ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
         ci.setAggregator(MedianAggregator.class);
+        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
+        ci.setType(CohortIndicator.IndicatorType.LOGIC);
         ci.setDataToAggregate(Mapped.mapStraightThrough(data));
-        // ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), "");
     }
 

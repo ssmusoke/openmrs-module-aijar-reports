@@ -121,14 +121,13 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         CohortDefinition everEnrolledCare = Cohorts.getPatientsWhoEnrolledInCareInYear();
         dsd.addRowFilter(Mapped.mapStraightThrough(everEnrolledCare));
 
-
         addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "Unique ID no", hivPatientData.getClinicNumber());
         addColumn(dsd, "Patient Clinic ID", builtInPatientData.getPatientId());
         addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Gender", builtInPatientData.getGender());
-        /*addColumn(dsd, "Age", builtInPatientData.getAgeAtEnd());*/
+        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "Address", basePatientData.getTraditionalAuthority());
         addColumn(dsd, "Entry Point", hivPatientData.getEntryPoint());
 
@@ -160,11 +159,10 @@ public class SetupPreARTRegister extends AijarDataExportManager {
         for (int i = 0; i <= 15; i++) {
             addColumn(dsd, "CPT" + (i + 1), hivPatientData.getCPTStatusDuringQuarter(i));
             addColumn(dsd, "INH" + (i + 1), hivPatientData.getINHStatusDuringQuarter(i));
-            addColumn(dsd, "DEAD" + (i + 1), hivPatientData.getDeadStatusDuringQuarter(i));
-            addColumn(dsd, "TO" + (i + 1), hivPatientData.getTOStatusDuringQuarter(i));
             addColumn(dsd, "TB" + (i + 1), hivPatientData.getTBStatusDuringQuarter(i));
             addColumn(dsd, "CD4" + (i + 1), hivPatientData.getCD4DuringQuarter(i));
             addColumn(dsd, "NUTRITION" + (i + 1), hivPatientData.getNutritionalStatusDuringQuarter(i));
+            addColumn(dsd, "FUS" + (i + 1), hivPatientData.havingEncounterDuringQuarter(i));
         }
 
         return rd;

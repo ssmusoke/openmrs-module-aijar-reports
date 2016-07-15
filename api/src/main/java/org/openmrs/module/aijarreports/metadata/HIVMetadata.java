@@ -236,6 +236,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("90203");
     }
 
+    public Concept getBaselineWHOClinicalStage() {
+        return getConcept("99070");
+    }
+
     public Concept getWHOClinicalStage1() {
         return getConcept("90033");
     }
@@ -410,5 +414,13 @@ public class HIVMetadata extends Metadata {
 
     public Concept getTransferInPlace() {
         return getConcept("90206");
+    }
+
+    public Concept getFunctionalStatusConcept() {
+        return getConcept("90235");
+    }
+
+    public Concept getViralLoad() {
+        return getConcept("856");
     }
 }

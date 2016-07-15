@@ -2,22 +2,29 @@ package org.openmrs.module.aijarreports.definition.data.evaluator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
+import org.openmrs.module.aijarreports.common.PatientData;
+import org.openmrs.module.aijarreports.common.Period;
+import org.openmrs.module.aijarreports.common.Periods;
+import org.openmrs.module.aijarreports.common.StubDate;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.aijarreports.library.PatientDatasets;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
-import org.openmrs.module.reporting.data.patient.PatientData;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.evaluator.PatientDataEvaluator;
+import org.openmrs.module.reporting.data.patient.evaluator.SqlPatientDataEvaluator;
 import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.parameter.Mapped;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,29 +40,105 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
     @Autowired
     private PatientDataService patientDataService;
 
+    @Autowired
+    private EvaluationService evaluationService;
+
+    @Autowired
+    private SqlPatientDataEvaluator sqlPatientDataEvaluator;
+
     @Override
     public EvaluatedPatientData evaluate(PatientDataDefinition definition, EvaluationContext context) throws EvaluationException {
-        EvaluatedPatientData pd = new EvaluatedPatientData(definition, context);
-        FUStatusPatientDataDefinition d = (FUStatusPatientDataDefinition) definition;
+        FUStatusPatientDataDefinition def = (FUStatusPatientDataDefinition) definition;
+
+        EvaluatedPatientData c = new EvaluatedPatientData(def, context);
+
+        if (context.getBaseCohort() != null && context.getBaseCohort().isEmpty()) {
+            return c;
+        }
+
+        Period period = def.getPeriod();
+
+        Date anotherDate = def.getOnDate();
+
+        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(anotherDate, "yyyy-MM-dd"));
 
 
-        Map<String, PatientDataDefinition> m = new LinkedHashMap<String, PatientDataDefinition>();
+        LocalDate localStartDate = null;
+        LocalDate localEndDate = null;
 
-        m.put("hadVisit", hivLibrary.havingVisitDuringQuarter(d.getPeriodToAdd()));
-        for (String questionKey : m.keySet()) {
-            PatientDataDefinition def = m.get(questionKey);
-            def.addParameter(new Parameter("onDate", "On Date", Date.class));
-            PatientData data = patientDataService.evaluate(Mapped.mapStraightThrough(def), context);
-            for (Map.Entry<Integer, Object> e : data.getData().entrySet()) {
-                Map<String, Object> reasonsForPatient = (Map<String, Object>) pd.getData().get(e.getKey());
-                if (reasonsForPatient == null) {
-                    reasonsForPatient = new LinkedHashMap<String, Object>();
-                    pd.getData().put(e.getKey(), reasonsForPatient);
-                }
-                reasonsForPatient.put(questionKey, e.getValue());
+
+        if (def.getPeriodToAdd() > 0) {
+            if (period == Period.MONTHLY) {
+                List<LocalDate> dates = Periods.addMonths(workingDate, def.getPeriodToAdd());
+                localStartDate = dates.get(0);
+                localEndDate = dates.get(1);
+            } else if (period == Period.QUARTERLY) {
+                List<LocalDate> dates = Periods.addQuarters(workingDate, def.getPeriodToAdd());
+                localStartDate = dates.get(0);
+                localEndDate = dates.get(1);
+            }
+        } else {
+            if (period == Period.MONTHLY) {
+                localStartDate = Periods.monthStartFor(workingDate);
+                localEndDate = Periods.monthEndFor(workingDate);
+            } else if (period == Period.QUARTERLY) {
+                localStartDate = Periods.quarterStartFor(workingDate);
+                localEndDate = Periods.quarterEndFor(workingDate);
             }
         }
 
-        return pd;
+
+        SqlPatientDataDefinition sqlPatientDataDefinition = PatientDatasets.getFUStatus(localStartDate.toDate(), localEndDate.toDate());
+        EvaluatedPatientData data = sqlPatientDataEvaluator.evaluate(sqlPatientDataDefinition, context);
+
+        Map<Integer, Object> evaluatedData = data.getData();
+
+        for (Integer pId : evaluatedData.keySet()) {
+            Object o = evaluatedData.get(pId);
+            if (o != null) {
+                String dt = (String) o;
+
+                if (dt != null) {
+                    String[] splitString = dt.split(",");
+                    String s0 = splitString[0];
+                    String s1 = splitString[1];
+                    String s2 = splitString[2];
+                    String s3 = splitString[3];
+                    String s4 = splitString[4];
+
+                    PatientData patientData = new PatientData();
+
+                    if (!s0.equalsIgnoreCase("-")) {
+                        Date encounterDate = DateUtil.parseDate(s0, "yyyy-MM-dd");
+                        patientData.setEncounterDate(encounterDate);
+                    }
+
+                    if (!s1.equalsIgnoreCase("-")) {
+                       Integer numberOfSinceLastVisit = Integer.valueOf(s1);
+                        patientData.setNumberOfSinceLastVisit(numberOfSinceLastVisit);
+                    }
+
+                    if (!s2.equalsIgnoreCase("-")) {
+                       Date deathDate = DateUtil.parseDate(s2, "yyyy-MM-dd");
+                        patientData.setDeathDate(deathDate);
+                    }
+
+                    if (!s3.equalsIgnoreCase("-")) {
+                        boolean transferredOut = true;
+                        patientData.setTransferredOut(transferredOut);
+                    }
+
+                    if (!s4.equalsIgnoreCase("-")) {
+                        Date nextVisitDate = DateUtil.parseDate(s4, "yyyy-MM-dd");
+                        patientData.setNextVisitDate(nextVisitDate);
+                    }
+
+                    c.addData(pId, patientData);
+                } else {
+                    c.addData(pId, new PatientData());
+                }
+            }
+        }
+        return c;
     }
 }

@@ -13,8 +13,7 @@
  */
 package org.openmrs.module.aijarreports.definition.data.converter;
 
-import org.openmrs.Concept;
-import org.openmrs.Obs;
+import org.openmrs.module.aijarreports.common.PatientData;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
@@ -34,9 +33,23 @@ public class LastSeenConverter implements DataConverter {
      * @see DataConverter#convert(Object)
      */
     public Object convert(Object original) {
-        Obs o = (Obs) original;
+
+        PatientData o = (PatientData) original;
+
         if (o != null) {
-            return "\u2713";
+            if (o.getEncounterDate() != null && o.getNumberOfSinceLastVisit() < 90) {
+                return "\u2713";
+            } else {
+                if (o.getDeathDate() != null && o.getEncounterDate() == null) {
+                    return "DEAD";
+                } else if (o.getEncounterDate() == null && o.isTransferredOut()) {
+                    return "TO";
+                }else if(o.getEncounterDate() == null && o.getNumberOfSinceLastVisit() >= 90){
+                    return "LOST";
+                } else if (o.getNextVisitDate() != null && o.getNumberOfSinceLastVisit() >= 90) {
+                    return "\u2192";
+                }
+            }
         }
         return null;
     }
@@ -52,6 +65,6 @@ public class LastSeenConverter implements DataConverter {
      * @see DataConverter#getInputDataType()
      */
     public Class<?> getInputDataType() {
-        return Concept.class;
+        return PatientData.class;
     }
 }

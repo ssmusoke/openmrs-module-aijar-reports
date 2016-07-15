@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
@@ -18,6 +19,18 @@ public class Cohorts {
 
     public static SqlCohortDefinition getPatientsWhoEnrolledInCareInYear() {
         SqlCohortDefinition patientsStartedCareInYear = new SqlCohortDefinition("select e.patient_id from encounter e where e.voided = false and e.encounter_type = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' and YEAR(:startDate) = YEAR(e.encounter_datetime)");
+        patientsStartedCareInYear.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return patientsStartedCareInYear;
+    }
+
+    public static SqlCohortDefinition getPatientHavingARTDuringMonth() {
+        SqlCohortDefinition patientsStartedCareInYear = new SqlCohortDefinition("select o.person_id from obs o where o.voided = false and o.concept_id in (99161) and (EXTRACT(YEAR_MONTH FROM :startDate) = EXTRACT(YEAR_MONTH FROM o.value_datetime) OR EXTRACT(YEAR_MONTH FROM :startDate) = EXTRACT(YEAR_MONTH FROM o.obs_datetime)) group by o.person_id");
+        patientsStartedCareInYear.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return patientsStartedCareInYear;
+    }
+
+    public static SqlCohortDefinition getPatientHavingARTBeforeMonth() {
+        SqlCohortDefinition patientsStartedCareInYear = new SqlCohortDefinition("select o.person_id from obs o where o.voided = false and o.concept_id in (99161) and (EXTRACT(YEAR_MONTH FROM :startDate) < EXTRACT(YEAR_MONTH FROM o.value_datetime) OR EXTRACT(YEAR_MONTH FROM :startDate) < EXTRACT(YEAR_MONTH FROM o.obs_datetime)) group by o.person_id");
         patientsStartedCareInYear.addParameter(new Parameter("startDate", "startDate", Date.class));
         return patientsStartedCareInYear;
     }

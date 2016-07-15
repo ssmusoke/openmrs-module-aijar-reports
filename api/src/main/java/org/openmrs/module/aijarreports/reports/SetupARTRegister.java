@@ -117,31 +117,32 @@ public class SetupARTRegister extends AijarDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("ART", Mapped.mapStraightThrough(dsd));
 
-        dsd.addSortCriteria("Date Enrolled", SortCriteria.SortDirection.ASC);
-        dsd.addSortCriteria("Unique ID no", SortCriteria.SortDirection.ASC);
+        dsd.addSortCriteria("Date ART Started", SortCriteria.SortDirection.ASC);
 
-        CohortDefinition everEnrolledCare = Cohorts.getPatientsWhoEnrolledInCareInYear();
-        dsd.addRowFilter(Mapped.mapStraightThrough(everEnrolledCare));
+        addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
 
-        addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
+        CohortDefinition duringMonth = Cohorts.getPatientHavingARTDuringMonth();
+        CohortDefinition beforeMonth = Cohorts.getPatientHavingARTBeforeMonth();
+        CohortDefinition enrolledThisMonth = df.getPatientsNotIn(duringMonth,beforeMonth);
+
+        dsd.addRowFilter(Mapped.mapStraightThrough(enrolledThisMonth));
         addColumn(dsd, "Unique ID no", hivPatientData.getClinicNumber());
         addColumn(dsd, "Patient Clinic ID", builtInPatientData.getPatientId());
         addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Gender", builtInPatientData.getGender());
         addColumn(dsd, "Address", basePatientData.getTraditionalAuthority());
-        addColumn(dsd, "Entry Point", hivPatientData.getEntryPoint());
         addColumn(dsd, "CPT Start Date", hivPatientData.getCPTStartDate());
         addColumn(dsd, "INH Start Date", hivPatientData.getINHStartDate());
         addColumn(dsd, "TB Start Date", hivPatientData.getTBStartDate());
         addColumn(dsd, "TB Stop Date", hivPatientData.getTBStopDate());
-        addColumn(dsd, "1", hivPatientData.getWHOStage1Date());
-        addColumn(dsd, "2", hivPatientData.getWHOStage2Date());
-        addColumn(dsd, "3", hivPatientData.getWHOStage3Date());
-        addColumn(dsd, "4", hivPatientData.getWHOStage4Date());
-        addColumn(dsd, "Date Eligible for ART", hivPatientData.getARTEligibilityDate());
-        addColumn(dsd, "Date Eligible and Ready", hivPatientData.getARTEligibilityAndReadyDate());
-        addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
+
+        for (int i = 0; i <= 71; i++) {
+            addColumn(dsd, "CPT" + (i + 1), hivPatientData.getCPTStatusDuringMonth(i));
+            addColumn(dsd, "TB" + (i + 1), hivPatientData.getTBStatusDuringMonth(i));
+            addColumn(dsd, "ARV" + (i + 1), hivPatientData.getARVRegimenDuringMonth(i));
+            addColumn(dsd, "ADH" + (i + 1), hivPatientData.getARVADHDuringMonth(i));
+        }
 
         return rd;
     }

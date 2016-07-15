@@ -5,6 +5,7 @@ import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.cohort.definition.*;
 import org.openmrs.module.aijarreports.definition.data.converter.PatientIdentifierConverter;
+import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
@@ -16,6 +17,7 @@ import org.openmrs.module.reporting.data.converter.*;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.*;
+import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
@@ -236,6 +238,13 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate-" + olderThan), converter);
     }
 
+    public PatientDataDefinition getObs(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        return convert(def, converter);
+    }
+
     public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
         ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
         def.setWhich(timeQualifier);
@@ -352,6 +361,14 @@ public class DataFactory {
         def.setEncounterPeriod(period);
         def.setObsPeriod(period);
         def.setWhichObs(TimeQualifier.LAST);
+        def.setPeriodToAdd(periodToAdd);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition havingEncounterDuringPeriod(Period period, Integer periodToAdd, DataConverter converter) {
+        FUStatusPatientDataDefinition def = new FUStatusPatientDataDefinition();
+        def.setPeriod(period);
         def.setPeriodToAdd(periodToAdd);
         def.addParameter(new Parameter("onDate", "On Date", Date.class));
         return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
@@ -492,6 +509,12 @@ public class DataFactory {
         def.setObsPeriod(obsPeriod);
         def.setPeriodToAdd(periodToAdd);
         def.setValueDatetime(valueDatetime);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getAgeOnEffectiveDate(DataConverter converter) {
+        AgeDataDefinition def = new AgeDataDefinition();
         def.addParameter(new Parameter("onDate", "On Date", Date.class));
         return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
