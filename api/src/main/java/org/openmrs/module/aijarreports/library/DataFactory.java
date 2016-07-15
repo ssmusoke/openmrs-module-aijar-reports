@@ -5,6 +5,7 @@ import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.cohort.definition.*;
 import org.openmrs.module.aijarreports.definition.data.converter.PatientIdentifierConverter;
+import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
@@ -16,6 +17,7 @@ import org.openmrs.module.reporting.data.converter.*;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.*;
+import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
@@ -27,10 +29,7 @@ import org.openmrs.module.reporting.query.encounter.definition.MappedParametersE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class DataFactory {
@@ -239,7 +238,14 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate-" + olderThan), converter);
     }
 
-    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter,TimeQualifier timeQualifier) {
+    public PatientDataDefinition getObs(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        return convert(def, converter);
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
         ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
         def.setWhich(timeQualifier);
         def.setQuestion(question);
@@ -331,24 +337,230 @@ public class DataFactory {
     }
 
 
-    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+    public PatientDataDefinition getObsValue(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setQuestion(question);
         def.setEncounterTypes(encounterTypes);
-        def.setWhichEncounter(TimeQualifier.FIRST);
-        def.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
 
-    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, List<Concept> answers, DataConverter converter) {
+
+    public PatientDataDefinition getObsValue(Concept question, List<EncounterType> encounterTypes, List<Concept> answers, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setAnswers(answers);
         def.setQuestion(question);
         def.setEncounterTypes(encounterTypes);
-        def.setWhichEncounter(TimeQualifier.FIRST);
-        def.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
+
+    public PatientDataDefinition hasVisitDuringPeriod(Period period, Integer periodToAdd, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setEncounterTypes(hivMetadata.getArtEncounterTypes());
+        def.setEncounterPeriod(period);
+        def.setObsPeriod(period);
+        def.setWhichObs(TimeQualifier.LAST);
+        def.setPeriodToAdd(periodToAdd);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition havingEncounterDuringPeriod(Period period, Integer periodToAdd, DataConverter converter) {
+        FUStatusPatientDataDefinition def = new FUStatusPatientDataDefinition();
+        def.setPeriod(period);
+        def.setPeriodToAdd(periodToAdd);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, List<Concept> answers, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setQuestion(question);
+        def.setEncounterTypes(encounterTypes);
+        def.setAnswers(answers);
+        Period obsPeriod = null;
+        Period encounterPeriod = null;
+        Boolean includeEncounters = false;
+        TimeQualifier whichEncounter = null;
+        TimeQualifier whichObs = null;
+
+        Set<String> keys = args.keySet();
+
+        if (keys.contains("obsPeriod")) {
+            obsPeriod = (Period) args.get("obsPeriod");
+        }
+
+        if (keys.contains("encounterPeriod")) {
+            encounterPeriod = (Period) args.get("encounterPeriod");
+        }
+
+        if (keys.contains("includeEncounters")) {
+            includeEncounters = (Boolean) args.get("includeEncounters");
+        }
+        if (keys.contains("whichObs")) {
+            whichObs = (TimeQualifier) args.get("whichObs");
+        }
+
+        if (keys.contains("whichEncounter")) {
+            whichEncounter = (TimeQualifier) args.get("whichEncounter");
+        }
+
+        if (includeEncounters) {
+            def.setWhichEncounter(whichEncounter);
+            def.setEncounterPeriod(encounterPeriod);
+        }
+        def.setWhichObs(whichObs);
+        def.setObsPeriod(obsPeriod);
+        def.setPeriodToAdd(periodToAdd);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<EncounterType> encounterTypes, Map<String, Object> args, Integer periodToAdd, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setQuestion(question);
+        def.setEncounterTypes(encounterTypes);
+        Period obsPeriod = null;
+        Period encounterPeriod = null;
+        Boolean includeEncounters = false;
+        TimeQualifier whichEncounter = null;
+        TimeQualifier whichObs = null;
+        Boolean valueDatetime = false;
+
+        Set<String> keys = args.keySet();
+
+        if (keys.contains("obsPeriod")) {
+            obsPeriod = (Period) args.get("obsPeriod");
+        }
+
+        if (keys.contains("encounterPeriod")) {
+            encounterPeriod = (Period) args.get("encounterPeriod");
+        }
+
+        if (keys.contains("includeEncounters")) {
+            includeEncounters = (Boolean) args.get("includeEncounters");
+        }
+        if (keys.contains("whichObs")) {
+            whichObs = (TimeQualifier) args.get("whichObs");
+        }
+
+        if (keys.contains("whichEncounter")) {
+            whichEncounter = (TimeQualifier) args.get("whichEncounter");
+        }
+
+        if (keys.contains("valueDatetime")) {
+            valueDatetime = (Boolean) args.get("valueDatetime");
+        }
+
+        if (includeEncounters) {
+            def.setWhichEncounter(whichEncounter);
+            def.setEncounterPeriod(encounterPeriod);
+        }
+        def.setWhichObs(whichObs);
+        def.setObsPeriod(obsPeriod);
+        def.setPeriodToAdd(periodToAdd);
+        def.setValueDatetime(valueDatetime);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+    //
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setQuestion(question);
+        Period obsPeriod = null;
+        Period encounterPeriod = null;
+        Boolean includeEncounters = false;
+        TimeQualifier whichEncounter = null;
+        TimeQualifier whichObs = null;
+        Boolean valueDatetime = false;
+
+        Set<String> keys = args.keySet();
+
+        if (keys.contains("obsPeriod")) {
+            obsPeriod = (Period) args.get("obsPeriod");
+        }
+
+        if (keys.contains("encounterPeriod")) {
+            encounterPeriod = (Period) args.get("encounterPeriod");
+        }
+
+        if (keys.contains("includeEncounters")) {
+            includeEncounters = (Boolean) args.get("includeEncounters");
+        }
+        if (keys.contains("whichObs")) {
+            whichObs = (TimeQualifier) args.get("whichObs");
+        }
+
+        if (keys.contains("whichEncounter")) {
+            whichEncounter = (TimeQualifier) args.get("whichEncounter");
+        }
+
+        if (keys.contains("valueDatetime")) {
+            valueDatetime = (Boolean) args.get("valueDatetime");
+        }
+
+        if (includeEncounters) {
+            def.setWhichEncounter(whichEncounter);
+            def.setEncounterPeriod(encounterPeriod);
+        }
+        def.setWhichObs(whichObs);
+        def.setObsPeriod(obsPeriod);
+        def.setPeriodToAdd(periodToAdd);
+        def.setValueDatetime(valueDatetime);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getAgeOnEffectiveDate(DataConverter converter) {
+        AgeDataDefinition def = new AgeDataDefinition();
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<Concept> answers, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
+        ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
+        def.setQuestion(question);
+        def.setAnswers(answers);
+        Period obsPeriod = null;
+        Period encounterPeriod = null;
+        Boolean includeEncounters = false;
+        TimeQualifier whichEncounter = null;
+        TimeQualifier whichObs = null;
+
+        Set<String> keys = args.keySet();
+
+        if (keys.contains("obsPeriod")) {
+            obsPeriod = (Period) args.get("obsPeriod");
+        }
+
+        if (keys.contains("encounterPeriod")) {
+            encounterPeriod = (Period) args.get("encounterPeriod");
+        }
+
+        if (keys.contains("includeEncounters")) {
+            includeEncounters = (Boolean) args.get("includeEncounters");
+        }
+        if (keys.contains("whichObs")) {
+            whichObs = (TimeQualifier) args.get("whichObs");
+        }
+
+        if (keys.contains("whichEncounter")) {
+            whichEncounter = (TimeQualifier) args.get("whichEncounter");
+        }
+
+        if (includeEncounters) {
+            def.setWhichEncounter(whichEncounter);
+            def.setEncounterPeriod(encounterPeriod);
+        }
+        def.setWhichObs(whichObs);
+        def.setObsPeriod(obsPeriod);
+        def.setPeriodToAdd(periodToAdd);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
 
     // Cohorts Definitions
 
