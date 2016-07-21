@@ -12,17 +12,24 @@ public class PatientData {
     private Date deathDate;
     private boolean transferredOut;
     private Date nextVisitDate;
+    private Date artStartDate;
+    private Period period;
+    private Date lastVisit;
+    private Date periodDate;
 
     public PatientData() {
     }
 
-    public PatientData(Integer patientId, Date encounterDate, Integer numberOfSinceLastVisit, Date deathDate, boolean transferredOut, Date nextVisitDate) {
+    public PatientData(Integer patientId, Date encounterDate, Integer numberOfSinceLastVisit, Date deathDate, boolean transferredOut, Date nextVisitDate, Date artStartDate, Period period) {
         this.patientId = patientId;
         this.encounterDate = encounterDate;
         this.numberOfSinceLastVisit = numberOfSinceLastVisit;
         this.deathDate = deathDate;
         this.transferredOut = transferredOut;
         this.nextVisitDate = nextVisitDate;
+        this.artStartDate = artStartDate;
+        this.period = period;
+
     }
 
     public Date getEncounterDate() {
@@ -71,5 +78,37 @@ public class PatientData {
 
     public void setPatientId(Integer patientId) {
         this.patientId = patientId;
+    }
+
+    public Date getArtStartDate() {
+        return artStartDate;
+    }
+
+    public void setArtStartDate(Date artStartDate) {
+        this.artStartDate = artStartDate;
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Period period) {
+        this.period = period;
+    }
+
+    public Date getLastVisit() {
+        return lastVisit;
+    }
+
+    public void setLastVisit(Date lastVisit) {
+        this.lastVisit = lastVisit;
+    }
+
+    public Date getPeriodDate() {
+        return periodDate;
+    }
+
+    public void setPeriodDate(Date periodDate) {
+        this.periodDate = periodDate;
     }
 }

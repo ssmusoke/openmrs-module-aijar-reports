@@ -3,6 +3,7 @@ package org.openmrs.module.aijarreports.library;
 import org.openmrs.Concept;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -48,7 +49,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsWithObsValueAtArtInitiationAtLocationByEnd(Concept question, Concept... values) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setEncounterTypeList(hivMetadata.getEIDSummaryPageEncounterType());
-        cd.setTimeModifier(PatientSetService.TimeModifier.FIRST);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.FIRST);
         cd.setQuestion(question);
         cd.setOperator(SetComparator.IN);
         cd.setValueList(Arrays.asList(values));

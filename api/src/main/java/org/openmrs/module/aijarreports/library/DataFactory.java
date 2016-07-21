@@ -5,6 +5,7 @@ import org.openmrs.api.PatientSetService;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.cohort.definition.*;
 import org.openmrs.module.aijarreports.definition.data.converter.PatientIdentifierConverter;
+import org.openmrs.module.aijarreports.definition.data.definition.EMTCTPatientDataDefinition;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
@@ -519,6 +520,13 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
 
+    public PatientDataDefinition getEDDDate(int pregnancyNo, DataConverter converter) {
+        EMTCTPatientDataDefinition def = new EMTCTPatientDataDefinition();
+        def.setPregnancyNo(pregnancyNo);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
     public PatientDataDefinition getObsValueDuringPeriod(Concept question, List<Concept> answers, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setQuestion(question);
@@ -566,7 +574,7 @@ public class DataFactory {
 
     public CohortDefinition getPatientsWhoseObsValueDateIsOnSpecifiedDate(Concept dateConcept, List<EncounterType> types) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
-        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
@@ -680,14 +688,14 @@ public class DataFactory {
         return cd;
     }
 
-    public CohortDefinition getPatientsWithConcept(Concept question, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithConcept(Concept question, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
         return cd;
     }
 
-    public CohortDefinition getPatientsWithCodedObs(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObs(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -697,7 +705,7 @@ public class DataFactory {
         return cd;
     }
 
-    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -707,7 +715,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
-    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -717,7 +725,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -729,7 +737,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
-    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -741,7 +749,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -750,7 +758,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
-    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -759,7 +767,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -770,7 +778,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
-    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithCodedObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -781,7 +789,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithNumericObs(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObs(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -791,7 +799,7 @@ public class DataFactory {
         return cd;
     }
 
-    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -803,7 +811,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
-    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -815,7 +823,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -825,7 +833,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
-    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -835,7 +843,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -846,7 +854,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
-    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -857,7 +865,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-" + olderThan));
     }
 
-    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -866,7 +874,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
-    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
@@ -878,7 +886,7 @@ public class DataFactory {
 
     public CohortDefinition getPatientsWhoseMostRecentCodedObsInValuesByEndDate(Concept question, List<EncounterType> types, Concept... values) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
-        cd.setTimeModifier(PatientSetService.TimeModifier.MAX);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.MAX);
         cd.setQuestion(question);
         cd.setEncounterTypeList(types);
         cd.setOperator(SetComparator.IN);
@@ -889,13 +897,13 @@ public class DataFactory {
 
     public CohortDefinition getPatientsWhoseObs(Concept dateConcept, List<EncounterType> types) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
-        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
         return cd;
     }
 
-    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
@@ -907,7 +915,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
     }
 
-    public CohortDefinition getPatientsWhoseObsValueDateIsByEndDate(Concept dateConcept, List<EncounterType> types, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWhoseObsValueDateIsByEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
@@ -917,7 +925,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=endDate"));
     }
 
-    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, String olderThan, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
@@ -930,7 +938,7 @@ public class DataFactory {
     }
 
 
-    public CohortDefinition getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(Concept dateConcept, List<EncounterType> types, PatientSetService.TimeModifier timeModifier, String olderThan, String onOrPriorTo) {
+    public CohortDefinition getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier, String olderThan, String onOrPriorTo) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
@@ -976,7 +984,7 @@ public class DataFactory {
 
     public CohortDefinition getTextBasedObs(Concept question) {
         TextObsCohortDefinition cd = new TextObsCohortDefinition();
-        cd.setTimeModifier(PatientSetService.TimeModifier.ANY);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setQuestion(question);
         return cd;
     }

@@ -20,10 +20,12 @@ import org.openmrs.module.reporting.data.patient.evaluator.SqlPatientDataEvaluat
 import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,8 +107,11 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
                     String s2 = splitString[2];
                     String s3 = splitString[3];
                     String s4 = splitString[4];
+                    String s5 = splitString[5];
 
                     PatientData patientData = new PatientData();
+                    patientData.setPeriod(period);
+                    patientData.setPeriodDate(localEndDate.toDate());
 
                     if (!s0.equalsIgnoreCase("-")) {
                         Date encounterDate = DateUtil.parseDate(s0, "yyyy-MM-dd");
@@ -114,12 +119,12 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
                     }
 
                     if (!s1.equalsIgnoreCase("-")) {
-                       Integer numberOfSinceLastVisit = Integer.valueOf(s1);
+                        Integer numberOfSinceLastVisit = Integer.valueOf(s1);
                         patientData.setNumberOfSinceLastVisit(numberOfSinceLastVisit);
                     }
 
                     if (!s2.equalsIgnoreCase("-")) {
-                       Date deathDate = DateUtil.parseDate(s2, "yyyy-MM-dd");
+                        Date deathDate = DateUtil.parseDate(s2, "yyyy-MM-dd");
                         patientData.setDeathDate(deathDate);
                     }
 
@@ -133,6 +138,11 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
                         patientData.setNextVisitDate(nextVisitDate);
                     }
 
+                    if (!s5.equalsIgnoreCase("-")) {
+                        Date artStartDate = DateUtil.parseDate(s5, "yyyy-MM-dd");
+                        patientData.setArtStartDate(artStartDate);
+                    }
+
                     c.addData(pId, patientData);
                 } else {
                     c.addData(pId, new PatientData());
@@ -140,5 +150,17 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
             }
         }
         return c;
+    }
+
+    protected Map<Integer, Date> getPatientMinimumArtDateMap(HqlQueryBuilder query, EvaluationContext context) {
+        Map<Integer, Date> m = new HashMap<Integer, Date>();
+        List<Object[]> queryResults = evaluationService.evaluateToList(query, context);
+        for (Object[] row : queryResults) {
+            Date a = (Date) row[1];
+            Date b = (Date) row[2];
+            Date minimum = a == null ? b : (b == null ? a : (a.before(b) ? a : b));
+            m.put((Integer) row[0], minimum);
+        }
+        return m;
     }
 }
