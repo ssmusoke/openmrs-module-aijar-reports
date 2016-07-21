@@ -11,8 +11,10 @@ import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,6 +45,7 @@ public class StatusAtEnrollmentPatientDatasetDefinitionEvaluator implements Pati
 
         for (String questionKey : m.keySet()) {
             PatientDataDefinition def = m.get(questionKey);
+            def.addParameter(new Parameter("onDate", "On Date", Date.class));
             PatientData data = patientDataService.evaluate(Mapped.mapStraightThrough(def), context);
             for (Map.Entry<Integer, Object> e : data.getData().entrySet()) {
                 Map<String, Object> reasonsForPatient = (Map<String, Object>) pd.getData().get(e.getKey());

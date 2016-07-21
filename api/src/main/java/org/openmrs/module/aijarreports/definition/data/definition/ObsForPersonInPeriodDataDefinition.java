@@ -4,10 +4,9 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Obs;
 import org.openmrs.module.aijarreports.common.Period;
-import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.BaseDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationPropertyCachingStrategy;
 import org.openmrs.module.reporting.evaluation.caching.Caching;
@@ -21,12 +20,14 @@ import java.util.List;
 @Caching(
         strategy = ConfigurationPropertyCachingStrategy.class
 )
-public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition implements PersonDataDefinition {
+public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
 
     @ConfigurationProperty
-    private Period period;
+    private Period obsPeriod;
     @ConfigurationProperty
-    private Date startDate;
+    private Period encounterPeriod;
+    @ConfigurationProperty
+    private Date onDate;
     @ConfigurationProperty
     private List<EncounterType> encounterTypes;
     @ConfigurationProperty
@@ -34,21 +35,17 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
     @ConfigurationProperty
     private TimeQualifier whichEncounter;
     @ConfigurationProperty
+    private TimeQualifier whichObs;
+    @ConfigurationProperty
     private List<Concept> answers;
     @ConfigurationProperty
-    private Date valueDatetime;
+    private int periodToAdd = 0;
     @ConfigurationProperty
-    private Double valueNumeric;
+    private boolean encountersInclusive = false;
     @ConfigurationProperty
-    private RangeComparator rangeComparator;
+    private boolean valueDatetime = false;
     @ConfigurationProperty
-    private int monthsToAdd = 0;
-    @ConfigurationProperty
-    private int quartersToAdd = 0;
-    @ConfigurationProperty
-    private int yearsToAdd = 0;
-    @ConfigurationProperty
-    private boolean compareDates = false;
+    private String whichReport;
 
 
     public ObsForPersonInPeriodDataDefinition() {
@@ -59,35 +56,33 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
         super(name);
     }
 
-    public ObsForPersonInPeriodDataDefinition(String name, TimeQualifier whichEncounter, Concept question, Date startDate) {
-        this(name);
-        this.whichEncounter = whichEncounter;
-        this.question = question;
-        this.startDate = startDate;
-    }
-
     @Override
     public Class<?> getDataType() {
-        if (whichEncounter == TimeQualifier.LAST || whichEncounter == TimeQualifier.FIRST) {
-            return Obs.class;
-        }
-        return List.class;
+        return Obs.class;
     }
 
-    public Period getPeriod() {
-        return period;
+    public Period getObsPeriod() {
+        return obsPeriod;
     }
 
-    public void setPeriod(Period period) {
-        this.period = period;
+    public void setObsPeriod(Period obsPeriod) {
+        this.obsPeriod = obsPeriod;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Period getEncounterPeriod() {
+        return encounterPeriod;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setEncounterPeriod(Period encounterPeriod) {
+        this.encounterPeriod = encounterPeriod;
+    }
+
+    public Date getOnDate() {
+        return onDate;
+    }
+
+    public void setOnDate(Date onDate) {
+        this.onDate = onDate;
     }
 
     public List<EncounterType> getEncounterTypes() {
@@ -114,14 +109,6 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
         this.whichEncounter = whichEncounter;
     }
 
-    public Double getValueNumeric() {
-        return valueNumeric;
-    }
-
-    public void setValueNumeric(Double valueNumeric) {
-        this.valueNumeric = valueNumeric;
-    }
-
     public List<Concept> getAnswers() {
         return answers;
     }
@@ -130,51 +117,43 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
         this.answers = answers;
     }
 
-    public Date getValueDatetime() {
+    public int getPeriodToAdd() {
+        return periodToAdd;
+    }
+
+    public void setPeriodToAdd(int periodToAdd) {
+        this.periodToAdd = periodToAdd;
+    }
+
+    public TimeQualifier getWhichObs() {
+        return whichObs;
+    }
+
+    public void setWhichObs(TimeQualifier whichObs) {
+        this.whichObs = whichObs;
+    }
+
+    public boolean isEncountersInclusive() {
+        return encountersInclusive;
+    }
+
+    public void setEncountersInclusive(boolean encountersInclusive) {
+        this.encountersInclusive = encountersInclusive;
+    }
+
+    public boolean isValueDatetime() {
         return valueDatetime;
     }
 
-    public void setValueDatetime(Date valueDatetime) {
+    public void setValueDatetime(boolean valueDatetime) {
         this.valueDatetime = valueDatetime;
     }
 
-    public RangeComparator getRangeComparator() {
-        return rangeComparator;
+    public String getWhichReport() {
+        return whichReport;
     }
 
-    public void setRangeComparator(RangeComparator rangeComparator) {
-        this.rangeComparator = rangeComparator;
-    }
-
-    public int getMonthsToAdd() {
-        return monthsToAdd;
-    }
-
-    public void setMonthsToAdd(int monthsToAdd) {
-        this.monthsToAdd = monthsToAdd;
-    }
-
-    public int getQuartersToAdd() {
-        return quartersToAdd;
-    }
-
-    public void setQuartersToAdd(int quartersToAdd) {
-        this.quartersToAdd = quartersToAdd;
-    }
-
-    public int getYearsToAdd() {
-        return yearsToAdd;
-    }
-
-    public void setYearsToAdd(int yearsToAdd) {
-        this.yearsToAdd = yearsToAdd;
-    }
-
-    public boolean isCompareDates() {
-        return compareDates;
-    }
-
-    public void setCompareDates(boolean compareDates) {
-        this.compareDates = compareDates;
+    public void setWhichReport(String whichReport) {
+        this.whichReport = whichReport;
     }
 }
