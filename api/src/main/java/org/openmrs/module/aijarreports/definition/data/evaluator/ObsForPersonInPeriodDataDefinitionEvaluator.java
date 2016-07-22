@@ -188,31 +188,9 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
         for (Integer pId : obsForPatients.keySet()) {
             List<Obs> l = obsForPatients.get(pId);
             Obs obs = l.get(0);
-            /*if (obsPeriod == Period.QUARTERLY) {
-
-                Map<Integer,Date> data = getPatientMinimumArtDateMap(artStartQuery, context);
-                if (data.containsKey(pId)) {
-                    if (obs.getObsDatetime().before(data.get(pId)) || obs.getObsDatetime().compareTo(data.get(pId)) == 0) {
-                        c.addData(pId, obs);
-                    }
-                }
-            } else {*/
             c.addData(pId, obs);
-            //}
         }
 
         return c;
-    }
-
-    protected Map<Integer, Date> getPatientMinimumArtDateMap(HqlQueryBuilder query, EvaluationContext context) {
-        Map<Integer, Date> m = new HashMap<Integer, Date>();
-        List<Object[]> queryResults = evaluationService.evaluateToList(query, context);
-        for (Object[] row : queryResults) {
-            Date a = (Date) row[1];
-            Date b = (Date) row[2];
-            Date minimum = a == null ? b : (b == null ? a : (a.before(b) ? a : b));
-            m.put((Integer) row[0], minimum);
-        }
-        return m;
     }
 }

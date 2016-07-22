@@ -14,6 +14,7 @@
 package org.openmrs.module.aijarreports.definition.data.converter;
 
 import org.openmrs.module.aijarreports.common.PatientData;
+import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
@@ -37,20 +38,39 @@ public class LastSeenConverter implements DataConverter {
         PatientData o = (PatientData) original;
 
         if (o != null) {
-            if (o.getEncounterDate() != null && o.getNumberOfSinceLastVisit() < 90) {
-                return "\u2713";
-            } else {
-                if (o.getDeathDate() != null && o.getEncounterDate() == null) {
-                    return "DEAD";
-                } else if (o.getEncounterDate() == null && o.isTransferredOut()) {
-                    return "TO";
-                }else if(o.getEncounterDate() == null && o.getNumberOfSinceLastVisit() >= 90){
-                    return "LOST";
-                } else if (o.getNextVisitDate() != null && o.getNumberOfSinceLastVisit() >= 90) {
-                    return "\u2192";
+            if (o.getPeriod() == Period.MONTHLY) {
+                if (o.getEncounterDate() != null && o.getNumberOfSinceLastVisit() < 90) {
+                    return "\u2713";
+                } else {
+                    if (o.getDeathDate() != null && o.getEncounterDate() == null) {
+                        return "DEAD";
+                    } else if (o.getEncounterDate() == null && o.isTransferredOut()) {
+                        return "TO";
+                    } else if (o.getEncounterDate() == null && o.getNumberOfSinceLastVisit() >= 90) {
+                        return "LOST";
+                    } else if (o.getNextVisitDate() != null && o.getNumberOfSinceLastVisit() >= 90) {
+                        return "\u2192";
+                    }
+                }
+            } else if (o.getPeriod() == Period.QUARTERLY) {
+                if (o.getEncounterDate() != null) {
+                    if (o.getNumberOfSinceLastVisit() < 90)
+                        return "\u2713";
+                } else {
+                    if (o.getDeathDate() != null) {
+                        if (o.getEncounterDate() == null)
+                            return "DEAD";
+                    } else if (o.getEncounterDate() == null && o.isTransferredOut()) {
+                        return "TO";
+                    } else if (o.getEncounterDate() == null && o.getNumberOfSinceLastVisit() >= 90) {
+                        return "LOST";
+                    } else if (o.getNextVisitDate() != null && o.getNumberOfSinceLastVisit() >= 90) {
+                        return "\u2192";
+                    }
                 }
             }
         }
+
         return null;
     }
 

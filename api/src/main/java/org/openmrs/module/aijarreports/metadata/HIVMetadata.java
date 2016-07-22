@@ -423,4 +423,8 @@ public class HIVMetadata extends Metadata {
     public Concept getViralLoad() {
         return getConcept("856");
     }
+
+    public Concept getEDD() {
+        return getConcept("5596");
+    }
 }
