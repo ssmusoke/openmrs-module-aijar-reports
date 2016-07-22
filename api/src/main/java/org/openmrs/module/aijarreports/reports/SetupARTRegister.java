@@ -119,29 +119,40 @@ public class SetupARTRegister extends AijarDataExportManager {
 
         dsd.addSortCriteria("Date ART Started", SortCriteria.SortDirection.ASC);
 
-        addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
-
         CohortDefinition duringMonth = Cohorts.getPatientHavingARTDuringMonth();
         CohortDefinition beforeMonth = Cohorts.getPatientHavingARTBeforeMonth();
-        CohortDefinition enrolledThisMonth = df.getPatientsNotIn(duringMonth,beforeMonth);
+        CohortDefinition enrolledThisMonth = df.getPatientsNotIn(duringMonth, beforeMonth);
 
         dsd.addRowFilter(Mapped.mapStraightThrough(enrolledThisMonth));
+        addColumn(dsd, "Date ART Started", hivPatientData.getARTStartDate());
         addColumn(dsd, "Unique ID no", hivPatientData.getClinicNumber());
         addColumn(dsd, "Patient Clinic ID", builtInPatientData.getPatientId());
         addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Gender", builtInPatientData.getGender());
+        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "Address", basePatientData.getTraditionalAuthority());
+        addColumn(dsd, "FUS", hivPatientData.getBaselineFunctionalStatus());
+        addColumn(dsd, "Weight", hivPatientData.getBaselineWeight());
+        addColumn(dsd, "CS", hivPatientData.getBaselineWHOStage());
+        addColumn(dsd, "CD4", hivPatientData.getArtBaselineCD4());
+        addColumn(dsd, "Viral load", hivPatientData.getViralLoad(0));
         addColumn(dsd, "CPT Start Date", hivPatientData.getCPTStartDate());
         addColumn(dsd, "INH Start Date", hivPatientData.getINHStartDate());
         addColumn(dsd, "TB Start Date", hivPatientData.getTBStartDate());
         addColumn(dsd, "TB Stop Date", hivPatientData.getTBStopDate());
+        addColumn(dsd, "EDD1", hivPatientData.getEDDDate(0));
+        addColumn(dsd, "EDD2", hivPatientData.getEDDDate(1));
+        addColumn(dsd, "EDD3", hivPatientData.getEDDDate(2));
+        addColumn(dsd, "EDD4", hivPatientData.getEDDDate(3));
+        addColumn(dsd, "BASE REGIMEN", hivPatientData.getBaseRegimen());
 
         for (int i = 0; i <= 71; i++) {
             addColumn(dsd, "CPT" + (i + 1), hivPatientData.getCPTStatusDuringMonth(i));
             addColumn(dsd, "TB" + (i + 1), hivPatientData.getTBStatusDuringMonth(i));
             addColumn(dsd, "ARV" + (i + 1), hivPatientData.getARVRegimenDuringMonth(i));
             addColumn(dsd, "ADH" + (i + 1), hivPatientData.getARVADHDuringMonth(i));
+            addColumn(dsd, "FUS" + (i + 1), hivPatientData.havingEncounterDuringMonth(i));
         }
 
         return rd;

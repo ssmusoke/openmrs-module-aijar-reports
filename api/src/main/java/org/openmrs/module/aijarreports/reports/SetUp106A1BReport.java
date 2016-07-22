@@ -7,6 +7,7 @@ import org.openmrs.module.aijarreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.RangeComparator;
@@ -103,11 +104,11 @@ public class SetUp106A1BReport extends AijarDataExportManager {
         String olderThan;
 
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getPregnantOrLactating();
-        CohortDefinition transferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtTransferInRegimen(), PatientSetService.TimeModifier.ANY);
-        CohortDefinition transferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), PatientSetService.TimeModifier.ANY);
+        CohortDefinition transferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition transferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition transferInRegimenDate = df.getPatientsWhoseObs(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition patientsWithCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), PatientSetService.TimeModifier.LAST);
-        CohortDefinition patientsHavingCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, PatientSetService.TimeModifier.LAST);
+        CohortDefinition patientsWithCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientsHavingCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition patientsOlderThan4Years = commonCohortDefinitionLibrary.agedAtLeast(5);
         CohortDefinition transferInFrom = hivCohortDefinitionLibrary.getPatientsWithTransferInPlace();
         CohortDefinition patientsTransferredIn = df.getPatientsInAny(transferInRegimen, transferInRegimenOther, transferInRegimenDate, transferInFrom);
@@ -138,8 +139,8 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(olderThan);
             CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod(olderThan + "-1d");
 
-            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, PatientSetService.TimeModifier.LAST);
-            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, olderThan, PatientSetService.TimeModifier.FIRST);
+            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.LAST);
+            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, olderThan, BaseObsCohortDefinition.TimeModifier.FIRST);
 
 
             CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
@@ -174,16 +175,6 @@ public class SetUp106A1BReport extends AijarDataExportManager {
             CohortDefinition patientsOver4YearsWithCD4Mothers = df.getPatientsInAll(patientsOver4YearsWithCD4, enrolledWhenPregnantOrLactating);
             CohortDefinition patientsOver4YearsWithCD4LessThan250Mothers = df.getPatientsInAll(patientsOver4YearsWithCD4LessThan250, enrolledWhenPregnantOrLactating);
             CohortDefinition netCurrentCohortAliveMothers = df.getPatientsInAll(netCurrentCohortAlive, enrolledWhenPregnantOrLactating);
-
-            // For Debugging
-            addIndicator(dsd, String.valueOf(i + 1) + "A1", "On ART This Quarter", onArtDuringQuarter);
-            addIndicator(dsd, String.valueOf(i + 1) + "A2", "On ART Before Quarter", onArtBeforeQuarter);
-            addIndicator(dsd, String.valueOf(i + 1) + "A3", "Having Base Regimen in the Quarter", havingBaseRegimenDuringQuarter);
-            addIndicator(dsd, String.valueOf(i + 1) + "A4", "Having Base Regimen Before Quarter", havingBaseRegimenBeforeQuarter);
-            addIndicator(dsd, String.valueOf(i + 1) + "A5", "Art Start During Quarter", havingArtStartDateDuringQuarter);
-            addIndicator(dsd, String.valueOf(i + 1) + "A6", "Art Start Before Quarter", havingArtStartDateBeforeQuarter);
-
-            // End Debugging
 
             addIndicator(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
             addIndicatorPercentage(dsd, String.valueOf(i + 1) + "4", "Fraction of clients and above with base cd4 < 250 numerator", patientsOver4YearsWithBaseCD4LessThan250, patientsOver4YearsWithBaseCD4);

@@ -4,7 +4,7 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
+//import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.data.converter.*;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
@@ -58,7 +58,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     @DocumentedDefinition(value = "clinicnumber", name = "Clinic Number")
     public PatientDataDefinition getClinicNumber() {
         PreferredIdentifierDataDefinition def = new PreferredIdentifierDataDefinition();
-        def.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, PatientIdentifierTypes.HIV_CARE_NUMBER.uuid()));
+        def.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115"));
         return convert(def, new PropertyConverter(PatientIdentifier.class, "identifier"));
     }
 
@@ -277,6 +277,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.havingEncounterDuringPeriod(Period.QUARTERLY, quarter, new LastSeenConverter());
     }
 
+    public PatientDataDefinition havingEncounterDuringMonth(Integer quarter) {
+        return df.havingEncounterDuringPeriod(Period.MONTHLY, quarter, new LastSeenConverter());
+    }
+
     @DocumentedDefinition(value = "cd4atenrollment", name = "CD4 at Enrollment")
     public PatientDataDefinition getCD4AtEnrollment() {
         return df.getObsByEndDate(hivMetadata.getCD4AtEnrollment(), df.getObsValueNumericConverter(), TimeQualifier.FIRST);
@@ -353,7 +357,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsValue(question, Arrays.asList(arvInitial), converter);
     }
 
-    protected PatientDataDefinition getAgeOnEffectiveDate(DataConverter ... converters) {
+    protected PatientDataDefinition getAgeOnEffectiveDate(DataConverter... converters) {
         AgeDataDefinition ageDataDefinition = new AgeDataDefinition();
         ageDataDefinition.addParameter(new Parameter("effectiveDate", "reporting.parameter.effectiveDate", Date.class));
         return convert(ageDataDefinition, converters);
@@ -415,7 +419,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getBaselineFunctionalStatus() {
-        return getFirstObsValueDuringMonth(hivMetadata.getFunctionalStatusConcept(), 0, new TIStatusConverter());
+        return getFirstObsValueDuringMonth(hivMetadata.getFunctionalStatusConcept(), 0, new FunctionalStatusConverter());
     }
 
     public PatientDataDefinition getBaselineWeight() {
@@ -435,7 +439,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getBaseRegimen() {
-        return getFirstObsValueDuringMonth(hivMetadata.getArtStartRegimen(), 0, df.getObsValueCodedConverter());
+        return getFirstObsValueDuringMonth(hivMetadata.getArtStartRegimen(), 0, new ARVConverter());
+    }
+
+    public PatientDataDefinition getEDDDate(int pregnancyNo) {
+        return df.getEDDDate(pregnancyNo, df.getObsDatetimeConverter());
     }
 
 }
