@@ -4,7 +4,6 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-//import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.data.converter.*;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
@@ -33,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+//import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
 
 /**
  * Attributes of a person not defined within the core OpenMRS definition
@@ -296,7 +297,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getRecentCD4() {
-        return df.getObsByEndDate(hivMetadata.getCD4(), df.getObsValueNumericConverter(), TimeQualifier.FIRST);
+        return df.getObsByEndDate(hivMetadata.getCD4(), df.getObsValueNumericConverter(), TimeQualifier.LAST);
+    }
+
+    public PatientDataDefinition getRecentCD4(String olderThan) {
+        return df.getObsByEndOfPeriod(hivMetadata.getCD4(), df.getObsValueNumericConverter(), olderThan, TimeQualifier.LAST);
     }
 
     public PatientDataDefinition getAgeDuringPeriod() {
