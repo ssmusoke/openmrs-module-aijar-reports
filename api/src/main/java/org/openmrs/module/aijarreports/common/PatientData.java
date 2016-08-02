@@ -11,6 +11,7 @@ public class PatientData {
     private Integer numberOfSinceLastVisit = 0;
     private Date deathDate;
     private boolean transferredOut;
+    private Date transferOutDate;
     private Date nextVisitDate;
     private Date artStartDate;
     private Period period;
@@ -111,4 +112,13 @@ public class PatientData {
     public void setPeriodDate(Date periodDate) {
         this.periodDate = periodDate;
     }
+
+    public Date getTransferOutDate() {
+        return transferOutDate;
+    }
+
+    public void setTransferOutDate(Date transferOutDate) {
+        this.transferOutDate = transferOutDate;
+    }
+    
 }

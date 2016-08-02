@@ -373,43 +373,24 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsValue(question, Arrays.asList(arvInitial), answers, converter);
     }
 
-    protected PatientDataDefinition getFirstObsValueDuringQuarter(Concept question, Integer periodToAdd, DataConverter converter) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.QUARTERLY);
-        map.put("whichObs", TimeQualifier.FIRST);
-        return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
-    }
-
     protected PatientDataDefinition getFirstObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.MONTHLY);
-        map.put("whichObs", TimeQualifier.FIRST);
+        map.put("whichEncounter", TimeQualifier.FIRST);
+        map.put("period", Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringQuarter(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.QUARTERLY);
-        map.put("whichObs", TimeQualifier.LAST);
+        map.put("whichEncounter", TimeQualifier.LAST);
+        map.put("period", Period.QUARTERLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.MONTHLY);
-        map.put("whichObs", TimeQualifier.LAST);
-        return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
-    }
-
-    protected PatientDataDefinition getObsValueDuringPeriod(Concept question, Period period, Integer periodToAdd, TimeQualifier timeQualifier, DataConverter converter) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", period);
-        map.put("whichObs", timeQualifier);
+        map.put("whichEncounter", TimeQualifier.LAST);
+        map.put("period", Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
