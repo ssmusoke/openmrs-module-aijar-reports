@@ -3,6 +3,7 @@ package org.openmrs.module.aijarreports.definition.data.evaluator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDate;
+import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.aijarreports.common.PatientData;
 import org.openmrs.module.aijarreports.common.Period;
@@ -11,6 +12,7 @@ import org.openmrs.module.aijarreports.common.StubDate;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.aijarreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.aijarreports.library.PatientDatasets;
+import org.openmrs.module.aijarreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
@@ -48,6 +50,9 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
     @Autowired
     private SqlPatientDataEvaluator sqlPatientDataEvaluator;
 
+    @Autowired
+    private HIVMetadata hivMetadata;
+
     @Override
     public EvaluatedPatientData evaluate(PatientDataDefinition definition, EvaluationContext context) throws EvaluationException {
         FUStatusPatientDataDefinition def = (FUStatusPatientDataDefinition) definition;
@@ -60,7 +65,9 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
 
         Period period = def.getPeriod();
 
-        Date anotherDate = def.getOnDate();
+        Date anotherDate = def.getStartDate();
+
+        Map<Integer, Date> m = new HashMap<Integer, Date>();
 
         LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(anotherDate, "yyyy-MM-dd"));
 
@@ -68,16 +75,26 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
         LocalDate localStartDate = null;
         LocalDate localEndDate = null;
 
+        HqlQueryBuilder artStartQuery = new HqlQueryBuilder();
+        artStartQuery.select("o.personId", "MIN(o.valueDatetime)");
+        artStartQuery.from(Obs.class, "o");
+        artStartQuery.wherePersonIn("o.personId", context);
+        artStartQuery.whereIn("o.concept", hivMetadata.getConceptList("99161"));
+        artStartQuery.groupBy("o.personId");
+
 
         if (def.getPeriodToAdd() > 0) {
-            if (period == Period.MONTHLY) {
-                List<LocalDate> dates = Periods.addMonths(workingDate, def.getPeriodToAdd());
-                localStartDate = dates.get(0);
-                localEndDate = dates.get(1);
-            } else if (period == Period.QUARTERLY) {
+            if (period == Period.QUARTERLY) {
                 List<LocalDate> dates = Periods.addQuarters(workingDate, def.getPeriodToAdd());
                 localStartDate = dates.get(0);
                 localEndDate = dates.get(1);
+            } else if (period == Period.MONTHLY) {
+                List<LocalDate> dates = Periods.addMonths(workingDate, def.getPeriodToAdd());
+                localStartDate = dates.get(0);
+                localEndDate = dates.get(1);
+            } else {
+                localStartDate = workingDate;
+                localEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
             }
         } else {
             if (period == Period.MONTHLY) {
@@ -86,12 +103,20 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
             } else if (period == Period.QUARTERLY) {
                 localStartDate = Periods.quarterStartFor(workingDate);
                 localEndDate = Periods.quarterEndFor(workingDate);
+            } else {
+                localStartDate = workingDate;
+                localEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
             }
+        }
+
+        if (period == Period.QUARTERLY) {
+            m = getPatientDateMap(artStartQuery, context);
         }
 
 
         SqlPatientDataDefinition sqlPatientDataDefinition = PatientDatasets.getFUStatus(localStartDate.toDate(), localEndDate.toDate());
         EvaluatedPatientData data = sqlPatientDataEvaluator.evaluate(sqlPatientDataDefinition, context);
+
 
         Map<Integer, Object> evaluatedData = data.getData();
 
@@ -112,6 +137,10 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
                     PatientData patientData = new PatientData();
                     patientData.setPeriod(period);
                     patientData.setPeriodDate(localEndDate.toDate());
+
+                    if (m.containsKey(pId)) {
+                        patientData.setArtStartDate(m.get(pId));
+                    }
 
                     if (!s0.equalsIgnoreCase("-")) {
                         Date encounterDate = DateUtil.parseDate(s0, "yyyy-MM-dd");
@@ -152,14 +181,11 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
         return c;
     }
 
-    protected Map<Integer, Date> getPatientMinimumArtDateMap(HqlQueryBuilder query, EvaluationContext context) {
+    protected Map<Integer, Date> getPatientDateMap(HqlQueryBuilder query, EvaluationContext context) {
         Map<Integer, Date> m = new HashMap<Integer, Date>();
         List<Object[]> queryResults = evaluationService.evaluateToList(query, context);
         for (Object[] row : queryResults) {
-            Date a = (Date) row[1];
-            Date b = (Date) row[2];
-            Date minimum = a == null ? b : (b == null ? a : (a.before(b) ? a : b));
-            m.put((Integer) row[0], minimum);
+            m.put((Integer) row[0], (Date) row[1]);
         }
         return m;
     }

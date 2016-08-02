@@ -4,7 +4,6 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-//import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
 import org.openmrs.module.aijarreports.common.Period;
 import org.openmrs.module.aijarreports.definition.data.converter.*;
 import org.openmrs.module.aijarreports.definition.data.definition.FUStatusPatientDataDefinition;
@@ -33,6 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+//import org.openmrs.module.aijar.metadata.core.PatientIdentifierTypes;
 
 /**
  * Attributes of a person not defined within the core OpenMRS definition
@@ -296,7 +297,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getRecentCD4() {
-        return df.getObsByEndDate(hivMetadata.getCD4(), df.getObsValueNumericConverter(), TimeQualifier.FIRST);
+        return df.getObsByEndDate(hivMetadata.getCD4(), df.getObsValueNumericConverter(), TimeQualifier.LAST);
+    }
+
+    public PatientDataDefinition getRecentCD4(String olderThan) {
+        return df.getObsByEndOfPeriod(hivMetadata.getCD4(), df.getObsValueNumericConverter(), olderThan, TimeQualifier.LAST);
     }
 
     public PatientDataDefinition getAgeDuringPeriod() {
@@ -368,43 +373,24 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsValue(question, Arrays.asList(arvInitial), answers, converter);
     }
 
-    protected PatientDataDefinition getFirstObsValueDuringQuarter(Concept question, Integer periodToAdd, DataConverter converter) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.QUARTERLY);
-        map.put("whichObs", TimeQualifier.FIRST);
-        return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
-    }
-
     protected PatientDataDefinition getFirstObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.MONTHLY);
-        map.put("whichObs", TimeQualifier.FIRST);
+        map.put("whichEncounter", TimeQualifier.FIRST);
+        map.put("period", Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringQuarter(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.QUARTERLY);
-        map.put("whichObs", TimeQualifier.LAST);
+        map.put("whichEncounter", TimeQualifier.LAST);
+        map.put("period", Period.QUARTERLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", Period.MONTHLY);
-        map.put("whichObs", TimeQualifier.LAST);
-        return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
-    }
-
-    protected PatientDataDefinition getObsValueDuringPeriod(Concept question, Period period, Integer periodToAdd, TimeQualifier timeQualifier, DataConverter converter) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("includeEncounters", false);
-        map.put("obsPeriod", period);
-        map.put("whichObs", timeQualifier);
+        map.put("whichEncounter", TimeQualifier.LAST);
+        map.put("period", Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 

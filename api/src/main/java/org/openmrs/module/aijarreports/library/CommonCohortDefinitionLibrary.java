@@ -10,6 +10,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Library of common Cohort definitions
@@ -36,6 +37,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition females() {
         GenderCohortDefinition cd = new GenderCohortDefinition();
         cd.setName("Females");
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         cd.setFemaleIncluded(true);
         return cd;
     }
@@ -48,6 +51,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     @DocumentedDefinition(value = "gender.males", name = "Males")
     public CohortDefinition males() {
         GenderCohortDefinition cd = new GenderCohortDefinition();
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         cd.setName("Males");
         cd.setMaleIncluded(true);
         return cd;
@@ -63,6 +68,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.setName("aged at most " + maxAge);
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMaxAge(maxAge);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         return cd;
     }
 
@@ -75,6 +82,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         AgeCohortDefinition cd = new AgeCohortDefinition();
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         return cd;
     }
 
@@ -95,6 +104,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition below6months() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(6);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         return cd;
     }
 
@@ -108,6 +119,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         AgeCohortDefinition cd = (AgeCohortDefinition) agedBetween(6, 59);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
         cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
         return cd;
     }
 
