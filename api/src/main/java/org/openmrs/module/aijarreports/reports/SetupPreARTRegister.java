@@ -96,7 +96,7 @@ public class SetupPreARTRegister extends AijarDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:6,dataset:PRE_ART");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:PRE_ART");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;

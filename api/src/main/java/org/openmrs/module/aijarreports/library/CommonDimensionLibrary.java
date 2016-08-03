@@ -21,6 +21,8 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     @Autowired
     private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
     private DataFactory df;
@@ -109,5 +111,17 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         return ageGenderDimension;
     }
 
+
+    public CohortDefinitionDimension get106bEMTCTGroup(String olderThan) {
+        CohortDefinitionDimension eMTCTDimension = new CohortDefinitionDimension();
+
+        CohortDefinition pregnant = hivCohortDefinitionLibrary.getPregnantOrLactating(olderThan);
+
+        eMTCTDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        eMTCTDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        eMTCTDimension.addCohortDefinition("pregnant", Mapped.mapStraightThrough(pregnant));
+
+        return eMTCTDimension;
+    }
 
 }

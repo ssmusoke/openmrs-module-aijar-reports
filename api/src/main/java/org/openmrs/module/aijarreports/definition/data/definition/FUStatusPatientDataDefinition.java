@@ -26,7 +26,7 @@ public class FUStatusPatientDataDefinition extends BaseDataDefinition implements
     }
 
     @ConfigurationProperty
-    private Date onDate;
+    private Date startDate;
 
     @ConfigurationProperty
     private Period period;
@@ -34,12 +34,12 @@ public class FUStatusPatientDataDefinition extends BaseDataDefinition implements
     @ConfigurationProperty
     private int periodToAdd = 0;
 
-    public Date getOnDate() {
-        return onDate;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setOnDate(Date onDate) {
-        this.onDate = onDate;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Period getPeriod() {

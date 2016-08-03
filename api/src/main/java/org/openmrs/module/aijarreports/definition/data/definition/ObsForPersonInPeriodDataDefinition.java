@@ -23,11 +23,9 @@ import java.util.List;
 public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
 
     @ConfigurationProperty
-    private Period obsPeriod;
+    private Period period;
     @ConfigurationProperty
-    private Period encounterPeriod;
-    @ConfigurationProperty
-    private Date onDate;
+    private Date startDate;
     @ConfigurationProperty
     private List<EncounterType> encounterTypes;
     @ConfigurationProperty
@@ -35,17 +33,9 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
     @ConfigurationProperty
     private TimeQualifier whichEncounter;
     @ConfigurationProperty
-    private TimeQualifier whichObs;
-    @ConfigurationProperty
     private List<Concept> answers;
     @ConfigurationProperty
     private int periodToAdd = 0;
-    @ConfigurationProperty
-    private boolean encountersInclusive = false;
-    @ConfigurationProperty
-    private boolean valueDatetime = false;
-    @ConfigurationProperty
-    private String whichReport;
 
 
     public ObsForPersonInPeriodDataDefinition() {
@@ -61,28 +51,20 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
         return Obs.class;
     }
 
-    public Period getObsPeriod() {
-        return obsPeriod;
+    public Period getPeriod() {
+        return period;
     }
 
-    public void setObsPeriod(Period obsPeriod) {
-        this.obsPeriod = obsPeriod;
+    public void setPeriod(Period period) {
+        this.period = period;
     }
 
-    public Period getEncounterPeriod() {
-        return encounterPeriod;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setEncounterPeriod(Period encounterPeriod) {
-        this.encounterPeriod = encounterPeriod;
-    }
-
-    public Date getOnDate() {
-        return onDate;
-    }
-
-    public void setOnDate(Date onDate) {
-        this.onDate = onDate;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public List<EncounterType> getEncounterTypes() {
@@ -123,37 +105,5 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
 
     public void setPeriodToAdd(int periodToAdd) {
         this.periodToAdd = periodToAdd;
-    }
-
-    public TimeQualifier getWhichObs() {
-        return whichObs;
-    }
-
-    public void setWhichObs(TimeQualifier whichObs) {
-        this.whichObs = whichObs;
-    }
-
-    public boolean isEncountersInclusive() {
-        return encountersInclusive;
-    }
-
-    public void setEncountersInclusive(boolean encountersInclusive) {
-        this.encountersInclusive = encountersInclusive;
-    }
-
-    public boolean isValueDatetime() {
-        return valueDatetime;
-    }
-
-    public void setValueDatetime(boolean valueDatetime) {
-        this.valueDatetime = valueDatetime;
-    }
-
-    public String getWhichReport() {
-        return whichReport;
-    }
-
-    public void setWhichReport(String whichReport) {
-        this.whichReport = whichReport;
     }
 }
