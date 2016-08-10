@@ -21,14 +21,14 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 /**
  * TB status converter
  */
-public class TbStatusConverter implements DataConverter {
+public class TBStatusConverter implements DataConverter {
 
     //***** CONSTRUCTORS *****
 
     /**
      * Default constructor
      */
-    public TbStatusConverter() {
+    public TBStatusConverter() {
     }
 
     //***** INSTANCE METHODS *****

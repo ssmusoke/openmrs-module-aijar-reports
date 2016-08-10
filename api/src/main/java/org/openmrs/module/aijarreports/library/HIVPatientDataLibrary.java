@@ -170,11 +170,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getTBStatusDuringQuarter(Integer num) {
-        return getLastObsValueDuringQuarter(hivMetadata.getTBStatus(), num, new TbStatusConverter());
+        return getLastObsValueDuringQuarter(hivMetadata.getTBStatus(), num, new TBStatusConverter());
     }
 
     public PatientDataDefinition getTBStatusDuringMonth(Integer num) {
-        return getLastObsValueDuringMonth(hivMetadata.getTBStatus(), num, new TbStatusConverter());
+        return getLastObsValueDuringMonth(hivMetadata.getTBStatus(), num, new TBStatusConverter());
     }
 
     public PatientDataDefinition getDeadStatusDuringQuarter(Integer num) {
