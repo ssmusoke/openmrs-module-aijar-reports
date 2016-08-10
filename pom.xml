@@ -44,7 +44,7 @@
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
 		<metadatasharingVersion>1.1.9</metadatasharingVersion>
 		<patientSummaryVersion>2.1</patientSummaryVersion>
-		<reportingVersion>0.9.9</reportingVersion>
+		<reportingVersion>0.10.0</reportingVersion>
 		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
 	</properties>
 
