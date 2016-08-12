@@ -30,7 +30,7 @@
         "id": "ugandaemr.reports.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "label": "ugandaemrreports.app.report.list.label",
+        "label": "ugandaemr.reportsapp.list.label",
         "url": "aijarreports/reports/home.page",
         "icon": "icon-book",
         "order": 110
