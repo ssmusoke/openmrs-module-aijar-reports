@@ -20,7 +20,7 @@
 
 	<require_modules>
 		<require_module>
-			org.openmrs.module.aijar
+			org.openmrs.module.appframework
 		</require_module>
 		<require_module>
 			org.openmrs.module.metadatadeploy
@@ -33,6 +33,9 @@
 		</require_module>
 		<require_module>
 			org.openmrs.module.serialization.xstream
+		</require_module>
+		<require_module>
+			org.openmrs.module.uiframework
 		</require_module>
 	</require_modules>
 	

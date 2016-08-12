@@ -38,7 +38,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- module version defeinitions -->
-		<aijarVersion>1.0.3-SNAPSHOT</aijarVersion>
+		<appframeworkVersion>2.4</appframeworkVersion>
 		<calculationVersion>1.1</calculationVersion>
 		<metadatadeployVersion>1.6</metadatadeployVersion>
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
@@ -46,6 +46,7 @@
 		<patientSummaryVersion>2.1</patientSummaryVersion>
 		<reportingVersion>0.10.0</reportingVersion>
 		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
+		<uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -108,11 +109,11 @@
 			<!-- End OpenMRS core -->
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
-				<artifactId>aijar-api</artifactId>
-				<version>${aijarVersion}</version>
+				<artifactId>appframework-omod</artifactId>
+				<version>${appframeworkVersion}</version>
 				<scope>provided</scope>
 			</dependency>
-
+			
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>calculation-api</artifactId>
@@ -164,6 +165,14 @@
 				<version>${serialization.xstreamVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>uiframework-api</artifactId>
+				<version>${uiframeworkModuleVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
