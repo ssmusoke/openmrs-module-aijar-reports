@@ -23,6 +23,9 @@
 			org.openmrs.module.appframework
 		</require_module>
 		<require_module>
+			org.openmrs.module.appui
+		</require_module>
+		<require_module>
 			org.openmrs.module.metadatadeploy
 		</require_module>
 		<require_module>

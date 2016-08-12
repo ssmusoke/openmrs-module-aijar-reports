@@ -39,6 +39,7 @@
 
 		<!-- module version defeinitions -->
 		<appframeworkVersion>2.4</appframeworkVersion>
+		<appuiVersion>1.6-SNAPSHOT</appuiVersion>
 		<calculationVersion>1.1</calculationVersion>
 		<metadatadeployVersion>1.6</metadatadeployVersion>
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
@@ -111,6 +112,13 @@
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>appframework-omod</artifactId>
 				<version>${appframeworkVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>appui-omod</artifactId>
+				<version>${appuiVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 			
