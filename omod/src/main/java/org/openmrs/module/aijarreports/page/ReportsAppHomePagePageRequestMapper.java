@@ -27,7 +27,7 @@ public class ReportsAppHomePagePageRequestMapper implements PageRequestMapper {
 	public boolean mapRequest(PageRequest request) {
 		if (request.getProviderName().equals("reportingui")) {
 			if (request.getPageName().equals("reportsapp/home")) {
-				// change to the custom login provided by the module
+				// change to the custom reports page
 				request.setProviderNameOverride("aijarreports");
 				request.setPageNameOverride("reportsHome");
 					log.info(request.toString());
