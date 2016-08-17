@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * Overrides the mapping from the reports app home page from reporting ui to a new one specified in this module
  *
  */
-/* @Component - commented out until an issue of beans across modules can be merged into a single list */
+@Component
 public class ReportsAppHomePagePageRequestMapper implements PageRequestMapper {
 
 	protected final Log log = LogFactory.getLog(getClass());
