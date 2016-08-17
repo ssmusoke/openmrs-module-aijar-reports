@@ -25,15 +25,15 @@ public class ReportsAppHomePagePageRequestMapper implements PageRequestMapper {
 	 * @return true if this page was mapped (by overriding the provider and/or page), false otherwise
 	 */
 	public boolean mapRequest(PageRequest request) {
-		log.info("Before " + request.toString());
 		if (request.getProviderName().equals("reportingui")) {
 			if (request.getPageName().equals("reportsapp/home")) {
 				// change to the custom login provided by the module
 				request.setProviderNameOverride("aijarreports");
 				request.setPageNameOverride("reportsHome");
 					log.info(request.toString());
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 }
