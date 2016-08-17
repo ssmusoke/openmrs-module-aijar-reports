@@ -10,6 +10,8 @@
 
 	<artifactId>aijarreports-omod</artifactId>
 	<name>Uganda EMR Reports Module OMOD</name>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<description>OMOD project for UgandaEMRReports</description>
 
 	<dependencies>
@@ -97,7 +99,7 @@
 			</resource>
 			<resource>
 				<directory>src/main/webapp</directory>
-				<filtering>false</filtering>
+				<filtering>true</filtering>
 				<excludes>
 					<exclude>resources</exclude>
 				</excludes>
@@ -147,7 +149,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 								<pluginExecution>
@@ -160,7 +162,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore />
 									</action>
 								</pluginExecution>
 							</pluginExecutions>

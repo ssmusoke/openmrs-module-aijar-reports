@@ -6,7 +6,7 @@
 	<artifactId>aijarreports</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Uganda EMR Reports Module</name>
+	<name>UgandaEMR Reports Module</name>
 	<description>Reports for the Uganda EMR distribution</description>
 	<url>https://wiki.openmrs.org/display/docs/Uganda+EMR+Reports+Module+Module</url>
 	
@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:ssmusoke/openmrs-module-aijar-reports.git</connection>
-		<developerConnection>scm:git:git@github.com:ssmusoke/openmrs-module-aijar-reports.git</developerConnection>
-		<url>scm:git:https://github.com/ssmusoke/openmrs-module-aijar-reports</url>
+		<connection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</connection>
+		<developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</developerConnection>
+		<url>scm:git:https://github.com/METS-Programme/openmrs-module-aijar-reports</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -34,7 +34,7 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.11.5</openMRSVersion>
+		<openMRSVersion>1.11.6</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- module version defeinitions -->
@@ -193,6 +193,7 @@
 					<configuration>
 						<target>1.6</target>
 						<source>1.6</source>
+                        <encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
 				<plugin>

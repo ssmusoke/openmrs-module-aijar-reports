@@ -30,8 +30,8 @@
         "id": "ugandaemr.reports.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "label": "ugandaemr.reportsapp.list.label",
-        "url": "aijarreports/reports/home.page",
+        "label": "UgandaEMR Reports",
+        "url": "aijarreports/reportsHome.page",
         "icon": "icon-book",
         "order": 110
       },
@@ -66,14 +66,6 @@
         "label": "Pre-ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
         "order": 5
-      },
-      {
-        "id": "ART Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "ART Register",
-        "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
-        "order": 10
       },
       {
         "id": "Case Based Surveillance EID Report",
