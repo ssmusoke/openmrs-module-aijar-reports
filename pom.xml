@@ -6,7 +6,7 @@
 	<artifactId>aijarreports</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<name>Uganda EMR Reports Module</name>
+	<name>UgandaEMR Reports Module</name>
 	<description>Reports for the Uganda EMR distribution</description>
 	<url>https://wiki.openmrs.org/display/docs/Uganda+EMR+Reports+Module+Module</url>
 	
@@ -22,9 +22,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:ssmusoke/openmrs-module-aijar-reports.git</connection>
-		<developerConnection>scm:git:git@github.com:ssmusoke/openmrs-module-aijar-reports.git</developerConnection>
-		<url>scm:git:https://github.com/ssmusoke/openmrs-module-aijar-reports</url>
+		<connection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</connection>
+		<developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</developerConnection>
+		<url>scm:git:https://github.com/METS-Programme/openmrs-module-aijar-reports</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -34,18 +34,20 @@
 	</modules>
 	
 	<properties>
-		<openMRSVersion>1.11.5</openMRSVersion>
+		<openMRSVersion>1.11.6</openMRSVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- module version defeinitions -->
-		<aijarVersion>1.0.3-SNAPSHOT</aijarVersion>
+		<appframeworkVersion>2.4</appframeworkVersion>
+		<appuiVersion>1.6-SNAPSHOT</appuiVersion>
 		<calculationVersion>1.1</calculationVersion>
 		<metadatadeployVersion>1.6</metadatadeployVersion>
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
 		<metadatasharingVersion>1.1.9</metadatasharingVersion>
 		<patientSummaryVersion>2.1</patientSummaryVersion>
-		<reportingVersion>0.9.9</reportingVersion>
+		<reportingVersion>0.10.0</reportingVersion>
 		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
+		<uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
 	</properties>
 
 	<dependencyManagement>
@@ -108,11 +110,18 @@
 			<!-- End OpenMRS core -->
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
-				<artifactId>aijar-api</artifactId>
-				<version>${aijarVersion}</version>
+				<artifactId>appframework-omod</artifactId>
+				<version>${appframeworkVersion}</version>
 				<scope>provided</scope>
 			</dependency>
-
+			
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>appui-omod</artifactId>
+				<version>${appuiVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			
 			<dependency>
 				<groupId>org.openmrs.module</groupId>
 				<artifactId>calculation-api</artifactId>
@@ -164,6 +173,14 @@
 				<version>${serialization.xstreamVersion}</version>
 				<scope>provided</scope>
 			</dependency>
+			
+			<dependency>
+				<groupId>org.openmrs.module</groupId>
+				<artifactId>uiframework-api</artifactId>
+				<version>${uiframeworkModuleVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -176,6 +193,7 @@
 					<configuration>
 						<target>1.6</target>
 						<source>1.6</source>
+                        <encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
 				<plugin>

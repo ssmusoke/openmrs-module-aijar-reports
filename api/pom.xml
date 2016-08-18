@@ -65,51 +65,42 @@
 		<!-- End OpenMRS core -->
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>aijar-api</artifactId>
-			<scope>provided</scope>
+			<artifactId>appframework-omod</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>calculation-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>metadatadeploy-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>metadatamapping-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>metadatasharing-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>patientsummary-api</artifactId>
-			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>reporting-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>serialization.xstream-api</artifactId>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

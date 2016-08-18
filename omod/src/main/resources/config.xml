@@ -7,6 +7,7 @@
 	<name>${project.parent.name}</name>
 	<version>${project.parent.version}</version>
 	<package>${project.parent.groupId}.${project.parent.artifactId}</package>
+	<author>METS Program</author>
 	<description>
 		${project.parent.description}
 	</description>
@@ -20,7 +21,10 @@
 
 	<require_modules>
 		<require_module>
-			org.openmrs.module.aijar
+			org.openmrs.module.appframework
+		</require_module>
+		<require_module>
+			org.openmrs.module.appui
 		</require_module>
 		<require_module>
 			org.openmrs.module.metadatadeploy
@@ -33,6 +37,9 @@
 		</require_module>
 		<require_module>
 			org.openmrs.module.serialization.xstream
+		</require_module>
+		<require_module>
+			org.openmrs.module.uiframework
 		</require_module>
 	</require_modules>
 	
