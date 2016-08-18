@@ -1,6 +1,6 @@
 [
   {
-    "id": "ugandaemr.reports",
+    "id": "ugemr.reports",
     "description": "Homepage showing a list of different kinds of reports",
     "order": 10,
     "extensionPoints": [
@@ -27,11 +27,11 @@
     ],
     "extensions": [
       {
-        "id": "ugandaemr.reports.homepageLink",
+        "id": "ugandaemrreports.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "UgandaEMR Reports",
-        "url": "aijarreports/reportsHome.page",
+        "url": "ugandaemrreports/reportsHome.page",
         "icon": "icon-book",
         "order": 110
       },

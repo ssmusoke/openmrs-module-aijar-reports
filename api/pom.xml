@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>aijarreports</artifactId>
+		<artifactId>ugandaemrreports</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>aijarreports-api</artifactId>
+	<artifactId>ugandaemrreports-api</artifactId>
 	<name>Uganda EMR Reports Module API</name>
 	<description>API project for UgandaEMR distribution</description>
 
@@ -110,7 +110,7 @@
 				<filtering>true</filtering>
 				<excludes>
 					<!-- exclude binary files from filtering as this causes corruption of the files -->
-					<exclude>org/openmrs/module/aijarreports/reports/*.xls</exclude>
+					<exclude>org/openmrs/module/ugandaemrreports/reports/*.xls</exclude>
 				</excludes>
 			</resource>
 			<!-- Add the binary files to the omod without filtering -->
@@ -119,7 +119,7 @@
 				<filtering>false</filtering>
 				<includes>
 					<include>*.xls</include>
-					<include>org/openmrs/module/aijarreports/reports/*.xls</include>
+					<include>org/openmrs/module/ugandaemrreports/reports/*.xls</include>
 				</includes>
 			</resource>
 		</resources>
