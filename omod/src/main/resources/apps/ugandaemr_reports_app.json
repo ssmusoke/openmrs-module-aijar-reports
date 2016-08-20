@@ -31,7 +31,7 @@
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "UgandaEMR Reports",
-        "url": "ugandaemrreports/reportsHome.page",
+        "url": "ugandaemrreports/reports.page",
         "icon": "icon-book",
         "order": 110
       },
