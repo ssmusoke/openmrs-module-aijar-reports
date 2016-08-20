@@ -29,7 +29,7 @@ public class ReportsAppHomePagePageRequestMapper implements PageRequestMapper {
 			if (request.getPageName().equals("reportsapp/home")) {
 				// change to the custom reports page
 				request.setProviderNameOverride("ugandaemrreports");
-				request.setPageNameOverride("reportsHome");
+				request.setPageNameOverride("reports");
 					log.info(request.toString());
 				return true;
 			}
