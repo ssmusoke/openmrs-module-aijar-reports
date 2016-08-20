@@ -92,7 +92,7 @@ public class DefinitionLibraryInitializer implements Initializer {
 		// reset the versions of the reports to 0 to enable them to be reinstalled
 		as.executeSQL("DELETE FROM global_property WHERE property LIKE 'reporting.reportManager.%';", false);
 		// remove any serialized report objects
-		as.executeSQL("delete from serialized_object WHERE serialized_data LIKE '%ugandaemrreports.%';", false);
+		as.executeSQL("delete from serialized_object WHERE serialized_data LIKE 'ugemr.%';", false);
 	}
 
 	private List<DefinitionLibrary> getCohortLibraryDefinitions() {
