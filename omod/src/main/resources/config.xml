@@ -30,9 +30,6 @@
 			org.openmrs.module.metadatadeploy
 		</require_module>
 		<require_module>
-			org.openmrs.module.patientsummary
-		</require_module>
-		<require_module>
 			org.openmrs.module.reporting
 		</require_module>
 		<require_module>
