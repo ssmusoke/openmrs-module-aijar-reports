@@ -8,6 +8,6 @@
   		    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
 	<!-- Add here beans related to the API context -->
-	<context:component-scan base-package="org.openmrs.module.ugandaemr.eports" />
+	<context:component-scan base-package="org.openmrs.module.ugandaemrreports" />
 
 </beans>
