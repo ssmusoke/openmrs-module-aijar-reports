@@ -3,11 +3,11 @@
 
 	<parent>
 		<groupId>org.openmrs.module</groupId>
-		<artifactId>aijarreports</artifactId>
+		<artifactId>ugandaemrreports</artifactId>
 		<version>1.0.2-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>aijarreports-omod</artifactId>
+	<artifactId>ugandaemrreports-omod</artifactId>
 	<name>Uganda EMR Reports Module OMOD</name>
 	<version>1.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>

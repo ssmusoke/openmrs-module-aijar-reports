@@ -2,11 +2,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openmrs.module</groupId>
-	<artifactId>aijarreports</artifactId>
+	<artifactId>ugandaemrreports</artifactId>
 	<version>1.0.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>UgandaEMR Reports Module</name>
-	<description>Reports for the Uganda EMR distribution</description>
+	<description>Reports for the UgandaEMR distribution</description>
 	<url>https://wiki.openmrs.org/display/docs/Uganda+EMR+Reports+Module+Module</url>
 	
 	<developers>
@@ -21,9 +21,9 @@
 	</organization>
 
 	<scm>
-		<connection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</connection>
-		<developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-aijar-reports.git</developerConnection>
-		<url>scm:git:https://github.com/METS-Programme/openmrs-module-aijar-reports</url>
+		<connection>scm:git:git@github.com:METS-Programme/openmrs-module-ugandaemr.reports.git</connection>
+		<developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-ugandaemr.reports.git</developerConnection>
+		<url>scm:git:https://github.com/METS-Programme/openmrs-module-ugandaemr.reports</url>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -43,7 +43,6 @@
 		<metadatadeployVersion>1.6</metadatadeployVersion>
 		<metadatamappingVersion>1.0.2</metadatamappingVersion>
 		<metadatasharingVersion>1.1.9</metadatasharingVersion>
-		<patientSummaryVersion>2.1</patientSummaryVersion>
 		<reportingVersion>0.10.0</reportingVersion>
 		<serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
 		<uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
@@ -149,13 +148,6 @@
 				<artifactId>metadatasharing-api</artifactId>
 				<version>${metadatasharingVersion}</version>
 				<type>jar</type>
-				<scope>provided</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.openmrs.module</groupId>
-				<artifactId>patientsummary-api</artifactId>
-				<version>${patientSummaryVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 
