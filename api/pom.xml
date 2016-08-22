@@ -7,7 +7,7 @@
 	</parent>
 
 	<artifactId>ugandaemrreports-api</artifactId>
-	<name>Uganda EMR Reports Module API</name>
+	<name>UgandaEMR Reports Module API</name>
 	<description>API project for UgandaEMR distribution</description>
 
 	<dependencies>
