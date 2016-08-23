@@ -51,10 +51,6 @@ public class DataFactory {
         return ReportingConstants.END_DATE_PARAMETER;
     }
 
-    public Parameter getOnDateParameter() {
-        return new Parameter("startDate", "Start Date", Date.class);
-    }
-
     // Data Converters
     public DataConverter getIdentifierConverter() {
         return new PropertyConverter(PatientIdentifier.class, "identifier");
@@ -223,13 +219,7 @@ public class DataFactory {
 
     // Patient Data Definitions
 
-    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-    }
+    
 
     public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
         ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
@@ -345,8 +335,15 @@ public class DataFactory {
         def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), getObsValueCodedPresentConverter(answer));
     }
-
-
+    
+    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
+        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
+        def.setWhich(timeQualifier);
+        def.setQuestion(question);
+        def.addParameter(new Parameter("endDate", "EndDate", Date.class));
+        return convert(def, ObjectUtil.toMap("endDate=endDate"), converter);
+    }
+    
     public PatientDataDefinition getObsValue(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setQuestion(question);
