@@ -2,9 +2,12 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
+import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
@@ -21,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Daily Appointments List report
+ * Export of all ART patients enrolled into care until a specified date
  */
 @Component
 public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
@@ -80,7 +83,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(ReportManagerUtil.createCsvReportDesign(getExcelDesignUuid(), reportDefinition));
+		l.add(buildReportDesign(reportDefinition));
 		return l;
 	}
 
@@ -93,7 +96,12 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		return null;
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTPatientExport.xls");
+		Properties props = new Properties();
+		props.put("repeatingSections", "sheet:1,row:2,dataset:PatientExport");
+		props.put("sortWeight", "5000");
+		rd.setProperties(props);
+		return rd;
 	}
 
 	@Override
@@ -107,12 +115,13 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName(getName());
 		dsd.setParameters(getParameters());
-		rd.addDataSetDefinition(getName(), Mapped.mapStraightThrough(dsd));
-
+		rd.addDataSetDefinition("PatientExport", Mapped.mapStraightThrough(dsd));
+		
+		dsd.addSortCriteria("Date Enrolled", SortCriteria.SortDirection.ASC);
 		// rows are patients with a next appointment date obs in the given date range
 
-		CohortDefinition rowFilter = hivCohorts.getPatientsWithReturnVisitDateOnEndDate();
-		dsd.addRowFilter(Mapped.mapStraightThrough(rowFilter));
+		CohortDefinition patientsInCare = Cohorts.getPatientsWhoEnrolledInCareUntilDate();
+		dsd.addRowFilter(Mapped.mapStraightThrough(patientsInCare));
 
 		// columns to include
 		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
@@ -120,13 +129,12 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
 		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
-		addColumn(dsd, "Current Age", builtInPatientData.getAgeAtEnd());
+		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
-		addColumn(dsd, "Last ART Date", hivPatientData
-				.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those
+		addColumn(dsd, "Last Regimen Pickup Date", hivPatientData.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those
 		// not in ART
-		addColumn(dsd, "ARVs for X days", hivPatientData.getARVDuration());
+		addColumn(dsd, "ARV Duration", hivPatientData.getARVDuration());
 		addColumn(dsd, "Expected Return Date", hivPatientData.getExpectedReturnDate());
 		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
 		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
