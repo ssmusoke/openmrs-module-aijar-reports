@@ -22,6 +22,12 @@ public class Cohorts {
         patientsStartedCareInYear.addParameter(new Parameter("startDate", "startDate", Date.class));
         return patientsStartedCareInYear;
     }
+    
+    public static SqlCohortDefinition getPatientsWhoEnrolledInCareUntilDate() {
+        SqlCohortDefinition patientsStartedCareByDate = new SqlCohortDefinition("select e.patient_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id where e.voided = false and et.uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' AND (TO_DAYS(e.encounter_datetime) < TO_DAYS(:endDate))");
+        patientsStartedCareByDate.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return patientsStartedCareByDate;
+    }
 
     public static SqlCohortDefinition getPatientHavingARTDuringMonth() {
         SqlCohortDefinition patientsStartedCareInYear = new SqlCohortDefinition("select o.person_id from obs o where o.voided = false and o.concept_id in (99161) and (EXTRACT(YEAR_MONTH FROM :startDate) = EXTRACT(YEAR_MONTH FROM o.value_datetime) OR EXTRACT(YEAR_MONTH FROM :startDate) = EXTRACT(YEAR_MONTH FROM o.obs_datetime)) group by o.person_id");
