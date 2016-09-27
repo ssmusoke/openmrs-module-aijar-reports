@@ -36,7 +36,6 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return "ugemr.cohort.eid.";
     }
 
-    @DocumentedDefinition(value = "exposedinfant", name = "Exposed Infants in Period")
     public CohortDefinition getEnrolledInCareDuringPeriod() {
         EncounterCohortDefinition q = new EncounterCohortDefinition();
         q.setEncounterTypeList(hivMetadata.getEIDSummaryPageEncounterType());
@@ -59,7 +58,6 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoStartedStateWhenInAgeRangeAtLocationByEndDate(0, Age.Unit.YEARS, 100, Age.Unit.YEARS);
     }
 
-    @DocumentedDefinition(value = "allPatients")
     public CohortDefinition getAllEIDPatients() {
         return df.getAnyEncounterOfType(hivMetadata.getEIDSummaryPageEncounterType());
     }
@@ -121,7 +119,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getEIDPatientsFinallyTransferredOut() {
-        return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getFinalOutcomeTransferred()));
+        return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getTransferredOut()));
     }
 
     public CohortDefinition getEIDTransferIns() {
