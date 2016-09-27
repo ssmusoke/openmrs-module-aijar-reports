@@ -1,7 +1,9 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
 import java.util.Date;
 
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -10,6 +12,7 @@ import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +29,8 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     @Autowired
     private DataFactory df;
+    @Autowired
+    private HIVMetadata hivMetadata;
 
 
     @Override
@@ -42,7 +47,6 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
      * Gender dimension
      * @return the dimension
      */
-    @DocumentedDefinition(value = "gender", name = "Gender")
     public CohortDefinitionDimension genders() {
         CohortDefinitionDimension dimGender = new CohortDefinitionDimension();
         dimGender.setName("Gender");
@@ -55,7 +59,6 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
      * Dimension of age using the standard age groups
      * @return the dimension
      */
-    @DocumentedDefinition(value = "age.106a-1A", name = "Age - 106a 1A")
     public CohortDefinitionDimension get106aAgeGroup() {
         CohortDefinitionDimension dimAges = new CohortDefinitionDimension();
         dimAges.setName("Age - 106a 1A");
@@ -78,7 +81,6 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
      * Dimension of age using the standard age and gender groups
      * @return the dimension
      */
-    @DocumentedDefinition(value = "age.gender.106a-1A", name = "Age Gender - 106a 1A")
     public CohortDefinitionDimension get106aAgeGenderGroup() {
         CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
 
@@ -113,6 +115,21 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         ageGenderDimension.addCohortDefinition("child", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedBetween(0, 14)));
         ageGenderDimension.addCohortDefinition("adult", Mapped.mapStraightThrough(cohortDefinitionLibrary.agedAtLeast(15)));
         return ageGenderDimension;
+    }
+
+
+    public CohortDefinitionDimension getAdherenceGroup() {
+        CohortDefinitionDimension adherenceDimension = new CohortDefinitionDimension();
+
+        CohortDefinition good = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getGoodAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition fair = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getFairAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition poor = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getPoorAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+
+        adherenceDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        adherenceDimension.addCohortDefinition("good", Mapped.mapStraightThrough(good));
+        adherenceDimension.addCohortDefinition("fair", Mapped.mapStraightThrough(fair));
+        adherenceDimension.addCohortDefinition("poor", Mapped.mapStraightThrough(poor));
+        return adherenceDimension;
     }
 
 
