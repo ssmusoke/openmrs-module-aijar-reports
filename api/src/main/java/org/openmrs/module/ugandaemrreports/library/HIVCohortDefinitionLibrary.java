@@ -1,12 +1,12 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.api.PatientSetService;
-import org.openmrs.module.ugandaemrreports.common.Period;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -184,6 +184,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtTransferInRegimen(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientsTransferredOutDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getPatientsHavingTransferInRegimenDuringPeriod(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtTransferInRegimen(), hivMetadata.getARTSummaryPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -266,11 +270,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getAdultsOnFirstLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getAdultsOnSecondLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsOnThirdLineRegimenDuringPeriod() {
@@ -286,11 +290,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getLastVisitDateByEndOfQuarter() {
-        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getVisitDate(), hivMetadata.getArtEncounterTypes(), BaseObsCohortDefinition.TimeModifier.MAX, null, null);
+        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getReturnVisitDate(), hivMetadata.getArtEncounterTypes(), BaseObsCohortDefinition.TimeModifier.MAX, null, null);
     }
 
     public CohortDefinition getAppointments() {
-        return df.getLastVisitInTheQuarter(hivMetadata.getVisitDate(), PatientSetService.TimeModifier.MAX);
+        return df.getLastVisitInTheQuarter(hivMetadata.getReturnVisitDate(), PatientSetService.TimeModifier.MAX);
     }
 
     public CohortDefinition getEligibleAndReadyByEndOfQuarter() {
