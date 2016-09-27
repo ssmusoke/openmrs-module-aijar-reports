@@ -1,18 +1,22 @@
 package org.openmrs.module.ugandaemrreports.definition.cohort.definition;
 
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
+import org.openmrs.module.reporting.definition.configuration.ConfigurationPropertyCachingStrategy;
+import org.openmrs.module.reporting.evaluation.caching.Caching;
 
 import java.util.Date;
 
 /**
  * Created by carapai on 28/06/2016.
  */
+@Caching(strategy = ConfigurationPropertyCachingStrategy.class)
 public class LostPatientsCohortDefinition extends BaseCohortDefinition {
 
     private static final long serialVersionUID = 1L;
 
+    @ConfigurationProperty
+    private Date startDate;
 
     @ConfigurationProperty
     private Date endDate;
@@ -22,9 +26,6 @@ public class LostPatientsCohortDefinition extends BaseCohortDefinition {
 
     @ConfigurationProperty
     private Integer maximumDays;
-
-    @ConfigurationProperty
-    private CohortDefinition cohort;
 
 
     public Date getEndDate() {
@@ -51,13 +52,11 @@ public class LostPatientsCohortDefinition extends BaseCohortDefinition {
         this.maximumDays = maximumDays;
     }
 
-
-    public CohortDefinition getCohort() {
-        return cohort;
+    public Date getStartDate() {
+        return startDate;
     }
 
-    public void setCohort(CohortDefinition cohort) {
-        this.cohort = cohort;
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
-
 }

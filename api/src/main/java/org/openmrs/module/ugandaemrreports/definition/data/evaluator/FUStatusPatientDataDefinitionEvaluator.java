@@ -5,14 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.joda.time.LocalDate;
 import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.ugandaemrreports.common.PatientData;
-import org.openmrs.module.ugandaemrreports.common.Period;
-import org.openmrs.module.ugandaemrreports.common.Periods;
-import org.openmrs.module.ugandaemrreports.common.StubDate;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.PatientDatasets;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
@@ -24,6 +16,14 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
+import org.openmrs.module.ugandaemrreports.common.PatientData;
+import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.Periods;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.PatientDatasets;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
@@ -65,15 +65,14 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
 
         Period period = def.getPeriod();
 
-        Date anotherDate = def.getStartDate();
-
         Map<Integer, Date> m = new HashMap<Integer, Date>();
 
-        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(anotherDate, "yyyy-MM-dd"));
+        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd"));
 
+        List<LocalDate> periods = Periods.getDatesDuringPeriods(workingDate, def.getPeriodToAdd(), period);
 
-        LocalDate localStartDate = null;
-        LocalDate localEndDate = null;
+        LocalDate localStartDate = periods.get(0);
+        LocalDate localEndDate = periods.get(1);
 
         HqlQueryBuilder artStartQuery = new HqlQueryBuilder();
         artStartQuery.select("o.personId", "MIN(o.valueDatetime)");
@@ -82,32 +81,6 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
         artStartQuery.whereIn("o.concept", hivMetadata.getConceptList("99161"));
         artStartQuery.groupBy("o.personId");
 
-
-        if (def.getPeriodToAdd() > 0) {
-            if (period == Period.QUARTERLY) {
-                List<LocalDate> dates = Periods.addQuarters(workingDate, def.getPeriodToAdd());
-                localStartDate = dates.get(0);
-                localEndDate = dates.get(1);
-            } else if (period == Period.MONTHLY) {
-                List<LocalDate> dates = Periods.addMonths(workingDate, def.getPeriodToAdd());
-                localStartDate = dates.get(0);
-                localEndDate = dates.get(1);
-            } else {
-                localStartDate = workingDate;
-                localEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
-            }
-        } else {
-            if (period == Period.MONTHLY) {
-                localStartDate = Periods.monthStartFor(workingDate);
-                localEndDate = Periods.monthEndFor(workingDate);
-            } else if (period == Period.QUARTERLY) {
-                localStartDate = Periods.quarterStartFor(workingDate);
-                localEndDate = Periods.quarterEndFor(workingDate);
-            } else {
-                localStartDate = workingDate;
-                localEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
-            }
-        }
 
         if (period == Period.QUARTERLY) {
             m = getPatientDateMap(artStartQuery, context);
