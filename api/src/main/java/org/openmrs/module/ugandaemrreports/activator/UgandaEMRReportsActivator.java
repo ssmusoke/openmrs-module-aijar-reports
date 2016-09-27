@@ -29,9 +29,8 @@ public class UgandaEMRReportsActivator extends BaseModuleActivator {
 
 	public List<Initializer> getInitializers() {
 		List<Initializer> l = new ArrayList<Initializer>();
-		l.add(new ReportInitializer());
-		l.add(new DefinitionLibraryInitializer());
 		l.add(new AppConfigInitializer());
+		l.add(new ReportInitializer());
 		return l;
 	}
 
