@@ -2,13 +2,6 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.*;
 import org.openmrs.api.PatientSetService;
-import org.openmrs.module.ugandaemrreports.common.Period;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ObsWithEncountersCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.EMTCTPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.*;
@@ -27,11 +20,14 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.HavingVisitCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.InAgeRangeAtCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.InEncounterCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsInPeriodCohortDefinition;
+import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.EMTCTPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FirstLineSubstitutionPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -221,56 +217,80 @@ public class DataFactory {
         return cd;
     }
 
+
     // Patient Data Definitions
 
-    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    public PatientDataDefinition getObs(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, timeQualifier);
+        return createPatientDataDefinition(def, converter);
     }
 
-    public PatientDataDefinition getObsByEndDate(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate-" + olderThan), converter);
+    public PatientDataDefinition getObsByEndDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
-    public PatientDataDefinition getObsByEndOfPeriod(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate" ), converter);
+    public PatientDataDefinition getObsByEndDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrBefore", "endDate", olderThan));
     }
 
-    public PatientDataDefinition getObs(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        return convert(def, converter);
+    public PatientDataDefinition getObsAfterDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrAfter", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
     }
 
-    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
+    public PatientDataDefinition getObsAfterDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrAfter", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrAfter", "startDate", olderThan));
     }
 
-    public PatientDataDefinition getObsDuringPeriod(Concept question, DataConverter converter, String olderThan, TimeQualifier timeQualifier) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(timeQualifier);
-        def.setQuestion(question);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrAfter=startDate-" + olderThan + ",onOrBefore=endDate-" + olderThan), converter);
+
+    public PatientDataDefinition getObsByEndOfPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
+        String startDate = Parameters.createParameterBeforeDuration("onOrAfter", "startDate", olderThan);
+        return createPatientDataDefinition(def, converter, Parameters.combineParameters(startDate, Parameters.ON_OR_BEFORE_END_DATE));
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.combineParameters(Parameters.ON_OR_AFTER_START_DATE, Parameters.ON_OR_BEFORE_END_DATE));
+
+    }
+
+    public PatientDataDefinition getValueDatetimeObsDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("valueDatetimeOrAfter", "valueDatetimeOnOrBefore"), timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.combineParameters(Parameters.VALUE_DATETIME_OR_AFTER_START_DATE, Parameters.VALUE_DATETIME_ON_OR_BEFORE_END_DATE));
+
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
+        String startDate = Parameters.createParameterBeforeDuration("onOrAfter", "startDate", olderThan);
+        String endDate = Parameters.createParameterBeforeDuration("onOrBefore", "endDate", olderThan);
+        return createPatientDataDefinition(def, converter, Parameters.combineParameters(startDate, endDate));
+    }
+
+    public PatientDataDefinition getFirstObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        return getObsByEndDate(question, encounterTypes, TimeQualifier.FIRST, converter);
+    }
+
+    public PatientDataDefinition getFirstObBetweenDates(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        return getObsDuringPeriod(question, encounterTypes, TimeQualifier.FIRST, converter);
+    }
+
+    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        return getObsByEndDate(question, encounterTypes, TimeQualifier.LAST, converter);
+
+    }
+
+    public PatientDataDefinition getAllObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
+        return getObsByEndDate(question, encounterTypes, null, converter);
+
+    }
+
+    public PatientDataDefinition getCodedObsPresentByEndDate(Concept question, Concept answer, List<EncounterType> encounterTypes) {
+        return getObsByEndDate(question, encounterTypes, null, getObsValueCodedPresentConverter(answer));
     }
 
 
@@ -281,19 +301,27 @@ public class DataFactory {
     }
 
     public PatientDataDefinition getFirstEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
-        EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(type), "onOrBefore");
         def.setWhich(TimeQualifier.FIRST);
-        def.setTypes(Arrays.asList(type));
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
-    public PatientDataDefinition getLastEncounterOfTypeByEndDate(EncounterType type, DataConverter converter) {
-        EncountersForPatientDataDefinition def = new EncountersForPatientDataDefinition();
-        def.setWhich(TimeQualifier.LAST);
-        def.setTypes(Arrays.asList(type));
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
+    public PatientDataDefinition getLastEncounterOfTypeByEndDate(List<EncounterType> types, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(types, "onOrBefore");
+        def.setWhich(TimeQualifier.FIRST);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
+    }
+
+    public PatientDataDefinition getLastEncounterOfTypeAfterDate(EncounterType type, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(type), "onOrAfter");
+        def.setWhich(TimeQualifier.FIRST);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
+    }
+
+    public PatientDataDefinition getLastEncounterOfTypeAfterDate(List<EncounterType> types, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(types, "onOrAfter");
+        def.setWhich(TimeQualifier.FIRST);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
     }
 
     public PatientDataDefinition getPreferredAddress(String property) {
@@ -301,51 +329,6 @@ public class DataFactory {
         PropertyConverter converter = new PropertyConverter(PersonAddress.class, property);
         return convert(d, converter);
     }
-
-    public PatientDataDefinition getFirstObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(TimeQualifier.FIRST);
-        def.setQuestion(question);
-        def.setEncounterTypeList(encounterTypes);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-    }
-
-    public PatientDataDefinition getFirstObBetweenDates(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(TimeQualifier.FIRST);
-        def.setQuestion(question);
-        def.setEncounterTypeList(encounterTypes);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
-    }
-
-    public PatientDataDefinition getMostRecentObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setWhich(TimeQualifier.LAST);
-        def.setQuestion(question);
-        def.setEncounterTypeList(encounterTypes);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-    }
-
-    public PatientDataDefinition getAllObsByEndDate(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setQuestion(question);
-        def.setEncounterTypeList(encounterTypes);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), converter);
-    }
-
-    public PatientDataDefinition getCodedObsPresentByEndDate(Concept question, Concept answer, List<EncounterType> encounterTypes) {
-        ObsForPersonDataDefinition def = new ObsForPersonDataDefinition();
-        def.setQuestion(question);
-        def.setEncounterTypeList(encounterTypes);
-        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(def, ObjectUtil.toMap("onOrBefore=endDate"), getObsValueCodedPresentConverter(answer));
-    }
-
 
     public PatientDataDefinition getObsValue(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
@@ -383,8 +366,12 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
     }
 
-
-    //
+    public PatientDataDefinition getFirstLineSwitch(Concept what, Integer which, DataConverter converter) {
+        FirstLineSubstitutionPatientDataDefinition def = new FirstLineSubstitutionPatientDataDefinition();
+        def.setWhat(what);
+        def.setSubstitutionOrSwitchNo(which);
+        return convert(def, converter);
+    }
 
     public PatientDataDefinition getObsValueDuringPeriod(Concept question, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
@@ -417,8 +404,8 @@ public class DataFactory {
     public PatientDataDefinition getEDDDate(int pregnancyNo, DataConverter converter) {
         EMTCTPatientDataDefinition def = new EMTCTPatientDataDefinition();
         def.setPregnancyNo(pregnancyNo);
-        def.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
+        def.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
 
 
@@ -587,6 +574,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
+
+    public CohortDefinition getDeadPatientsDuringPeriod() {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrAfter=startDate,diedOnOrBefore=endDate"));
     }
 
     public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
@@ -844,6 +838,15 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
 
+    public CohortDefinition getLostDuringPeriod() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(7);
+        cd.setMaximumDays(89);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
     public CohortDefinition getTextBasedObs(Concept question) {
         TextObsCohortDefinition cd = new TextObsCohortDefinition();
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
@@ -851,5 +854,43 @@ public class DataFactory {
         return cd;
     }
 
+    public CohortDefinition getPatientsWhoNeverMissedAnyAppointment() {
+        MissedAppointmentCohortDefinition cd = new MissedAppointmentCohortDefinition();
+        return cd;
+    }
+
+   /* public CohortDefinition getAtLeastOneMissedAfterArt() {
+        return convert(Cohorts.getPatientsWithAtLeastOneMissedAppointmentAfterArtStartDate(), null);
+
+    }
+
+    public CohortDefinition getAtLeastOneScheduledAfterArt() {
+        return convert(Cohorts.getPatientsWithAtLeastOneScheduledVisitAfterArtStartDate(), null);
+
+    }*/
+
+    public PatientDataDefinition createPatientDataDefinition(PersonDataDefinition personDataDefinition, DataConverter converter) {
+        return convert(personDataDefinition, converter);
+    }
+
+    public PatientDataDefinition createPatientDataDefinition(PersonDataDefinition personDataDefinition, DataConverter converter, String parameters) {
+        return convert(personDataDefinition, ObjectUtil.toMap(parameters), converter);
+    }
+
+    public PatientDataDefinition createPatientDataDefinition(PatientDataDefinition patientDataDefinition, DataConverter converter) {
+        return convert(patientDataDefinition, converter);
+    }
+
+    public PatientDataDefinition createPatientDataDefinition(PatientDataDefinition patientDataDefinition, DataConverter converter, String parameters) {
+        return convert(patientDataDefinition, ObjectUtil.toMap(parameters), converter);
+    }
+
+    public PatientDataDefinition createPatientDataDefinition(EncountersForPatientDataDefinition encountersForPatientDataDefinition, DataConverter converter) {
+        return convert(encountersForPatientDataDefinition, converter);
+    }
+
+    public PatientDataDefinition createPatientDataDefinition(EncountersForPatientDataDefinition encountersForPatientDataDefinition, DataConverter converter, String parameters) {
+        return convert(encountersForPatientDataDefinition, ObjectUtil.toMap(parameters), converter);
+    }
 
 }
