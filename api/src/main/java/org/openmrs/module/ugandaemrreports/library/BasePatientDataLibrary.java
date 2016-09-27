@@ -28,22 +28,18 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
         return PatientDataDefinition.class;
     }
 
-    @DocumentedDefinition("village")
     public PatientDataDefinition getVillage() {
         return df.getPreferredAddress("cityVillage");
     }
 
-    @DocumentedDefinition("traditionalAuthority")
     public PatientDataDefinition getTraditionalAuthority() {
         return df.getPreferredAddress("countyDistrict");
     }
 
-    @DocumentedDefinition("district")
     public PatientDataDefinition getDistrict() {
         return df.getPreferredAddress("stateProvince");
     }
 
-    @DocumentedDefinition("addressFull")
     public PatientDataDefinition getAddressFull() {
         PreferredAddressDataDefinition pdd = new PreferredAddressDataDefinition();
         return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "district", "traditionalAuthority", "village"));
