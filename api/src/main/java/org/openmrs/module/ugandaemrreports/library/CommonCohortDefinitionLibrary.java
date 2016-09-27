@@ -33,7 +33,6 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      *
      * @return the cohort definition
      */
-    @DocumentedDefinition(value = "gender.females", name = "Females")
     public CohortDefinition females() {
         GenderCohortDefinition cd = new GenderCohortDefinition();
         cd.setName("Females");
@@ -48,7 +47,6 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      *
      * @return the cohort definition
      */
-    @DocumentedDefinition(value = "gender.males", name = "Males")
     public CohortDefinition males() {
         GenderCohortDefinition cd = new GenderCohortDefinition();
         UUID uuid = UUID.randomUUID();
@@ -100,7 +98,6 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
-    @DocumentedDefinition(value = "age.below6months", name = "< 6 months")
     public CohortDefinition below6months() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(6);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
@@ -109,12 +106,10 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
-    @DocumentedDefinition(value = "age.below2yrs", name = "< 2 years")
     public CohortDefinition below2Years() {
         return agedAtMost(1);
     }
 
-    @DocumentedDefinition(value = "age.6to59mths", name = "6 - 59 months")
     public CohortDefinition between6And59months() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedBetween(6, 59);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
@@ -124,42 +119,34 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
-    @DocumentedDefinition(value = "age.0to4yrs", name = "0 - 4 years")
     public CohortDefinition between0And4years() {
         return agedAtMost(4);
     }
 
-    @DocumentedDefinition(value = "age.btn2and5yrs", name = "2 - <5 years")
     public CohortDefinition between2And5Years() {
         return agedBetween(2, 4);
     }
 
-    @DocumentedDefinition(value = "age.btn5and14yrs", name = "5 - 14 years")
     public CohortDefinition between5And14Years() {
         return agedBetween(5, 14);
     }
 
-    @DocumentedDefinition(value = "age.btn15and49yrs", name = "15 - 49 years")
     public CohortDefinition between15And49Years() {
         return agedBetween(14, 49);
     }
 
-    @DocumentedDefinition(value = "age.over15yrs", name = "Over 15 years")
     public CohortDefinition above15Years() {
         return agedAtLeast(15);
     }
 
-    @DocumentedDefinition(value = "age.over50yrs", name = "Over 50 years")
     public CohortDefinition above50Years() {
         return agedAtLeast(50);
     }
 
-    @DocumentedDefinition(value = "age.0to10yrs", name = "0 - 10 years")
     public CohortDefinition between0And10years() {
         return agedAtMost(10);
     }
 
-    @DocumentedDefinition(value = "age.over10years", name = "11 years and above")
     public CohortDefinition above10years() {
         return agedAtLeast(11);
     }

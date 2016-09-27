@@ -8,18 +8,17 @@ import java.util.Date;
 /**
  * Created by carapai on 06/04/2016.
  */
-public class PreARTDatasetDefinition extends BaseDataSetDefinition {
+public class ARTDatasetDefinition extends BaseDataSetDefinition {
 
-    private static final long serialVersionUID = 6405583377151111487L;
-
+    private static final long serialVersionUID = 6405583324151111487L;
     @ConfigurationProperty
     private Date startDate;
 
-    public PreARTDatasetDefinition() {
+    public ARTDatasetDefinition() {
         super();
     }
 
-    public PreARTDatasetDefinition(String name, String description) {
+    public ARTDatasetDefinition(String name, String description) {
         super(name, description);
     }
 

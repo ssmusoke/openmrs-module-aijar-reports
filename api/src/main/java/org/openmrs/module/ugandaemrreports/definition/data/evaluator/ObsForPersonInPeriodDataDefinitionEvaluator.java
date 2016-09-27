@@ -52,17 +52,15 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
 
         Period period = def.getPeriod();
 
-        Date anotherDate = def.getStartDate();
+        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd"));
 
-        LocalDate localEncounterStartDate = null;
-        LocalDate localEncounterEndDate = null;
+        List<LocalDate> periods = Periods.getDatesDuringPeriods(workingDate, def.getPeriodToAdd(), period);
+
+        LocalDate localEncounterStartDate = periods.get(0);
+        LocalDate localEncounterEndDate = periods.get(1);
 
 
         HqlQueryBuilder encounterQuery = new HqlQueryBuilder();
-
-
-        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(anotherDate, "yyyy-MM-dd"));
-
 
         if (def.getWhichEncounter() != null && def.getWhichEncounter() == TimeQualifier.FIRST) {
             encounterQuery.select(new String[]{"e.encounterId", "e.patient.patientId", "MIN(e.encounterDatetime)"});
@@ -73,33 +71,6 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
         }
 
         encounterQuery.from(Encounter.class, "e");
-
-        if (def.getPeriodToAdd() > 0) {
-            if (period == Period.QUARTERLY) {
-                List<LocalDate> dates = Periods.addQuarters(workingDate, def.getPeriodToAdd());
-                localEncounterStartDate = dates.get(0);
-                localEncounterEndDate = dates.get(1);
-            } else if (period == Period.MONTHLY) {
-                List<LocalDate> dates = Periods.addMonths(workingDate, def.getPeriodToAdd());
-                localEncounterStartDate = dates.get(0);
-                localEncounterEndDate = dates.get(1);
-            } else {
-                localEncounterStartDate = workingDate;
-                localEncounterEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
-            }
-
-        } else {
-            if (period == Period.QUARTERLY) {
-                localEncounterStartDate = Periods.quarterStartFor(workingDate);
-                localEncounterEndDate = Periods.quarterEndFor(workingDate);
-            } else if (period == Period.MONTHLY) {
-                localEncounterStartDate = Periods.monthStartFor(workingDate);
-                localEncounterEndDate = Periods.monthEndFor(workingDate);
-            } else {
-                localEncounterStartDate = workingDate;
-                localEncounterEndDate = StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
-            }
-        }
 
         if (period != null) {
             encounterQuery.groupBy("e.patient.patientId");
@@ -134,7 +105,7 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
             q.whereIn("o.valueCoded", def.getAnswers());
         }
 
-        q.whereBetweenInclusive("o.obsDatetime", localEncounterStartDate.toDate(), localEncounterEndDate.toDate());
+        //q.whereBetweenInclusive("o.obsDatetime", localEncounterStartDate.toDate(), localEncounterEndDate.toDate());
 
         q.groupBy("o.personId");
 

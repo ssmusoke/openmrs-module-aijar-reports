@@ -52,7 +52,7 @@ public class EMTCTPatientDataDefinitionEvaluator implements PatientDataEvaluator
 
         for (Integer pId : obsForPatients.keySet()) {
             List<Obs> l = obsForPatients.get(pId);
-            if(obsForPatients.size() > def.getPregnancyNo()){
+            if(obsForPatients.size() > def.getPregnancyNo() && l.size() > def.getPregnancyNo()){
                 Obs obs = l.get(def.getPregnancyNo());
                 c.addData(pId, obs);
             }

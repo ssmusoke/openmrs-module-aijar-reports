@@ -30,7 +30,6 @@ public class ARTClinicCohortDefinitionLibrary extends BaseDefinitionLibrary<Coho
 		return "ugemr.cohort.art.";
 	}
 
-	@DocumentedDefinition(value = "enrolledincare", name = "Patients Enrolled in Care As of Date")
 	public CohortDefinition getPatientsEnrolledInCareBetweenStartAndEndDate() {
 		EncounterCohortDefinition q = new EncounterCohortDefinition();
 		q.setEncounterTypeList(hivMetadata.getARTSummaryPageEncounterType());
@@ -39,14 +38,8 @@ public class ARTClinicCohortDefinitionLibrary extends BaseDefinitionLibrary<Coho
 		return q;
 	}
 
-	@DocumentedDefinition(value = "returnvisitdate", name = "Patients with return visit on date")
 	public CohortDefinition getPatientsWithReturnVisitDateOnEndDate() {
 		return df.getPatientsWhoseObsValueDateIsOnSpecifiedDate(hivMetadata.getReturnVisitDate(), hivMetadata.getARTEncounterPageEncounterType());
 	}
-
-	/*@DocumentedDefinition(value = "startedARTBetweenStartAndEndDate")
-	public CohortDefinition getPatientsThatStartedARTBetweenStartAndEndDate() {
-		return null;
-	}*/
 
 }

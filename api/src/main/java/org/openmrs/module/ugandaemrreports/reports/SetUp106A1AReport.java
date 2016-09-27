@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Component
 
-public class SetUp106A1AReport extends UgandaEMRDataExportManager {
+public class Setup106A1AReport extends UgandaEMRDataExportManager {
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 

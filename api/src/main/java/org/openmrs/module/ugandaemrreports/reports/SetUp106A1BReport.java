@@ -32,7 +32,7 @@ import java.util.List;
  */
 @Component
 
-public class SetUp106A1BReport extends UgandaEMRDataExportManager {
+public class Setup106A1BReport extends UgandaEMRDataExportManager {
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
@@ -53,12 +53,12 @@ public class SetUp106A1BReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getExcelDesignUuid() {
-        return "b98ab976-9c9d-4a28-9760-ac3119c8ef23";
+        return "b98ab976-9c9d-4a28-9760-ac3119c0ef23";
     }
 
     @Override
     public String getUuid() {
-        return "167cf668-0715-488b-b159-d5f391774038";
+        return "167cf668-071e-488b-b159-d5f391774038";
     }
 
     @Override

@@ -4,12 +4,6 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.module.ugandaemrreports.common.Period;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.TOStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.WhyEligibleForARTPatientDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
@@ -24,18 +18,15 @@ import org.openmrs.module.reporting.data.patient.definition.PreferredIdentifierD
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.ARVConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.DeadStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.FunctionalStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.LastSeenConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.NutritionalStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.TBStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.TIStatusConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.YesConverter;
+import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.WhyEligibleForARTPatientDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,61 +55,74 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return "ugemr.patientdata.";
     }
 
-    @DocumentedDefinition(value = "clinicnumber", name = "Clinic Number")
     public PatientDataDefinition getClinicNumber() {
         PreferredIdentifierDataDefinition def = new PreferredIdentifierDataDefinition();
         def.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115"));
         return convert(def, new PropertyConverter(PatientIdentifier.class, "identifier"));
     }
 
-    @DocumentedDefinition(value = "enrollmentdate", name = "Enrollment Date")
     public PatientDataDefinition getEnrollmentDate() {
         return getFirstArtInitialEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "lastvisitdate", name = "Last Visit Date")
     public PatientDataDefinition getLastVisitDate() {
         return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "artstartdate", name = "ART Start Date")
+    public PatientDataDefinition getLastEncounterDateTime() {
+        return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getLastARTEncounter() {
+        return getFirstEncounterAfterDate(hivMetadata.getArtEncounterTypes(), df.getEncounterDatetimeConverter());
+    }
+
     public PatientDataDefinition getARTStartDate() {
-        return df.getObsByEndDate(hivMetadata.getArtStartDate(), df.getObsValueDatetimeConverter(), TimeQualifier.LAST);
+        return df.getObs(hivMetadata.getArtStartDate(), null, TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "lastregimenpickupdate", name = "Last Regimen Pickup Date")
     public PatientDataDefinition getLastRegimenPickupDate() {
-        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), df.getObsDatetimeConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "currentregimen", name = "Current Regimen")
     public PatientDataDefinition getCurrentRegimen() {
-        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), df.getObsValueCodedConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
-    @DocumentedDefinition(value = "currentregimendate", name = "Current Regimen Date")
     public PatientDataDefinition getCurrentRegimenDate() {
-        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), df.getObsDatetimeConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "arvduration", name = "ARV Duration")
     public PatientDataDefinition getARVDuration() {
-        return df.getObsByEndDate(hivMetadata.getARVDuration(), df.getObsValueNumericConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getARVDuration(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
 
-    @DocumentedDefinition(value = "expectedreturndate", name = "Expected Return Date")
     public PatientDataDefinition getExpectedReturnDate() {
-        return df.getObsByEndDate(hivMetadata.getExpectedReturnDate(), df.getObsValueDatetimeConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
-    @DocumentedDefinition(value = "startregimen", name = "Start Regimen")
+    public PatientDataDefinition getExpectedReturnDateDuringPeriod() {
+        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getTODateDuringPeriod() {
+        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getTransferredOutDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getToPlaceDuringPeriod() {
+        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getTransferredOutPlace(), null, TimeQualifier.LAST, df.getObsValueTextConverter());
+    }
+
+    public PatientDataDefinition getExpectedReturnDateBetween() {
+        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
     public PatientDataDefinition getStartRegimen() {
-        return df.getObsByEndDate(hivMetadata.getArtStartRegimen(), df.getObsValueCodedConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getArtStartRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
-    @DocumentedDefinition(value = "startregimendate", name = "Start Regimen Date")
     public PatientDataDefinition getStartRegimenDate() {
-        return df.getObsByEndDate(hivMetadata.getArtStartDate(), df.getObsValueDatetimeConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getArtStartDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
     protected PatientDataDefinition getFirstArtInitialEncounterByEndDate(DataConverter converter) {
@@ -128,10 +132,18 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     protected PatientDataDefinition getLastARTVisitEncounterByEndDate(DataConverter converter) {
         EncounterType arvInitial = hivMetadata.getARTEncounterPageEncounterType().get(0);
-        return df.getLastEncounterOfTypeByEndDate(arvInitial, converter);
+        return df.getLastEncounterOfTypeByEndDate(Arrays.asList(arvInitial), converter);
     }
 
-    @DocumentedDefinition("allArtNumbers")
+
+    protected PatientDataDefinition getLastEncounter(List<EncounterType> encounterTypes, DataConverter converter) {
+        return df.getLastEncounterOfTypeByEndDate(encounterTypes, converter);
+    }
+
+    protected PatientDataDefinition getFirstEncounterAfterDate(List<EncounterType> encounterTypes, DataConverter converter) {
+        return df.getLastEncounterOfTypeAfterDate(encounterTypes, converter);
+    }
+
     public PatientDataDefinition getAllArtNumbers() {
         PatientIdentifierType pit = hivMetadata.getHIVIdentifier();
         return df.getAllIdentifiersOfType(pit, df.getIdentifierCollectionConverter());
@@ -150,7 +162,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getFirstTB() {
-        return getSummaryPageObsValue(hivMetadata.getTBAtEnrollment(), df.getObsValueNumericConverter());
+        return getSummaryPageObsValue(hivMetadata.getDateEligibilityTB(), df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getFirstPregnant() {
@@ -290,26 +302,24 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.havingEncounterDuringPeriod(Period.MONTHLY, quarter, new LastSeenConverter());
     }
 
-    @DocumentedDefinition(value = "cd4atenrollment", name = "CD4 at Enrollment")
     public PatientDataDefinition getCD4AtEnrollment() {
-        return df.getObsByEndDate(hivMetadata.getCD4AtEnrollment(), df.getObsValueNumericConverter(), TimeQualifier.FIRST);
+        return df.getObsByEndDate(hivMetadata.getCD4AtEnrollment(), null, TimeQualifier.FIRST, df.getObsValueNumericConverter());
     }
 
-    @DocumentedDefinition(value = "baselinecd4", name = "Baseline CD4")
     public PatientDataDefinition getBaselineCD4() {
-        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), df.getObsValueNumericConverter(), TimeQualifier.FIRST);
+        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), null, TimeQualifier.FIRST, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getBaselineCD4(String olderThan) {
-        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), df.getObsValueNumericConverter(), olderThan, TimeQualifier.FIRST);
+        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), null, TimeQualifier.FIRST, olderThan, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getRecentCD4() {
-        return df.getObsByEndDate(hivMetadata.getCD4(), df.getObsValueNumericConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getCD4(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getRecentCD4(String olderThan) {
-        return df.getObsByEndOfPeriod(hivMetadata.getCD4(), df.getObsValueNumericConverter(), olderThan, TimeQualifier.LAST);
+        return df.getObsByEndOfPeriod(hivMetadata.getCD4(), null, TimeQualifier.LAST, olderThan, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getAgeDuringPeriod() {
@@ -319,22 +329,9 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return ageOnDate;
     }
 
-    @DocumentedDefinition(value = "cd4At6months", name = "CD4 at 6 months")
     public PatientDataDefinition getCD4At6months() {
-        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), df.getObsValueNumericConverter(), TimeQualifier.LAST);
+        return df.getObsByEndDate(hivMetadata.getBaselineCD4(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
-
-    /*@DocumentedDefinition(value = "cd4At6monthsdate", name = "Date of CD4 at 6 months")
-    public PatientDataDefinition getDateofCD4At6months() {
-    }
-
-    @DocumentedDefinition(value = "cd4At12months", name = "CD4 at 12 months")
-    public PatientDataDefinition getCD4At12months() {
-    }
-
-    @DocumentedDefinition(value = "cd4At12monthsdate", name = "Date of CD4 at 12 months")
-    public PatientDataDefinition getDateofCD4At12months() {
-    }*/
 
     // ***** CONVENIENCE METHODS
 
@@ -432,12 +429,24 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return getFirstObsValueDuringMonth(hivMetadata.getViralLoad(), month, df.getObsValueCodedConverter());
     }
 
+    public PatientDataDefinition getDistrictTBRxNo() {
+        return df.getObs(hivMetadata.getDistrictTBNo(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueTextConverter());
+    }
+
     public PatientDataDefinition getBaseRegimen() {
         return getFirstObsValueDuringMonth(hivMetadata.getArtStartRegimen(), 0, new ARVConverter());
     }
 
     public PatientDataDefinition getEDDDate(int pregnancyNo) {
         return df.getEDDDate(pregnancyNo, df.getObsDatetimeConverter());
+    }
+
+    public PatientDataDefinition getFirstLineSubsDate(int which) {
+        return df.getFirstLineSwitch(hivMetadata.getFirstLineSubstitutionDate(), which, df.getObsDatetimeConverter());
+    }
+
+    public PatientDataDefinition getFirstLineSubsReason(int which) {
+        return df.getFirstLineSwitch(hivMetadata.getSubstitutionReason(), which, df.getObsValueCodedConverter());
     }
 
 }
