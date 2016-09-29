@@ -56,8 +56,40 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Daily Appointments List",
-        "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1ccc",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
         "order": 5
+      },
+      {
+        "id": "Missed Appointments List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Missed Appointments List",
+        "url": "reportingui/runReport.page?reportDefinition=654c7276-75f8-11e6-8b77-86f30ca893d3",
+        "order": 10
+      },
+      {
+        "id": "Death List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Death List",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
+        "order": 15
+      },
+      {
+        "id": "Transfer Out List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Transfer Out List",
+        "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
+        "order": 20
+      },
+      {
+        "id": "ART Patient Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "ART Patient Export",
+        "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
+        "order": 25
       },
       {
         "id": "Pre-ART Register",
@@ -74,6 +106,22 @@
         "label": "Case Based Surveillance EID Report",
         "url": "reportingui/runReport.page?reportDefinition=167cf668-0715-488b-b159-d5f391774099",
         "order": 5
+      },
+      {
+        "id": "Adherence Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "Adherence Report",
+        "url": "reportingui/runReport.page?reportDefinition=167cf66c-0715-488b-b159-d5f391774095",
+        "order": 10
+      },
+      {
+        "id": "Early Warning Indicator Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "Early Warning Indicator Report",
+        "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
+        "order": 15
       }
     ]
   }
