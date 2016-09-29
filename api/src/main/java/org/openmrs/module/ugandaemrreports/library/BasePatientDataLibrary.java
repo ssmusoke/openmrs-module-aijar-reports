@@ -1,11 +1,13 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.ConcatenatedPropertyConverter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
+import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +18,7 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
     private DataFactory df;
 
     @Autowired
-    private HIVMetadata metadata;
+    private CommonReportMetadata commonReportMetadata;
 
     @Override
     public String getKeyPrefix() {
@@ -43,5 +45,10 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
     public PatientDataDefinition getAddressFull() {
         PreferredAddressDataDefinition pdd = new PreferredAddressDataDefinition();
         return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "district", "traditionalAuthority", "village"));
+    }
+
+    public PatientDataDefinition getTelephone() {
+        PersonAttributeDataDefinition personAttributeDataDefinition = PatientColumns.createAttributeForPersonData("telephone", commonReportMetadata.getTelephone());
+        return df.convert(personAttributeDataDefinition, new PropertyConverter(PersonAttribute.class, "value"));
     }
 }
