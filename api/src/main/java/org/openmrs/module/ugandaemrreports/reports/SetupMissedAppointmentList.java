@@ -1,39 +1,36 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Daily Appointments List report
  */
 @Component
-public class SetupDailyAppointmentsList extends UgandaEMRDataExportManager {
-
-    @Autowired
-    ARTClinicCohortDefinitionLibrary hivCohorts;
+public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
-    private CommonReportMetadata commonMetadata;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
+    ARTClinicCohortDefinitionLibrary hivCohorts;
 
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
@@ -44,33 +41,36 @@ public class SetupDailyAppointmentsList extends UgandaEMRDataExportManager {
     @Autowired
     private BasePatientDataLibrary basePatientData;
 
+    @Autowired
+    private HIVMetadata hivMetadata;
+
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "98e9202d-8c00-415f-9882-43917181f08d";
+        return "654c6fec-75f8-11e6-8b77-86f30ca893d3";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e206-c3cd-4dc1-b332-13f1d02f1ccc";
+        return "654c7276-75f8-11e6-8b77-86f30ca893d3";
     }
 
     @Override
     public String getName() {
-        return "Daily Appointments List";
+        return "Missed Appointment List";
     }
 
     @Override
     public String getDescription() {
-        return "A list of clients expected for appointments in the ART clinic on the specified date";
+        return "Missed Appointment List";
     }
 
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
-        // TODO: What parameters will cause the cohorts to show only obs on a specific day
+        l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
         return l;
     }
@@ -86,47 +86,46 @@ public class SetupDailyAppointmentsList extends UgandaEMRDataExportManager {
      * Build the report design for the specified report, this allows a user to override the report design by adding
      * properties and other metadata to the report design
      *
+     * @param reportDefinition
      * @return The report design
      */
     @Override
+
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DailyAppointmentsList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:9,dataset:DAL");
+        props.put("repeatingSections", "sheet:1,row:2,dataset:MISSED_APPOINTMENT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
     }
 
-
     @Override
     public ReportDefinition constructReportDefinition() {
+
         ReportDefinition rd = new ReportDefinition();
+
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
-        rd.setParameters(Arrays.asList(new Parameter("endDate", "End Date", Date.class)));
+        rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+
+        CohortDefinition definition = df.getLostDuringPeriod();
+
         dsd.setName(getName());
-        dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        dsd.setParameters(getParameters());
+        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
+        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
+        dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
+        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
+        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
 
-        // rows are patients with a next appointment date obs in the given date range
-        rd.setBaseCohortDefinition(hivCohorts.getPatientsWithReturnVisitDateOnEndDate(), ParameterizableUtil.createParameterMappings("onOrAfter=${endDate},onOrBefore=${endDate}"));
-
-        // columns to include
-        addColumn(dsd, "ID", hivPatientData.getClinicNumber());
-        addColumn(dsd, "familyName", builtInPatientData.getPreferredFamilyName());
-        addColumn(dsd, "givenName", builtInPatientData.getPreferredGivenName());
-        addColumn(dsd, "Sex", builtInPatientData.getGender());
-        addColumn(dsd, "Birthdate", builtInPatientData.getBirthdate());
-        addColumn(dsd, "LastVisitDate", hivPatientData.getLastVisitDate());
-        addColumn(dsd, "NextAppointmentDate", hivPatientData.getExpectedReturnDate());
-
-        Map<String, Object> mappings = new HashMap<String, Object>();
-        mappings.put("endDate", "${endDate}");
-
-        rd.addDataSetDefinition("DAL", dsd, mappings);
+        rd.addDataSetDefinition("MISSED_APPOINTMENT", Mapped.mapStraightThrough(dsd));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
         return rd;
     }

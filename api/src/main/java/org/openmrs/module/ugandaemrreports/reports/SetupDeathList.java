@@ -1,23 +1,26 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DeathDateDataDefinition;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,22 +28,13 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupARTRegister extends UgandaEMRDataExportManager {
+public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-
-    @Autowired
-    private CommonReportMetadata commonMetadata;
-
-    @Autowired
-    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
 
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
@@ -51,33 +45,37 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     @Autowired
     private BasePatientDataLibrary basePatientData;
 
+    @Autowired
+    private HIVMetadata hivMetadata;
+
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "98e9202d-8c00-415f-9882-43917181f023";
+        return "f8e92026-8c00-415f-988c-43917181f02d";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e206-c3cd-4dc1-b332-13f1d02f1c54";
+        return "9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a";
     }
 
     @Override
     public String getName() {
-        return "ART Register";
+        return "Death List";
     }
 
     @Override
     public String getDescription() {
-        return "ART Register";
+        return "Death List";
     }
 
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
+        l.add(df.getEndDateParameter());
         return l;
     }
 
@@ -98,9 +96,9 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTRegister.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DeathList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:6,dataset:ART");
+        props.put("repeatingSections", "sheet:1,row:2,dataset:DEATH_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -110,15 +108,28 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     public ReportDefinition constructReportDefinition() {
 
         ReportDefinition rd = new ReportDefinition();
+
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        ARTDatasetDefinition dsd = new ARTDatasetDefinition();
+        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+
+
+        CohortDefinition definition = df.getDeadPatientsDuringPeriod();
+
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("ART", Mapped.mapStraightThrough(dsd));
+        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
+        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
+        dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
+        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        dsd.addColumn("Death Date", new DeathDateDataDefinition(), (String) null);
+        rd.addDataSetDefinition("DEATH_LIST", Mapped.mapStraightThrough(dsd));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+
         return rd;
     }
 
