@@ -63,12 +63,12 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Daily Appointment List";
+        return "Appointments List";
     }
 
     @Override
     public String getDescription() {
-        return "Daily Appointment List";
+        return "Appointments List";
     }
 
     @Override

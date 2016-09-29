@@ -55,7 +55,7 @@
         "id": "Daily Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Daily Appointments List",
+        "label": "Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
         "order": 5
       },
