@@ -40,7 +40,7 @@
 
         <!-- module version defeinitions -->
         <appframeworkVersion>2.4</appframeworkVersion>
-        <appuiVersion>1.6-SNAPSHOT</appuiVersion>
+        <appuiVersion>1.6</appuiVersion>
         <calculationVersion>1.1</calculationVersion>
         <metadatadeployVersion>1.6</metadatadeployVersion>
         <metadatamappingVersion>1.0.2</metadatamappingVersion>
