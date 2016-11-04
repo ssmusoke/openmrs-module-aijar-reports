@@ -67,6 +67,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getTransferredOut() {
         return df.getPatientsWithCodedObs(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+    public CohortDefinition getTransferredOutDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
 
     public CohortDefinition getTransferredOutBy(String olderThan) {
         return df.getPatientsWithCodedObsByEndDate(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
@@ -270,11 +273,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getAdultsOnFirstLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getAdultsOnSecondLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsOnThirdLineRegimenDuringPeriod() {
