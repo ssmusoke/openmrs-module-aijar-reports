@@ -52,9 +52,7 @@ public class ViralLoadEvaluator implements CohortDefinitionEvaluator {
 
         Set<Integer> encounterIds = new HashSet<Integer>(obsResults.values());
         Set<Integer> patients = new HashSet<Integer>(obsResults.keySet());
-
-        System.out.println(encounterIds);
-
+        
         HqlQueryBuilder detectedQuery = new HqlQueryBuilder();
         detectedQuery.select(new String[]{"o.personId"});
         detectedQuery.from(Obs.class, "o");
