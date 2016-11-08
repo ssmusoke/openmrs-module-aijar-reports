@@ -52,6 +52,14 @@
         "order": 10
       },
       {
+        "id": "CBS Adult Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "CBS Adult Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=1479f8ae-5d93-4b2f-9cd6-8b7eb976dc6b",
+        "order": 15
+      },
+      {
         "id": "Daily Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
