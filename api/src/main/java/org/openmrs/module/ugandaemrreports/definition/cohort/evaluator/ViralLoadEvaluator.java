@@ -50,20 +50,20 @@ public class ViralLoadEvaluator implements CohortDefinitionEvaluator {
 
         Map<Integer, Integer> obsResults = evaluationService.evaluateToMap(obsQuery, Integer.class, Integer.class, context);
 
-        Set<Integer> patients = new HashSet<Integer>(obsResults.values());
-
-
+        Set<Integer> encounterIds = new HashSet<Integer>(obsResults.values());
+        Set<Integer> patients = new HashSet<Integer>(obsResults.keySet());
+        
         HqlQueryBuilder detectedQuery = new HqlQueryBuilder();
         detectedQuery.select(new String[]{"o.personId"});
         detectedQuery.from(Obs.class, "o");
         detectedQuery.whereEqual("o.concept", hivMetadata.getViralLoadDetection());
-        detectedQuery.whereIn("o.encounter", patients);
+        detectedQuery.whereIn("o.encounter.encounterId", encounterIds);
 
         HqlQueryBuilder copiesQuery = new HqlQueryBuilder();
         copiesQuery.select(new String[]{"o.personId"});
         copiesQuery.from(Obs.class, "o");
         copiesQuery.whereEqual("o.concept", hivMetadata.getViralLoadCopies());
-        copiesQuery.whereIn("o.encounter", patients);
+        copiesQuery.whereIn("o.encounter.encounterId", encounterIds);
 
 
         if (cd.getCopiesFrom() != null && cd.getCopiesTo() != null) {
