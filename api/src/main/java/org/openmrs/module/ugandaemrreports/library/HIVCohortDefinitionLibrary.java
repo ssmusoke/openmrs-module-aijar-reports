@@ -68,6 +68,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObs(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getTransferredOutDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getTransferredOutBy(String olderThan) {
         return df.getPatientsWithCodedObsByEndDate(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -122,6 +126,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getArtStartDateBetweenPeriod() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+    public CohortDefinition getArtStartDate() {
+        return df.getPatientsWhoseObsValueAfterDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getArtStartDateBetweenPeriod(String olderThan) {
@@ -265,20 +272,42 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getChildrenOnFirstLineRegimen() {
+        return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getChildrenOnSecondLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getChildrenOnSecondLineRegimen() {
+        return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getAdultsOnFirstLineRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getAdultsOnFirstLineRegimen() {
+        return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getAdultsOnSecondLineRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getAdultsOnSecondLineRegimen() {
+        return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsOnThirdLineRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getThirdLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsOnThirdLineRegimen() {
+        return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getThirdLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsStartedArtBasedOnCD4() {

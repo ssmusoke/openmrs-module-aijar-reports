@@ -1,7 +1,9 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xpath.SourceTree;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
@@ -23,6 +25,7 @@ import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -55,11 +58,11 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
         context = ObjectUtil.nvl(context, new EvaluationContext());
 
-        String sql = "SELECT A.person_id, DATE(A.value_datetime),B.ti,C.identifier,D.family_name,D.given_name,E.gender,TIMESTAMPDIFF(YEAR, E.birthdate,'" + date + "') as age,\n" +
+        String sql = "SELECT A.person_id,DATE(A.value_datetime),B.ti,C.identifier,D.family_name,D.given_name,E.gender,TIMESTAMPDIFF(YEAR, E.birthdate, '" + date + "') as age,\n" +
                 "  F.county_district,G.functional_status,H.baseline_weight,I.muac,J.baseline_ci,K.baseline_cd4,L.baseline_cd4_per,M.viral_load,\n" +
                 "  N.cpt,O.inh,P.tb_reg,Q.tb_start_date,R.tb_stop_date,S.pregnancy,T.baseline_regimen,U.baseline_regimen_other,V.line1_sub_date,\n" +
                 "  W.line1_sub_reason,X.line2_sub_date,Y.line2_sub_reason,Z.line3_sub_date,AA.line3_sub_reason,AB.current_arv,AC.tb_status,AD.adh,\n" +
-                "  AE.ci,AF.wieght,AG.cd4,AH.cd4_per,AI.encounters\n" +
+                "  AE.ci,AF.wieght,AG.cd4,AH.cd4_per,AI.encounters,AJ.appointments,E.dead,DATE(E.death_date),AK.trans_out,AL.trans_out_date,AM.lost,AN.lost_date,AO.interupt,AP.stop_date,AQ.restart_date\n" +
                 "FROM\n" +
                 "  (SELECT person_id,value_datetime FROM obs WHERE concept_id = 99161 AND value_datetime BETWEEN '" + startDateString + "' AND '" + endDateString + "' group by person_id) A\n" +
                 "  LEFT JOIN\n" +
@@ -71,8 +74,8 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,family_name,given_name FROM person_name group by person_id) D\n" +
                 "    ON (A.person_id = D.person_id)\n" +
-                "    LEFT JOIN\n" +
-                "  (SELECT person_id,gender,birthdate FROM person group by person_id) E\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,gender,birthdate,dead,death_date FROM person group by person_id) E\n" +
                 "    ON (A.person_id = E.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,county_district FROM person_address group by person_id) F\n" +
@@ -108,13 +111,13 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS tb_reg FROM obs WHERE concept_id = 99031 group by person_id) P\n" +
                 "    ON(A.person_id = P.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS tb_start_date FROM obs WHERE concept_id = 90217 group by person_id) Q\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS tb_start_date FROM obs WHERE concept_id = 90217 group by person_id) Q\n" +
                 "    ON(A.person_id = Q.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS tb_stop_date FROM obs WHERE concept_id = 90310 group by person_id) R\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS tb_stop_date FROM obs WHERE concept_id = 90310 group by person_id) R\n" +
                 "    ON(A.person_id = R.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS pregnancy FROM obs WHERE concept_id = 5596 group by person_id) S\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS pregnancy FROM obs WHERE concept_id = 5596 group by person_id) S\n" +
                 "    ON(A.person_id = S.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS baseline_regimen FROM obs WHERE concept_id = 99061 group by person_id) T\n" +
@@ -123,19 +126,19 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS baseline_regimen_other FROM obs WHERE concept_id = 99268 group by person_id) U\n" +
                 "    ON(A.person_id = U.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS line1_sub_date FROM obs WHERE concept_id = 99163 group by person_id) V\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS line1_sub_date FROM obs WHERE concept_id = 99163 group by person_id) V\n" +
                 "    ON(A.person_id = V.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS line1_sub_reason FROM obs WHERE concept_id = 90246 group by person_id) W\n" +
                 "    ON(A.person_id = W.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS line2_sub_date FROM obs WHERE concept_id = 99164 group by person_id) X\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS line2_sub_date FROM obs WHERE concept_id = 99164 group by person_id) X\n" +
                 "    ON(A.person_id = X.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS line2_sub_reason FROM obs WHERE concept_id = 90247 group by person_id) Y\n" +
                 "    ON(A.person_id = Y.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_datetime,'|',DATE(obs_datetime))) AS line3_sub_date FROM obs WHERE concept_id = 162991 group by person_id) Z\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS line3_sub_date FROM obs WHERE concept_id = 162991 group by person_id) Z\n" +
                 "    ON(A.person_id = Z.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS line3_sub_reason FROM obs WHERE concept_id = 90247 group by person_id) AA\n" +
@@ -147,7 +150,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS tb_status FROM obs WHERE concept_id = 90216 group by person_id) AC\n" +
                 "    ON(A.person_id = AC.person_id)\n" +
                 "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS adh FROM obs WHERE concept_id = 90221 group by person_id) AD\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS adh FROM obs WHERE concept_id = 90220 group by person_id) AD\n" +
                 "    ON(A.person_id = AD.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS ci FROM obs WHERE concept_id = 90203 group by person_id) AE\n" +
@@ -163,7 +166,31 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 "    ON(A.person_id = AH.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT patient_id as person_id,group_concat(concat(encounter_id,'|',encounter_type,'|',DATE(encounter_datetime))) as encounters FROM encounter group by person_id) AI\n" +
-                "    ON (A.person_id = AI.person_id)";
+                "    ON (A.person_id = AI.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS appointments FROM obs WHERE concept_id = 5096 group by person_id) AJ\n" +
+                "    ON(A.person_id = AJ.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS trans_out FROM obs WHERE concept_id = 90306 group by person_id) AK\n" +
+                "    ON(A.person_id = AK.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS trans_out_date FROM obs WHERE concept_id = 99165 group by person_id) AL\n" +
+                "    ON(A.person_id = AL.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS lost FROM obs WHERE concept_id = 5240 group by person_id) AM\n" +
+                "    ON(A.person_id = AM.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS lost_date FROM obs WHERE concept_id = 90209 group by person_id) AN\n" +
+                "    ON(A.person_id = AN.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS interupt FROM obs WHERE concept_id = 99132 group by person_id) AO\n" +
+                "    ON(A.person_id = AO.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS stop_date FROM obs WHERE concept_id = 99084 group by person_id) AP\n" +
+                "    ON(A.person_id = AP.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS restart_date FROM obs WHERE concept_id = 99085 group by person_id) AQ\n" +
+                "    ON(A.person_id = AQ.person_id)";
 
         SqlQueryBuilder q = new SqlQueryBuilder(sql);
 
@@ -192,10 +219,23 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
             TreeMap<String, String> encounters = Helper.splitQuery((String) r[37], 1, 3);
 
+            List<String> encounterDates = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[37], 3, 1).keySet()));
+
+            System.out.println(encounterDates);
+
             TreeMap<String, String> cpts = Periods.changeKeys(Helper.splitQuery((String) r[16], 1, 2), encounters);
             TreeMap<String, String> inhs = Periods.changeKeys(Helper.splitQuery((String) r[17], 1, 2), encounters);
             TreeMap<String, String> tbStarts = Helper.splitQuery((String) r[19], 2, 1);
             TreeMap<String, String> tbStops = Helper.splitQuery((String) r[20], 2, 1);
+
+            String deathDate = DateUtil.formatDate((Date) r[40], "yyyy-MM-dd");
+            List<String> lostDates = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[44], 2, 1).keySet()));
+            List<String> stoppedDates = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[46], 2, 1).keySet()));
+            List<String> restartDates = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[47], 2, 1).keySet()));
+            List<String> appointments = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[38], 2, 1).keySet()));
+            List<String> tos = Periods.listOfDatesInPeriods(periods, Lists.newArrayList(Helper.splitQuery((String) r[42], 2, 1).keySet()));
+
+
             TreeMap<String, String> funcStatuses = Periods.changeKeys(Helper.splitQuery((String) r[9], 1, 2), encounters);
 
             String artStartDate = DateUtil.formatDate((Date) r[1], "yyyy-MM-dd");
@@ -270,6 +310,11 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
             Integer largestPeriod = Periods.isDateInTheInterval(dateToday, periods);
 
+            Integer deathPeriod = null;
+            if (StringUtils.isNotBlank(deathDate)) {
+                deathPeriod = Periods.isDateInTheInterval(deathDate, periods);
+            }
+
             if (StringUtils.isNotBlank(artStartDate)) {
                 biggestPeriod = Periods.isDateInTheInterval(artStartDate, periods);
             }
@@ -339,9 +384,9 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
             pdh.addCol(row, "L2 Switch Reason", r[27]);
             pdh.addCol(row, "L3 Switch Date", r[28]);
             pdh.addCol(row, "L3 Switch Reason", r[29]);*/
-
             for (int i = 0; i <= 72; i++) {
                 String key = String.valueOf(i);
+                List<String> fusStates = new ArrayList<String>();
                 if (i >= biggestPeriod && i <= largestPeriod) {
                     String fuStatus = "";
                     String tbStatus = "";
@@ -349,29 +394,56 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     String currentArv = "";
                     String adherence = "";
 
+                    if (deathPeriod != null) {
+                        if (deathPeriod == i) {
+                            fusStates.add("1");
+                        }
+                    }
+                    if (stoppedDates.contains(key)) {
+                        fusStates.add("2");
+                    }
+                    if (restartDates.contains(key)) {
+                        fusStates.add("6");
+                    }
+                    if (tos.contains(key)) {
+                        fusStates.add("5");
+                    }
+                    if (deathPeriod != null) {
+                        if (!encounterDates.contains(key) && deathPeriod != i && !appointments.contains(key) && !stoppedDates.contains(key) && !restartDates.contains(key) && !tos.contains(key)) {
+                            fusStates.add("\u2713");
+                        } else if (!encounterDates.contains(key) && appointments.contains(key)) {
+                            fusStates.add("3");
+                        }
+                    } else if (!encounterDates.contains(key) && !appointments.contains(key) && !stoppedDates.contains(key) && !restartDates.contains(key) && !tos.contains(key)) {
+                        fusStates.add("\u2713");
+                    } else if (!encounterDates.contains(key) && appointments.contains(key)) {
+                        fusStates.add("3");
+                    }
+
                     TreeMap<String, String> tb = tbMap.get(key);
                     TreeMap<String, String> cpt = cptMap.get(key);
                     TreeMap<String, String> inh = inhMap.get(key);
                     TreeMap<String, String> arv = arvMap.get(key);
                     TreeMap<String, String> adh = adhMap.get(key);
 
-                    if (tb != null) {
+                    if (MapUtils.isNotEmpty(tb)) {
                         tbStatus = tb.lastEntry().getValue();
                     }
 
-                    if (cpt != null || inh != null) {
+                    if (MapUtils.isNotEmpty(inh) || MapUtils.isNotEmpty(cpt)) {
                         cptInhStatus = "Y";
+                    } else {
+                        cptInhStatus = "N";
                     }
 
-                    if (arv != null || arv != null) {
+                    if (MapUtils.isNotEmpty(arv)) {
                         currentArv = arv.lastEntry().getValue();
                     }
-                    if (adh != null || adh != null) {
+                    if (MapUtils.isNotEmpty(adh)) {
                         adherence = adh.lastEntry().getValue();
                     }
 
                     StringBuilder cptAdherence = new StringBuilder();
-
                     if (StringUtils.isNotBlank(cptInhStatus) && StringUtils.isNotBlank(adherence)) {
                         cptAdherence.append(cptInhStatus + "|" + Helper.getString(adherence));
                     } else if (StringUtils.isNotBlank(cptInhStatus) && StringUtils.isBlank(adherence)) {
@@ -383,7 +455,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     }
 
                     String followupStatus = new StringBuilder()
-                            .append(Helper.getString(currentArv) + " " + fuStatus + "\n")
+                            .append(Helper.getString(currentArv) + "|" + StringUtils.join(fusStates, ",") + "\n")
                             .append(Helper.getString(tbStatus) + "\n")
                             .append(cptAdherence.toString())
                             .toString();

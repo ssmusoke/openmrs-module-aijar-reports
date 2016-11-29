@@ -354,6 +354,11 @@ public class HIVMetadata extends Metadata {
 
     public List<Concept> getFirstLineDrugsChildren() {
         return getConceptList("99015,99016,99005,99006,90002"); // Last Concept is Other Specify which includes any unknown drugs
+        return getConceptList("dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,dd2b84c5-30ab-102d-86b0-7a5022ba4115,dd2b8b27-30ab-102d-86b0-7a5022ba4115,25b0b83c-a7b8-4663-b727-0c03c982bab2,f99ef0fa-b299-4573-ae31-f4d09b1b69d5,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,6cdbfee8-87bf-406c-8dc3-3a22d95e952c,583a954b-0cd5-4b69-aef6-87c281e03a55,14c56659-3d4e-4b88-b3ff-e2d43dbfb865");
+    }
+
+    public List<Concept> getFirstLineDrugsAdults() {
+        return getConceptList("dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,dd2b84c5-30ab-102d-86b0-7a5022ba4115,dd2b8b27-30ab-102d-86b0-7a5022ba4115,012a1378-b005-4793-8ea0-d01fceea769d,25b0b83c-a7b8-4663-b727-0c03c982bab2,f99ef0fa-b299-4573-ae31-f4d09b1b69d5,20bcbf56-2784-4bf0-a6b4-23ba43764163");
     }
 
     public List<Concept> getFirstLineDrugsAdult() {
@@ -361,7 +366,11 @@ public class HIVMetadata extends Metadata {
     }
 
     public List<Concept> getSecondLineDrugsChildren() {
-        return getConceptList("99017,99018,99019,99044,99043,99045,99284,99286,99285");
+        return getConceptList("dd2b3eee-30ab-102d-86b0-7a5022ba4115,dd2b9181-30ab-102d-86b0-7a5022ba4115,dd2b97d3-30ab-102d-86b0-7a5022ba4115,dd2b9e11-30ab-102d-86b0-7a5022ba4115,b06bdb63-dd08-4b80-af5a-d17f6b3062a5,4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6,4a608d68-516f-44d2-9e0b-1783dc0d870e,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,f00e5ff7-73bb-4385-8ee1-ea7aa772ec3e,faf13d3c-7ca8-4995-ab29-749f3960b83d,d4393bd0-3a9e-4716-8968-1057c58c32bc,6cdbfee8-87bf-406c-8dc3-3a22d95e952c,583a954b-0cd5-4b69-aef6-87c281e03a55,fe78521e-eb7a-440f-912d-0eb9bf2d4b2c,14c56659-3d4e-4b88-b3ff-e2d43dbfb865");
+    }
+
+    public List<Concept> getSecondLineDrugsAdults() {
+        return getConceptList("dd2b452c-30ab-102d-86b0-7a5022ba4115,dd2b4d82-30ab-102d-86b0-7a5022ba4115,b06bdb63-dd08-4b80-af5a-d17f6b3062a5,4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,942e427c-7a3b-49b6-97f3-5cdbfeb8d0e3,29439504-5f5d-49ac-b8e4-258adc08c67a,d4393bd0-3a9e-4716-8968-1057c58c32bc,fe78521e-eb7a-440f-912d-0eb9bf2d4b2c,25186d70-ed8f-486c-83e5-fc31cbe95630,14c56659-3d4e-4b88-b3ff-e2d43dbfb865");
     }
 
     public List<Concept> getSecondLineDrugsAdult() {
@@ -436,7 +445,35 @@ public class HIVMetadata extends Metadata {
         return getConceptList("dc9b8cd1-30ab-102d-86b0-7a5022ba4115,dc9b9113-30ab-102d-86b0-7a5022ba4115,dc9b9549-30ab-102d-86b0-7a5022ba4115,dc9b999b-30ab-102d-86b0-7a5022ba4115");
     }
 
-    public List<Concept> getPreARTClinicalStages() {
-        return getConceptList("dcda2bc2-30ab-102d-86b0-7a5022ba4115,dcda3251-30ab-102d-86b0-7a5022ba4115,dcda3663-30ab-102d-86b0-7a5022ba4115,dcda3a80-30ab-102d-86b0-7a5022ba4115");
+    public List<Concept> getBaselineClinicalStages1() {
+        return getConceptList("dc9b8cd1-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public List<Concept> getBaselineClinicalStages2() {
+        return getConceptList("dc9b9113-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public List<Concept> getBaselineClinicalStages3() {
+        return getConceptList("dc9b9549-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public List<Concept> getBaselineClinicalStages4() {
+        return getConceptList("dc9b999b-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public List<Concept> getBaselineClinicalStages12() {
+        return getConceptList("dc9b8cd1-30ab-102d-86b0-7a5022ba4115,dc9b9113-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getViralLoadDate() {
+        return getConcept("0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
+    }
+
+    public Concept getViralLoadDetection() {
+        return getConcept("dca12261-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getViralLoadCopies() {
+        return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
     }
 }

@@ -1,8 +1,15 @@
 language: java
 jdk:
- - openjdk7
- - oraclejdk7
-script: mvn clean install --batch-mode
+- openjdk7
+- oraclejdk7
+script:
+- if [ "$TRAVIS_JDK_VERSION" = "openjdk7" ] && [ "$TRAVIS_BRANCH" = "master" ] &&
+  [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn deploy --settings maven-settings.xml;
+  else mvn install; fi
 matrix:
   allow_failures:
     jdk: oraclejdk7
+env:
+  global:
+  - secure: MwkNpmmvzF8WxvIXaDziRBLyV51Z4nGShQyj5DHyVrJITINdHIgMXVN+jv+3XA2IFmnUiTOZ2OQnrBxhmfbpbkpSaXaQfbkxlHmzDTnfRn5H12aCAAVHkRiY2CaCdzgTGjoDuqguRi39Qoy2NIVANiTs+JKSp70dFoBi0ftTJdy14hZQGOgJWAzFs0PF3ZHLprBYSbfB1KuC4yNObo0GcyrJFWIWbqBYH4cJM7t2+TwPQyVv8EZH5Lo8FkQFUIFFYr45WTYZv4y5TEi07fg/vdSDfWfaOm65FnA43cIrtG6QWY9/w78dWBzXEihz8HGwAsAJxNgEp1pYHrTGjFl1VfGcWnphJi6yOaVmK4u93yDavneHCYm8gUOhtLd/MgJCp8KqCZGhaTjudQIlpf7iBc9u0VzuZOjnmRZvYoBnP5jbuHDFc9QfZRvfjgSMguzzP09nnn8A7OrKYSR9MV4BG+hbAFXqJYwgslxcbFAdutAmoG3fz4G7HeThfksUtsJkBxMFvuEOZ9gWUnAxuJ888RCdsolHFVN4tIRuCWLqUi2JcsRaytwtpncTf/C3NoydAeCXrR9fs7u5xbIXLd0j+kVSPe+XUitX3RJBf4iCY1o6VWdOtH4bWVuWs4MCEbY+PrOB5d8Sw9ldozgTsUsfOVae4+DayLkGUZgfs+7IVUw=
+  - secure: meAWGH8s0CywnM+uNAX1EM1+A2mPh0A5HVX7FN6jiq6gT75jkZCbn1wL2VhkPgPhiXExgrfzseUwQvUUucHUkuGqe9yA+eU5qGTAVRgglkWBNoL7DyuScixbGeOpuy5IBYQ7m3NuY3T38lFNXXlXESEryMOZ9HTRk/6IibHEWiYz8A86DxEiuILJc8GuaoCKHAvxPY8tf0/q+CAMnrmQ95/yb6h5cbT8zYZmWJNdpiXNGm643//eit/e8FGfKOkqUO43mDCBg9M+UGmMv15YAwYqWWLgiU1YmeW7Jrlpd9hkN2u9t74rdi0nuUEVo8V1OhpGt9Wor1SImkc+wZNQkkc7M0gEgwahCfVSe8HOk3JK1rbDRvhh1CS2BXobc7dY7r2ys30CmxHAckmop5kyoVW+NVbY2VX3BUYCCU4kEwNNyXPTP8BMFMRmLYZTsaT9ausd5SfXolcW00kZHkis5oB/6pa8kIz940VeAqU+7/Q2YeoyB3UajAFk8RJwDW+ZvkR1yEnaJsndQb7mYRP8PaxM8I/m2P6r8ZwQo8bH6sAD46gvRjHG9uCrKiUxDNpxKT6YKnbSbtorgNv5I8JMd3i6RdMkpOwyKwv3vFEk+YnqlI8HGPmQBRy+W4xXY6XwvNhCLZNZtG+mk1rr1uC7LHptr2lld/clczJM66w6Ex0=

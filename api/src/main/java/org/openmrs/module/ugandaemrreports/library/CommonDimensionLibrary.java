@@ -117,6 +117,34 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         return ageGenderDimension;
     }
 
+    public CohortDefinitionDimension getCBSAdultReportAgeGenderGroup() {
+        CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
+
+        CohortDefinition below5Years = cohortDefinitionLibrary.below5Years();
+        CohortDefinition between5And14Years = cohortDefinitionLibrary.between5And14Years();
+        CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
+
+        CohortDefinition males = cohortDefinitionLibrary.males();
+        CohortDefinition females = cohortDefinitionLibrary.females();
+
+        CohortDefinition a = df.getPatientsInAll(below5Years, males);
+        CohortDefinition b = df.getPatientsInAll(below5Years, females);
+
+        CohortDefinition e = df.getPatientsInAll(between5And14Years, males);
+        CohortDefinition f = df.getPatientsInAll(between5And14Years, females);
+        CohortDefinition g = df.getPatientsInAll(above15Years, males);
+        CohortDefinition h = df.getPatientsInAll(above15Years, females);
+
+        ageGenderDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ageGenderDimension.addCohortDefinition("below5male", Mapped.mapStraightThrough(a));
+        ageGenderDimension.addCohortDefinition("below5female", Mapped.mapStraightThrough(b));
+        ageGenderDimension.addCohortDefinition("between5and14male", Mapped.mapStraightThrough(e));
+        ageGenderDimension.addCohortDefinition("between5and14female", Mapped.mapStraightThrough(f));
+        ageGenderDimension.addCohortDefinition("above15male", Mapped.mapStraightThrough(g));
+        ageGenderDimension.addCohortDefinition("above15female", Mapped.mapStraightThrough(h));
+        return ageGenderDimension;
+    }
+
 
     public CohortDefinitionDimension getAdherenceGroup() {
         CohortDefinitionDimension adherenceDimension = new CohortDefinitionDimension();

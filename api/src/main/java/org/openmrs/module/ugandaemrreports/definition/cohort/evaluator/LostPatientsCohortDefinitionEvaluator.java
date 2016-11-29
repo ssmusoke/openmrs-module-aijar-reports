@@ -70,11 +70,11 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
 
         for (Map.Entry<Integer, Date> entry : obsResults.entrySet()) {
 
-            Date localDate = encounterResults.get(entry.getKey());
+            Date encounterDate = encounterResults.get(entry.getKey());
 
-            if (localDate != null) {
+            if (encounterDate != null) {
 
-                Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(),localDate);
+                Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(),encounterDate);
 
                 if (cd.getMaximumDays() != null && cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays() && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
                     ret.addMember(entry.getKey());

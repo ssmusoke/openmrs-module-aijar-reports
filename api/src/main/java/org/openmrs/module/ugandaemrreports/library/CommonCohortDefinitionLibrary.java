@@ -4,9 +4,11 @@ import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -17,6 +19,9 @@ import java.util.UUID;
  */
 @Component
 public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
+
+    @Autowired
+    private DataFactory df;
 
     @Override
     public Class<? super CohortDefinition> getDefinitionType() {
@@ -68,7 +73,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.setMaxAge(maxAge);
         UUID uuid = UUID.randomUUID();
         cd.setUuid(String.valueOf(uuid));
-        return cd;
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
     /**
@@ -82,7 +87,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.setMinAge(minAge);
         UUID uuid = UUID.randomUUID();
         cd.setUuid(String.valueOf(uuid));
-        return cd;
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
     /**
@@ -95,7 +100,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
         cd.setMaxAge(maxAge);
-        return cd;
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
     public CohortDefinition below6months() {
@@ -108,6 +113,9 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
     public CohortDefinition below2Years() {
         return agedAtMost(1);
+    }
+    public CohortDefinition below5Years() {
+        return agedAtMost(4);
     }
 
     public CohortDefinition between6And59months() {
