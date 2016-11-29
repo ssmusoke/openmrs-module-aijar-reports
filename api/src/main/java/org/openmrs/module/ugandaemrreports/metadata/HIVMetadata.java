@@ -353,7 +353,6 @@ public class HIVMetadata extends Metadata {
     }
 
     public List<Concept> getFirstLineDrugsChildren() {
-        return getConceptList("99015,99016,99005,99006,90002"); // Last Concept is Other Specify which includes any unknown drugs
         return getConceptList("dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,dd2b84c5-30ab-102d-86b0-7a5022ba4115,dd2b8b27-30ab-102d-86b0-7a5022ba4115,25b0b83c-a7b8-4663-b727-0c03c982bab2,f99ef0fa-b299-4573-ae31-f4d09b1b69d5,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,6cdbfee8-87bf-406c-8dc3-3a22d95e952c,583a954b-0cd5-4b69-aef6-87c281e03a55,14c56659-3d4e-4b88-b3ff-e2d43dbfb865");
     }
 
