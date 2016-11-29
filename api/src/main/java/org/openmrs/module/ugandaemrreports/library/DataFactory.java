@@ -583,6 +583,12 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("diedOnOrAfter=startDate,diedOnOrBefore=endDate"));
     }
 
+    public CohortDefinition getDeadPatients() {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrAfter=startDate"));
+    }
+
     public CohortDefinition getPatientsWithCodedObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -841,6 +847,16 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=endDate"));
     }
 
+    public CohortDefinition getPatientsWhoseObsValueAfterDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate"));
+    }
+
     public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -888,6 +904,12 @@ public class DataFactory {
         cd.setMinimumDays(90);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+
+    public CohortDefinition getEverLost() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(90);
+        return cd;
     }
 
     public CohortDefinition getLost() {

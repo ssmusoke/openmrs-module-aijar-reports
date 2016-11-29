@@ -106,18 +106,15 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.getCBSAdultReportAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition dead = df.getDeadPatientsDuringPeriod();
-
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
         CohortDefinition regimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
         CohortDefinition eligibleByEndOfQuarter = hivCohortDefinitionLibrary.getEligibleAndReadyByEndOfQuarter();
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
+        CohortDefinition havingArtStartDate = hivCohortDefinitionLibrary.getArtStartDate();
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-        CohortDefinition transferredOutTheQuarter = hivCohortDefinitionLibrary.getTransferredOutDuringPeriod();
         CohortDefinition pregnantAtFirstEncounter = hivCohortDefinitionLibrary.getPatientsPregnantAtFirstEncounter();
 
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(havingArtStartDateDuringQuarter, transferredInTheQuarter);
-        CohortDefinition netCurrentCohort = df.getPatientsNotIn(havingArtStartDateDuringQuarter, transferredOutTheQuarter);
         CohortDefinition eligibleThisQuarter = df.getPatientsInAll(eligibleByEndOfQuarter, enrolledInTheQuarter);
 
         CohortDefinition clinicalStage = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getDateEligibilityWHOStage(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.FIRST);
@@ -125,10 +122,10 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
         CohortDefinition clinicalStage2 = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getDateEligibilityWHOStage(), hivMetadata.getARTSummaryPageEncounterType(), hivMetadata.getBaselineClinicalStages3(), BaseObsCohortDefinition.TimeModifier.FIRST);
         CohortDefinition clinicalStage3 = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getDateEligibilityWHOStage(), hivMetadata.getARTSummaryPageEncounterType(), hivMetadata.getBaselineClinicalStages4(), BaseObsCohortDefinition.TimeModifier.FIRST);
 
-        CohortDefinition all = df.getPatientsInAll(enrolledInTheQuarter, clinicalStage);
         CohortDefinition hiv = df.getPatientsInAll(enrolledInTheQuarter, clinicalStage1);
         CohortDefinition advanced = df.getPatientsInAll(enrolledInTheQuarter, clinicalStage2);
         CohortDefinition aids = df.getPatientsInAll(enrolledInTheQuarter, clinicalStage3);
+        CohortDefinition notStaged = df.getPatientsNotIn(enrolledDuringTheQuarter, clinicalStage);
 
         CohortDefinition baseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.FIRST);
         CohortDefinition baseCD4L50 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_THAN, 50.0, BaseObsCohortDefinition.TimeModifier.FIRST);
@@ -137,22 +134,37 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
         CohortDefinition baseCD4G350L500 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.GREATER_EQUAL, 350.0, RangeComparator.LESS_THAN, 500.0, BaseObsCohortDefinition.TimeModifier.FIRST);
         CohortDefinition baseCD4G500 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.GREATER_EQUAL, 500.0, BaseObsCohortDefinition.TimeModifier.FIRST);
 
-        CohortDefinition childrenOnSecondLineDuringQuarter = df.getPatientsInAll(cohortDefinitionLibrary.between0And10years(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod());
+        CohortDefinition childrenOnSecondLine = df.getPatientsInAll(cohortDefinitionLibrary.between0And10years(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimen());
 
-        CohortDefinition adultsOnSecondLineDuringQuarter = df.getPatientsInAll(cohortDefinitionLibrary.above10years(), hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimenDuringPeriod());
+        CohortDefinition adultsOnSecondLine = df.getPatientsInAll(cohortDefinitionLibrary.above10years(), hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimen());
 
-        CohortDefinition secondLineDuringQuarter = df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter);
-        CohortDefinition onThirdLineRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
+        CohortDefinition secondLine = df.getPatientsInAll(enrolledDuringTheQuarter, df.getPatientsInAny(childrenOnSecondLine, adultsOnSecondLine));
+        CohortDefinition onThirdLineRegimen = df.getPatientsInAll(enrolledDuringTheQuarter, hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimen());
 
         CohortDefinition viralLoadG1000 = df.getPatientsInAll(df.getViralLoadDuringPeriod(1000.0), regimenDuringQuarter);
 
-        CohortDefinition failingFirstSecondLine = df.getPatientsInAll(secondLineDuringQuarter, viralLoadG1000);
-        CohortDefinition failingThirdSecondLine = df.getPatientsInAll(onThirdLineRegimenDuringQuarter, viralLoadG1000);
+        CohortDefinition failingFirstSecondLine = df.getPatientsInAll(secondLine, viralLoadG1000);
+        CohortDefinition failingThirdSecondLine = df.getPatientsInAll(onThirdLineRegimen, viralLoadG1000);
 
-        addAgeGender(dsd, "a", "All HIV", all);
+
+        CohortDefinition aliveAndOnTreatment = df.getPatientsInAll(regimenDuringQuarter, enrolledInTheQuarter);
+
+        CohortDefinition lostToFollowup = df.getPatientsInAll(df.getEverLost(), enrolledDuringTheQuarter);
+
+        CohortDefinition dead = df.getPatientsInAll(df.getDeadPatients(), enrolledDuringTheQuarter);
+
+        CohortDefinition startedArt = df.getPatientsInAll(enrolledDuringTheQuarter, havingArtStartDate);
+
+        CohortDefinition transferredOutTheQuarter = df.getPatientsInAll(enrolledDuringTheQuarter, hivCohortDefinitionLibrary.getTransferredOutDuringPeriod());
+
+        CohortDefinition netCurrentCohort = df.getPatientsNotIn(enrolledDuringTheQuarter, transferredOutTheQuarter);
+
+
+        addAgeGender(dsd, "a", "All HIV", enrolledInTheQuarter);
         addAgeGender(dsd, "a1", "HIV", hiv);
         addAgeGender(dsd, "a2", "Advanced", advanced);
         addAgeGender(dsd, "a3", "AIDS", aids);
+        addAgeGender(dsd, "a4", "Not Staged", notStaged);
 
         addAgeGender(dsd, "b", "Number enrolled in care", enrolledInTheQuarter);
         addAgeGender(dsd, "c", "Tested for CD4 < 50", baseCD4);
@@ -162,16 +174,16 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "c4", "Tested for CD4 > 350 < 500", baseCD4G350L500);
         addAgeGender(dsd, "c5", "Tested for CD4 > 500", baseCD4G500);
         addAgeGender(dsd, "d", "Eligible", eligibleThisQuarter);
-        addAgeGender(dsd, "e", "Started this quarter", enrolledDuringTheQuarter);
+        addAgeGender(dsd, "e", "Started art", startedArt);
         addAgeGender(dsd, "f", "Transfer in", transferredInTheQuarter);
         addAgeGender(dsd, "g", "Transfer out", transferredOutTheQuarter);
         addAgeGender(dsd, "h", "Net Current Cohort", netCurrentCohort);
-        addAgeGender(dsd, "p", "Number alive and on treatment", regimenDuringQuarter);
-        addAgeGender(dsd, "q", "On second line", secondLineDuringQuarter);
+        addAgeGender(dsd, "p", "Number alive and on treatment", aliveAndOnTreatment);
+        addAgeGender(dsd, "q", "On second line", secondLine);
         addAgeGender(dsd, "r", "Failing on second line", failingFirstSecondLine);
-        addAgeGender(dsd, "s", "On third line", onThirdLineRegimenDuringQuarter);
+        addAgeGender(dsd, "s", "On third line", onThirdLineRegimen);
         addAgeGender(dsd, "t", "Failing on third line", failingThirdSecondLine);
-        addAgeGender(dsd, "u", "Number lost to followup", df.getLostToFollowUp());
+        addAgeGender(dsd, "u", "Number lost to followup", lostToFollowup);
         addAgeGender(dsd, "v", "Dead", dead);
 
 
@@ -185,10 +197,10 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
 
             CohortDefinition startedArtMonthsAgo = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(olderThan);
 
-            CohortDefinition viralLoadDuringQuarter = df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod());
-            CohortDefinition viralLoadDuringQuarterL1000 = df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(Boolean.TRUE));
-            CohortDefinition viralLoadDuringQuarterG1000L5000 = df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(1000.0, 5000.0));
-            CohortDefinition viralLoadDuringQuarterG10000 = df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(10000.0));
+            CohortDefinition viralLoadDuringQuarter = df.getPatientsInAll(df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod()), enrolledDuringTheQuarter);
+            CohortDefinition viralLoadDuringQuarterL1000 = df.getPatientsInAll(df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(Boolean.TRUE)), enrolledDuringTheQuarter);
+            CohortDefinition viralLoadDuringQuarterG1000L5000 = df.getPatientsInAll(df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(1000.0, 5000.0)), enrolledDuringTheQuarter);
+            CohortDefinition viralLoadDuringQuarterG10000 = df.getPatientsInAll(df.getPatientsInAll(startedArtMonthsAgo, df.getViralLoadDuringPeriod(10000.0)), enrolledDuringTheQuarter);
 
             addAgeGender(dsd, labels[i], "Number with VL", viralLoadDuringQuarter);
             addAgeGender(dsd, labels[i] + "1", "Number with VL", viralLoadDuringQuarterL1000);
@@ -220,6 +232,6 @@ public class SetupCBSAdultReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.31";
+        return "0.34";
     }
 }
