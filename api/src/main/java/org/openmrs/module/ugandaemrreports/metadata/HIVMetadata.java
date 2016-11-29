@@ -377,7 +377,7 @@ public class HIVMetadata extends Metadata {
     }
 
     public List<Concept> getThirdLineDrugs() {
-        return getConceptList("162986,90002,162987");
+        return getConceptList("607ffca4-6f15-4e85-b0a5-8226d4f25592,4c27fe52-98fd-4068-9e81-ea9caba4b583");
     }
 
     public Concept getTransferredOut() {
