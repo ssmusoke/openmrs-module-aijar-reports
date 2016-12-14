@@ -68,22 +68,6 @@
         "order": 5
       },
       {
-        "id": "Death List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Death List",
-        "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
-        "order": 15
-      },
-      {
-        "id": "Transfer Out List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Transfer Out List",
-        "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
-        "order": 20
-      },
-      {
         "id": "ART Patient Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",

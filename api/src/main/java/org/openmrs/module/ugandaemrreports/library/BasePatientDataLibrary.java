@@ -31,20 +31,28 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
     }
 
     public PatientDataDefinition getVillage() {
-        return df.getPreferredAddress("cityVillage");
+        return df.getPreferredAddress("address5");
     }
 
-    public PatientDataDefinition getTraditionalAuthority() {
-        return df.getPreferredAddress("countyDistrict");
+    public PatientDataDefinition getCounty() {
+        return df.getPreferredAddress("stateProvince");
+    }
+    
+    public PatientDataDefinition getSubcounty() {
+        return df.getPreferredAddress("address3");
+    }
+    
+    public PatientDataDefinition getParish() {
+        return df.getPreferredAddress("adddress4");
     }
 
     public PatientDataDefinition getDistrict() {
-        return df.getPreferredAddress("stateProvince");
+        return df.getPreferredAddress("countyDistrict");
     }
 
     public PatientDataDefinition getAddressFull() {
         PreferredAddressDataDefinition pdd = new PreferredAddressDataDefinition();
-        return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "district", "traditionalAuthority", "village"));
+        return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "district", "county", "subcounty", "parish", "village"));
     }
 
     public PatientDataDefinition getTelephone() {

@@ -154,6 +154,22 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between0And10years() {
         return agedAtMost(10);
     }
+    
+    /**
+     * MoH definition of children who is anybody 14 years and below
+     * @return
+     */
+    public CohortDefinition MoHChildren(){
+        return agedAtMost(14);
+    }
+    
+    /**
+     * MoH definition of adults who are 15 years and older
+     * @return
+     */
+    public CohortDefinition MoHAdult(){
+        return agedAtLeast(15);
+    }
 
     public CohortDefinition above10years() {
         return agedAtLeast(11);

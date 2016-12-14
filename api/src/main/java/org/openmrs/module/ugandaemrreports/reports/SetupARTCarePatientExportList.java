@@ -36,12 +36,6 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 	private DataFactory df;
 
 	@Autowired
-	private CommonReportMetadata commonMetadata;
-
-	@Autowired
-	private HIVMetadata hivMetadata;
-
-	@Autowired
 	private BuiltInPatientDataLibrary builtInPatientData;
 
 	@Autowired
@@ -130,6 +124,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
 		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
 		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+		addColumn(dsd, "Telephone", basePatientData.getTelephone());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
 		addColumn(dsd, "Last Regimen Pickup Date", hivPatientData.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those
