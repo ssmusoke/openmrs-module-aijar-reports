@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -26,7 +25,7 @@
         <developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-ugandaemr-reports.git
         </developerConnection>
         <url>scm:git:https://github.com/METS-Programme/openmrs-module-ugandaemr-reports</url>
-        <tag>HEAD</tag>
+        <tag>1.0.3</tag>
     </scm>
 
     <modules>
