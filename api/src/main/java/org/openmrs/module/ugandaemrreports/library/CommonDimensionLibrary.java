@@ -1,20 +1,19 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
+import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Common dimensions shared across multiple reports
@@ -45,6 +44,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     /**
      * Gender dimension
+     *
      * @return the dimension
      */
     public CohortDefinitionDimension genders() {
@@ -55,8 +55,10 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
         return dimGender;
     }
+
     /**
      * Dimension of age using the standard age groups
+     *
      * @return the dimension
      */
     public CohortDefinitionDimension get106aAgeGroup() {
@@ -79,6 +81,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     /**
      * Dimension of age using the standard age and gender groups
+     *
      * @return the dimension
      */
     public CohortDefinitionDimension get106aAgeGenderGroup() {
@@ -149,9 +152,9 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
     public CohortDefinitionDimension getAdherenceGroup() {
         CohortDefinitionDimension adherenceDimension = new CohortDefinitionDimension();
 
-        CohortDefinition good = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getGoodAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition fair = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getFairAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition poor = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getPoorAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition good = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), Arrays.asList(hivMetadata.getGoodAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition fair = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), Arrays.asList(hivMetadata.getFairAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition poor = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), Arrays.asList(hivMetadata.getPoorAdherence()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         adherenceDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
         adherenceDimension.addCohortDefinition("good", Mapped.mapStraightThrough(good));
@@ -161,14 +164,14 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
     }
 
 
-    public CohortDefinitionDimension get106bEMTCTGroup(String olderThan) {
+    public CohortDefinitionDimension get106bEMTCTGroup() {
         CohortDefinitionDimension eMTCTDimension = new CohortDefinitionDimension();
 
-        CohortDefinition pregnant = hivCohortDefinitionLibrary.getPregnantOrLactating(olderThan);
+        CohortDefinition pregnant = hivCohortDefinitionLibrary.getPregnantPatientsAtArtStart();
+        CohortDefinition lactating = hivCohortDefinitionLibrary.getLactatingPatientsAtArtStart();
+        CohortDefinition pregnantOrLactating = df.getPatientsInAny(pregnant, lactating);
 
-        eMTCTDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
-        eMTCTDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
-        eMTCTDimension.addCohortDefinition("pregnant", Mapped.mapStraightThrough(pregnant));
+        eMTCTDimension.addCohortDefinition("pregnant", Mapped.mapStraightThrough(pregnantOrLactating));
 
         return eMTCTDimension;
     }

@@ -16,8 +16,8 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.PatientData;
-import org.openmrs.module.ugandaemrreports.common.Period;
 import org.openmrs.module.ugandaemrreports.common.Periods;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
@@ -63,7 +63,7 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
             return c;
         }
 
-        Period period = def.getPeriod();
+        Enums.Period period = def.getPeriod();
 
         Map<Integer, Date> m = new HashMap<Integer, Date>();
 
@@ -82,7 +82,7 @@ public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvalua
         artStartQuery.groupBy("o.personId");
 
 
-        if (period == Period.QUARTERLY) {
+        if (period == Enums.Period.QUARTERLY) {
             m = getPatientDateMap(artStartQuery, context);
         }
 

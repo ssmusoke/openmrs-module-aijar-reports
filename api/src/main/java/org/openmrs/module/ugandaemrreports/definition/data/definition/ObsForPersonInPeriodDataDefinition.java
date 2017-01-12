@@ -3,13 +3,13 @@ package org.openmrs.module.ugandaemrreports.definition.data.definition;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Obs;
-import org.openmrs.module.ugandaemrreports.common.Period;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.BaseDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationPropertyCachingStrategy;
 import org.openmrs.module.reporting.evaluation.caching.Caching;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 
 import java.util.Date;
 import java.util.List;
@@ -23,7 +23,7 @@ import java.util.List;
 public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
 
     @ConfigurationProperty
-    private Period period;
+    private Enums.Period period;
     @ConfigurationProperty
     private Date startDate;
     @ConfigurationProperty
@@ -51,11 +51,11 @@ public class ObsForPersonInPeriodDataDefinition extends BaseDataDefinition imple
         return Obs.class;
     }
 
-    public Period getPeriod() {
+    public Enums.Period getPeriod() {
         return period;
     }
 
-    public void setPeriod(Period period) {
+    public void setPeriod(Enums.Period period) {
         this.period = period;
     }
 

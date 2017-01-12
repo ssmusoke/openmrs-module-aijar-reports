@@ -27,6 +27,7 @@ public class Cohorts {
     
     public static SqlCohortDefinition getPatientsWhoEnrolledInCareUntilDate() {
         SqlCohortDefinition patientsStartedCareByDate = new SqlCohortDefinition("select e.patient_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id where e.voided = false and et.uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' AND (TO_DAYS(e.encounter_datetime) < TO_DAYS(:endDate))");
+
         patientsStartedCareByDate.addParameter(new Parameter("endDate", "endDate", Date.class));
         return patientsStartedCareByDate;
     }

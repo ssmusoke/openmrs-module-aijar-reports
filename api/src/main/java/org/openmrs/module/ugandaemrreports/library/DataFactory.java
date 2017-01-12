@@ -20,13 +20,11 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
-import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.CD4;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.EMTCTPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FirstLineSubstitutionPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -88,6 +86,10 @@ public class DataFactory {
 
     public DataConverter getObsValueCodedConverter() {
         return new PropertyConverter(Obs.class, "valueCoded");
+    }
+
+    public DataConverter getCD4Converter() {
+        return new PropertyConverter(CD4.class, "cd4");
     }
 
     public DataConverter getObsValueCodedNameConverter() {
@@ -348,7 +350,7 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
     }
 
-    public PatientDataDefinition hasVisitDuringPeriod(Period period, Integer periodToAdd, DataConverter converter) {
+    public PatientDataDefinition hasVisitDuringPeriod(Enums.Period period, Integer periodToAdd, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setEncounterTypes(hivMetadata.getArtEncounterTypes());
         def.setPeriod(period);
@@ -358,7 +360,7 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
     }
 
-    public PatientDataDefinition havingEncounterDuringPeriod(Period period, Integer periodToAdd, DataConverter converter) {
+    public PatientDataDefinition havingEncounterDuringPeriod(Enums.Period period, Integer periodToAdd, DataConverter converter) {
         FUStatusPatientDataDefinition def = new FUStatusPatientDataDefinition();
         def.setPeriod(period);
         def.setPeriodToAdd(periodToAdd);
@@ -376,13 +378,13 @@ public class DataFactory {
     public PatientDataDefinition getObsValueDuringPeriod(Concept question, Integer periodToAdd, Map<String, Object> args, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setQuestion(question);
-        Period period = null;
+        Enums.Period period = null;
         TimeQualifier whichEncounter = null;
 
         Set<String> keys = args.keySet();
 
         if (keys.contains("period")) {
-            period = (Period) args.get("period");
+            period = (Enums.Period) args.get("period");
         }
 
         if (keys.contains("whichEncounter")) {
@@ -408,6 +410,14 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
     }
 
+    public PatientDataDefinition getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, DataConverter converter) {
+        CD4PatientDataDefinition cd = new CD4PatientDataDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"), converter);
+    }
 
     // Cohorts Definitions
 
@@ -487,7 +497,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
-    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Period period) {
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Enums.Period period) {
         PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
         cd.setEncounterTypes(types);
         cd.setWhichEncounter(TimeQualifier.FIRST);
@@ -496,7 +506,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
-    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, Period period) {
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, Enums.Period period) {
         PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
         cd.setEncounterTypes(types);
         cd.setQuestion(question);
@@ -507,7 +517,7 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
-    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, List<Concept> answers, Period period) {
+    public CohortDefinition getPatientsInPeriod(List<EncounterType> types, Concept question, List<Concept> answers, Enums.Period period) {
         PatientsInPeriodCohortDefinition cd = new PatientsInPeriodCohortDefinition();
         cd.setEncounterTypes(types);
         cd.setQuestion(question);
@@ -539,6 +549,15 @@ public class DataFactory {
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
         cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator(SetComparator.IN);
+        cd.setValueList(codedValues);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithCodedObs(Concept question, List<Concept> codedValues, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
         cd.setOperator(SetComparator.IN);
         cd.setValueList(codedValues);
         return cd;
@@ -940,6 +959,73 @@ public class DataFactory {
         MissedAppointmentCohortDefinition cd = new MissedAppointmentCohortDefinition();
         return cd;
     }
+
+    public CohortDefinition getWhoStartedArtDuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference) {
+        ArtStartCohortDefinition cd = new ArtStartCohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getPregnantOrLactatingDuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference) {
+        ArtPregnantCohortDefinition cd = new ArtPregnantCohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getStartedArtWithCD4DuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, Boolean allBaseCD4) {
+        ArtCD4CohortDefinition cd = new ArtCD4CohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.setAllBaseCD4(allBaseCD4);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getDeadPatientsOnArtBeforePeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference) {
+        ArtFollowupDeadCohortDefinition cd = new ArtFollowupDeadCohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getStoppedPatientsOnArtDuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference) {
+        ArtFollowupStoppedCohortDefinition cd = new ArtFollowupStoppedCohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getLostPatientsOnArtDuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, Boolean lostToFollowup) {
+        ArtFollowupLostCohortDefinition cd = new ArtFollowupLostCohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.setLostToFollowup(lostToFollowup);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
+    public CohortDefinition getStartedArtWithCD4BeforePeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, Boolean allBaseCD4) {
+        ArtFollowupCD4CohortDefinition cd = new ArtFollowupCD4CohortDefinition();
+        cd.setPeriodDifference(periodDifference);
+        cd.setPeriod(period);
+        cd.setPeriodInterval(periodInterval);
+        cd.setAllBaseCD4(allBaseCD4);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate"));
+    }
+
 
 
 

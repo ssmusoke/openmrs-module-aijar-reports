@@ -21,7 +21,7 @@ import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
-import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
@@ -291,15 +291,15 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition havingVisitDuringQuarter(Integer quarter) {
-        return df.hasVisitDuringPeriod(Period.QUARTERLY, quarter, new LastSeenConverter());
+        return df.hasVisitDuringPeriod(Enums.Period.QUARTERLY, quarter, new LastSeenConverter());
     }
 
     public PatientDataDefinition havingEncounterDuringQuarter(Integer quarter) {
-        return df.havingEncounterDuringPeriod(Period.QUARTERLY, quarter, new LastSeenConverter());
+        return df.havingEncounterDuringPeriod(Enums.Period.QUARTERLY, quarter, new LastSeenConverter());
     }
 
     public PatientDataDefinition havingEncounterDuringMonth(Integer quarter) {
-        return df.havingEncounterDuringPeriod(Period.MONTHLY, quarter, new LastSeenConverter());
+        return df.havingEncounterDuringPeriod(Enums.Period.MONTHLY, quarter, new LastSeenConverter());
     }
 
     public PatientDataDefinition getCD4AtEnrollment() {
@@ -381,21 +381,21 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     protected PatientDataDefinition getFirstObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("whichEncounter", TimeQualifier.FIRST);
-        map.put("period", Period.MONTHLY);
+        map.put("period", Enums.Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringQuarter(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("whichEncounter", TimeQualifier.LAST);
-        map.put("period", Period.QUARTERLY);
+        map.put("period", Enums.Period.QUARTERLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
     protected PatientDataDefinition getLastObsValueDuringMonth(Concept question, Integer periodToAdd, DataConverter converter) {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("whichEncounter", TimeQualifier.LAST);
-        map.put("period", Period.MONTHLY);
+        map.put("period", Enums.Period.MONTHLY);
         return df.getObsValueDuringPeriod(question, periodToAdd, map, converter);
     }
 
@@ -447,6 +447,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getFirstLineSubsReason(int which) {
         return df.getFirstLineSwitch(hivMetadata.getSubstitutionReason(), which, df.getObsValueCodedConverter());
+    }
+
+    public PatientDataDefinition getBaseCD4OnArtDuringQuarter(Integer quartersBack) {
+        return df.getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, df.getCD4Converter());
     }
 
 }

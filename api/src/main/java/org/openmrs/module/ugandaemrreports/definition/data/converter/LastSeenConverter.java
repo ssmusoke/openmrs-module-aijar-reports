@@ -13,8 +13,8 @@
  */
 package org.openmrs.module.ugandaemrreports.definition.data.converter;
 
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.PatientData;
-import org.openmrs.module.ugandaemrreports.common.Period;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 import java.util.Date;
@@ -40,7 +40,7 @@ public class LastSeenConverter implements DataConverter {
         PatientData o = (PatientData) original;
 
         if (o != null) {
-            if (o.getPeriod() == Period.MONTHLY) {
+            if (o.getPeriod() == Enums.Period.MONTHLY) {
                 if (o.getEncounterDate() != null && o.getNumberOfSinceLastVisit() < 90) {
                     return "\u2713";
                 } else {
@@ -54,7 +54,7 @@ public class LastSeenConverter implements DataConverter {
                         return "\u2192";
                     }
                 }
-            } else if (o.getPeriod() == Period.QUARTERLY) {
+            } else if (o.getPeriod() == Enums.Period.QUARTERLY) {
                 if (o.getArtStartDate() != null && o.getPeriodDate().before(o.getArtStartDate()) && o.getPeriodDate().before(new Date())) {
                     if ((o.getLastVisit() != null && o.getLastVisit().before(o.getArtStartDate()))) {
                         if (o.getEncounterDate() != null) {
