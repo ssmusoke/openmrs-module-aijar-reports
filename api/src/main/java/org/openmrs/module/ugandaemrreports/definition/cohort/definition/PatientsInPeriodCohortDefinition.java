@@ -2,10 +2,10 @@ package org.openmrs.module.ugandaemrreports.definition.cohort.definition;
 
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
-import org.openmrs.module.ugandaemrreports.common.Period;
 import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 
 import java.util.Date;
 import java.util.List;
@@ -16,7 +16,7 @@ import java.util.List;
 public class PatientsInPeriodCohortDefinition extends BaseCohortDefinition {
     private static final long serialVersionUID = 1L;
     @ConfigurationProperty
-    private Period period;
+    private Enums.Period period;
     @ConfigurationProperty
     private Date startDate;
     @ConfigurationProperty
@@ -58,11 +58,11 @@ public class PatientsInPeriodCohortDefinition extends BaseCohortDefinition {
         this.answers = answers;
     }
 
-    public Period getPeriod() {
+    public Enums.Period getPeriod() {
         return period;
     }
 
-    public void setPeriod(Period period) {
+    public void setPeriod(Enums.Period period) {
         this.period = period;
     }
 

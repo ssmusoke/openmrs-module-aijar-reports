@@ -3,7 +3,7 @@ package org.openmrs.module.ugandaemrreports.definition.cohort.evaluator;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsInPeriodCohortDefinition;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -34,13 +34,13 @@ public class PatientsInPeriodCohortDefinitionEvaluator implements CohortDefiniti
         EvaluatedCohort ret = new EvaluatedCohort(cohortDefinition, context);
         PatientsInPeriodCohortDefinition cd = (PatientsInPeriodCohortDefinition) cohortDefinition;
 
-        Period period = cd.getPeriod();
+        Enums.Period period = cd.getPeriod();
         Date beginPeriod = cd.getStartDate();
 
         Date beginning = null;
         Date ending = null;
 
-        if (period == Period.MONTHLY) {
+        if (period == Enums.Period.MONTHLY) {
             beginning = DateUtil.getStartOfMonth(beginPeriod);
             ending = DateUtil.getEndOfMonth(beginPeriod);
         } else if (period == period.QUARTERLY) {

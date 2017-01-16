@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.common;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.definition.service.SerializedDefinitionService;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -249,5 +250,40 @@ public class Helper {
             return map.get(concept);
         }
         return "";
+    }
+
+    public static List<Date> getDates(LocalDate beginning, Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference) {
+        List<LocalDate> localDates = new ArrayList<LocalDate>();
+        List<Date> convertedDates = new ArrayList<Date>();
+        if (period == Enums.Period.MONTHLY) {
+            if (periodInterval == Enums.PeriodInterval.AFTER) {
+                localDates = Periods.addMonths(beginning, periodDifference);
+            } else if (periodInterval == Enums.PeriodInterval.BEFORE) {
+                localDates = Periods.subtractMonths(beginning, periodDifference);
+            } else {
+                localDates.add(Periods.monthStartFor(beginning));
+                localDates.add(Periods.monthEndFor(beginning));
+            }
+        } else if (period == Enums.Period.QUARTERLY) {
+            if (periodInterval == Enums.PeriodInterval.AFTER) {
+                localDates = Periods.addQuarters(beginning, periodDifference);
+            } else if (periodInterval == Enums.PeriodInterval.BEFORE) {
+                localDates = Periods.subtractQuarters(beginning, periodDifference);
+            } else {
+                localDates.add(Periods.quarterStartFor(beginning));
+                localDates.add(Periods.quarterEndFor(beginning));
+            }
+        } else {
+            localDates.add(beginning);
+        }
+
+        if (localDates.size() == 1) {
+            convertedDates.add(localDates.get(0).toDate());
+        } else if (localDates.size() > 1) {
+            convertedDates.add(localDates.get(0).toDate());
+            convertedDates.add(localDates.get(1).toDate());
+
+        }
+        return convertedDates;
     }
 }

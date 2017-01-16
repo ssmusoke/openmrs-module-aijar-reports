@@ -1,14 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -18,7 +11,8 @@ import org.openmrs.module.reporting.indicator.aggregation.MedianAggregator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -101,92 +95,63 @@ public class Setup106A1BReport extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators_106a1b", Mapped.mapStraightThrough(dsd));
 
-        String olderThan;
+        CohortDefinition transferIn = df.getPatientsWhoseObs(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType());
+        CohortDefinition transferOut = hivCohortDefinitionLibrary.getTransferredOut();
+
+        CohortDefinitionDimension pregnancyDimension = commonDimensionLibrary.get106bEMTCTGroup();
+        dsd.addDimension("cohort", Mapped.mapStraightThrough(pregnancyDimension));
 
 
-        CohortDefinition transferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition transferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition transferInRegimenDate = df.getPatientsWhoseObs(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition transferInFrom = hivCohortDefinitionLibrary.getPatientsWithTransferInPlace();
-
-        CohortDefinition patientsTransferredIn = df.getPatientsInAny(transferInRegimen, transferInRegimenOther, transferInRegimenDate, transferInFrom);
-
-        CohortDefinition patientsWithCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
-        CohortDefinition patientsHavingCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getCD4(), hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, BaseObsCohortDefinition.TimeModifier.LAST);
-
-
+        int numberOfQuarters = 2;
         for (int i = 0; i <= 6; i++) {
-
-            if (i == 0) {
-                olderThan = "6m";
-            } else {
-                olderThan = i + "y";
+            if (i > 0) {
+                numberOfQuarters = i * 4;
             }
 
-            CohortDefinitionDimension pregnancyDimension = commonDimensionLibrary.get106bEMTCTGroup(olderThan);
-            dsd.addDimension("cohort" + String.valueOf(i), Mapped.mapStraightThrough(pregnancyDimension));
+            PatientDataDefinition cd4 = hivPatientDataLibrary.getBaseCD4OnArtDuringQuarter(numberOfQuarters);
 
+            CohortDefinition onArt = hivCohortDefinitionLibrary.getPatientsWhoStartedArtQuartersAgo(numberOfQuarters);
+            CohortDefinition baseCD4LE250 = hivCohortDefinitionLibrary.getPatientsOnArtWithCD4QuartersAgo(numberOfQuarters, Boolean.FALSE);
+            CohortDefinition allBaseCD4 = hivCohortDefinitionLibrary.getPatientsOnArtWithCD4QuartersAgo(numberOfQuarters, Boolean.TRUE);
 
-            CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod(olderThan);
-            CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod(olderThan + "-1d");
+            CohortDefinition cD4LE250 = hivCohortDefinitionLibrary.getPatientsOnArtWithCD4BeforeQuartersAgo(numberOfQuarters, Boolean.FALSE);
+            CohortDefinition allCD4 = hivCohortDefinitionLibrary.getPatientsOnArtWithCD4BeforeQuartersAgo(numberOfQuarters, Boolean.TRUE);
+            CohortDefinition deadPatients = hivCohortDefinitionLibrary.getDeadPatientsOnArtQuartersAgo(numberOfQuarters);
+            CohortDefinition stopped = hivCohortDefinitionLibrary.getStoppedPatientsOnSArtQuartersAgo(numberOfQuarters);
+            CohortDefinition missed = hivCohortDefinitionLibrary.getPatientsOnArtWhoMissedQuartersAgo(numberOfQuarters);
+            CohortDefinition lost = hivCohortDefinitionLibrary.getLostPatientsOnArtQuartersAgo(numberOfQuarters);
 
-            PatientDataDefinition baseCD4 = hivPatientDataLibrary.getBaselineCD4(olderThan);
+            CohortDefinition startedArtInFacility = df.getPatientsNotIn(onArt, transferIn);
 
-            PatientDataDefinition latestCD4 = hivPatientDataLibrary.getRecentCD4(olderThan);
-
-
-            CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod(olderThan);
-            CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod(olderThan + "-1d");
-
-            CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(olderThan);
-
-            CohortDefinition patientsWithBaseCD4 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.FIRST);
-            CohortDefinition patientsHavingBaseCD4LessThan250 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(), RangeComparator.LESS_EQUAL, 250.0, olderThan, BaseObsCohortDefinition.TimeModifier.FIRST);
-
-
-            CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingBaseRegimenBeforeQuarter);
-            CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingBaseRegimenDuringQuarter);
-
-            CohortDefinition startedArtDuringQuarter = df.getPatientsInAny(havingArtStartDateDuringQuarter, df.getPatientsNotIn(beenOnArtDuringQuarter, beenOnArtBeforeQuarter));
-
-            CohortDefinition startedArtInFacility = df.getPatientsNotIn(startedArtDuringQuarter, patientsTransferredIn);
-
-            CohortDefinition startedArtInFacilityWithBaseCD4 = df.getPatientsInAll(patientsWithBaseCD4, startedArtInFacility);
-            CohortDefinition startedArtInFacilityWithBaseCD4LessThan250 = df.getPatientsInAll(patientsHavingBaseCD4LessThan250, startedArtInFacility);
-
-            CohortDefinition startedArtDuringQuarterFromAnotherFacility = df.getPatientsInAll(startedArtDuringQuarter, patientsTransferredIn);
-
-            CohortDefinition transferredOut = df.getPatientsInAll(startedArtInFacility, hivCohortDefinitionLibrary.getTransferredOutBy(olderThan));
-
+            CohortDefinition startedArtDuringQuarterFromAnotherFacility = df.getPatientsInAll(onArt, transferIn);
+            CohortDefinition transferredOut = df.getPatientsInAll(onArt, transferOut);
 
             CohortDefinition netCurrentCohort = df.createPatientComposition("(", startedArtInFacility, "OR", startedArtDuringQuarterFromAnotherFacility, ") AND NOT ", transferredOut);
 
-            CohortDefinition netStopped = df.getPatientsInAll(netCurrentCohort, hivCohortDefinitionLibrary.getInterruptedMedically());
-            CohortDefinition netDied = df.getPatientsInAll(netCurrentCohort, hivCohortDefinitionLibrary.gePatientsWhoDiedBy(olderThan));
-            CohortDefinition netLostToFollowUp = df.getPatientsInAll(netCurrentCohort, df.getLostToFollowUp());
-            CohortDefinition netLost = df.getPatientsInAll(netCurrentCohort, df.getLost());
+            CohortDefinition netStopped = df.getPatientsInAll(netCurrentCohort, stopped);
+            CohortDefinition netDied = df.getPatientsInAll(netCurrentCohort, deadPatients);
+            CohortDefinition netLost = df.getPatientsInAll(netCurrentCohort, missed);
+            CohortDefinition netLostToFollowUp = df.getPatientsInAll(netCurrentCohort, lost);
 
             CohortDefinition netCurrentCohortAlive = df.createPatientComposition(netCurrentCohort, "AND NOT", df.getPatientsInAny(netStopped, netDied, netLostToFollowUp, netLost));
 
-            CohortDefinition netCurrentCohortAliveWithCD4 = df.getPatientsInAll(netCurrentCohortAlive, patientsWithCD4);
-            CohortDefinition netCurrentCohortAliveWithCD4LessThan250 = df.getPatientsInAll(netCurrentCohortAlive, patientsHavingCD4LessThan250);
+            addCohort(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility);
+            addCohort(dsd, String.valueOf(i + 1) + "4a", "Clients with base CD4 less than 250", baseCD4LE250);
+            addCohort(dsd, String.valueOf(i + 1) + "4b", "Clients with base CD4", allBaseCD4);
+            addCohortMedianIndicator(dsd, String.valueOf(i + 1) + "5", "Median CD4", cd4, startedArtInFacility);
+            addCohort(dsd, String.valueOf(i + 1) + "6", "TI", startedArtDuringQuarterFromAnotherFacility);
+            addCohort(dsd, String.valueOf(i + 1) + "7", "TO", transferredOut);
+            addCohort(dsd, String.valueOf(i + 1) + "8", "Net current cohort", netCurrentCohort);
 
-            addCohort(dsd, String.valueOf(i + 1) + "3", "Started ART in this clinic original cohort", startedArtInFacility, String.valueOf(i));
-            addBaseCD4FractionCohort(dsd, String.valueOf(i + 1) + "4", "Fraction of clients with base CD4 less than 250", startedArtInFacilityWithBaseCD4LessThan250, startedArtInFacilityWithBaseCD4, String.valueOf(i));
-            addCohortMedianIndicator(dsd, String.valueOf(i + 1) + "5", "Median CD4", baseCD4, startedArtInFacility, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "6", "TI", startedArtDuringQuarterFromAnotherFacility, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "7", "TO", transferredOut, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "8", "Net current cohort", netCurrentCohort, String.valueOf(i));
+            addCohort(dsd, String.valueOf(i + 1) + "9", "Stopped", netStopped);
+            addCohort(dsd, String.valueOf(i + 1) + "10", "Died", netDied);
+            addCohort(dsd, String.valueOf(i + 1) + "11", "Lost", netLost);
+            addCohort(dsd, String.valueOf(i + 1) + "12", "Lost to follow up", netLostToFollowUp);
+            addCohort(dsd, String.valueOf(i + 1) + "13", "Net current cohort alive and on art", netCurrentCohortAlive);
+            addCohort(dsd, String.valueOf(i + 1) + "15a", "Fraction of clients 5yrs & above  with CD4 less than 250", cD4LE250);
+            addCohort(dsd, String.valueOf(i + 1) + "15b", "Fraction of clients 5yrs & above  with CD4", allCD4);
 
-            addCohort(dsd, String.valueOf(i + 1) + "9", "Stopped", netStopped, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "10", "Died", netDied, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "11", "Lost", netLost, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "12", "Lost to follow up", netLostToFollowUp, String.valueOf(i));
-            addCohort(dsd, String.valueOf(i + 1) + "13", "Net current cohort alive and on art", netCurrentCohortAlive, String.valueOf(i));
-            addBaseCD4FractionCohort(dsd, String.valueOf(i + 1) + "14", "Percentage net current cohort alive and on art", netCurrentCohortAlive, netCurrentCohort, String.valueOf(i));
-            addBaseCD4FractionCohort(dsd, String.valueOf(i + 1) + "15", "Fraction of clients 5yrs & above  with CD4", netCurrentCohortAliveWithCD4LessThan250, netCurrentCohortAliveWithCD4, String.valueOf(i));
-            addCohortMedianIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", latestCD4, netCurrentCohortAliveWithCD4, String.valueOf(i));
-
+            //addCohortMedianIndicator(dsd, String.valueOf(i + 1) + "16", "Median CD4", latestCD4, netCurrentCohortAliveWithCD4);
         }
         return rd;
     }
@@ -221,9 +186,9 @@ public class Setup106A1BReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), cohort);
     }
 
-    public void addCohort(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String cohort) {
+    public void addCohort(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         addIndicator(dsd, key, label + " all", cohortDefinition, "");
-        addIndicator(dsd, key + "f", label + " pregnant", cohortDefinition, "cohort" + cohort + "=pregnant");
+        addIndicator(dsd, key + "f", label + " pregnant", cohortDefinition, "cohort=pregnant");
     }
 
     public void addBaseCD4FractionCohort(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, CohortDefinition denominator, String cohort) {
@@ -231,13 +196,13 @@ public class Setup106A1BReport extends UgandaEMRDataExportManager {
         addIndicatorPercentage(dsd, key + "f", label + " pregnant", cohortDefinition, denominator, "cohort" + cohort + "=pregnant");
     }
 
-    public void addCohortMedianIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, PatientDataDefinition data, CohortDefinition cohortDefinition, String cohort) {
+    public void addCohortMedianIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, PatientDataDefinition data, CohortDefinition cohortDefinition) {
         addMedianIndicator(dsd, key, label + " all", data, cohortDefinition, "");
-        addMedianIndicator(dsd, key + "f", label + " pregnant", data, cohortDefinition, "cohort" + cohort + "=pregnant");
+        addMedianIndicator(dsd, key + "f", label + " pregnant", data, cohortDefinition, "cohort=pregnant");
     }
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.42";
     }
 }

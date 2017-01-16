@@ -3,36 +3,32 @@ package org.openmrs.module.ugandaemrreports.definition.data.definition;
 import org.openmrs.module.reporting.data.BaseDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
+import org.openmrs.module.ugandaemrreports.common.CD4;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 
 import java.util.Date;
-import java.util.Map;
 
 /**
- * Created by carapai on 05/07/2016.
+ * Created by carapai on 10/01/2017.
  */
-public class FUStatusPatientDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
-    public FUStatusPatientDataDefinition() {
-        super();
-    }
-
-    public FUStatusPatientDataDefinition(String name) {
-        super(name);
-    }
-
-    @Override
-    public Class<?> getDataType() {
-        return Map.class;
-    }
+public class CD4PatientDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
 
     @ConfigurationProperty
     private Date startDate;
 
     @ConfigurationProperty
+    private Integer periodDifference;
+
+    @ConfigurationProperty
     private Enums.Period period;
 
     @ConfigurationProperty
-    private int periodToAdd = 0;
+    private Enums.PeriodInterval periodInterval;
+
+    @Override
+    public Class<?> getDataType() {
+        return CD4.class;
+    }
 
     public Date getStartDate() {
         return startDate;
@@ -40,6 +36,14 @@ public class FUStatusPatientDataDefinition extends BaseDataDefinition implements
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Integer getPeriodDifference() {
+        return periodDifference;
+    }
+
+    public void setPeriodDifference(Integer periodDifference) {
+        this.periodDifference = periodDifference;
     }
 
     public Enums.Period getPeriod() {
@@ -50,11 +54,11 @@ public class FUStatusPatientDataDefinition extends BaseDataDefinition implements
         this.period = period;
     }
 
-    public int getPeriodToAdd() {
-        return periodToAdd;
+    public Enums.PeriodInterval getPeriodInterval() {
+        return periodInterval;
     }
 
-    public void setPeriodToAdd(int periodToAdd) {
-        this.periodToAdd = periodToAdd;
+    public void setPeriodInterval(Enums.PeriodInterval periodInterval) {
+        this.periodInterval = periodInterval;
     }
 }

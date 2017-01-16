@@ -14,14 +14,14 @@ public class PatientData {
     private Date transferOutDate;
     private Date nextVisitDate;
     private Date artStartDate;
-    private Period period;
+    private Enums.Period period;
     private Date lastVisit;
     private Date periodDate;
 
     public PatientData() {
     }
 
-    public PatientData(Integer patientId, Date encounterDate, Integer numberOfSinceLastVisit, Date deathDate, boolean transferredOut, Date nextVisitDate, Date artStartDate, Period period) {
+    public PatientData(Integer patientId, Date encounterDate, Integer numberOfSinceLastVisit, Date deathDate, boolean transferredOut, Date nextVisitDate, Date artStartDate, Enums.Period period) {
         this.patientId = patientId;
         this.encounterDate = encounterDate;
         this.numberOfSinceLastVisit = numberOfSinceLastVisit;
@@ -89,11 +89,11 @@ public class PatientData {
         this.artStartDate = artStartDate;
     }
 
-    public Period getPeriod() {
+    public Enums.Period getPeriod() {
         return period;
     }
 
-    public void setPeriod(Period period) {
+    public void setPeriod(Enums.Period period) {
         this.period = period;
     }
 

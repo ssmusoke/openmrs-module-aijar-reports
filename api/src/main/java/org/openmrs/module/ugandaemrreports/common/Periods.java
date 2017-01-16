@@ -32,13 +32,25 @@ public class Periods {
     }
 
     public static List<LocalDate> addQuarters(LocalDate date, Integer numberOfQuarters) {
-        LocalDate startDate = quarterEndFor(date);
+        LocalDate endDate = quarterEndFor(date);
+        LocalDate startDate = quarterStartFor(date);
 
-        LocalDate addedQuarters = startDate.plusMonths(numberOfQuarters * 3).minusDays(1);
+        LocalDate beginningDate = startDate.plusMonths(numberOfQuarters * 3);
 
-        LocalDate beginningDate = quarterStartFor(addedQuarters);
+        LocalDate endingDate = endDate.plusMonths(numberOfQuarters * 3);
 
-        return Arrays.asList(beginningDate, addedQuarters);
+        return Arrays.asList(beginningDate, endingDate);
+    }
+
+    public static List<LocalDate> subtractQuarters(LocalDate date, Integer numberOfQuarters) {
+        LocalDate endDate = quarterEndFor(date);
+        LocalDate startDate = quarterStartFor(date);
+
+        LocalDate beginningDate = startDate.minusMonths(numberOfQuarters * 3);
+
+        LocalDate endingDate = endDate.minusMonths(numberOfQuarters * 3);
+
+        return Arrays.asList(beginningDate, endingDate);
     }
 
     public static List<LocalDate> addMonths(LocalDate date, Integer numberOfMonths) {
@@ -49,20 +61,28 @@ public class Periods {
         return Arrays.asList(monthStartFor(addedMonths), monthEndFor(addedMonths));
     }
 
-    public static List<LocalDate> getDatesDuringPeriods(LocalDate workingDate, Integer getPeriodToAdd, Period period) {
+    public static List<LocalDate> subtractMonths(LocalDate date, Integer numberOfMonths) {
+        LocalDate workingDate = monthStartFor(date);
+
+        LocalDate addedMonths = workingDate.minusMonths(numberOfMonths);
+
+        return Arrays.asList(monthStartFor(addedMonths), monthEndFor(addedMonths));
+    }
+
+    public static List<LocalDate> getDatesDuringPeriods(LocalDate workingDate, Integer getPeriodToAdd, Enums.Period period) {
         List<LocalDate> dates;
         if (getPeriodToAdd > 0) {
-            if (period == Period.QUARTERLY) {
+            if (period == Enums.Period.QUARTERLY) {
                 dates = Periods.addQuarters(workingDate, getPeriodToAdd);
-            } else if (period == Period.MONTHLY) {
+            } else if (period == Enums.Period.MONTHLY) {
                 dates = Periods.addMonths(workingDate, getPeriodToAdd);
             } else {
                 dates = Arrays.asList(workingDate, StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd")));
             }
         } else {
-            if (period == Period.MONTHLY) {
+            if (period == Enums.Period.MONTHLY) {
                 dates = Arrays.asList(Periods.monthStartFor(workingDate), Periods.monthEndFor(workingDate));
-            } else if (period == Period.QUARTERLY) {
+            } else if (period == Enums.Period.QUARTERLY) {
                 dates = Arrays.asList(Periods.quarterStartFor(workingDate), Periods.quarterEndFor(workingDate));
             } else {
                 dates = Arrays.asList(workingDate, StubDate.dateOf(DateUtil.formatDate(new Date(), "yyyy-MM-dd")));
@@ -76,7 +96,7 @@ public class Periods {
         TreeMap<String, Interval> intervalTreeMap = new TreeMap<String, Interval>();
 
         for (int i = 0; i < numbers; i++) {
-            List<LocalDate> localDates = getDatesDuringPeriods(workingDate, i, Period.QUARTERLY);
+            List<LocalDate> localDates = getDatesDuringPeriods(workingDate, i, Enums.Period.QUARTERLY);
             Collections.sort(localDates);
             DateTime start = new DateTime(localDates.get(0).getYear(), localDates.get(0).getMonthOfYear(), localDates.get(0).getDayOfMonth(), 0, 0, 0, 0);
             DateTime end = new DateTime(localDates.get(1).getYear(), localDates.get(1).getMonthOfYear(), localDates.get(1).getDayOfMonth(), 0, 0, 0, 0);
@@ -93,7 +113,7 @@ public class Periods {
         TreeMap<String, Interval> intervalTreeMap = new TreeMap<String, Interval>();
 
         for (int i = 0; i < numbers; i++) {
-            List<LocalDate> localDates = getDatesDuringPeriods(workingDate, i, Period.MONTHLY);
+            List<LocalDate> localDates = getDatesDuringPeriods(workingDate, i, Enums.Period.MONTHLY);
             Collections.sort(localDates);
             DateTime start = new DateTime(localDates.get(0).getYear(), localDates.get(0).getMonthOfYear(), localDates.get(0).getDayOfMonth(), 0, 0, 0, 0);
             DateTime end = new DateTime(localDates.get(1).getYear(), localDates.get(1).getMonthOfYear(), localDates.get(1).getDayOfMonth(), 0, 0, 0, 0);

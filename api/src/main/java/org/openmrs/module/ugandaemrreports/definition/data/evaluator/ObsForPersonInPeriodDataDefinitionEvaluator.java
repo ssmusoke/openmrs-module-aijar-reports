@@ -6,7 +6,8 @@ import org.joda.time.LocalDate;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.ugandaemrreports.common.Period;
+//import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.Periods;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
@@ -50,7 +51,7 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
 
         Map<Integer, Date> m = new HashMap<Integer, Date>();
 
-        Period period = def.getPeriod();
+        Enums.Period period = def.getPeriod();
 
         LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd"));
 
@@ -114,7 +115,7 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
 
         ListMap<Integer, Obs> obsForPatients = new ListMap<Integer, Obs>();
 
-        if (period == Period.QUARTERLY) {
+        if (period == Enums.Period.QUARTERLY) {
             m = getPatientDateMap(artStartQuery, context);
         }
 
@@ -126,7 +127,7 @@ public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataE
             List<Obs> l = obsForPatients.get(pId);
             Obs obs = l.get(0);
 
-            if (period == Period.QUARTERLY) {
+            if (period == Enums.Period.QUARTERLY) {
                 /*if (m.containsKey(pId)) {
                     Date date = m.get(pId);
                     Date date2 = obs.getObsDatetime();

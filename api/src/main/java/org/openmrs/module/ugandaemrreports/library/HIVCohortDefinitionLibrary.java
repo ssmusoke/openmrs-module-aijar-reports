@@ -5,7 +5,7 @@ import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.common.Period;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,7 +40,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getYearlyPatientsOnCare() {
-        return df.getPatientsInPeriod(hivMetadata.getARTSummaryPageEncounterType(), Period.YEARLY);
+        return df.getPatientsInPeriod(hivMetadata.getARTSummaryPageEncounterType(), Enums.Period.YEARLY);
     }
 
     public CohortDefinition getEnrolledInCareByEndOfPreviousDate() {
@@ -112,6 +112,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObs(hivMetadata.getEMTCTAtEnrollment(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.FIRST);
     }
 
+    //    public CohortDefinition getPregnantAtArtStart() {
+    //        return df.getPatientsWithCodedObs(hivMetadata.getPregnantAtArtStart(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.ANY);
+    //    }
+    //
+    //
+    //    public CohortDefinition getLactatingAtArtStart() {
+    //        return df.getPatientsWithCodedObs(hivMetadata.getLactatingAtArtStart(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.ANY);
+    //    }
+
     public CohortDefinition getPregnantOrLactating(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -127,6 +136,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getArtStartDateBetweenPeriod() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+
     public CohortDefinition getArtStartDate() {
         return df.getPatientsWhoseObsValueAfterDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -316,6 +326,14 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPregnant(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.FIRST);
     }
 
+    public CohortDefinition getPregnantPatientsAtArtStart() {
+        return df.getPatientsWithCodedObs(hivMetadata.getPregnantAtArtStart(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.FIRST);
+    }
+
+    public CohortDefinition getLactatingPatientsAtArtStart() {
+        return df.getPatientsWithCodedObs(hivMetadata.getLactatingAtArtStart(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.FIRST);
+    }
+
     public CohortDefinition getLastVisitDateByEndOfQuarter() {
         return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getReturnVisitDate(), hivMetadata.getArtEncounterTypes(), BaseObsCohortDefinition.TimeModifier.MAX, null, null);
     }
@@ -334,5 +352,37 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsWithTransferInPlace() {
         return df.getTextBasedObs(hivMetadata.getTransferInPlace());
+    }
+
+    public CohortDefinition getPatientsWhoStartedArtQuartersAgo(Integer quartersBack) {
+        return df.getWhoStartedArtDuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack);
+    }
+
+    public CohortDefinition getPatientsWhoStartedPregnantQuartersAgo(Integer quartersBack) {
+        return df.getPregnantOrLactatingDuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack);
+    }
+
+    public CohortDefinition getPatientsOnArtWithCD4QuartersAgo(Integer quartersBack, Boolean allBaseCD4) {
+        return df.getStartedArtWithCD4DuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
+    }
+
+    public CohortDefinition getDeadPatientsOnArtQuartersAgo(Integer quartersBack) {
+        return df.getDeadPatientsOnArtBeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack);
+    }
+
+    public CohortDefinition getStoppedPatientsOnSArtQuartersAgo(Integer quartersBack) {
+        return df.getStoppedPatientsOnArtDuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack);
+    }
+
+    public CohortDefinition getPatientsOnArtWhoMissedQuartersAgo(Integer quartersBack) {
+        return df.getLostPatientsOnArtDuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, Boolean.FALSE);
+    }
+
+    public CohortDefinition getLostPatientsOnArtQuartersAgo(Integer quartersBack) {
+        return df.getLostPatientsOnArtDuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, Boolean.TRUE);
+    }
+
+    public CohortDefinition getPatientsOnArtWithCD4BeforeQuartersAgo(Integer quartersBack, Boolean allBaseCD4) {
+        return df.getStartedArtWithCD4BeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
     }
 }
