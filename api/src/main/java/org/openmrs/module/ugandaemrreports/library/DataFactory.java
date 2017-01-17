@@ -21,6 +21,7 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
 import org.openmrs.module.ugandaemrreports.common.CD4;
+import org.openmrs.module.ugandaemrreports.common.DeathDate;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
@@ -147,6 +148,14 @@ public class DataFactory {
             ret.addConverter(new NullValueConverter(nullReplacement));
         }
         return ret;
+    }
+
+    public DataConverter getDeathDateConverter() {
+        return new PropertyConverter(DeathDate.class, "deathDate");
+    }
+
+    public DataConverter getDeathCourseConverter() {
+        return new PropertyConverter(DeathDate.class, "caseOfDeath");
     }
 
     // Convenience converter methods

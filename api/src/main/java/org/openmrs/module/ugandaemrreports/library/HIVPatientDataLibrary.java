@@ -61,6 +61,12 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return convert(def, new PropertyConverter(PatientIdentifier.class, "identifier"));
     }
 
+    public PatientDataDefinition getEIDNumber() {
+        PreferredIdentifierDataDefinition def = new PreferredIdentifierDataDefinition();
+        def.setIdentifierType(MetadataUtils.existing(PatientIdentifierType.class, "2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe"));
+        return convert(def, new PropertyConverter(PatientIdentifier.class, "identifier"));
+    }
+
     public PatientDataDefinition getEnrollmentDate() {
         return getFirstArtInitialEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
