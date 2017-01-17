@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.definition.data.evaluator;
 
+import org.openmrs.Concept;
 import org.openmrs.Person;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.data.person.EvaluatedPersonData;
@@ -31,7 +32,7 @@ public class DeathDateDataDefinitionEvaluator implements PersonDataEvaluator {
         EvaluatedPersonData c = new EvaluatedPersonData(definition, context);
 
         HqlQueryBuilder q = new HqlQueryBuilder();
-        q.select("p.personId", "p.deathDate");
+        q.select("p.personId", "p.deathDate", "p.causeOfDeath");
         q.from(Person.class, "p");
         q.wherePersonIn("p.personId", context);
 
@@ -40,8 +41,9 @@ public class DeathDateDataDefinitionEvaluator implements PersonDataEvaluator {
         for (Object[] row : results) {
             Integer pId = (Integer) row[0];
             Date deathDate = (Date) row[1];
+            String causeOfDeath = ((Concept) row[2]).getName().getName();
             if (deathDate != null) {
-                c.addData(pId, new DeathDate(deathDate));
+                c.addData(pId, new DeathDate(deathDate, causeOfDeath));
             } else {
                 c.addData(pId, null);
             }
