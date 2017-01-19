@@ -865,6 +865,36 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
     }
 
+    public CohortDefinition getPatientsWithObsDuringWeek(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        Date currentDate = new Date();
+        Date startDate = DateUtil.getStartOfWeek(currentDate);
+        Date endDate = DateUtil.getEndOfWeek(currentDate);
+        cd.setValue1(startDate);
+        cd.setValue2(endDate);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithObsDuringDay(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        Date currentDate = new Date();
+        Date startDate = DateUtil.getStartOfDay(currentDate);
+        Date endDate = DateUtil.getEndOfDay(currentDate);
+        cd.setValue1(startDate);
+        cd.setValue2(endDate);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        return cd;
+    }
+
     public CohortDefinition getPatientsWhoseObsValueDateIsByEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);

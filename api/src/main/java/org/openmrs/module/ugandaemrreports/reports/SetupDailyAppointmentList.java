@@ -1,10 +1,8 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -19,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,7 +25,7 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
+public class SetupDailyAppointmentList extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -51,30 +50,22 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "654c6fec-75f8-11e6-8b77-86f30ca893d3";
+        return "418c7584-dd59-11e6-bf26-cec0c932ce01";
     }
 
     @Override
     public String getUuid() {
-        return "654c7276-75f8-11e6-8b77-86f30ca893d3";
+        return "418c78d6-dd59-11e6-bf26-cec0c932ce01";
     }
 
     @Override
     public String getName() {
-        return "Missed Appointment List";
+        return "Daily Appointments List";
     }
 
     @Override
     public String getDescription() {
-        return "Missed Appointment List";
-    }
-
-    @Override
-    public List<Parameter> getParameters() {
-        List<Parameter> l = new ArrayList<Parameter>();
-        l.add(df.getStartDateParameter());
-        l.add(df.getEndDateParameter());
-        return l;
+        return "Daily Appointments List";
     }
 
     @Override
@@ -94,10 +85,9 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "AppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:2,dataset:MISSED_APPOINTMENT");
-        props.put("sortWeight", "5000");
+        props.put("repeatingSections", "sheet:1,row:2,dataset:APPOINTMENT_LIST");
         rd.setProperties(props);
         return rd;
     }
@@ -110,24 +100,22 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
-        rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getLostDuringPeriod();
+        CohortDefinition definition = df.getPatientsWithObsDuringDay(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         dsd.setName(getName());
-        dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
-        dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
-        addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
-        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
+        addColumn(dsd,"Family Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd,"Given Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd,"Sex", builtInPatientData.getGender());
+        addColumn(dsd,"Birth Date", builtInPatientData.getBirthdate());
+        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
+        addColumn(dsd,"Telephone",basePatientData.getTelephone());
 
-        rd.addDataSetDefinition("MISSED_APPOINTMENT", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
         return rd;
@@ -135,6 +123,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.3";
     }
 }
