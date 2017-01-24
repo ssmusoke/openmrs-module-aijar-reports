@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Pre-ART Register
+ * CBS EID Cohort Report
  */
 @Component
 public class SetupCBSEIDCohortReport extends UgandaEMRDataExportManager {
