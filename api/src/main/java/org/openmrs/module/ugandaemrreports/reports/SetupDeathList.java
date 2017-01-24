@@ -127,7 +127,9 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
         dsd.addColumn("Death Date", new DeathDateDataDefinition(), "", df.getDeathDateConverter());
+        dsd.addColumn("Age At Death", new DeathDateDataDefinition(), "", df.getAgeAtDeathConverter());
         dsd.addColumn("Death Course", new DeathDateDataDefinition(), "", df.getDeathCourseConverter());
+
         rd.addDataSetDefinition("DEATH_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
@@ -136,6 +138,6 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.21";
+        return "0.22";
     }
 }

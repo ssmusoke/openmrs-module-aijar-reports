@@ -21,7 +21,7 @@ import java.util.Properties;
  * Pre-ART Register
  */
 @Component
-public class EIDCohortReport extends UgandaEMRDataExportManager {
+public class SetupCBSEIDCohortReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
