@@ -158,6 +158,10 @@ public class DataFactory {
         return new PropertyConverter(DeathDate.class, "caseOfDeath");
     }
 
+    public DataConverter getAgeAtDeathConverter() {
+        return new PropertyConverter(DeathDate.class, "ageAtDeath");
+    }
+
     // Convenience converter methods
 
     public DataConverter getIdentifierCollectionConverter() {

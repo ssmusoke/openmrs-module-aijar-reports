@@ -10,6 +10,7 @@ import java.util.Date;
 public class DeathDate {
     private Date deathDate;
     private String caseOfDeath;
+    private Integer ageAtDeath;
 
     public DeathDate(Date deathDate) {
         this.deathDate = deathDate;
@@ -19,9 +20,10 @@ public class DeathDate {
         return DateUtil.formatDate(deathDate, "dd/MMM/yyyy", "");
     }
 
-    public DeathDate(Date deathDate, String caseOfDeath) {
+    public DeathDate(Date deathDate, String caseOfDeath,Integer ageAtDeath) {
         this.deathDate = deathDate;
         this.caseOfDeath = caseOfDeath;
+        this.ageAtDeath = ageAtDeath;
     }
 
     public Date getDeathDate() {
@@ -38,5 +40,13 @@ public class DeathDate {
 
     public void setCaseOfDeath(String caseOfDeath) {
         this.caseOfDeath = caseOfDeath;
+    }
+
+    public Integer getAgeAtDeath() {
+        return ageAtDeath;
+    }
+
+    public void setAgeAtDeath(Integer ageAtDeath) {
+        this.ageAtDeath = ageAtDeath;
     }
 }
