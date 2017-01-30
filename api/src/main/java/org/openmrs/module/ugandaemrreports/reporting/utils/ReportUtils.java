@@ -1,10 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reporting.utils;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -61,5 +63,19 @@ public class ReportUtils {
 			paramMap.put(param, value);
 		}
 		return new Mapped<T>(parameterizable, paramMap);
+	}
+	
+	/**
+	 * Maps a parameterizable item using a list of string parameters and values
+	 * @param parameterizable the parameterizable item
+	 * @param mappings the Collection of mappings
+	 * @param <T>
+	 * @return the mapped item
+	 */
+	public static <T extends Parameterizable> Mapped<T> map(T parameterizable, List<T> mappings) {
+		if (parameterizable == null) {
+			throw new IllegalArgumentException("Parameterizable cannot be null");
+		}
+		return map(parameterizable, StringUtils.join(mappings, ","));
 	}
 }

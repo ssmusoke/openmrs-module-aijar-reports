@@ -37,7 +37,7 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return null;
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1AReport.xls");
     }
 
     @Override
@@ -52,7 +52,7 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "MOH 106A Refracted";
+        return "MOH 106A Refactored";
     }
 
     @Override
@@ -71,29 +71,35 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
+        String params = "startDate=${startDate},endDate=${endDate}";
+
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(commonReportDimensionLibrary.get106AgeGroups(), "onDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(commonReportDimensionLibrary.get106AgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(commonReportDimensionLibrary.gender()));
 
 
-        ColumnParameters colInfantsMale = new ColumnParameters(null, "<2 Male", "age=<2|gender=M");
-        ColumnParameters colInfantsFemale = new ColumnParameters(null, "<2 Female", "age=<2|gender=F");
+        ColumnParameters colInfantsMale = new ColumnParameters("a", "<2 Male", "age=<2|gender=M");
+        ColumnParameters colInfantsFemale = new ColumnParameters("b", "<2 Female", "age=<2|gender=F");
 
-        ColumnParameters colChildrenMale = new ColumnParameters(null, "2-<5 Male", "age=2-<5|gender=M");
-        ColumnParameters colChildrenFemale = new ColumnParameters(null, "2-<5 Female", "age=2-<5|gender=F");
+        ColumnParameters colChildrenMale = new ColumnParameters("c", "2-<5 Male", "age=2-<5|gender=M");
+        ColumnParameters colChildrenFemale = new ColumnParameters("d", "2-<5 Female", "age=2-<5|gender=F");
 
-        ColumnParameters colAdolescentsMale = new ColumnParameters(null, "5-14 Male", "age=5-14|gender=M");
-        ColumnParameters colAdolescentsFemale = new ColumnParameters(null, "5-14 Female", "age=5-14|gender=F");
+        ColumnParameters colAdolescentsMale = new ColumnParameters("e", "5-14 Male", "age=5-14|gender=M");
+        ColumnParameters colAdolescentsFemale = new ColumnParameters("f", "5-14 Female", "age=5-14|gender=F");
 
-        ColumnParameters colAdultsMale = new ColumnParameters(null, "15+ Male", "age=15+|gender=M");
-        ColumnParameters colAdultsFemale = new ColumnParameters(null, "15+ Female", "age=15+|gender=F");
+        ColumnParameters colAdultsMale = new ColumnParameters("g", "15+ Male", "age=15+|gender=M");
+        ColumnParameters colAdultsFemale = new ColumnParameters("h", "15+ Female", "age=15+|gender=F");
 
-        ColumnParameters colTotal = new ColumnParameters(null, "Total", "");
+        ColumnParameters colTotal = new ColumnParameters("i", "Total", "");
 
         List<ColumnParameters> allColumns = Arrays.asList(colInfantsMale, colInfantsFemale, colChildrenMale, colChildrenFemale, colAdolescentsMale, colAdolescentsFemale, colAdultsMale, colAdultsFemale, colTotal);
 
-        EmrReportingUtils.addRow(dsd, "1", moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare().getName(), ReportUtils.map(moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare(), getParameters()), allColumns, Arrays.asList("a", "b", "c", "d", "e","f","g","h","i"));
+        EmrReportingUtils.addRow(dsd,
+                "1",
+                moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare(), params),
+                allColumns);
 
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
         return rd;
@@ -101,6 +107,6 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 }

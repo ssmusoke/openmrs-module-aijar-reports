@@ -41,12 +41,8 @@ public class MoH106AIndicatorLibrary {
 	 * Number of new patients enrolled in HIV care (excluding transfers)
 	 * @return the indicator
 	 */
-	/**
-	 * Number of patients who are on Cotrimoxazole prophylaxis
-	 * @return the indicator
-	 */
 	public CohortIndicator cumulativePatientsEnrolledInCare() {
-		return cohortIndicator("Cumulative Number of Patients Ever Enrolled In Care", map(cohorts.enrolledInCareOnOrBefore(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+		return cohortIndicator("Cumulative Number of Patients Ever Enrolled In Care", map(cohorts.enrolledInCareOnOrBefore(), "onOrBefore=${endDate}"));
 	}
 
 }

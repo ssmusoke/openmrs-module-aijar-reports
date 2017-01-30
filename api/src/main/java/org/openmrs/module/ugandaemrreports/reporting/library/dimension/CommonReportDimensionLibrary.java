@@ -53,11 +53,11 @@ public class CommonReportDimensionLibrary {
     public CohortDefinitionDimension get106AgeGroups() {
         CohortDefinitionDimension dim = new CohortDefinitionDimension();
         dim.setName("age groups (<2, 2-4, 5-14,15+)");
-        dim.addParameter(new Parameter("onDate", "Date", Date.class));
-        dim.addCohortDefinition("<2", map(commonCohortLibrary.agedAtMost(1), "effectiveDate=${onDate}"));
-        dim.addCohortDefinition("2-<5", map(commonCohortLibrary.agedAtLeastAgedAtMost(2, 4), "effectiveDate=${onDate}"));
-        dim.addCohortDefinition("5-14", map(commonCohortLibrary.agedAtLeastAgedAtMost(5,14), "effectiveDate=${onDate}"));
-        dim.addCohortDefinition("15+", map(commonCohortLibrary.agedAtLeast(15), "effectiveDate=${onDate}"));
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("<2", map(commonCohortLibrary.agedAtMost(1), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("2-<5", map(commonCohortLibrary.agedAtLeastAgedAtMost(2, 4), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("5-14", map(commonCohortLibrary.agedAtLeastAgedAtMost(5,14), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("15+", map(commonCohortLibrary.agedAtLeast(15), "effectiveDate=${endDate}"));
         return dim;
     }
 }

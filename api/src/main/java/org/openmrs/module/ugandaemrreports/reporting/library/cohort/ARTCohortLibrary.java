@@ -25,7 +25,6 @@ public class ARTCohortLibrary {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_SUMMARY_PAGE)));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-
         return cd;
     }
 }

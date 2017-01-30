@@ -104,7 +104,13 @@ public class CoreUtils {
         gp.setPropertyValue(value);
         Context.getAdministrationService().saveGlobalProperty(gp);
     }
-
+    
+    /**
+     * Get the EncounterType for the given identifier
+     *
+     * @param identifier The uuid of the encounter type
+     * @return the EncounterType
+     */
     public static EncounterType getEncounterType(String identifier) {
         return Context.getEncounterService().getEncounterTypeByUuid(identifier);
 
