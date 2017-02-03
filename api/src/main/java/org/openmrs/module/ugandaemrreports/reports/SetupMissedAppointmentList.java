@@ -96,7 +96,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:2,dataset:MISSED_APPOINTMENT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:MISSED_APPOINTMENT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -135,6 +135,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 }

@@ -98,7 +98,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "AppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:2,dataset:APPOINTMENT_LIST");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:APPOINTMENT_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -137,6 +137,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.4";
     }
 }
