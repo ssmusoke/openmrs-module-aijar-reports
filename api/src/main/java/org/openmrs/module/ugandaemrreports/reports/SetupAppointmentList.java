@@ -3,14 +3,12 @@ package org.openmrs.module.ugandaemrreports.reports;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -122,12 +120,13 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd,"Family Name", builtInPatientData.getPreferredFamilyName());
-        addColumn(dsd,"Given Name", builtInPatientData.getPreferredFamilyName());
-        addColumn(dsd,"Sex", builtInPatientData.getGender());
-        addColumn(dsd,"Birth Date", builtInPatientData.getBirthdate());
+        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
+        addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Given Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Sex", builtInPatientData.getGender());
+        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
-        addColumn(dsd,"Telephone",basePatientData.getTelephone());
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -137,6 +136,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4";
+        return "0.56";
     }
 }
