@@ -120,7 +120,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getExpectedReturnDateBetween() {
-        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+        return df.getValueDatetimeObsDuringPeriod(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getStartRegimen() {
