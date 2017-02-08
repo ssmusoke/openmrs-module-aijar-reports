@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Pre-ART Register
+ * CBS EID Cohort Report
  */
 @Component
-public class EIDCohortReport extends UgandaEMRDataExportManager {
+public class SetupCBSEIDCohortReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;

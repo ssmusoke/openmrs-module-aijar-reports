@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
@@ -11,6 +10,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.DeathDateDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
@@ -98,7 +98,7 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DeathList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:2,dataset:DEATH_LIST");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:DEATH_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -123,10 +123,14 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
+        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
-        dsd.addColumn("Death Date", new DeathDateDataDefinition(), (String) null);
+        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), "", new BirthDateConverter());
+        dsd.addColumn("Death Date", new DeathDateDataDefinition(), "", df.getDeathDateConverter());
+        dsd.addColumn("Age At Death", new DeathDateDataDefinition(), "", df.getAgeAtDeathConverter());
+        dsd.addColumn("Death Course", new DeathDateDataDefinition(), "", df.getDeathCourseConverter());
+
         rd.addDataSetDefinition("DEATH_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
@@ -135,6 +139,6 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.41";
     }
 }
