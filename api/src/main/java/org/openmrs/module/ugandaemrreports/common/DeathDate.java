@@ -17,10 +17,10 @@ public class DeathDate {
     }
 
     public String toString() {
-        return DateUtil.formatDate(deathDate, "EEE, MMM d, yyyy"	, "");
+        return DateUtil.formatDate(deathDate, "MMM d, yyyy", "");
     }
 
-    public DeathDate(Date deathDate, String caseOfDeath,Integer ageAtDeath) {
+    public DeathDate(Date deathDate, String caseOfDeath, Integer ageAtDeath) {
         this.deathDate = deathDate;
         this.caseOfDeath = caseOfDeath;
         this.ageAtDeath = ageAtDeath;

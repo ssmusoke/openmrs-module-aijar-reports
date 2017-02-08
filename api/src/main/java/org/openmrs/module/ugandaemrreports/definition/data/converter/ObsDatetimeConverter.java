@@ -37,7 +37,7 @@ public class ObsDatetimeConverter implements DataConverter {
     public Object convert(Object original) {
         Obs o = (Obs) original;
         if (o != null) {
-            return (new DateConverter("EEE, MMM d, yyyy")).convert(o.getObsDatetime());
+            return (new DateConverter("MMM d, yyyy")).convert(o.getObsDatetime());
         }
         return null;
     }

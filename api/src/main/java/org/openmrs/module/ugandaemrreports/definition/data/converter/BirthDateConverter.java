@@ -38,7 +38,7 @@ public class BirthDateConverter implements DataConverter {
     public Object convert(Object original) {
         Birthdate o = (Birthdate) original;
         if (o != null) {
-            return (new DateConverter("EEE, MMM d, yyyy")).convert(o.getBirthdate());
+            return (new DateConverter("MMM d, yyyy")).convert(o.getBirthdate());
         }
         return null;
     }
