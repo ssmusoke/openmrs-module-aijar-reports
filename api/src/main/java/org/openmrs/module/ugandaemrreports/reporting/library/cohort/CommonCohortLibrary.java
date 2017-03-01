@@ -79,7 +79,7 @@ public class CommonCohortLibrary {
         cd.setName("aged between " + minAge + " and " + maxAge + " years");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
-        cd.setMinAge(maxAge);
+        cd.setMaxAge(maxAge);
         return cd;
     }
 

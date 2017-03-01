@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 25/01/2017.
+ * MOH 106a
  */
 @Component
 public class SetupMoH106AReport extends UgandaEMRDataExportManager {
@@ -107,6 +107,6 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "0.2.1";
     }
 }
