@@ -86,8 +86,6 @@ public class CD4PatientDataEvaluator implements PatientDataEvaluator {
         SqlQueryBuilder q = new SqlQueryBuilder();
         q.append(query);
 
-        System.out.println(dates);
-
         List<Object[]> results = evaluationService.evaluateToList(q, context);
 
         for (Object[] row : results) {

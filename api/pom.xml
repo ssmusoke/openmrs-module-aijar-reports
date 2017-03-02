@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>ugandaemrreports</artifactId>
-		<version>1.0.4-SNAPSHOT</version>
+		<version>1.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ugandaemrreports-api</artifactId>
 	<name>UgandaEMR Reports Module API</name>
-	<description>API project for UgandaEMR distribution</description>
+	<description>API project for UgandaEMR Reports</description>
 
 	<dependencies>
 
