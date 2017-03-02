@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
@@ -11,7 +10,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -94,7 +96,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:2,dataset:MISSED_APPOINTMENT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:MISSED_APPOINTMENT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -118,6 +120,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
+        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
@@ -132,6 +135,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 }

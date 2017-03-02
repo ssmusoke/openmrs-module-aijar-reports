@@ -21,6 +21,7 @@ import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
 import org.openmrs.module.ugandaemrreports.common.CD4;
+import org.openmrs.module.ugandaemrreports.common.DeathDate;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
@@ -147,6 +148,18 @@ public class DataFactory {
             ret.addConverter(new NullValueConverter(nullReplacement));
         }
         return ret;
+    }
+
+    public DataConverter getDeathDateConverter() {
+        return new PropertyConverter(DeathDate.class, "deathDate");
+    }
+
+    public DataConverter getDeathCourseConverter() {
+        return new PropertyConverter(DeathDate.class, "caseOfDeath");
+    }
+
+    public DataConverter getAgeAtDeathConverter() {
+        return new PropertyConverter(DeathDate.class, "ageAtDeath");
     }
 
     // Convenience converter methods
@@ -854,6 +867,36 @@ public class DataFactory {
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.addParameter(new Parameter("value2", "value2", Date.class));
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithObsDuringWeek(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        Date currentDate = new Date();
+        Date startDate = DateUtil.getStartOfWeek(currentDate);
+        Date endDate = DateUtil.getEndOfWeek(currentDate);
+        cd.setValue1(startDate);
+        cd.setValue2(endDate);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithObsDuringDay(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        Date currentDate = new Date();
+        Date startDate = DateUtil.getStartOfDay(currentDate);
+        Date endDate = DateUtil.getEndOfDay(currentDate);
+        cd.setValue1(startDate);
+        cd.setValue2(endDate);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        return cd;
     }
 
     public CohortDefinition getPatientsWhoseObsValueDateIsByEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
