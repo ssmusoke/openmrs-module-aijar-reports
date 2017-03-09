@@ -18,6 +18,7 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptNumeric;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MissingMetadataException;
+import org.openmrs.module.reporting.common.ObjectUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +74,49 @@ public class Dictionary extends Metadata.Concept {
 			concepts.add(getConcept(identifier));
 		}
 		return concepts;
+	}
+	
+	/**
+	 * @return the List of Concepts that matches the passed comma-separated list of concept lookups
+	 */
+	public static List<Concept> getConceptList(String lookup) {
+		List<Concept> l = new ArrayList<Concept>();
+		if (ObjectUtil.notNull(lookup)) {
+			String[] split = lookup.split(",");
+			for (String s : split) {
+				l.add(getConcept(s));
+			}
+		}
+		return l;
+	}
+	
+	/**
+	 * @return the List of Concepts that matches the passed any separated list of concept lookups
+	 */
+	public static List<Concept> getConceptList(String lookup, String separator) {
+		List<Concept> l = new ArrayList<Concept>();
+		if (ObjectUtil.notNull(lookup)) {
+			if (ObjectUtil.notNull(separator)) {
+				String[] split = lookup.split(separator);
+				for (String s : split) {
+					l.add(getConcept(s));
+				}
+			} else {
+				l.add(getConcept(lookup));
+			}
+		}
+		return l;
+	}
+	
+	/**
+	 * @return the List of Concepts that matches the passed comma-separated list of concept lookups
+	 */
+	public static List<Concept> getConceptsInSet(String lookup) {
+		List<Concept> ret = new ArrayList<Concept>();
+		Concept set = getConcept(lookup);
+		for (Concept c : set.getSetMembers()) {
+			ret.add(c);
+		}
+		return ret;
 	}
 }

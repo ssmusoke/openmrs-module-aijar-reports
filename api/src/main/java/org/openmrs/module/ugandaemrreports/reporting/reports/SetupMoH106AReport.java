@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 25/01/2017.
+ * MOH 106a
  */
 @Component
 public class SetupMoH106AReport extends UgandaEMRDataExportManager {
@@ -47,7 +47,7 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "MOH 106A";
+        return "MOH 106A Refactored";
     }
 
     @Override
@@ -76,6 +76,7 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd.addDimension("age", ReportUtils.map(commonReportDimensionLibrary.get106AgeGroups(), "effectiveDate=${endDate}"));
+        dsd.addDimension("mohage", ReportUtils.map(commonReportDimensionLibrary.getMOHDefinedChildrenAndAdultAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(commonReportDimensionLibrary.gender()));
 
 
@@ -94,11 +95,71 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
         ColumnParameters colTotal = new ColumnParameters("i", "Total", "");
 
         List<ColumnParameters> allColumns = Arrays.asList(colInfantsMale, colInfantsFemale, colChildrenMale, colChildrenFemale, colAdolescentsMale, colAdolescentsFemale, colAdultsMale, colAdultsFemale, colTotal);
+        List<ColumnParameters> adultFemaleColumns = Arrays.asList(colAdultsFemale, colTotal);
+        
+        ColumnParameters colChildren = new ColumnParameters("a", "< 15", "mohage=<15");
+        ColumnParameters colAdult = new ColumnParameters("b", "15+", "mohage=15+");
+        List<ColumnParameters> mohAgeColumns = Arrays.asList(colChildren, colAdult, colTotal);
 
         EmrReportingUtils.addRow(dsd,
                 "1",
-                moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare().getName(),
-                ReportUtils.map(moH106AIndicatorLibrary.cumulativePatientsEnrolledInCare(), params),
+                moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfLastQuarter().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfLastQuarter(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "2",
+                moH106AIndicatorLibrary.newPatientsEnrolledInCare().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.newPatientsEnrolledInCare(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "3",
+                moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter(), params),
+                adultFemaleColumns);
+        EmrReportingUtils.addRow(dsd,
+                "5",
+                moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfReportingQuarter().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfReportingQuarter(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "6",
+                moH106AIndicatorLibrary.transferInAlreadyEnrolledInHIVCare().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.transferInAlreadyEnrolledInHIVCare(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "7",
+                moH106AIndicatorLibrary.activeClientsOnPreART().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.activeClientsOnPreART(), params),
+                mohAgeColumns);
+        EmrReportingUtils.addRow(dsd,
+                "15",
+                moH106AIndicatorLibrary.cumulativeClientsStartedOnARTAtEndOfPreviousQuarter().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.cumulativeClientsStartedOnARTAtEndOfPreviousQuarter(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "16",
+                moH106AIndicatorLibrary.newClientStartedOnART().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.newClientStartedOnART(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "18",
+                moH106AIndicatorLibrary.newPregnantOrLactatingClientStartedOnART().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.newPregnantOrLactatingClientStartedOnART(), params),
+                adultFemaleColumns);
+        EmrReportingUtils.addRow(dsd,
+                "20",
+                moH106AIndicatorLibrary.clientsOnFirstLineRegimen().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.clientsOnFirstLineRegimen(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "21",
+                moH106AIndicatorLibrary.clientsOnSecondLineRegimen().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.clientsOnSecondLineRegimen(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "22",
+                moH106AIndicatorLibrary.clientsOnThirdLineRegimen().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.clientsOnThirdLineRegimen(), params),
                 allColumns);
 
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
@@ -107,6 +168,6 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "0.2.2";
     }
 }
