@@ -192,9 +192,5 @@ public class CommonCohortLibrary {
         return agedAtLeast(15);
     }
     
-    /**
-     * Patients who have missed their last appointment which is less than 30 days ago
-     */
-    
 }
 

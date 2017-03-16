@@ -100,6 +100,8 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
         ColumnParameters colChildren = new ColumnParameters("a", "< 15", "mohage=<15");
         ColumnParameters colAdult = new ColumnParameters("b", "15+", "mohage=15+");
         List<ColumnParameters> mohAgeColumns = Arrays.asList(colChildren, colAdult, colTotal);
+        
+        List<ColumnParameters> totalOnly = Arrays.asList(colTotal);
 
         EmrReportingUtils.addRow(dsd,
                 "1",
@@ -116,6 +118,11 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
                 moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter().getName(),
                 ReportUtils.map(moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter(), params),
                 adultFemaleColumns);
+        /*EmrReportingUtils.addRow(dsd,
+                "4",
+                moH106AIndicatorLibrary.clientsStartedOnINHPropphylaxis().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.clientsStartedOnINHPropphylaxis(), params),
+                totalOnly);*/
         EmrReportingUtils.addRow(dsd,
                 "5",
                 moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfReportingQuarter().getName(),
@@ -131,6 +138,21 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
                 moH106AIndicatorLibrary.activeClientsOnPreART().getName(),
                 ReportUtils.map(moH106AIndicatorLibrary.activeClientsOnPreART(), params),
                 mohAgeColumns);
+        EmrReportingUtils.addRow(dsd,
+                "8",
+                moH106AIndicatorLibrary.preARTClientsWhoGotCPTOnLastVisit().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.preARTClientsWhoGotCPTOnLastVisit(), params),
+                mohAgeColumns);
+        EmrReportingUtils.addRow(dsd,
+                "9",
+                moH106AIndicatorLibrary.preARTClientsAssessedForTBAtLastVisit().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.preARTClientsAssessedForTBAtLastVisit(), params),
+                totalOnly);
+        EmrReportingUtils.addRow(dsd,
+                "10",
+                moH106AIndicatorLibrary.preARTClientsDiagnosedWithTB().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.preARTClientsDiagnosedWithTB(), params),
+                totalOnly);
         EmrReportingUtils.addRow(dsd,
                 "15",
                 moH106AIndicatorLibrary.cumulativeClientsStartedOnARTAtEndOfPreviousQuarter().getName(),
@@ -161,6 +183,31 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
                 moH106AIndicatorLibrary.clientsOnThirdLineRegimen().getName(),
                 ReportUtils.map(moH106AIndicatorLibrary.clientsOnThirdLineRegimen(), params),
                 allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "23",
+                moH106AIndicatorLibrary.ARTClientsWhoGotCPTOnLastVisit().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.ARTClientsWhoGotCPTOnLastVisit(), params),
+                allColumns);
+        EmrReportingUtils.addRow(dsd,
+                "24",
+                moH106AIndicatorLibrary.ARTClientsAssessedForTBAtLastVisit().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.ARTClientsAssessedForTBAtLastVisit(), params),
+                totalOnly);
+        EmrReportingUtils.addRow(dsd,
+                "25",
+                moH106AIndicatorLibrary.ARTClientsDiagnosedWithTB().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.ARTClientsDiagnosedWithTB(), params),
+                totalOnly);
+        EmrReportingUtils.addRow(dsd,
+                "26",
+                moH106AIndicatorLibrary.ARTClientsStartedOnTBTreatment().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.ARTClientsStartedOnTBTreatment(), params),
+                totalOnly);
+        EmrReportingUtils.addRow(dsd,
+                "27",
+                moH106AIndicatorLibrary.ARTClientsOnTBTreatment().getName(),
+                ReportUtils.map(moH106AIndicatorLibrary.ARTClientsOnTBTreatment(), params),
+                totalOnly);
 
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
         return rd;
