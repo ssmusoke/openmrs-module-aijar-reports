@@ -96,6 +96,8 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>serialization.xstream-api</artifactId>
 		</dependency>
+		
+		
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -126,7 +128,7 @@
 
 		<testResources>
 			<testResource>
-				<directory>src/test/resources</directory>
+				<directory>../omod/src/main/test/resources</directory>
 				<filtering>true</filtering>
 			</testResource>
 		</testResources>
