@@ -7,7 +7,7 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
-import org.openmrs.module.reporting.report.renderer.TsvReportRenderer;
+import org.openmrs.module.reporting.report.renderer.CsvReportRenderer;
 import org.openmrs.module.ugandaemrreports.StandaloneContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +32,7 @@ public class SetupMoH106AReportTest extends StandaloneContextSensitiveTest {
 		
 		ReportDefinition reportDefinition = manager.constructReportDefinition();
 		ReportData data = reportDefinitionService.evaluate(reportDefinition, context);
-		new TsvReportRenderer().render(data, null, System.out);
+		new CsvReportRenderer().render(data, null, System.out);
 		Assert.assertTrue(true);
 	}
 	
