@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.reporting.library.cohort;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.openmrs.EncounterType;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -39,11 +40,11 @@ public class ARTCohortLibrary {
         return cd;
     }
     /**
-     * Patients who on in Care
+     * Patients who on in Care in the specified period
      *
      * @return the cohort definition
      */
-    public CohortDefinition enrolledInCare() {
+    public CohortDefinition enrolledInCareInPeriod() {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_SUMMARY_PAGE)));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
@@ -56,7 +57,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition enrolledInCareForPeriodWithoutTransferIn() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.NOT, enrolledInCare(), commonCohortLibrary.transferredIn());
+        ccd.initializeFromQueries(BooleanOperator.NOT, enrolledInCareInPeriod(), commonCohortLibrary.transferredIn());
         
         return ccd;
     }
@@ -76,7 +77,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition pregnantAtHIVEnrollment() {
-        return commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CARE_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.CARE_ENTRY_POINT_EMTCT));
+        return commonCohortLibrary.hasCodedObs(Arrays.asList(ARTSummaryEncounterType()), Dictionary.getConcept(Metadata.Concept.CARE_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.CARE_ENTRY_POINT_EMTCT));
     }
     
     /**
@@ -84,15 +85,23 @@ public class ARTCohortLibrary {
      *
      * <ul>
      *     <li>Have an ART encounter in the period</li>
-     *     <li>Have missed their last appointment, which is less than 90 days from the start of the period</li>
+     *     <li>TODO: Have missed their last appointment, which is less than 90 days from the start of the period</li>
      * </ul>
      * @return
      */
     public CohortDefinition activeClients(){
-        CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        //ccd.initializeFromQueries(BooleanOperator.OR, clientWithARTEncounter());
-        
-        return ccd;
+        return clientWithARTEncounter();
+    }
+    
+    /**
+     * Client who visited the facility in the period
+     */
+    public CohortDefinition clientWithARTEncounter() {
+        EncounterCohortDefinition ec = new EncounterCohortDefinition();
+        ec.setEncounterTypeList(Arrays.asList(ARTSummaryEncounterType(), ARTEncounterEncounterType(), ARTHealthEducationEncounterType()));
+        ec.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        ec.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return ec;
     }
     
     /**
@@ -111,7 +120,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition childrenOnFirstLineRegimen() {
-        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.CHILDREN_FIRST_LINE_REGIMEN));
+        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()), Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.CHILDREN_FIRST_LINE_REGIMEN));
         cobs.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
     
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
@@ -123,7 +132,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition adultsOnFirstLineRegimen() {
-        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.ADULT_FIRST_LINE_REGIMEN));
+        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.ADULT_FIRST_LINE_REGIMEN));
         cobs.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
         
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
@@ -146,7 +155,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition childrenOnSecondLineRegimen() {
-        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.CHILDREN_SECOND_LINE_REGIMEN));
+        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.CHILDREN_SECOND_LINE_REGIMEN));
         cobs.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
         
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
@@ -158,7 +167,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition adultsOnSecondLineRegimen() {
-        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.ADULT_SECOND_LINE_REGIMEN));
+        CodedObsCohortDefinition cobs = (CodedObsCohortDefinition) commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.ADULT_SECOND_LINE_REGIMEN));
         cobs.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
         
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
@@ -172,7 +181,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition clientonThirdLineRegimen() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnART(), commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.THIRD_LINE_REGIMEN)));
+        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnART(), commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN), Dictionary.getConceptList(Metadata.Concept.THIRD_LINE_REGIMEN)));
         return ccd;
     }
     
@@ -189,6 +198,7 @@ public class ARTCohortLibrary {
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
         cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        cd.setEncounterTypeList(Arrays.asList(ARTSummaryEncounterType()));
         return cd;
     }
     
@@ -205,7 +215,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition activeClientOnART() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.OR, clientStartingART(), commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN)));
+        ccd.initializeFromQueries(BooleanOperator.OR, clientStartingART(), commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN)));
         return ccd;
     }
     
@@ -220,6 +230,7 @@ public class ARTCohortLibrary {
         cd.setQuestion(Dictionary.getConcept(Metadata.Concept.CURRENT_REGIMEN));
         cd.setOperator(SetComparator.IN);
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.setEncounterTypeList(Arrays.asList(ARTEncounterEncounterType()));
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
         return cd;
     }
@@ -232,7 +243,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition activeClientOnPreART() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.NOT, enrolledInCareAtEndOfPeriod(), hasEverTakenARTRegimenAtEndOfPeriod());
+        ccd.initializeFromQueries(BooleanOperator.NOT, clientWithARTEncounter(), hasEverTakenARTRegimenAtEndOfPeriod());
         return ccd;
     }
     
@@ -251,7 +262,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition pregnantAtARTStart() {
-        return commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.PREGNANT_AT_ART_START), Dictionary.getConcept(Metadata.Concept.YES_WHO));
+        return commonCohortLibrary.hasCodedObs(Arrays.asList(ARTSummaryEncounterType()), Dictionary.getConcept(Metadata.Concept.PREGNANT_AT_ART_START), Dictionary.getConcept(Metadata.Concept.YES_WHO));
     }
     
     /**
@@ -259,7 +270,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition lactatingAtARTStart() {
-        return commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.LACTATING_AT_ART_START), Dictionary.getConcept(Metadata.Concept.YES_WHO));
+        return commonCohortLibrary.hasCodedObs(Arrays.asList(ARTSummaryEncounterType()), Dictionary.getConcept(Metadata.Concept.LACTATING_AT_ART_START), Dictionary.getConcept(Metadata.Concept.YES_WHO));
     }
     
     /**
@@ -267,6 +278,31 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition startedINHProphylaxis() {
+        CompositionCohortDefinition ccd = new CompositionCohortDefinition();
+        ccd.initializeFromQueries(BooleanOperator.NOT, onINHProphylaxisInPeriod(), startedINHProphylaxisBeforePeriod());
+        
+        return ccd;
+    }
+    /**
+     * Patients who started on INH Prophylaxis before period
+     * @return
+     */
+    public CohortDefinition startedINHProphylaxisBeforePeriod() {
+        NumericObsCohortDefinition nocd = new NumericObsCohortDefinition();
+        nocd.setQuestion(Dictionary.getConcept(Metadata.Concept.INH_DOSAGE));
+        nocd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        nocd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        nocd.setOperator1(RangeComparator.GREATER_THAN);
+        nocd.setValue1(0.0);
+        nocd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
+        
+        return nocd;
+    }
+    /**
+     * Patients who are on INH Prophylaxis in the period
+     * @return
+     */
+    public CohortDefinition onINHProphylaxisInPeriod() {
         NumericObsCohortDefinition nocd = new NumericObsCohortDefinition();
         nocd.setQuestion(Dictionary.getConcept(Metadata.Concept.INH_DOSAGE));
         nocd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
@@ -274,6 +310,7 @@ public class ARTCohortLibrary {
         nocd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         nocd.setOperator1(RangeComparator.GREATER_THAN);
         nocd.setValue1(0.0);
+        nocd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
         
         return nocd;
     }
@@ -309,7 +346,7 @@ public class ARTCohortLibrary {
         nocd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.MAX);
         nocd.setOperator1(RangeComparator.GREATER_THAN);
         nocd.setValue1(0.0);
-    
+        nocd.setEncounterTypeList(Arrays.asList(ARTEncounterEncounterType()));
         return nocd;
     }
     
@@ -341,6 +378,7 @@ public class ARTCohortLibrary {
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.MAX);
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
         cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        cd.setEncounterTypeList(Arrays.asList(ARTEncounterEncounterType()));
         return cd;
     }
     /**
@@ -349,7 +387,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition preARTClientsDiagnosedWithTBInQuarter() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnPreART(), commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.DIAGNOSED_WITH_TB)));
+        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnPreART(), commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.DIAGNOSED_WITH_TB)));
         return ccd;
     }
     /**
@@ -358,7 +396,7 @@ public class ARTCohortLibrary {
      */
     public CohortDefinition ARTClientsDiagnosedWithTBInQuarter() {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
-        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnART(), commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.DIAGNOSED_WITH_TB)));
+        ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnART(), commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.DIAGNOSED_WITH_TB)));
         return ccd;
     }
     /**
@@ -391,6 +429,7 @@ public class ARTCohortLibrary {
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
         cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        cd.setEncounterTypeList(Arrays.asList(ARTEncounterEncounterType()));
         
         return cd;
     }
@@ -418,7 +457,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition patientAssessedForMalnutrition() {
-        return commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_MALNUTRITION));
+        return commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_MALNUTRITION));
     }
     
     /**
@@ -426,7 +465,7 @@ public class ARTCohortLibrary {
      * @return
      */
     public CohortDefinition patientReceivingTBTreatment() {
-        return commonCohortLibrary.hasCodedObs(Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.ON_TB_TREATMENT));
+        return commonCohortLibrary.hasCodedObs(Arrays.asList(ARTEncounterEncounterType()),Dictionary.getConcept(Metadata.Concept.ASSESSED_FOR_TB), Dictionary.getConcept(Metadata.Concept.ON_TB_TREATMENT));
     }
     
     /**
@@ -449,5 +488,17 @@ public class ARTCohortLibrary {
         CompositionCohortDefinition ccd = new CompositionCohortDefinition();
         ccd.initializeFromQueries(BooleanOperator.AND, activeClientOnART(), patientsOnTBTreatment());
         return ccd;
+    }
+    
+    public EncounterType ARTSummaryEncounterType() {
+        return CoreUtils.getEncounterType(Metadata.EncounterType.ART_SUMMARY_PAGE);
+    }
+    
+    public EncounterType ARTEncounterEncounterType() {
+        return CoreUtils.getEncounterType(Metadata.EncounterType.ART_ENCOUNTER_PAGE);
+    }
+    
+    public EncounterType ARTHealthEducationEncounterType() {
+        return CoreUtils.getEncounterType(Metadata.EncounterType.ART_HEALTH_EDUCATION_PAGE);
     }
 }

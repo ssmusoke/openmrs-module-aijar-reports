@@ -9,8 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Properties;
 
-@ContextConfiguration(locations = {"classpath:openmrs-servlet.xml"}, inheritLocations = true)
-@SkipBaseSetup
+// @ContextConfiguration(locations = {"classpath:openmrs-servlet.xml"}, inheritLocations = true)
+// @SkipBaseSetup
 public abstract class StandaloneContextSensitiveTest extends BaseModuleWebContextSensitiveTest {
 	
 	@Override
@@ -24,7 +24,7 @@ public abstract class StandaloneContextSensitiveTest extends BaseModuleWebContex
 	@Override
 	public Properties getRuntimeProperties() {
 		Properties p = super.getRuntimeProperties();
-		p.setProperty("connection.url", "jdbc:mysql://localhost:3306/ams?autoReconnect=true&useUnicode=true&characterEncoding=UTF-8");
+		p.setProperty("connection.url", "jdbc:mysql://localhost:3306/openmrs?autoReconnect\\=true&sessionVariables\\=storage_engine%3DInnoDB&useUnicode\\=true&characterEncoding\\=UTF-8");
 		p.setProperty("connection.username", "openmrs");
 		p.setProperty("connection.password", "openmrs");
 		p.setProperty("junit.username", "admin");

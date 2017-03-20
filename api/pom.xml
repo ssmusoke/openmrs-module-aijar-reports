@@ -120,7 +120,6 @@
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>*.xls</include>
 					<include>org/openmrs/module/ugandaemrreports/reports/*.xls</include>
 				</includes>
 			</resource>
@@ -128,7 +127,7 @@
 
 		<testResources>
 			<testResource>
-				<directory>../omod/src/main/test/resources</directory>
+				<directory>src/test/resources</directory>
 				<filtering>true</filtering>
 			</testResource>
 		</testResources>

@@ -118,11 +118,11 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
                 moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter().getName(),
                 ReportUtils.map(moH106AIndicatorLibrary.pregnantAndLactatingWomenEnrolledInQuarter(), params),
                 adultFemaleColumns);
-        /*EmrReportingUtils.addRow(dsd,
+        EmrReportingUtils.addRow(dsd,
                 "4",
                 moH106AIndicatorLibrary.clientsStartedOnINHPropphylaxis().getName(),
                 ReportUtils.map(moH106AIndicatorLibrary.clientsStartedOnINHPropphylaxis(), params),
-                totalOnly);*/
+                totalOnly);
         EmrReportingUtils.addRow(dsd,
                 "5",
                 moH106AIndicatorLibrary.cumulativePatientsEnrolledInCareAtTheEndOfReportingQuarter().getName(),
@@ -215,6 +215,6 @@ public class SetupMoH106AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.2";
+        return "0.2.2.1";
     }
 }

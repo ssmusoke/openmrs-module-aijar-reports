@@ -143,7 +143,7 @@ public class CommonCohortLibrary {
      * @param answers the answers to include
      * @return the cohort definition
      */
-    public CohortDefinition hasCodedObs(Concept question, List<Concept> answers) {
+    public CohortDefinition hasCodedObs(List<EncounterType> encounterTypeList, Concept question, List<Concept> answers) {
         CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
         cd.setName("has obs between dates");
         cd.setQuestion(question);
@@ -163,8 +163,8 @@ public class CommonCohortLibrary {
      * @param answers
      * @return
      */
-    public CohortDefinition hasCodedObs(Concept question, Concept ... answers) {
-        return hasCodedObs(question, Arrays.asList(answers));
+    public CohortDefinition hasCodedObs(List<EncounterType> encounterTypeList, Concept question, Concept ... answers) {
+        return hasCodedObs(encounterTypeList, question, Arrays.asList(answers));
     }
     
     /**
@@ -173,7 +173,7 @@ public class CommonCohortLibrary {
      * @return the cohort definition
      */
     public CohortDefinition transferredIn() {
-        return hasCodedObs(Dictionary.getConcept(Metadata.Concept.TRANSFER_IN), Dictionary.getConcept(Metadata.Concept.YES_CIEL), Dictionary.getConcept(Metadata.Concept.YES_WHO));
+        return hasCodedObs(null,Dictionary.getConcept(Metadata.Concept.TRANSFER_IN), Dictionary.getConcepts(Metadata.Concept.YES_WHO));
     }
     
     /**

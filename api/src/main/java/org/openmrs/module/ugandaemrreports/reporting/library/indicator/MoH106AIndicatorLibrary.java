@@ -165,7 +165,7 @@ public class MoH106AIndicatorLibrary {
 	 */
 	public CohortIndicator cumulativeClientsStartedOnARTAtEndOfPreviousQuarter(){
 		return cohortIndicator("Cumulative No. of clients ever started on ART at this facility at the end of the previous quarter",
-				map(artCohortLibrary.clientStartingART(), "onOrBefore=${startDate-1d}"));
+				map(artCohortLibrary.activeClientOnART(), "onOrBefore=${startDate-1d}"));
 	}
 	/**
 	 * HMIS 106A - 1A #16
