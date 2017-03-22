@@ -54,10 +54,9 @@ public class SetupMoH106AReportTest extends StandaloneContextSensitiveTest {
 		AdministrationService as = Context.getAdministrationService();
 		as.executeSQL("delete from global_property WHERE property = 'reporting.reportManager." + manager.getUuid() +  "'  ;", false);
 		as.executeSQL("delete from serialized_object WHERE uuid = '" + manager.getUuid() +  "'  ;", false);
-		// update all reports
+		// update the report reports
 		ReportManagerUtil.setupReport(manager);
 	}
-	
 	@Test
 	public void testReport() throws Exception {
 		EvaluationContext context = new EvaluationContext();
@@ -69,7 +68,7 @@ public class SetupMoH106AReportTest extends StandaloneContextSensitiveTest {
 		
 		//ReportDesign design = reportService.getReportDesignByUuid(manager.getExcelDesignUuid());
 		//System.out.println(design);
-		FileOutputStream fos = new FileOutputStream("report.html");
+		FileOutputStream fos = new FileOutputStream("target/report.html");
 		new IndicatorReportRenderer().render(data, null, fos);
 		Assert.assertTrue(true);
 	}
