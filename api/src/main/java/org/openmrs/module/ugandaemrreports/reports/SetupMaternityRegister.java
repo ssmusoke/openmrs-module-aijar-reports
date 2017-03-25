@@ -4,31 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.MaternityDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+/**
+ * Integrated Maternity Register Report
+ * */
+
+@Component
 public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	
 	@Autowired
 	private DataFactory df;
-	
-	@Autowired
-	private CommonReportMetadata commonMetadata;
-	
-	@Autowired
-	private BuiltInPatientDataLibrary builtInPatientData;
-	
-	@Autowired
-	private BasePatientDataLibrary basePatientData;
 	
 	@Override
 	public String getDescription() {
@@ -42,18 +36,20 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "d14ba9bd-cff4-45f6-a390-bf9b0bf0f40b";
+		return "03b96289-54f7-458b-923d-efeb9739023b";
 	}
 	
 	@Override
 	public String getVersion() {
-		// TODO Auto-generated method stub
 		return "0.1";
 	}
 	
+	/**
+     * @return the uuid for the report design for exporting to Excel
+     */
 	@Override
 	public String getExcelDesignUuid() {
-		return "98e9202d-8c00-415f-9882-43917181f023";
+		return "5f1e7e64-e91d-4c70-9184-c3bc311acf7b";
 	}
 	
 	@Override
@@ -77,8 +73,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	 * @param reportDefinition
 	 * @return The report design
 	 */
-	@Override
-	
+	@Override	
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MaternityRegister.xls");
 		Properties props = new Properties();
