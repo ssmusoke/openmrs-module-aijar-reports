@@ -3,14 +3,18 @@ package org.openmrs.module.ugandaemrreports.library;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.common.Enums;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by carapai on 12/05/2016.
@@ -384,5 +388,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsOnArtWithCD4BeforeQuartersAgo(Integer quartersBack, Boolean allBaseCD4) {
         return df.getStartedArtWithCD4BeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
+    }
+    
+    public CohortDefinition getActiveWithNoEncounterInQuarter() {
+        return df.getActiveInPeriodWithoutVisit();
     }
 }

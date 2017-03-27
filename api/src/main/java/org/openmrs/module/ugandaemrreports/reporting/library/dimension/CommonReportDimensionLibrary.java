@@ -15,6 +15,7 @@
 package org.openmrs.module.ugandaemrreports.reporting.library.dimension;
 
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ public class CommonReportDimensionLibrary {
     }
 
     /**
-     * Dimension of age using the 3 standard age groups
+     * Dimension of age using the 4 standard age groups
      * @return the dimension
      */
     public CohortDefinitionDimension get106AgeGroups() {
@@ -60,4 +61,17 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("15+", map(commonCohortLibrary.agedAtLeast(15), "effectiveDate=${endDate}"));
         return dim;
     }
+    
+    /**
+     * MoH definiton of auult and children
+     * @return
+     */
+	public CohortDefinitionDimension getMOHDefinedChildrenAndAdultAgeGroups() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (<15, 15+)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("<15", map(commonCohortLibrary.MoHChildren(), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("15+", map(commonCohortLibrary.MoHAdult(), "effectiveDate=${endDate}"));
+        return dim;
+	}
 }

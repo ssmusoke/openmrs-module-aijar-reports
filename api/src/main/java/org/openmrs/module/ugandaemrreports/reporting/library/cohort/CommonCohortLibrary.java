@@ -1,17 +1,20 @@
 package org.openmrs.module.ugandaemrreports.reporting.library.cohort;
 
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Program;
 import org.openmrs.module.reporting.cohort.definition.*;
+import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.IsPregnantCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Library of common cohort definitions
@@ -133,19 +136,61 @@ public class CommonCohortLibrary {
         }
         return cd;
     }
-
-
+    
     /**
-     * Patients who are pregnant on ${onDate}
+     * Patients who have an obs between ${onOrAfter} and ${onOrBefore}
+     * @param question the question concept
+     * @param answers the answers to include
+     * @return the cohort definition
+     */
+    public CohortDefinition hasCodedObs(List<EncounterType> encounterTypeList, Concept question, List<Concept> answers) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setName("has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator(SetComparator.IN);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        if (answers.size() > 0) {
+            cd.setValueList(answers);
+        }
+        return cd;
+    }
+    
+    /**
+     * Convenience method to
+     * @param question
+     * @param answers
+     * @return
+     */
+    public CohortDefinition hasCodedObs(List<EncounterType> encounterTypeList, Concept question, Concept ... answers) {
+        return hasCodedObs(encounterTypeList, question, Arrays.asList(answers));
+    }
+    
+    /**
+     * Patients who transferred in between ${onOrAfter} and ${onOrBefore}
      *
      * @return the cohort definition
      */
-    public CohortDefinition pregnant() {
-        CalculationCohortDefinition cd = new CalculationCohortDefinition(new IsPregnantCalculation());
-        cd.setName("pregnant on date");
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
+    public CohortDefinition transferredIn() {
+        return hasCodedObs(null,Dictionary.getConcept(Metadata.Concept.TRANSFER_IN), Dictionary.getConcepts(Metadata.Concept.YES_WHO));
     }
-
+    
+    /**
+     * MoH definition of children who is anybody 14 years and below
+     * @return
+     */
+    public CohortDefinition MoHChildren(){
+        return agedAtMost(14);
+    }
+    
+    /**
+     * MoH definition of adults who are 15 years and older
+     * @return
+     */
+    public CohortDefinition MoHAdult(){
+        return agedAtLeast(15);
+    }
+    
 }
 

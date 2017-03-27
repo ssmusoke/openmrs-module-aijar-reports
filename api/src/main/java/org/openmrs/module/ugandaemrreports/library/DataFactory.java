@@ -981,6 +981,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
+    
+    public CohortDefinition getActiveInPeriodWithoutVisit() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMaximumDays(30);
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
 
     public CohortDefinition getLostDuringPeriod() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
