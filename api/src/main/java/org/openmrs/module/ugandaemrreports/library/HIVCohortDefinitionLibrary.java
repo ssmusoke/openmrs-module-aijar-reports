@@ -390,7 +390,4 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getStartedArtWithCD4BeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
     }
     
-    public CohortDefinition getActiveWithNoEncounterInQuarter() {
-        return df.getActiveInPeriodWithoutVisit();
-    }
 }

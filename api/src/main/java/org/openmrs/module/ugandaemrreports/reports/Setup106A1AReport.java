@@ -95,8 +95,6 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition enrolledBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
         
-        CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
-
         CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
@@ -160,7 +158,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
 
         CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter, activeWithNoEncounterInQuarter);
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(df.getPatientsInAll(onArtBeforeQuarter, df.getMissedAppoinmentAndLost()), onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
 
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, transferredInBeforeQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
@@ -169,7 +167,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
-        CohortDefinition onPreArt = df.getPatientsNotIn(df.getPatientsInAny(hadEncounterInQuarter, activeWithNoEncounterInQuarter), df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
+        CohortDefinition onPreArt = df.getPatientsNotIn(df.getPatientsInAny(hadEncounterInQuarter, df.getLost()), df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
 
         CohortDefinition onPreArtWhoReceivedCPT = df.getPatientsInAll(onPreArt, onCPTDuringQuarter);
 
