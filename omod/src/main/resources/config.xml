@@ -41,6 +41,10 @@
 		
 	</require_modules>
 	
+	<aware_of_modules>
+	    <aware_of_module>org.openmrs.module.legacyui</aware_of_module>
+	</aware_of_modules>
+	
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
@@ -62,6 +66,17 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
+	
+	<conditionalResources>
+		<conditionalResource>
+			<path>/lib/ugandaemrreports-api-1.x.*</path>
+			<openmrsVersion>1.*</openmrsVersion>
+		</conditionalResource>
+		<conditionalResource>
+			<path>/lib/ugandaemrreports-api-2.x.*</path>
+			<openmrsVersion>2.*</openmrsVersion>
+		</conditionalResource>
+	</conditionalResources>
 
 </module>
 
