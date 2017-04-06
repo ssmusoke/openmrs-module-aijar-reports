@@ -60,3 +60,6 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 
+.project
+api/.project
+omod/.project
