@@ -42,7 +42,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:10,dataset:Intergrated Antenatal Register");
+        props.put("repeatingSections", "sheet:1,row:10,dataset:IANC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -71,21 +71,17 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-
-
-        CohortDefinition definition = df.getDeadPatientsDuringPeriod();
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
 
         //start adding columns here
-        addColumn(dsd, "Serial No", null);
-        addColumn(dsd, "Client No", null);
+
+        /*addColumn(dsd, "Serial No", null);
+        addColumn(dsd, "Client No", null);*/
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
-        addColumn(dsd, "Village+parish", null);
+        /*addColumn(dsd, "Village+parish", null);
         addColumn(dsd, "Phone Number", null);
         addColumn(dsd, "Age-10-19yrs", null);
         addColumn(dsd, "Age-20-24yrs", null);
@@ -117,7 +113,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         addColumn(dsd, "Folic Acid", null);
         addColumn(dsd, "Other treatments", null);
         addColumn(dsd, "Referal In/Out", null);
-        addColumn(dsd, "Risk Factor/Complications", null);
+        addColumn(dsd, "Risk Factor/Complications", null);*/
 
         return rd;
     }
