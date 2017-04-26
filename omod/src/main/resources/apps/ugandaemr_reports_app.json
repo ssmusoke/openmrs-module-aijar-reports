@@ -120,6 +120,14 @@
         "label": "Early Warning Indicator Report",
         "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
         "order": 15
+      },
+      {
+        "id": "ANC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "ANC Register",
+        "url": "reportingui/runReport.page?reportDefinition=d63d0202-25ca-11e7-8479-507b9dc4c741",
+        "order": 20
       }
     ]
   }
