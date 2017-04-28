@@ -1,10 +1,13 @@
 package org.openmrs.module.ugandaemrreports.reporting.reports;
 
 import org.openmrs.Concept;
+import org.openmrs.PersonAttribute;
+import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -12,12 +15,14 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -77,10 +82,15 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
+        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
+
+        //supply the dates
+        Date onOrAfter = new Date();
+        Date onOrBefore = new Date();
+        PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
 
         //start adding columns here
 
@@ -89,7 +99,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
         //dsd.addColumn("Village", new ObsForPersonDataDefinition("Village", TimeQualifier.LAST, getConcept(""), null, null), "", null);
         //dsd.addColumn("Parish", new ObsForPersonDataDefinition("Parish", TimeQualifier.LAST, getConcept(""), null, null), "", null);
-        //dsd.addColumn("Phone Number", new ObsForPersonDataDefinition("Phone Number", TimeQualifier.LAST, getConcept(""), null, null), "", null);
+        dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", attribute), "", new PersonAttributeConverter());
         //addColumn(dsd, "Age-10-19yrs", null);
         //addColumn(dsd, "Age-20-24yrs", null);
         //addColumn(dsd, "Age-25andAboveyrs", null);
