@@ -124,13 +124,22 @@
         "label": "ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
         "order": 10
-      },{
+      },
+      {
         "id": "Maternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "Maternity Register",
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
+      },
+      {
+        "id": "TB Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "TB Register",
+        "url": "reportingui/runReport.page?reportDefinition=00002c21-2c46-4ea1-9993-4ea63c3d7e06",
+        "order": 12
       },
       {
         "id": "Case Based Surveillance EID Report",

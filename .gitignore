@@ -63,3 +63,12 @@ buildNumber.properties
 .project
 api/.project
 omod/.project
+
+.settings/
+api/.classpath
+api/.settings/
+api/bin/
+omod/.classpath
+omod/.settings/
+
+
