@@ -22,6 +22,8 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
@@ -65,11 +67,11 @@ public class WhoCd4VLCalculation extends AbstractPatientCalculation {
             }
 
             if(cd4Date != null){
-                cd4CountDate = cd4Date.toString();
+                cd4CountDate = formatDate(cd4Date);
             }
 
             if(vlDate != null){
-                vlCountDate = vlDate.toString();
+                vlCountDate = formatDate(vlDate);
             }
 
             //start calculating the who stagings
@@ -109,5 +111,14 @@ public class WhoCd4VLCalculation extends AbstractPatientCalculation {
         }
 
         return ret;
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        if (date == null) {
+            return "";
+        }
+
+        return dateFormatter.format(date);
     }
 }

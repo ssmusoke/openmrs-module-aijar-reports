@@ -17,6 +17,7 @@ import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  * Created by Nicholas Ingosi on 4/29/17.
@@ -28,23 +29,19 @@ public class SyphilisTestConverter implements DataConverter {
         if (obj == null) {
             return "";
         }
-        Concept rx = Context.getConceptService().getConceptByUuid("db3b19b2-e5f0-48c5-9ab4-dd9e4ad519dd"); //Rx
-        Concept positive = Context.getConceptService().getConceptByUuid("fe247560-8db6-4664-a6bc-e3b873b9b10a");//+ve
-        Concept nr = Context.getConceptService().getConceptByUuid("0d323507-97ff-4146-917c-11119546c051");//NR
-        Concept nt = Context.getConceptService().getConceptByUuid("451f794b-2f67-4ac5-bfb6-39cdae7bf4fc");//NT
 
         //get the obs value
         Concept value = ((Obs)obj).getValueCoded();
-        if(value.equals(rx)){
+        if(value.equals(Dictionary.getConcept("db3b19b2-e5f0-48c5-9ab4-dd9e4ad519dd"))){
             return "Rx";
         }
-        else if(value.equals(positive)){
+        else if(value.equals(Dictionary.getConcept("fe247560-8db6-4664-a6bc-e3b873b9b10a"))){
             return "+ve";
         }
-        else if(value.equals(nr)){
+        else if(value.equals(Dictionary.getConcept("0d323507-97ff-4146-917c-11119546c051"))){
             return "NR";
         }
-        else if(value.equals(nt)){
+        else if(value.equals(Dictionary.getConcept("451f794b-2f67-4ac5-bfb6-39cdae7bf4fc"))){
             return "NT";
         }
 
