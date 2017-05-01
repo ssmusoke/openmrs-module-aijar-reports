@@ -38,7 +38,12 @@
 		<require_module>
 			org.openmrs.module.uiframework
 		</require_module>
-		
+		<require_module>
+			org.openmrs.module.legacyui
+		</require_module>
+		<require_module>
+			org.openmrs.module.reportingcompatibility
+		</require_module>
 	</require_modules>
 	
 	

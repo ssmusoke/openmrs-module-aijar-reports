@@ -1,14 +1,13 @@
 package org.openmrs.module.ugandaemrreports.definition.cohort.definition;
 
-import org.openmrs.Concept;
-import org.openmrs.EncounterType;
-import org.openmrs.api.PatientSetService;
-import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
-import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
-
 import java.util.Date;
 import java.util.List;
+
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
+import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
+import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 
 /**
  * Created by carapai on 16/06/2016.
@@ -16,7 +15,7 @@ import java.util.List;
 public class HavingVisitCohortDefinition extends BaseCohortDefinition {
 
     @ConfigurationProperty
-    private PatientSetService.TimeModifier timeModifier;
+    private TimeModifier timeModifier;
 
     @ConfigurationProperty
     private Date startDate;
@@ -30,11 +29,11 @@ public class HavingVisitCohortDefinition extends BaseCohortDefinition {
     @ConfigurationProperty
     private Concept question;
 
-    public PatientSetService.TimeModifier getTimeModifier() {
+    public TimeModifier getTimeModifier() {
         return timeModifier;
     }
 
-    public void setTimeModifier(PatientSetService.TimeModifier timeModifier) {
+    public void setTimeModifier(TimeModifier timeModifier) {
         this.timeModifier = timeModifier;
     }
 
