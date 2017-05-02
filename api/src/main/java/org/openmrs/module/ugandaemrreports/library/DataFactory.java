@@ -1,16 +1,55 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.*;
-import org.openmrs.api.PatientSetService;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.openmrs.Concept;
+import org.openmrs.Encounter;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAddress;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.*;
-import org.openmrs.module.reporting.common.*;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.BirthAndDeathCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.MappedParametersCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.PatientIdentifierCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.TextObsCohortDefinition;
+import org.openmrs.module.reporting.common.Age;
+import org.openmrs.module.reporting.common.BooleanOperator;
+import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.reporting.common.SetComparator;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.ConvertedDataDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.*;
+import org.openmrs.module.reporting.data.converter.ChainedConverter;
+import org.openmrs.module.reporting.data.converter.CollectionConverter;
+import org.openmrs.module.reporting.data.converter.CollectionElementConverter;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.DataSetRowConverter;
+import org.openmrs.module.reporting.data.converter.ListConverter;
+import org.openmrs.module.reporting.data.converter.NullValueConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
+import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.*;
+import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.EncountersForPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
@@ -20,17 +59,34 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
+import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.CD4;
 import org.openmrs.module.ugandaemrreports.common.DeathDate;
 import org.openmrs.module.ugandaemrreports.common.Enums;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtCD4CohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtFollowupCD4CohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtFollowupDeadCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtFollowupLostCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtFollowupStoppedCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtPregnantCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ArtStartCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.HavingVisitCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.InAgeRangeAtCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.InEncounterCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.MissedAppointmentCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ObsWithEncountersCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsInPeriodCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ViralLoadCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.CD4PatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.EMTCTPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.FirstLineSubstitutionPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.ObsForPersonInPeriodDataDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 @Component
 public class DataFactory {
@@ -952,7 +1008,7 @@ public class DataFactory {
         return convert(cd, params);
     }
 
-    public CohortDefinition getLastVisitInTheQuarter(Concept question, PatientSetService.TimeModifier timeModifier) {
+    public CohortDefinition getLastVisitInTheQuarter(Concept question, TimeModifier timeModifier) {
         HavingVisitCohortDefinition cd = new HavingVisitCohortDefinition();
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(question);
