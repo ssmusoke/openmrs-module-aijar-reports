@@ -107,9 +107,8 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
-        rd.setParameters(getParameters());
+        rd.addParameters(getParameters());
         rd.addDataSetDefinition("ANC-DSD", Mapped.mapStraightThrough(dataSetDefinition()));
-        System.out.println(rd.getBaseCohortDefinition());
         return rd;
     }
 
@@ -196,8 +195,10 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
-        dsd.setParameters(getParameters());
-        dsd.addRowFilter((Mapped<? extends CohortDefinition>) onlyFemaleWithAncEncounterType());
+        dsd.addParameters(getParameters());
+        Mapped<CohortDefinition> cohort = (Mapped<CohortDefinition>) onlyFemaleWithAncEncounterType();
+        dsd.addRowFilter(cohort);
+
 
         //start constructing of the dataset
         PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
