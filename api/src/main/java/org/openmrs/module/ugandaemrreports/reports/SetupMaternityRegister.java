@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.MaternityDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +36,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "03b96289-54f7-458b-923d-efeb9739023b";
+		return "3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c";
 	}
 	
 	@Override
@@ -50,7 +49,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "5f1e7e64-e91d-4c70-9184-c3bc311acf7b";
+		return "19cb4e89-cc1a-49ce-82aa-8c5982a00599";
 	}
 	
 	@Override
