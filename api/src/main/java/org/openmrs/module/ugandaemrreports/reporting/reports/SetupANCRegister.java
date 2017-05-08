@@ -196,8 +196,8 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.addParameters(getParameters());
-        Mapped<CohortDefinition> cohort = (Mapped<CohortDefinition>) onlyFemaleWithAncEncounterType();
-        dsd.addRowFilter(cohort);
+        CohortDefinition cohort = onlyFemaleWithAncEncounterType();
+        dsd.addRowFilter(cohort, "");
 
 
         //start constructing of the dataset
