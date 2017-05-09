@@ -4,8 +4,6 @@ import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -42,7 +40,6 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ReferalCalc
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeightMuacInrCalcultion;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -114,7 +111,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.6";
     }
 
     @Override
@@ -132,8 +129,11 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     private DataDefinition definition(String name, Concept concept) {
         ObsForPersonDataDefinition obsForPersonDataDefinition = new ObsForPersonDataDefinition();
         obsForPersonDataDefinition.setName(name);
+        obsForPersonDataDefinition.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        obsForPersonDataDefinition.addParameter(new Parameter("onOrAfter", "End Date", Date.class));
         obsForPersonDataDefinition.setQuestion(concept);
         obsForPersonDataDefinition.setWhich(TimeQualifier.LAST);
+        obsForPersonDataDefinition.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid("044daI6d-f80e-48fe-aba9-037f241905Pe"));
         return obsForPersonDataDefinition;
     }
 
@@ -196,8 +196,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.addParameters(getParameters());
-        CohortDefinition cohort = onlyFemaleWithAncEncounterType();
-        dsd.addRowFilter(cohort, "");
+        dsd.addRowFilter(onlyFemale(), "");
 
 
         //start constructing of the dataset
@@ -245,21 +244,9 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         return dsd;
     }
 
-    private CohortDefinition onlyFemaleWithAncEncounterType(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-
+    private CohortDefinition onlyFemale(){
         GenderCohortDefinition gender = new GenderCohortDefinition();
         gender.setFemaleIncluded(true);
-        gender.setMaleIncluded(false);
-
-        EncounterCohortDefinition enc = new EncounterCohortDefinition();
-        enc.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid("044daI6d-f80e-48fe-aba9-037f241905Pe"));
-
-        //combine the 2 cohortDefinitions
-        cd.setName("femaleAndInANC");
-        cd.addSearch("gender", ReportUtils.map(gender, ""));
-        cd.addSearch("anc", ReportUtils.map(enc, ""));
-        cd.setCompositionString("gender AND enc");
-        return cd;
+        return gender;
     }
 }
