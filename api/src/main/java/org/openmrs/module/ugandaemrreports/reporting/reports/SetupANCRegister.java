@@ -4,6 +4,8 @@ import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -40,6 +42,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ReferalCalc
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeightMuacInrCalcultion;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -111,7 +114,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.7";
+        return "0.8";
     }
 
     @Override
@@ -129,11 +132,10 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     private DataDefinition definition(String name, Concept concept) {
         ObsForPersonDataDefinition obsForPersonDataDefinition = new ObsForPersonDataDefinition();
         obsForPersonDataDefinition.setName(name);
-        obsForPersonDataDefinition.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        obsForPersonDataDefinition.addParameter(new Parameter("onOrAfter", "End Date", Date.class));
+        obsForPersonDataDefinition.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        obsForPersonDataDefinition.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         obsForPersonDataDefinition.setQuestion(concept);
         obsForPersonDataDefinition.setWhich(TimeQualifier.LAST);
-        obsForPersonDataDefinition.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid("044daI6d-f80e-48fe-aba9-037f241905Pe"));
         return obsForPersonDataDefinition;
     }
 
@@ -196,7 +198,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(onlyFemale(), "");
+        dsd.addRowFilter(onlyFemaleAndHasAncEncounter(), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
@@ -244,9 +246,26 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         return dsd;
     }
 
-    private CohortDefinition onlyFemale(){
+    private CohortDefinition onlyFemaleAndHasAncEncounter(){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+
         GenderCohortDefinition gender = new GenderCohortDefinition();
+        gender.setName("Is Female");
         gender.setFemaleIncluded(true);
-        return gender;
+
+        EncounterCohortDefinition encounter = new EncounterCohortDefinition();
+        encounter.setName("Has encounter");
+        encounter.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        encounter.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        encounter.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid("044daI6d-f80e-48fe-aba9-037f241905Pe"));
+
+        cd.setName("Is female and has ANC encounter");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addSearch("gender", ReportUtils.map(gender));
+        cd.addSearch("encounter", ReportUtils.map(encounter, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("gender AND encounter");
+
+        return cd;
     }
 }
