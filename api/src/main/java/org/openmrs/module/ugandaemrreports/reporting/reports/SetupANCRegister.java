@@ -111,7 +111,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.6";
+        return "0.7";
     }
 
     @Override
@@ -236,7 +236,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Free LLIN", definition("Free LLIN", getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FreeLlinDataConverter());
         dsd.addColumn("Mebendazole", definition("Mebendazole", getConcept("9d6abbc4-707a-4ec7-a32a-4090b1c3af87")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MebendazoleDataConverter());
         dsd.addColumn("Iron given", ironGiven(), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("Folic acid given", folicAcidGiven(), "onDate=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Folic acid given", folicAcidGiven(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Other treatments", definition("Other treatments", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Referal In/Out", referal(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Risk Factor/Complications", definition("Risk Factor/Complications", getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
