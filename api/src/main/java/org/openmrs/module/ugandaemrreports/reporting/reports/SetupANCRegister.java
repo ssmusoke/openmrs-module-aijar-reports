@@ -64,7 +64,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "c357f8ea-25ca-11e7-8712-507b9dc4c741";
+        return "581d401a-3562-11e7-8a67-507b9dc4c741";
     }
 
     /**
@@ -77,7 +77,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC-DSD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -112,7 +112,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.8";
+        return "0.11";
     }
 
     @Override
