@@ -3,13 +3,7 @@ package org.openmrs.module.ugandaemrreports.reporting.reports;
 import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
@@ -30,6 +24,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeConvert
 import org.openmrs.module.ugandaemrreports.data.converter.SyphilisTestConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.TetanusDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ArvDrugsPreArtNumberCalcultion;
@@ -41,8 +36,8 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddre
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ReferalCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeightMuacInrCalcultion;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,6 +55,9 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
+
+    @Autowired
+    SharedDataDefintion sdd;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -129,16 +127,6 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         return Dictionary.getConcept(uuid);
     }
 
-    private DataDefinition definition(String name, Concept concept) {
-        ObsForPersonDataDefinition obsForPersonDataDefinition = new ObsForPersonDataDefinition();
-        obsForPersonDataDefinition.setName(name);
-        obsForPersonDataDefinition.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        obsForPersonDataDefinition.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        obsForPersonDataDefinition.setQuestion(concept);
-        obsForPersonDataDefinition.setWhich(TimeQualifier.LAST);
-        return obsForPersonDataDefinition;
-    }
-
     private DataDefinition villageParish(){
         CalculationDataDefinition cdf =new CalculationDataDefinition("village+parish", new PersonAddressCalculation());
         cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
@@ -198,7 +186,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName(getName());
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(onlyFemaleAndHasAncEncounter(), "startDate=${startDate},endDate=${endDate}");
+        dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "044daI6d-f80e-48fe-aba9-037f241905Pe"), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
@@ -206,66 +194,43 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
         //start adding columns here
 
-        dsd.addColumn("Serial No", definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Client No", definition("Client No",  getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Client No", sdd.definition("Client No",  getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", attribute), "", new PersonAttributeConverter());
         dsd.addColumn("Age-10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Age-20-24yrs", age(20,24), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Age-25+yrs", age(25,200), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("ANC Visit", definition("ANC Visit",  getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Gravida", definition("Gravida",  getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Parity", definition("Parity",  getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Gestational Age", definition("Gestational Age",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("ANC1 Timing", definition("ANC1 Timing",  getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingConverter());
-        dsd.addColumn("EDD", definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("ANC Visit", sdd.definition("ANC Visit",  getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Gravida", sdd.definition("Gravida",  getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Parity", sdd.definition("Parity",  getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Gestational Age", sdd.definition("Gestational Age",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("ANC1 Timing", sdd.definition("ANC1 Timing",  getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingConverter());
+        dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WHMI", weightHeightMuacInr(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("BP", bloodPressure(), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("EMTCT codesW", definition("EMTCT codesW", getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
-        dsd.addColumn("EMTCT codesP", definition("EMTCT codesP", getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
-        dsd.addColumn("Diagnosis", definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
+        dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
+        dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WHO/CD4/VL", whoCd4Vl(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("ARVs drugs/Pre-ART No", arvDrugsPreArtNumber(), "onDate=${endDate}",  new CalculationResultConverter());
         dsd.addColumn("IYCF/MNC", iycfMnc(), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("TB Status", definition("TB Status", getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Haemoglobin", definition("Haemoglobin", getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Syphilis testW", definition("Syphilis testW", getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestConverter());
-        dsd.addColumn("Syphilis testP", definition("Syphilis testP", getConcept("d8bc9915-ed4b-4df9-9458-72ca1bc2cd06")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestConverter());
-        dsd.addColumn("FPC", definition("FPC", getConcept("0815c786-5994-49e4-aa07-28b662b0e428")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FpcDataConverter());
-        dsd.addColumn("TT", definition("TT", getConcept("39217e3d-6a39-4679-bf56-f0954a7ffdb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TetanusDataConverter());
-        dsd.addColumn("IPT/CTX", definition("IPT/CTX", getConcept("1da3cb98-59d8-4bfd-b0bb-c9c1bcd058c6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IptCtxConverter());
-        dsd.addColumn("Free LLIN", definition("Free LLIN", getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FreeLlinDataConverter());
-        dsd.addColumn("Mebendazole", definition("Mebendazole", getConcept("9d6abbc4-707a-4ec7-a32a-4090b1c3af87")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MebendazoleDataConverter());
+        dsd.addColumn("TB Status", sdd.definition("TB Status", getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Haemoglobin", sdd.definition("Haemoglobin", getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Syphilis testW", sdd.definition("Syphilis testW", getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestConverter());
+        dsd.addColumn("Syphilis testP", sdd.definition("Syphilis testP", getConcept("d8bc9915-ed4b-4df9-9458-72ca1bc2cd06")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestConverter());
+        dsd.addColumn("FPC", sdd.definition("FPC", getConcept("0815c786-5994-49e4-aa07-28b662b0e428")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FpcDataConverter());
+        dsd.addColumn("TT", sdd.definition("TT", getConcept("39217e3d-6a39-4679-bf56-f0954a7ffdb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TetanusDataConverter());
+        dsd.addColumn("IPT/CTX", sdd.definition("IPT/CTX", getConcept("1da3cb98-59d8-4bfd-b0bb-c9c1bcd058c6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IptCtxConverter());
+        dsd.addColumn("Free LLIN", sdd.definition("Free LLIN", getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FreeLlinDataConverter());
+        dsd.addColumn("Mebendazole", sdd.definition("Mebendazole", getConcept("9d6abbc4-707a-4ec7-a32a-4090b1c3af87")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MebendazoleDataConverter());
         dsd.addColumn("Iron given", ironGiven(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Folic acid given", folicAcidGiven(), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("Other treatments", definition("Other treatments", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Other treatments", sdd.definition("Other treatments", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Referal In/Out", referal(), "onDate=${endDate}", new CalculationResultConverter());
-        dsd.addColumn("Risk Factor/Complications", definition("Risk Factor/Complications", getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Risk Factor/Complications", sdd.definition("Risk Factor/Complications", getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
         return dsd;
-    }
-
-    private CohortDefinition onlyFemaleAndHasAncEncounter(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-
-        GenderCohortDefinition gender = new GenderCohortDefinition();
-        gender.setName("Is Female");
-        gender.setFemaleIncluded(true);
-
-        EncounterCohortDefinition encounter = new EncounterCohortDefinition();
-        encounter.setName("Has encounter");
-        encounter.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        encounter.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        encounter.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid("044daI6d-f80e-48fe-aba9-037f241905Pe"));
-
-        cd.setName("Is female and has ANC encounter");
-        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
-        cd.addSearch("gender", ReportUtils.map(gender));
-        cd.addSearch("encounter", ReportUtils.map(encounter, "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("gender AND encounter");
-
-        return cd;
     }
 }
