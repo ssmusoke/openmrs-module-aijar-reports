@@ -94,6 +94,8 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition enrolledBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
+        
+        CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
 
         CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
@@ -158,7 +160,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
 
         CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter, activeWithNoEncounterInQuarter);
 
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, transferredInBeforeQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
@@ -167,7 +169,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
-        CohortDefinition onPreArt = df.getPatientsNotIn(hadEncounterInQuarter, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
+        CohortDefinition onPreArt = df.getPatientsNotIn(df.getPatientsInAny(hadEncounterInQuarter, activeWithNoEncounterInQuarter), df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
 
         CohortDefinition onPreArtWhoReceivedCPT = df.getPatientsInAll(onPreArt, onCPTDuringQuarter);
 
@@ -281,6 +283,6 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.1";
+        return "0.1.2";
     }
 }
