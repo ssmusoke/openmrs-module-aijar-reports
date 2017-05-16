@@ -1,133 +1,217 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.openmrs.Cohort;
+import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
-import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
-import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
-import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CBSAdultDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.util.*;
 
-/**
- * Created by carapai on 17/10/2016.
- */
 @Handler(supports = {CBSAdultDatasetDefinition.class})
-public class CBSAdultDataSetEvaluator implements DataSetEvaluator {
+public class CBSAdultDataSetEvaluator implements org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator {
     @Autowired
-    private EvaluationService evaluationService;
+    private CohortDefinitionService cohortDefinitionService;
+    @Autowired
+    private HIVMetadata hivMetadata;
+    @Autowired
+    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+    PatientDataHelper pdh = new PatientDataHelper();
 
-    @Override
-    public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext evaluationContext) throws EvaluationException {
-
+    public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext evaluationContext)
+            throws org.openmrs.module.reporting.evaluation.EvaluationException {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, evaluationContext);
         CBSAdultDatasetDefinition definition = (CBSAdultDatasetDefinition) dataSetDefinition;
 
-        String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
-        String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
+        Date startDate = definition.getStartDate();
+        Date endDate = definition.getEndDate();
 
-        evaluationContext = ObjectUtil.nvl(evaluationContext, new EvaluationContext());
 
-        PatientDataHelper pdh = new PatientDataHelper();
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(this.hivMetadata.getARTSummaryPageEncounterType());
+        cd.setOnOrAfter(startDate);
+        cd.setOnOrBefore(endDate);
 
-        String sql = "select A.patient_id,A.identifiers,B.hiv_status,C.baseline_cd4,D.date_eligible,E.art_start_date,F.current_regimen,G.ti,H.ti_location,\n" +
-                "  I.ti_regimen_date,J.ti_regimen_location,K.ti_regimen,L.tout,M.tout_date,N.tout_location,O.vl_date,P.vl_qualitative,\n" +
-                "  Q.vl,R.dead,S.death_date,T.missed,U.lost,V.lost_date,W.death_date,W.dead,W.birthdate,W.gender,X.preg_or_lact,\n" +
-                "  Y.encounters\n" +
-                "from\n" +
-                "  (select patient_id,group_concat(concat(identifier,'|',identifier_type)) as identifiers from patient_identifier where identifier_type in(4,9) GROUP BY  patient_id) A\n" +
-                "LEFT JOIN\n" +
-                "  (select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS hiv_status from obs WHERE concept_id = 99493 group by person_id) B\n" +
-                "  on(A.patient_id = B.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS baseline_cd4 from obs WHERE concept_id = 99071 group by person_id) C\n" +
-                "  on(A.patient_id = C.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime))) AS date_eligible from obs WHERE concept_id = 90297 and voided = 0 group by person_id ) D\n" +
-                "  on(A.patient_id = D.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime))) AS art_start_date from obs WHERE concept_id = 99161 and voided = 0 group by person_id ) E\n" +
-                "  on(A.patient_id = E.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS current_regimen from obs WHERE concept_id = 90315 group by person_id) F\n" +
-                "  on(A.patient_id = F.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS ti from obs WHERE concept_id = 99110 group by person_id) G\n" +
-                "  on(A.patient_id = G.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS ti_location from obs WHERE concept_id = 99109 group by person_id) H\n" +
-                "  on(A.patient_id = H.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime))) AS ti_regimen_date from obs WHERE concept_id = 99160 group by person_id) I\n" +
-                "  on(A.patient_id = I.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS ti_regimen_location from obs WHERE concept_id = 90206 group by person_id) J\n" +
-                "  on(A.patient_id = J.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS ti_regimen from obs WHERE concept_id = 99064 group by person_id) K\n" +
-                "  on(A.patient_id = K.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS tout from obs WHERE concept_id = 90306 group by person_id) L\n" +
-                "  on(A.patient_id = L.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime))) AS tout_date from obs WHERE concept_id = 99165 group by person_id) M\n" +
-                "  on(A.patient_id = M.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS tout_location from obs WHERE concept_id = 90211 group by person_id) N\n" +
-                "  on(A.patient_id = N.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime))) AS vl_date from obs WHERE concept_id = 163023 group by person_id) O\n" +
-                "  on(A.patient_id = O.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS vl_qualitative from obs WHERE concept_id = 1305 group by person_id) P\n" +
-                "  on(A.patient_id = P.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(select person_id,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) AS vl from obs WHERE concept_id = 856 group by person_id) Q\n" +
-                "  on(A.patient_id = Q.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS dead FROM obs WHERE concept_id = 99112 group by person_id) R\n" +
-                "  ON(A.patient_id = R.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS death_date FROM obs WHERE concept_id = 90272 group by person_id) S\n" +
-                "  ON(A.patient_id = S.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS missed FROM obs WHERE concept_id = 99132 and value_coded = 99133  group by person_id) T\n" +
-                "  ON(A.patient_id = T.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS lost FROM obs WHERE concept_id = 5240 group by person_id) U\n" +
-                "  ON(A.patient_id = U.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS lost_date FROM obs WHERE concept_id = 90209 group by person_id) V\n" +
-                "  ON(A.patient_id = V.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,gender,birthdate,dead,death_date FROM person group by person_id) W\n" +
-                "  ON (A.patient_id = W.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT person_id,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS preg_or_lact FROM obs WHERE concept_id in(99072,99603) group by person_id) X\n" +
-                "  ON(A.patient_id = X.person_id)\n" +
-                "LEFT JOIN\n" +
-                "(SELECT patient_id,group_concat(concat(encounter_id,'|',encounter_type,'|',DATE(encounter_datetime))) as encounters FROM encounter group by patient_id) Y\n" +
-                "  ON (A.patient_id = Y.patient_id)";
 
-        SqlQueryBuilder q = new SqlQueryBuilder(sql);
+        DateObsCohortDefinition withArtStartDate = new DateObsCohortDefinition();
+        withArtStartDate.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        withArtStartDate.setQuestion(this.hivMetadata.getArtStartDate());
 
-        List<Object[]> results = evaluationService.evaluateToList(q, evaluationContext);
+        DateObsCohortDefinition eligibleAndReady = new DateObsCohortDefinition();
+        eligibleAndReady.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        eligibleAndReady.setQuestion(this.hivMetadata.getDateEligibleAndReadyForART());
 
-        for (Object[] r : results) {
-            DataSetRow row = new DataSetRow();
 
-            pdh.addCol(row, "Name", r[1]);
+        CohortDefinition clinicalStage = this.hivCohortDefinitionLibrary.getPatientsWithBaselineClinicalStage();
+        CohortDefinition clinicalStage1 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineClinicalStage(Arrays.asList(new Concept[]{this.hivMetadata.getWHOClinicalStage1(), this.hivMetadata.getWHOClinicalStage2()}));
+        CohortDefinition clinicalStage2 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineClinicalStage(Arrays.asList(new Concept[]{this.hivMetadata.getWHOClinicalStage3()}));
+        CohortDefinition clinicalStage3 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineClinicalStage(Arrays.asList(new Concept[]{this.hivMetadata.getWHOClinicalStage4()}));
+
+        CohortDefinition baseCD4 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4();
+        CohortDefinition baseCD4L50 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4After(Double.valueOf(50.0D));
+        CohortDefinition baseCD4G50L200 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4(Double.valueOf(50.0D), Double.valueOf(200.0D));
+        CohortDefinition baseCD4G200L350 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4(Double.valueOf(200.0D), Double.valueOf(350.0D));
+        CohortDefinition baseCD4G350L500 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4(Double.valueOf(350.0D), Double.valueOf(500.0D));
+        CohortDefinition baseCD4G500 = this.hivCohortDefinitionLibrary.getPatientsWithBaselineCD4(Double.valueOf(500.0D));
+
+
+        Cohort enrolledThisQuarter = this.cohortDefinitionService.evaluate(cd, null);
+
+        Cohort c = this.cohortDefinitionService.evaluate(clinicalStage, null);
+        Cohort c1 = this.cohortDefinitionService.evaluate(clinicalStage1, null);
+        Cohort c2 = this.cohortDefinitionService.evaluate(clinicalStage2, null);
+        Cohort c3 = this.cohortDefinitionService.evaluate(clinicalStage3, null);
+
+        Cohort cD4 = this.cohortDefinitionService.evaluate(baseCD4, null);
+        Cohort cD4L50 = this.cohortDefinitionService.evaluate(baseCD4L50, null);
+        Cohort cD4G50L200 = this.cohortDefinitionService.evaluate(baseCD4G50L200, null);
+        Cohort cD4G200L350 = this.cohortDefinitionService.evaluate(baseCD4G200L350, null);
+        Cohort cD4G350L500 = this.cohortDefinitionService.evaluate(baseCD4G350L500, null);
+        Cohort cD4G500 = this.cohortDefinitionService.evaluate(baseCD4G500, null);
+
+        Cohort onArt = this.cohortDefinitionService.evaluate(withArtStartDate, null);
+        Cohort eligible = this.cohortDefinitionService.evaluate(eligibleAndReady, null);
+
+
+        Cohort males = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.males(), null);
+
+
+        Cohort females = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.females(), null);
+
+
+        Cohort below5Years = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.agedAtMost(4, endDate), null);
+        Cohort between5And9Years = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.agedBetween(5, 9, endDate), null);
+        Cohort between10And19Years = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.agedBetween(10, 19, endDate), null);
+        Cohort above19Years = this.cohortDefinitionService.evaluate(this.commonCohortDefinitionLibrary.agedAtLeast(20, endDate), null);
+
+
+        Collection baseCohortMembers = enrolledThisQuarter.getMemberIds();
+
+        Cohort enrolledThisQuarterStage1 = getCohort(CollectionUtils.intersection(baseCohortMembers, c1.getMemberIds()));
+        Cohort enrolledThisQuarterStage2 = getCohort(CollectionUtils.intersection(baseCohortMembers, c2.getMemberIds()));
+        Cohort enrolledThisQuarterStage3 = getCohort(CollectionUtils.intersection(baseCohortMembers, c3.getMemberIds()));
+        Cohort enrolledThisQuarterNotStaged = getCohort(CollectionUtils.subtract(baseCohortMembers, c.getMemberIds()));
+
+        Cohort enrolledThisQuarterCD4 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4.getMemberIds()));
+        Cohort enrolledThisQuarterCD4L50 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4L50.getMemberIds()));
+        Cohort enrolledThisQuarterCD4G50L200 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4G50L200.getMemberIds()));
+        Cohort enrolledThisQuarterCD4G200L350 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4G200L350.getMemberIds()));
+        Cohort enrolledThisQuarterCD4G350L500 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4G350L500.getMemberIds()));
+        Cohort enrolledThisQuarterCD4G500 = getCohort(CollectionUtils.intersection(baseCohortMembers, cD4G500.getMemberIds()));
+
+        Cohort enrolledThisQuarterEligibleAndReady = getCohort(CollectionUtils.intersection(baseCohortMembers, eligible.getMemberIds()));
+
+        Cohort enrolledThisQuarterOnArt = getCohort(CollectionUtils.intersection(baseCohortMembers, onArt.getMemberIds()));
+
+
+        List<String> clinicalStage1Columns = Arrays.asList(new String[]{"", "% of HIV clients enrolled  with HIV infection", "Clients with stage 1 and 2 disease", "All clients enrolled in a cohort"});
+        List<String> clinicalStage2Columns = Arrays.asList(new String[]{"", "% of HIV clients enrolled  with Advanced disease", "Clients with stage 3 disease", "All clients enrolled in a cohort"});
+        List<String> clinicalStage3Columns = Arrays.asList(new String[]{"", "% of HIV clients enrolled  with AIDS", "Clients with stage 4 disease", "All clients enrolled in a cohort"});
+        List<String> clinicalNotStageColumns = Arrays.asList(new String[]{"", "% of clients not staged", "All clients with no clinical stage", "All clients enrolled in a cohort"});
+
+        List<String> cD4Columns = Arrays.asList(new String[]{"", "% of clients with Baseline CD4", "All clients tested for CD4 at enrollment", "All clients enrolled in a cohort"});
+        List<String> cD4L50Columns = Arrays.asList(new String[]{"", "% of HIV + clients with very severe HIV infection", "C1 :<50", "All clients enrolled in a cohort"});
+        List<String> cD4G50L200Columns = Arrays.asList(new String[]{"", "% of HIV + clients with  severe HIV infection", "C2: 50- <200", "All clients enrolled in a cohort"});
+        List<String> cD4G200L350Columns = Arrays.asList(new String[]{"", "% of HIV + clients with  advanced HIV infection", "C2: 200- <350", "All clients enrolled in a cohort"});
+        List<String> cD4G350L500Columns = Arrays.asList(new String[]{"", "% of HIV + clients with  mild HIV infection", "C2: 350- <500", "All clients enrolled in a cohort"});
+        List<String> cD4G500Columns = Arrays.asList(new String[]{"", "% of HIV + clients with None or not significant HIV infection", "C5: >500", "All clients enrolled in a cohort"});
+
+        List<String> eligibleColumns = Arrays.asList(new String[]{"", "% Initiated on ART", "Number initiated on ART", "Number eligible for ART"});
+
+
+        Map<String, List<Cohort>> aggregates = new HashMap();
+
+        aggregates.put("1", Arrays.asList(new Cohort[]{below5Years, males}));
+        aggregates.put("2", Arrays.asList(new Cohort[]{below5Years, females}));
+
+        aggregates.put("3", Arrays.asList(new Cohort[]{between5And9Years, males}));
+        aggregates.put("4", Arrays.asList(new Cohort[]{between5And9Years, females}));
+
+        aggregates.put("5", Arrays.asList(new Cohort[]{between10And19Years, males}));
+        aggregates.put("6", Arrays.asList(new Cohort[]{between10And19Years, females}));
+
+        aggregates.put("7", Arrays.asList(new Cohort[]{above19Years, males}));
+        aggregates.put("8", Arrays.asList(new Cohort[]{above19Years, females}));
+
+        dataSet.addRow(populate(enrolledThisQuarterStage1, enrolledThisQuarter, aggregates, clinicalStage1Columns));
+        dataSet.addRow(populate(enrolledThisQuarterStage2, enrolledThisQuarter, aggregates, clinicalStage2Columns));
+        dataSet.addRow(populate(enrolledThisQuarterStage3, enrolledThisQuarter, aggregates, clinicalStage3Columns));
+        dataSet.addRow(populate(enrolledThisQuarterNotStaged, enrolledThisQuarter, aggregates, clinicalNotStageColumns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4, enrolledThisQuarter, aggregates, cD4Columns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4L50, enrolledThisQuarter, aggregates, cD4L50Columns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4G50L200, enrolledThisQuarter, aggregates, cD4G50L200Columns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4G200L350, enrolledThisQuarter, aggregates, cD4G200L350Columns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4G350L500, enrolledThisQuarter, aggregates, cD4G350L500Columns));
+        dataSet.addRow(populate(enrolledThisQuarterCD4G500, enrolledThisQuarter, aggregates, cD4G500Columns));
+        dataSet.addRow(populate(enrolledThisQuarterOnArt, enrolledThisQuarterEligibleAndReady, aggregates, eligibleColumns));
+
+
+        return dataSet;
+    }
+
+    private DataSetRow populate(Cohort numerator, Cohort denominator, Map<String, List<Cohort>> breakdown, List<String> otherColumnValues) {
+        DataSetRow row = new DataSetRow();
+
+        Iterator<String> otherColumnValuesIterator = otherColumnValues.iterator();
+        Iterator<String> otherColumnsIterator = Arrays.asList(new String[]{"sn", "indicator", "numerator", "denominator"}).iterator();
+
+
+        Map<String, String> otherColumns = new HashMap();
+
+        while ((otherColumnsIterator.hasNext()) && (otherColumnValuesIterator.hasNext())) {
+            otherColumns.put(otherColumnsIterator.next(), otherColumnValuesIterator.next());
         }
 
-        return null;
+        for (Map.Entry<String, String> o : otherColumns.entrySet()) {
+            this.pdh.addCol(row, (String) o.getKey(), o.getValue());
+        }
+
+        for (Map.Entry<String, List<Cohort>> b : breakdown.entrySet()) {
+            Collection denominatorCohort = denominator.getMemberIds();
+            Collection numeratorCohort = numerator.getMemberIds();
+            String k = (String) b.getKey();
+            List<Cohort> bVal = (List) b.getValue();
+
+            for (Cohort found : bVal) {
+                denominatorCohort = CollectionUtils.intersection(denominatorCohort, found.getMemberIds());
+                numeratorCohort = CollectionUtils.intersection(numeratorCohort, found.getMemberIds());
+            }
+
+            Integer n = Integer.valueOf(numeratorCohort.size());
+            Integer d = Integer.valueOf(numeratorCohort.size());
+
+            this.pdh.addCol(row, "numerator" + k, n);
+            this.pdh.addCol(row, "denominator" + k, d);
+        }
+
+
+        return row;
+    }
+
+    private Cohort getCohort(Collection<Integer> results) {
+        Cohort result = new Cohort();
+        Set<Integer> patients = new java.util.HashSet();
+        for (Integer r : results) {
+            patients.add(r);
+        }
+        result.setMemberIds(patients);
+        return result;
     }
 }

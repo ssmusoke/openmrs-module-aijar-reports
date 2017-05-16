@@ -56,8 +56,15 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
         "label": "CBS Adult Quarterly Report",
-        "url": "reportingui/runReport.page?reportDefinition=1479f8ae-5d93-4b2f-9cd6-8b7eb976dc6b",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e908-c3cd-4dc1-b145-13f1d02f1c54",
         "order": 15
+      },{
+        "id": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=6633f9c9-dffb-4e6b-bfcc-e2ddb08805ca",
+        "order": 25
       },
       {
         "id": "Appointments List",

@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Concept;
 import org.openmrs.api.PatientSetService;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by carapai on 12/05/2016.
@@ -384,5 +386,29 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsOnArtWithCD4BeforeQuartersAgo(Integer quartersBack, Boolean allBaseCD4) {
         return df.getStartedArtWithCD4BeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
+    }
+
+    public CohortDefinition getPatientsWithBaselineCD4() {
+        return this.df.getBaselineCD4();
+    }
+
+    public CohortDefinition getPatientsWithBaselineClinicalStage() {
+        return this.df.getBaselineClinicalStage();
+    }
+
+    public CohortDefinition getPatientsWithBaselineCD4(Double from) {
+        return this.df.getBaselineCD4(from);
+    }
+
+    public CohortDefinition getPatientsWithBaselineCD4After(Double to) {
+        return this.df.getBaselineCD4GreaterThan(to);
+    }
+
+    public CohortDefinition getPatientsWithBaselineCD4(Double from, Double to) {
+        return this.df.getBaselineCD4(from, to);
+    }
+
+    public CohortDefinition getPatientsWithBaselineClinicalStage(List<Concept> values) {
+        return this.df.getBaselineClinicalStage(values);
     }
 }
