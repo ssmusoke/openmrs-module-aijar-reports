@@ -51,6 +51,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddre
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeightMuacInrCalcultion;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.IfoIycfMncCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
@@ -189,7 +190,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Vit A", sdd.definition("Vit A", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("PCV", sdd.definition("PCV", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("Other treatment child", sdd.definition("Other treatment child", getConcept("59560ede-43e2-4e56-a47e-0f876779f0e1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("RTW/RFW", );
+        dsd.addColumn("RTW/RFW", referredToOrFrom(), "onDate=${endDate}", new CalculationResultConverter());
 
         return dsd;
     }
@@ -227,6 +228,12 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
     }
     private DataDefinition ifoIycfMnc(){
         CalculationDataDefinition cd = new CalculationDataDefinition("IFO/IYCF/MNC", new IfoIycfMncCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    private DataDefinition referredToOrFrom(){
+        CalculationDataDefinition cd = new CalculationDataDefinition("RTW/RFW", new RtwRfwCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }
