@@ -19,6 +19,8 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.data.DataDefinition;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
@@ -35,7 +37,6 @@ import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultConve
 import org.openmrs.module.ugandaemrreports.data.converter.CervixStatusDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FpPNCDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.IdentifierConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ImmunizationDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.MotherDiagnosisDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
@@ -128,7 +129,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.5";
     }
 
     @Override
@@ -146,8 +147,9 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
         PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
-        PatientIdentifierType clientNo = MetadataUtils.existing(PatientIdentifierType.class, "");
-        DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(clientNo.getName(), clientNo), new IdentifierConverter());
+        PatientIdentifierType clientNo = MetadataUtils.existing(PatientIdentifierType.class, "758ef6e4-9ceb-4137-bc8d-9246dc7b41fe");
+        DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
+        DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(clientNo.getName(), clientNo), identifierFormatter);
 
 
 

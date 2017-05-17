@@ -128,6 +128,14 @@
         "label": "ANC Register",
         "url": "reportingui/runReport.page?reportDefinition=d63d0202-25ca-11e7-8479-507b9dc4c741",
         "order": 20
+      },
+      {
+        "id": "PNC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "PNC Register",
+        "url": "reportingui/runReport.page?reportDefinition=054f2326-356c-11e7-8616-507b9dc4c741",
+        "order": 21
       }
     ]
   }
