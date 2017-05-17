@@ -83,6 +83,13 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
     public String getExcelDesignUuid() {
         return "d49823d6-356b-11e7-98b3-507b9dc4c741";
     }
+    
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
+    }
 
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
