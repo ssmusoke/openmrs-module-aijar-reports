@@ -414,6 +414,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsWithBaselineClinicalStage(List<Concept> values) {
         return this.df.getBaselineClinicalStage(values);
+    }
     
     public CohortDefinition getActiveWithNoEncounterInQuarter() {
         return df.getActiveInPeriodWithoutVisit();
