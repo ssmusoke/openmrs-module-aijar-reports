@@ -15,7 +15,6 @@ public class ViralLoadFailedFilter implements Predicate<ViralLoad> {
 
     @Override
     public boolean apply(ViralLoad viralLoad) {
-        return (viralLoad.getMonthsSinceArt() >= month) && (viralLoad.getMonthsSinceArt() <= month + 2) && (viralLoad.getValueNumeric() > 1000.0D);
-
+        return (viralLoad.getMonthsBetweenArtAndViralLoad() >= month) && (viralLoad.getMonthsBetweenArtAndViralLoad() <= month + 2) && (viralLoad.getValueNumeric() > 1000.0D);
     }
 }

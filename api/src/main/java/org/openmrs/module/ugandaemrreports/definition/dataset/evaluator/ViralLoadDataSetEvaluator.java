@@ -14,6 +14,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.service.PatientDataService;
@@ -29,7 +30,7 @@ import org.openmrs.module.ugandaemrreports.common.PatientNonSuppressingData;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.common.ViralLoad;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.NonSuppressingPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.ViralLoadPatientDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.ViralLoadCohortDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ViralLoadDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.predicates.NonSuppressedDataFilter;
 import org.openmrs.module.ugandaemrreports.definition.dataset.predicates.ViralLoadNotDetectedFilter;
@@ -62,15 +63,15 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
 
         evaluationContext = ObjectUtil.nvl(evaluationContext, new EvaluationContext());
 
-        ViralLoadPatientDataDefinition viralLoadPatientDataDefinition = new ViralLoadPatientDataDefinition();
-        viralLoadPatientDataDefinition.setEndDate(endDate);
-        viralLoadPatientDataDefinition.setStartDate(startDate);
+        ViralLoadCohortDataDefinition viralLoadCohortDataDefinition = new ViralLoadCohortDataDefinition();
+        viralLoadCohortDataDefinition.setEndDate(endDate);
+        viralLoadCohortDataDefinition.setStartDate(startDate);
 
         NonSuppressingPatientDataDefinition nonSuppressingPatientDataDefinition = new NonSuppressingPatientDataDefinition();
         nonSuppressingPatientDataDefinition.setEndDate(endDate);
         nonSuppressingPatientDataDefinition.setStartDate(startDate);
 
-        EvaluatedPatientData data = Context.getService(PatientDataService.class).evaluate(viralLoadPatientDataDefinition, evaluationContext);
+        EvaluatedPatientData data = Context.getService(PatientDataService.class).evaluate(viralLoadCohortDataDefinition, evaluationContext);
 
         EvaluatedPatientData nonSuppressingData = Context.getService(PatientDataService.class).evaluate(nonSuppressingPatientDataDefinition, evaluationContext);
 
@@ -80,13 +81,13 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
 
         Map<String, Map<String, Integer>> quartersToSubtract = new HashMap<String, Map<String, Integer>>();
 
-        Map<String, Integer> sixMonths = ImmutableMap.of("from", 6, "to", 11);
-        Map<String, Integer> twelveMonths = ImmutableMap.of("from", 12, "to", 23);
-        Map<String, Integer> twenty4Months = ImmutableMap.of("from", 24, "to", 35);
-        Map<String, Integer> thirty6Months = ImmutableMap.of("from", 36, "to", 47);
-        Map<String, Integer> forty8Months = ImmutableMap.of("from", 48, "to", 59);
-        Map<String, Integer> sixtyMonths = ImmutableMap.of("from", 60, "to", 71);
-        Map<String, Integer> seventy2Months = ImmutableMap.of("from", 72, "to", 83);
+        Map<String, Integer> sixMonths = ImmutableMap.of("from", 6, "to", 8);
+        Map<String, Integer> twelveMonths = ImmutableMap.of("from", 12, "to", 14);
+        Map<String, Integer> twenty4Months = ImmutableMap.of("from", 24, "to", 26);
+        Map<String, Integer> thirty6Months = ImmutableMap.of("from", 36, "to", 38);
+        Map<String, Integer> forty8Months = ImmutableMap.of("from", 48, "to", 50);
+        Map<String, Integer> sixtyMonths = ImmutableMap.of("from", 60, "to", 62);
+        Map<String, Integer> seventy2Months = ImmutableMap.of("from", 72, "to", 74);
 
         List<String> otherColumnLabels = Arrays.asList("no", "dataElement");
 
@@ -166,7 +167,7 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
             final Integer end = val.get("to");
 
             Collection<ViralLoad> tested = Collections2.filter(viralLoads, new ViralLoadTestedFilter(start, end));
-            Collection<ViralLoad> notDetected = Collections2.filter(tested, new ViralLoadNotDetectedFilter());
+            Collection<ViralLoad> notDetected = Collections2.filter(tested, new ViralLoadNotDetectedFilter(start, end));
 
             Cohort testedCohort = getPatients(tested);
             Cohort suppressed = getPatients(notDetected);
@@ -276,6 +277,10 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
 
     private Map<String, List<Cohort>> getNonSuppressedCohorts(Collection<PatientNonSuppressingData> patientNonSuppressingData, Date startDate, Date endDate) {
 
+        Date defaultDate = DateUtil.parseDate("1900-01-01", "yyyy-MM-dd");
+        Integer defaultInteger = -1;
+        Double defaultDouble = -1.0;
+
         Set<Integer> indicator1 = new HashSet<Integer>();
         Set<Integer> indicator2 = new HashSet<Integer>();
 
@@ -290,8 +295,10 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
 
         Map<String, List<Cohort>> cohorts = new HashMap<String, List<Cohort>>();
 
-        Collection<Integer> secondLineDrugsChildren = CollectionUtils.collect(hivMetadata.getSecondLineDrugsChildren(), TransformerUtils.invokerTransformer("getConceptId"));
-        Collection<Integer> secondLineDrugsAdults = CollectionUtils.collect(hivMetadata.getSecondLineDrugsAdults(), TransformerUtils.invokerTransformer("getConceptId"));
+        Collection<Integer> secondLineDrugsChildren = CollectionUtils.collect(hivMetadata.getSecondLineDrugsChildren(), new BeanToPropertyValueTransformer("conceptId"));
+        Collection<Integer> secondLineDrugsAdults = CollectionUtils.collect(hivMetadata.getSecondLineDrugsAdults(), new BeanToPropertyValueTransformer("conceptId"));
+        Collection<Integer> firstLineDrugsChildren = CollectionUtils.collect(hivMetadata.getFirstLineDrugsChildren(), new BeanToPropertyValueTransformer("conceptId"));
+        Collection<Integer> firstLineDrugsAdults = CollectionUtils.collect(hivMetadata.getSecondLineDrugsAdults(), new BeanToPropertyValueTransformer("conceptId"));
 
         Integer firstLine = 1;
 
@@ -318,14 +325,14 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
 
             for (Integer encounterId : groupedByEncounter.keySet()) {
 
-                Date resultsReceivedAfterIACDate = null;
-                Integer qualitativeViralLoadValue = null;
-                Double quantitativeViralLoadValue = null;
-                Date clinicalDecisionDateValue = null;
-                Integer clinicalDecisionValue = null;
-                Integer regimenValue = null;
-                Date regimenStartDateValue = null;
-                Date lastSessionDate = null;
+                Date resultsReceivedAfterIACDate = defaultDate;
+                Integer qualitativeViralLoadValue = defaultInteger;
+                Double quantitativeViralLoadValue = defaultDouble;
+                Date clinicalDecisionDateValue = defaultDate;
+                Integer clinicalDecisionValue = defaultInteger;
+                Integer regimenValue = defaultInteger;
+                Date regimenStartDateValue = defaultDate;
+                Date lastSessionDate = defaultDate;
 
                 Collection<PatientNonSuppressingData> collection = groupedByEncounter.get(encounterId);
 
@@ -337,6 +344,7 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
                 Collection<PatientNonSuppressingData> clinicalDecisions = Collections2.filter(collection, new NonSuppressedDataFilter(163166));
                 Collection<PatientNonSuppressingData> regimens = Collections2.filter(collection, new NonSuppressedDataFilter(163152));
                 Collection<PatientNonSuppressingData> regimenStartDates = Collections2.filter(collection, new NonSuppressedDataFilter(163172));
+                Collection<PatientNonSuppressingData> adherenceCodes = Collections2.filter(collection, new NonSuppressedDataFilter(90221));
 
                 Collection<Date> sessionDates = CollectionUtils.collect(sessions, new BeanToPropertyValueTransformer("valueDatetime"));
                 List<Date> list = new ArrayList(sessionDates);
@@ -345,6 +353,8 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
                 if (!list.isEmpty() && list.size() >= 3) {
                     lastSessionDate = Iterables.getLast(list);
                 }
+
+                Collection<Integer> adherenceCodeValues = CollectionUtils.collect(adherenceCodes, new BeanToPropertyValueTransformer("valueCoded"));
 
                 Collection<Date> resultsReceivedAfterIACDates = CollectionUtils.collect(resultsReceivedAfterIAC, new BeanToPropertyValueTransformer("valueDatetime"));
 
@@ -386,25 +396,32 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
                     regimenStartDateValue = Iterables.getLast(regimenStartDateValues);
                 }
 
-                if (regimenStartDateValue != null) {
+                if (regimenValue != -1 && !regimenStartDateValue.equals(defaultDate)) {
                     Years age = Years.yearsBetween(StubDate.dateOf(data.getBirthDate()), StubDate.dateOf(regimenStartDateValue));
                     if (age.getYears() > 10 && secondLineDrugsAdults.contains(regimenValue) || age.getYears() <= 10 && secondLineDrugsChildren.contains(regimenValue)) {
                         firstLine = 2;
-                    }
-                } else {
-                    firstLine = 1;
-                }
-
-
-                if (lastSessionDate != null && startDate.compareTo(lastSessionDate) * lastSessionDate.compareTo(endDate) >= 0) {
-                    if (firstLine == 1) {
-                        indicator1.add(patientId);
-                    } else if (firstLine == 2) {
-                        indicator2.add(patientId);
+                    } else if (age.getYears() > 10 && firstLineDrugsAdults.contains(regimenValue) || age.getYears() <= 10 && firstLineDrugsChildren.contains(regimenValue)) {
+                        firstLine = 1;
                     }
                 }
 
-                if (resultsReceivedAfterIACDate != null && startDate.compareTo(resultsReceivedAfterIACDate) * resultsReceivedAfterIACDate.compareTo(endDate) >= 0) {
+
+                if (!lastSessionDate.equals(defaultDate) && (startDate.compareTo(lastSessionDate) * lastSessionDate.compareTo(endDate) >= 0)) {
+                    if (adherenceCodeValues.size() >= 3) {
+                        List<Integer> codeList = new ArrayList<Integer>(adherenceCodeValues);
+                        List<Integer> sub = codeList.subList(adherenceCodeValues.size() - 3, adherenceCodeValues.size());
+                        Set<Integer> unique = new HashSet<Integer>(sub);
+                        if (unique.size() == 1 && sub.get(sub.size() - 1) == 90156) {
+                            if (firstLine == 1) {
+                                indicator1.add(patientId);
+                            } else if (firstLine == 2) {
+                                indicator2.add(patientId);
+                            }
+                        }
+                    }
+                }
+
+                if (!resultsReceivedAfterIACDate.equals(defaultDate) && (startDate.compareTo(resultsReceivedAfterIACDate) * resultsReceivedAfterIACDate.compareTo(endDate) >= 0)) {
 
                     if (firstLine == 1) {
                         indicator3.add(patientId);
@@ -412,7 +429,7 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
                         indicator4.add(patientId);
                     }
 
-                    if (qualitativeViralLoadValue == 1306 || quantitativeViralLoadValue < 1000) {
+                    if (qualitativeViralLoadValue == 1306 || (quantitativeViralLoadValue < 1000 && quantitativeViralLoadValue > -1)) {
                         if (firstLine == 1) {
                             indicator5.add(patientId);
                         } else if (firstLine == 2) {
@@ -421,7 +438,7 @@ public class ViralLoadDataSetEvaluator implements org.openmrs.module.reporting.d
                     }
                 }
 
-                if (clinicalDecisionDateValue != null && startDate.compareTo(clinicalDecisionDateValue) * clinicalDecisionDateValue.compareTo(endDate) >= 0) {
+                if (!clinicalDecisionDateValue.equals(defaultDate) && (startDate.compareTo(clinicalDecisionDateValue) * clinicalDecisionDateValue.compareTo(endDate) >= 0)) {
                     if (clinicalDecisionValue == 163162) {
                         indicator7.add(patientId);
                     } else if (clinicalDecisionValue == 163164) {

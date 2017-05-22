@@ -3,17 +3,18 @@ package org.openmrs.module.ugandaemrreports.common;
 
 public class ViralLoad {
     private Integer patientId;
-
-    private Integer monthsSinceArt;
+    private Integer monthsBetweenReportDateAndArt;
+    private Integer monthsBetweenArtAndViralLoad;
     private Integer valueCoded;
     private Double valueNumeric;
 
     public ViralLoad() {
     }
 
-    public ViralLoad(Integer patientId, Integer monthsSinceArt, Integer valueCoded, Double valueNumeric) {
+    public ViralLoad(Integer patientId, Integer monthsBetweenReportDateAndArt, Integer monthsBetweenArtAndViralLoad, Integer valueCoded, Double valueNumeric) {
         this.patientId = patientId;
-        this.monthsSinceArt = monthsSinceArt;
+        this.monthsBetweenReportDateAndArt = monthsBetweenReportDateAndArt;
+        this.monthsBetweenArtAndViralLoad = monthsBetweenArtAndViralLoad;
         this.valueCoded = valueCoded;
         this.valueNumeric = valueNumeric;
     }
@@ -26,12 +27,20 @@ public class ViralLoad {
         this.patientId = patientId;
     }
 
-    public Integer getMonthsSinceArt() {
-        return this.monthsSinceArt;
+    public Integer getMonthsBetweenReportDateAndArt() {
+        return monthsBetweenReportDateAndArt;
     }
 
-    public void setMonthsSinceArt(Integer monthsSinceArt) {
-        this.monthsSinceArt = monthsSinceArt;
+    public void setMonthsBetweenReportDateAndArt(Integer monthsBetweenReportDateAndArt) {
+        this.monthsBetweenReportDateAndArt = monthsBetweenReportDateAndArt;
+    }
+
+    public Integer getMonthsBetweenArtAndViralLoad() {
+        return monthsBetweenArtAndViralLoad;
+    }
+
+    public void setMonthsBetweenArtAndViralLoad(Integer monthsBetweenArtAndViralLoad) {
+        this.monthsBetweenArtAndViralLoad = monthsBetweenArtAndViralLoad;
     }
 
     public Integer getValueCoded() {

@@ -43,12 +43,12 @@ public class NonSuppressingPatientDataEvaluator implements PatientDataEvaluator 
         String query = "SELECT\n" +
                 "  o.person_id,\n" +
                 "  e.encounter_id,\n" +
-                "  e.encounter_datetime,\n" +
+                "  DATe(e.encounter_datetime),\n" +
                 "  o.concept_id,\n" +
-                "  o.value_coded,\n" +
-                "  o.value_datetime,\n" +
-                "  o.value_numeric,\n" +
-                "  o.value_text,\n" +
+                "  IF(o.value_coded IS NULL, -1, o.value_coded)                       AS 'value_coded',\n" +
+                "  IF(o.value_datetime IS NULL, '1900-01-01', DATE(o.value_datetime)) AS 'value_datetime',\n" +
+                "  IF(o.value_numeric IS NULL, -1, o.value_numeric)                 AS 'value_numeric',\n" +
+                "  IF(o.value_text IS NULL, '', o.value_text)                         AS 'value_text',\n" +
                 "  p.birthdate\n" +
                 "FROM encounter e INNER JOIN obs o ON (e.encounter_id = o.encounter_id\n" +
                 "                                      AND e.encounter_type = (SELECT encounter_type_id\n" +
@@ -64,61 +64,22 @@ public class NonSuppressingPatientDataEvaluator implements PatientDataEvaluator 
         List<Object[]> results = this.evaluationService.evaluateToList(q, context);
         Integer i = 1;
         for (Object[] row : results) {
-            String patientIdString = String.valueOf(row[0]);
-            String encounterIdString = String.valueOf(row[1]);
-            String encounterDateString = String.valueOf(row[2]);
-            String conceptString = String.valueOf(row[3]);
-            String valueCodedString = String.valueOf(row[4]);
-            String valueDatetimeString = String.valueOf(row[5]);
-            String valueNumericString = String.valueOf(row[6]);
-            String valueTextString = String.valueOf(row[7]);
-            String birthDateString = String.valueOf(row[8]);
-
-            Integer valueCoded = -1;
-            Date valueDatetime = null;
-            Double valueNumeric = -1.0;
-            String valueText = "";
-            Date birthDate = null;
-
-            Date encounterDate = null;
-
-            Integer patientId = Integer.valueOf(patientIdString);
-            Integer encounterId = Integer.valueOf(encounterIdString);
-
             try {
-                encounterDate = DateUtil.parseDate(encounterDateString);
+                Integer patientId = Integer.valueOf(String.valueOf(row[0]));
+                Integer encounterId = Integer.valueOf(String.valueOf(row[1]));
+                Date encounterDate = DateUtil.parseDate(String.valueOf(row[2]));
+                Integer concept = Integer.valueOf(String.valueOf(row[3]));
+                Integer valueCoded = Integer.valueOf(String.valueOf(row[4]));
+                Date valueDatetime = DateUtil.parseDate(String.valueOf(row[5]));
+                Double valueNumeric = Double.valueOf(String.valueOf(row[6]));
+                String valueText = String.valueOf(row[7]);
+                Date birthDate = DateUtil.parseDate(String.valueOf(row[8]));
+                c.addData(i, new PatientNonSuppressingData(patientId, encounterId, encounterDate, concept, valueCoded, valueDatetime, valueNumeric, valueText, birthDate));
+                i += 1;
             } catch (ParseException e) {
+                e.printStackTrace();
             }
 
-            Integer concept = Integer.valueOf(conceptString);
-
-            if (!valueCodedString.equalsIgnoreCase("null")) {
-                valueCoded = Integer.valueOf(valueCodedString);
-            }
-
-            if (!valueNumericString.equalsIgnoreCase("null")) {
-                valueNumeric = Double.valueOf(valueNumericString);
-            }
-
-            if (!valueDatetimeString.equalsIgnoreCase("null")) {
-                try {
-                    valueDatetime = DateUtil.parseDate(valueDatetimeString);
-                } catch (ParseException e) {
-                    valueDatetime = null;
-                }
-            }
-            if (!valueTextString.equalsIgnoreCase("null")) {
-                valueText = valueTextString;
-            }
-
-            try {
-                birthDate = DateUtil.parseDate(birthDateString);
-            } catch (ParseException e) {
-            }
-
-            c.addData(i, new PatientNonSuppressingData(patientId, encounterId, encounterDate, concept, valueCoded, valueDatetime, valueNumeric, valueText, birthDate));
-
-            i += 1;
         }
         return c;
     }
