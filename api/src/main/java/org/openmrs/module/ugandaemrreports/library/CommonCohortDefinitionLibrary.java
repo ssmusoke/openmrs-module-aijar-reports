@@ -6,7 +6,6 @@ import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -76,6 +75,13 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
+    public AgeCohortDefinition agedAtMost(int maxAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMaxAge(Integer.valueOf(maxAge));
+        return cd;
+    }
+
     /**
      * Patients who are at least minAge years old on ${effectiveDate}
      *
@@ -88,6 +94,13 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         UUID uuid = UUID.randomUUID();
         cd.setUuid(String.valueOf(uuid));
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
+    }
+
+    public AgeCohortDefinition agedAtLeast(int minAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMinAge(Integer.valueOf(minAge));
+        return cd;
     }
 
     /**
@@ -103,6 +116,14 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
+    public AgeCohortDefinition agedBetween(int minAge, int maxAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMinAge(Integer.valueOf(minAge));
+        cd.setMaxAge(Integer.valueOf(maxAge));
+        return cd;
+    }
+
     public CohortDefinition below6months() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(6);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
@@ -114,6 +135,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition below2Years() {
         return agedAtMost(1);
     }
+
     public CohortDefinition below5Years() {
         return agedAtMost(4);
     }
@@ -154,20 +176,22 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between0And10years() {
         return agedAtMost(10);
     }
-    
+
     /**
      * MoH definition of children who is anybody 14 years and below
+     *
      * @return
      */
-    public CohortDefinition MoHChildren(){
+    public CohortDefinition MoHChildren() {
         return agedAtMost(14);
     }
-    
+
     /**
      * MoH definition of adults who are 15 years and older
+     *
      * @return
      */
-    public CohortDefinition MoHAdult(){
+    public CohortDefinition MoHAdult() {
         return agedAtLeast(15);
     }
 
