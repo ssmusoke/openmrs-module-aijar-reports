@@ -14,17 +14,18 @@
 package org.openmrs.module.ugandaemrreports.reporting.calculation.anc;
 
 import org.openmrs.Concept;
+import org.openmrs.Patient;
 import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.utils.CalculationUtils;
 
 import java.util.Collection;
 import java.util.Map;
@@ -37,9 +38,8 @@ public class ArvDrugsPreArtNumberCalcultion extends AbstractPatientCalculation {
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> params, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
         CalculationResultMap arvGivenMap = Calculations.lastObs(Dictionary.getConcept("a615f932-26ee-449c-8e20-e50a15232763"), cohort, context);
-        PatientIdentifierDataDefinition dfn = new PatientIdentifierDataDefinition("preARTNo", Context.getPatientService().getPatientIdentifierTypeByUuid("e1731641-30ab-102d-86b0-7a5022ba4115"));
-        CalculationResultMap identifier = CalculationUtils.evaluateWithReporting(dfn, cohort, params, null, context);
-
+        PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByUuid("e1731641-30ab-102d-86b0-7a5022ba4115");
+        PatientService patientService = Context.getPatientService();
 
         for(Integer ptId: cohort){
             String results = "";
@@ -47,7 +47,9 @@ public class ArvDrugsPreArtNumberCalcultion extends AbstractPatientCalculation {
             String pIdentifier = "";
 
             Concept arvResultsConcept = EmrCalculationUtils.codedObsResultForPatient(arvGivenMap, ptId);
-            PatientIdentifier patientIdentifier = EmrCalculationUtils.resultForPatient(identifier, ptId);
+            Patient patient = patientService.getPatient(ptId);
+
+            PatientIdentifier patientIdentifier = patient.getPatientIdentifier(patientIdentifierType);
 
             if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3"))){
                 arvResults = "ART";
