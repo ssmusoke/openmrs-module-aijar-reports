@@ -45,6 +45,7 @@ public class ANCVisitStages extends AbstractPatientCalculation {
             for(Obs obs:allObs) {
                 if(obs != null && stage != null && obs.getValueNumeric().doubleValue() == stage){
                     stageFound = true;
+                    break;
                 }
             }
 
