@@ -1,16 +1,20 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 
@@ -174,5 +178,26 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition above10years() {
         return agedAtLeast(11);
     }
+
+    /**
+     * Patients who have an obs between ${onOrAfter} and ${onOrBefore}
+     * @param question the question concept
+     * @param answers the answers to include
+     * @return the cohort definition
+     */
+    public CohortDefinition hasObs(Concept question, Concept... answers) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setName("has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator(SetComparator.IN);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        if (answers.length > 0) {
+            cd.setValueList(Arrays.asList(answers));
+        }
+        return cd;
+    }
+
 
 }
