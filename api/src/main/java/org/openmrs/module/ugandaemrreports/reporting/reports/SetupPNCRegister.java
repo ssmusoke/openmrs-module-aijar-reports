@@ -81,7 +81,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "d49823d6-356b-11e7-98b3-507b9dc4c741";
+        return "6625672c-3ee1-11e7-ad03-507b9dc4c741";
     }
     
     @Override
@@ -109,7 +109,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getUuid() {
-        return "054f2326-356c-11e7-8616-507b9dc4c741";
+        return "489baf0e-3ee1-11e7-a1d1-507b9dc4c741";
     }
 
     @Override
@@ -136,7 +136,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.5";
+        return "0.6";
     }
 
     @Override
