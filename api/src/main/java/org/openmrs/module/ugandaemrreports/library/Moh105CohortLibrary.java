@@ -16,6 +16,7 @@ package org.openmrs.module.ugandaemrreports.library;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ANCVisit4PlusCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ANCVisitStages;
 import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -35,7 +36,7 @@ public class Moh105CohortLibrary {
 
     public CohortDefinition femaleAndHasAncVisit(Double stage){
 
-        CalculationCohortDefinition calculationCohortDefinition = new CalculationCohortDefinition("ancVist", new ANCVisitStages());
+        CalculationCohortDefinition calculationCohortDefinition = new CalculationCohortDefinition("ancVist "+stage, new ANCVisitStages());
         calculationCohortDefinition.addParameter(new Parameter("onDate", "On Date", Date.class));
         calculationCohortDefinition.addCalculationParameter("stage", stage);
 
@@ -46,6 +47,12 @@ public class Moh105CohortLibrary {
         cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
         cd.addSearch("ancVist", ReportUtils.map(calculationCohortDefinition, "onDate=${onOrBefore}"));
         cd.setCompositionString("female AND ancVist");
+        return cd;
+    }
+
+    public CohortDefinition femaleAndHas4PlusAncVisit() {
+        CalculationCohortDefinition cd = new CalculationCohortDefinition("anc4thPlus", new ANCVisit4PlusCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }
 }

@@ -109,6 +109,7 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
         //start building the columns for the report
         EmrReportingUtils.addRow(dsd, "A1", "A1-ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
         EmrReportingUtils.addRow(dsd, "A2", "A2-ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
+        dsd.addColumn("A3", "A3- ANC 4+ visits for Women", ReportUtils.map(indicatorLibrary.anc4thPlusVisit(), params), "");
 
 
         //connect the report definition to the dsd

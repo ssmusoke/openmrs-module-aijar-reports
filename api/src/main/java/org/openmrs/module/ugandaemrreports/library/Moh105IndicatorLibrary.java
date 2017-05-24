@@ -34,13 +34,20 @@ public class Moh105IndicatorLibrary {
      * Number of female patients with ANC 1st visit
      */
     public CohortIndicator anc1stVisit(){
-        return cohortIndicator("patients who have ANC 1st Visit", map(cohortLibrary.femaleAndHasAncVisit(1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.femaleAndHasAncVisit(1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Number of female patients with ANC 4th visit
      */
     public CohortIndicator anc4thVisit(){
-        return cohortIndicator("patients who have ANC 4th Visit", map(cohortLibrary.femaleAndHasAncVisit(4.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 4th Visit", map(cohortLibrary.femaleAndHasAncVisit(4.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Number of female patients with ANC 4th visit and above
+     */
+    public CohortIndicator anc4thPlusVisit(){
+        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHas4PlusAncVisit(), "onDate=${endDate}"));
     }
 }
