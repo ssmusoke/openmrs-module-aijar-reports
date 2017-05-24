@@ -50,14 +50,12 @@ public class ReportInitializer implements Initializer {
 
 	private void removeOldReports() {
 		String gpVal = Context.getAdministrationService().getGlobalProperty("ugandaemr.reports.oldReportsRemoved");
-		if (ObjectUtil.isNull(gpVal)) {
-			AdministrationService as = Context.getAdministrationService();
-			log.warn("Removing all reports");
-			as.executeSQL("delete from reporting_report_design_resource;", false);
-			as.executeSQL("delete from reporting_report_design;", false);
-			as.executeSQL("delete from reporting_report_request;", false);
-			as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-			ReportUtil.updateGlobalProperty("ugandaemr.reports.oldReportsRemoved", "true");
-		}
+		AdministrationService as = Context.getAdministrationService();
+		log.warn("Removing all reports");
+		as.executeSQL("delete from reporting_report_design_resource;", false);
+		as.executeSQL("delete from reporting_report_design;", false);
+		as.executeSQL("delete from reporting_report_request;", false);
+		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
+		ReportUtil.updateGlobalProperty("ugandaemr.reports.oldReportsRemoved", "true");
 	}
 }
