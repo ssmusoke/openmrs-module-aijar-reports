@@ -103,10 +103,12 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
 
         //buils list of columns
         List<ColumnParameters> allColumns = Arrays.asList(female10To19, female20To24, female25Plus, femaleTotals);
+        List<ColumnParameters> noTotalsColumns = Arrays.asList(female10To19, female20To24, female25Plus);
 
         String params = "startDate=${startDate},endDate=${endDate}";
         //start building the columns for the report
         EmrReportingUtils.addRow(dsd, "A1", "A1-ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
+        EmrReportingUtils.addRow(dsd, "A2", "A2-ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
 
 
         //connect the report definition to the dsd
@@ -117,7 +119,7 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "0.1";
     }
 
     @Override
