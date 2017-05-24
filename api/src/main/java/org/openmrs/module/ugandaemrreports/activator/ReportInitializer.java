@@ -56,6 +56,7 @@ public class ReportInitializer implements Initializer {
 		as.executeSQL("delete from reporting_report_design;", false);
 		as.executeSQL("delete from reporting_report_request;", false);
 		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
+		as.executeSQL("delete from serialized_object WHERE type LIKE 'org.openmrs.module.reporting.report%'", false);
 		ReportUtil.updateGlobalProperty("ugandaemr.reports.oldReportsRemoved", "true");
 	}
 }
