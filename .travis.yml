@@ -2,7 +2,7 @@ language: java
 jdk:
 - oraclejdk8
 script:
-- if [ "$TRAVIS_JDK_VERSION" = "openjdk7" ] && [ "$TRAVIS_BRANCH" = "master" ] &&
+- if [ "$TRAVIS_BRANCH" = "master" ] &&
   [ "$TRAVIS_PULL_REQUEST" = "false" ]; then mvn deploy --settings maven-settings.xml;
   else mvn install; fi
 env:
