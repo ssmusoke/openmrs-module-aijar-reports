@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;
@@ -38,7 +38,6 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeigh
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -83,8 +82,9 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
+        System.out.println("The dataset name is ::::"+reportDefinition.getDataSetDefinitions());
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC-DSD");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -113,7 +113,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
-        rd.addDataSetDefinition("ANC-DSD", Mapped.mapStraightThrough(dataSetDefinition()));
+        rd.addDataSetDefinition("ANC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
 
@@ -191,7 +191,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        dsd.setName(getName());
+        dsd.setName("ANC");
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "044daI6d-f80e-48fe-aba9-037f241905Pe"), "startDate=${startDate},endDate=${endDate}");
 
