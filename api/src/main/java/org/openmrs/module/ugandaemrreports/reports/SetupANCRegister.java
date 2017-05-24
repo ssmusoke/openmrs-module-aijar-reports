@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.Concept;
 import org.openmrs.PersonAttributeType;

@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
@@ -55,7 +55,6 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.IfoIycfMncC
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -101,7 +100,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:PNC-DSD");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:PNC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -130,13 +129,13 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
-        rd.addDataSetDefinition("PNC-DSD", Mapped.mapStraightThrough(dataSetDefinition()));
+        rd.addDataSetDefinition("PNC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.6";
+        return "0.1";
     }
 
     @Override
@@ -149,7 +148,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        dsd.setName(getName());
+        dsd.setName("PNC");
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
