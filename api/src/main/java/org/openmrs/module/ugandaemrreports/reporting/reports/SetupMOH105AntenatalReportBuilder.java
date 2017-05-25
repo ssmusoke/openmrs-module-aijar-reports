@@ -20,6 +20,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ColumnParameters;
 import org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -110,7 +111,17 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
         EmrReportingUtils.addRow(dsd, "A1", "A1-ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
         EmrReportingUtils.addRow(dsd, "A2", "A2-ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
         dsd.addColumn("A3", "A3- ANC 4+ visits for Women", ReportUtils.map(indicatorLibrary.anc4thPlusVisit(), params), "");
-
+        EmrReportingUtils.addRow(dsd, "A4", "A4- Total ANC visits (new clients + Re-attendances)", ReportUtils.map(indicatorLibrary.totalAncVisits(), params), noTotalsColumns, Arrays.asList("01","02","03"));
+        dsd.addColumn("A5", "A5: Referrals to ANC unit - Total", ReportUtils.map(indicatorLibrary.referalToAncUnitTotal(), params), "");
+        dsd.addColumn("A5", "A5: Referrals to ANC unit - Community services", ReportUtils.map(indicatorLibrary.referalToAncUnitFromCommunityServices(), params), "");
+        dsd.addColumn("A6", "A6: Referrals from ANC unit - Total", ReportUtils.map(indicatorLibrary.referalFromAncUnitTotal(), params), "");
+        dsd.addColumn("A6", "A5: Referrals form ANC unit - FSG", ReportUtils.map(indicatorLibrary.referalFromAncUniFsg(), params), "");
+        EmrReportingUtils.addRow(dsd, "A7", "A7 - First dose IPT (IPT1)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("0192ca59-b647-4f88-b07e-8fda991ba6d6")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        EmrReportingUtils.addRow(dsd, "A8", "A8 - Second dose IPT (IPT2)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("f1d5afce-8dfe-4d2d-b24b-051815d61848")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        dsd.addColumn("A9", "A9 - Pregnant Women receiving Iron/Folic Acid on ANC 1 st Visit", ReportUtils.map(indicatorLibrary.pregnantAndReceivingIronOrFolicAcidAnc1stVisit(), params), "");
+        dsd.addColumn("A10", "A10 - Pregnant Women receiving free LLINs", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), params), "");
+        dsd.addColumn("A11", "A11 - Pregnant Women tested for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndTestedForSyphilis(), params), "");
+        dsd.addColumn("A12", "A12 - Pregnant Women tested positive for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8"), Dictionary.getConcept("fe247560-8db6-4664-a6bc-e3b873b9b10a")), params), "");
 
         //connect the report definition to the dsd
         rd.addDataSetDefinition("2.1-indicators", Mapped.mapStraightThrough(dsd));
