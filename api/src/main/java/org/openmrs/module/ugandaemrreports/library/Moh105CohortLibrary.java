@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Concept;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
@@ -55,6 +57,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setQuestion(Dictionary.getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb"));
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setOperator1(RangeComparator.GREATER_EQUAL);
         cd.setValue1(lower);
         cd.setOperator2(RangeComparator.LESS_EQUAL);
@@ -64,6 +67,7 @@ public class Moh105CohortLibrary {
 
     /**
      * Pregnant women receiving iron/folic acid on ANC 1st Visit
+     * @return CohortDefinition
      */
     public CohortDefinition pregnantAndReceivingIronOrFolicAcidAnc1stVisit(){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -74,6 +78,21 @@ public class Moh105CohortLibrary {
         cd.addSearch("takingIron", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("315825e8-8ba4-4551-bdd1-aa4e02a36639"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("takingFolic", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("8c346216-c444-4528-a174-5139922218ed"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("femaleAndHasAncVisit AND (takingIron OR takingFolic)");
+        return cd;
+    }
+
+    /**
+     * HIV+ pregnant women assessed by CD4 or WHO clinical stage for the 1st time
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveAndAccessedWithCd4WhoStage(Concept question) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ assed by "+question.getName().getName());
+        cd.addSearch("hivPositive", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("assessedBy", ReportUtils.map(definitionLibrary.hasObs(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND assessedBy");
         return cd;
     }
 

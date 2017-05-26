@@ -108,20 +108,33 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
 
         String params = "startDate=${startDate},endDate=${endDate}";
         //start building the columns for the report
-        EmrReportingUtils.addRow(dsd, "A1", "A1-ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
-        EmrReportingUtils.addRow(dsd, "A2", "A2-ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
-        dsd.addColumn("A3", "A3- ANC 4+ visits for Women", ReportUtils.map(indicatorLibrary.anc4thPlusVisit(), params), "");
+        EmrReportingUtils.addRow(dsd, "A1", "A1: ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
+        EmrReportingUtils.addRow(dsd, "A2", "A2: ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
+        dsd.addColumn("A3", "A3: ANC 4+ visits for Women", ReportUtils.map(indicatorLibrary.anc4thPlusVisit(), params), "");
         EmrReportingUtils.addRow(dsd, "A4", "A4- Total ANC visits (new clients + Re-attendances)", ReportUtils.map(indicatorLibrary.totalAncVisits(), params), noTotalsColumns, Arrays.asList("01","02","03"));
         dsd.addColumn("A5", "A5: Referrals to ANC unit - Total", ReportUtils.map(indicatorLibrary.referalToAncUnitTotal(), params), "");
         dsd.addColumn("A5", "A5: Referrals to ANC unit - Community services", ReportUtils.map(indicatorLibrary.referalToAncUnitFromCommunityServices(), params), "");
         dsd.addColumn("A6", "A6: Referrals from ANC unit - Total", ReportUtils.map(indicatorLibrary.referalFromAncUnitTotal(), params), "");
         dsd.addColumn("A6", "A5: Referrals form ANC unit - FSG", ReportUtils.map(indicatorLibrary.referalFromAncUniFsg(), params), "");
-        EmrReportingUtils.addRow(dsd, "A7", "A7 - First dose IPT (IPT1)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("0192ca59-b647-4f88-b07e-8fda991ba6d6")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
-        EmrReportingUtils.addRow(dsd, "A8", "A8 - Second dose IPT (IPT2)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("f1d5afce-8dfe-4d2d-b24b-051815d61848")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
-        dsd.addColumn("A9", "A9 - Pregnant Women receiving Iron/Folic Acid on ANC 1 st Visit", ReportUtils.map(indicatorLibrary.pregnantAndReceivingIronOrFolicAcidAnc1stVisit(), params), "");
-        dsd.addColumn("A10", "A10 - Pregnant Women receiving free LLINs", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), params), "");
-        dsd.addColumn("A11", "A11 - Pregnant Women tested for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndTestedForSyphilis(), params), "");
-        dsd.addColumn("A12", "A12 - Pregnant Women tested positive for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8"), Dictionary.getConcept("fe247560-8db6-4664-a6bc-e3b873b9b10a")), params), "");
+        EmrReportingUtils.addRow(dsd, "A7", "A7: First dose IPT (IPT1)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("0192ca59-b647-4f88-b07e-8fda991ba6d6")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        EmrReportingUtils.addRow(dsd, "A8", "A8: Second dose IPT (IPT2)", ReportUtils.map(indicatorLibrary.iptDose(Dictionary.getConcept("f1d5afce-8dfe-4d2d-b24b-051815d61848")), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        dsd.addColumn("A9", "A9: Pregnant Women receiving Iron/Folic Acid on ANC 1 st Visit", ReportUtils.map(indicatorLibrary.pregnantAndReceivingIronOrFolicAcidAnc1stVisit(), params), "");
+        dsd.addColumn("A10", "A10: Pregnant Women receiving free LLINs", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), params), "");
+        dsd.addColumn("A11", "A11: Pregnant Women tested for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndTestedForSyphilis(), params), "");
+        dsd.addColumn("A12", "A12: Pregnant Women tested positive for syphilis", ReportUtils.map(indicatorLibrary.pregnantAndReceivingServices(Dictionary.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8"), Dictionary.getConcept("fe247560-8db6-4664-a6bc-e3b873b9b10a")), params), "");
+        EmrReportingUtils.addRow(dsd, "A13", "A13: Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        EmrReportingUtils.addRow(dsd, "A14", "A14: Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRR(), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        dsd.addColumn("A15-CD4", "A15: HIV+ Pregnant women assessed by CD4", ReportUtils.map(indicatorLibrary.hivPositiveAndAccessedWithCd4WhoStage(Dictionary.getConcept("dcbcba2c-30ab-102d-86b0-7a5022ba4115")), params), "");
+        dsd.addColumn("A15-WHO", "A15: HIV+ Pregnant women assessed by WHO", ReportUtils.map(indicatorLibrary.hivPositiveAndAccessedWithCd4WhoStage(Dictionary.getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), params), "");
+        dsd.addColumn("A16", "HIV+ Pregnant Women initiated on ART for EMTCT (ART)", ReportUtils.map(indicatorLibrary.hivPositiveInitiatedART(), params), "");
+        dsd.addColumn("A17-T", "Pregnant women who knew status before 1st ANC total (TRK+TRRK)", ReportUtils.map(indicatorLibrary.pregnantTrkTrrk(), params), "");
+        dsd.addColumn("A17-TRRk", "Pregnant women who knew status before 1st ANC total TRRK", ReportUtils.map(indicatorLibrary.pregnantTrrk(), params), "");
+        dsd.addColumn("A18", "Pregnant Women already on ART before 1 ANC (ART-K)", ReportUtils.map(indicatorLibrary.alreadyOnARTK(), params), "");
+        dsd.addColumn("A19", "Pregnant Women re-tested later in pregnancy (TR+&TRR+)", ReportUtils.map(indicatorLibrary.retestedTrTrrPlus(), params), "");
+        dsd.addColumn("A20", "Pregnant Women testing HIV+ on a retest (TRR+)", ReportUtils.map(indicatorLibrary.retestedTrrPlus(), params), "");
+        dsd.addColumn("A21", "Pregnant Women initiated on Cotrimoxazole", ReportUtils.map(indicatorLibrary.initiatedOnCtx(), params), "");
+        dsd.addColumn("A22-T", "Male partners received HIV test results in eMTCT - Total", ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "");
+        dsd.addColumn("A22-HIV+", "Male partners received HIV test results in eMTCT - HIV+", ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params), "");
 
         //connect the report definition to the dsd
         rd.addDataSetDefinition("2.1-indicators", Mapped.mapStraightThrough(dsd));
