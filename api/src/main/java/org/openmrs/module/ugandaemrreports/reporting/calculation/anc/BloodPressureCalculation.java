@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.reporting.calculation.anc;
 
-import org.openmrs.Concept;
-import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
@@ -40,18 +38,12 @@ public class BloodPressureCalculation extends AbstractPatientCalculation {
 
         for(Integer ptId: cohort) {
             String fullBp = "";
-            String systolic = "";
-            String diastolic = "";
             Double systollicObs = EmrCalculationUtils.numericObsResultForPatient(systollicObsMap, ptId);
             Double diastollicObs = EmrCalculationUtils.numericObsResultForPatient(diastollicObsMap, ptId);
 
-            if(systollicObs != null) {
-                systolic = systollicObs.toString();
+            if(systollicObs != null && diastollicObs != null) {
+                fullBp = systollicObs.toString()+"/"+diastollicObs.toString();
             }
-            if(diastollicObs != null){
-                diastolic=diastollicObs.toString();
-            }
-            fullBp = systolic+"/"+diastolic;
             ret.put(ptId, new SimpleResult(fullBp, this));
         }
         return ret;

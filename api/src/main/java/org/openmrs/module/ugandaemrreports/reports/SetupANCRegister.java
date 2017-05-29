@@ -82,9 +82,8 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
-        System.out.println("The dataset name is ::::"+reportDefinition.getDataSetDefinitions());
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC");
+        props.put("repeatingSections", "sheet:1,row:10,dataset:ANC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
