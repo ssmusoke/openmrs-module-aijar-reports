@@ -6,6 +6,8 @@ import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.data.DataDefinition;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
@@ -22,7 +24,9 @@ import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultConve
 import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FpcDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FreeLlinDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.IYCFataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.IptCtxConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.MNCDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.MUACDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.MebendazoleDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
@@ -34,11 +38,9 @@ import org.openmrs.module.ugandaemrreports.definition.data.definition.Calculatio
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ArvDrugsPreArtNumberCalcultion;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.BloodPressureCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.FolicAcidCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.IronGivenCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.IycfMncCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ReferalCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
@@ -164,16 +166,6 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         cd.addCalculationParameter("answer", a);
         return cd;
     }
-    private DataDefinition arvDrugsPreArtNumber(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("ARVs drugs/Pre-ART No", new ArvDrugsPreArtNumberCalcultion());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
-    private DataDefinition iycfMnc(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("IYCF/MNC", new IycfMncCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
     private DataDefinition referal(){
         CalculationDataDefinition cd = new CalculationDataDefinition("Referal In/Out", new ReferalCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
@@ -203,7 +195,8 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
         //identifier
         PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
-        DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), new IdentifierConverter());
+        DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
+        DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
 
 
         //start adding columns here
@@ -235,8 +228,8 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("VL", whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
         dsd.addColumn("Pre-ART No", identifierDef, "");
-
-        dsd.addColumn("IYCF/MNC", iycfMnc(), "onDate=${endDate}", new CalculationResultConverter());
+        dsd.addColumn("IYCF", sdd.definition("IYCF", getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFataConverter());
+        dsd.addColumn("MNC", sdd.definition("MNC", getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
         dsd.addColumn("TB Status", sdd.definition("TB Status", getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Haemoglobin", sdd.definition("Haemoglobin", getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Syphilis testW", sdd.definition("Syphilis testW", getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestConverter());
