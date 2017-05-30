@@ -47,30 +47,11 @@ public class IfoIycfMncCalculation extends AbstractPatientCalculation {
             Concept iyfcConceptAns = EmrCalculationUtils.codedObsResultForPatient(iyfcMap, ptId);
             Concept mncConceptAns = EmrCalculationUtils.codedObsResultForPatient(mncMap, ptId);
 
-            if(iyoConceptAns != null && iyoConceptAns.equals(Dictionary.getConcept("dcbd637e-30ab-102d-86b0-7a5022ba4115"))) {
-                feedingOption = "EBF";
-            }
-            else if(iyoConceptAns != null && iyoConceptAns.equals(Dictionary.getConcept("40fdb5b6-e8ac-424d-988c-f2f2937348db"))) {
-                feedingOption = "RF";
-            }
 
-            else if(iyoConceptAns != null && iyoConceptAns.equals(Dictionary.getConcept("dcd5487d-30ab-102d-86b0-7a5022ba4115"))) {
-                feedingOption = "MF";
-            }
             //loop through
-            if(iyfcConceptAns != null && iyfcConceptAns.equals(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-                iyfcOption = "Y";
-            }
-            else if(iyfcConceptAns != null && iyfcConceptAns.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-                iyfcOption = "N";
-            }
+
             //loop through
-            if(mncConceptAns != null && mncConceptAns.equals(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-                mncOption = "Y";
-            }
-            else if(mncConceptAns != null && mncConceptAns.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-                mncOption = "N";
-            }
+
 
             results =feedingOption+"\n"+iyfcOption+"\n"+mncOption;
             ret.put(ptId, new SimpleResult(results, this));

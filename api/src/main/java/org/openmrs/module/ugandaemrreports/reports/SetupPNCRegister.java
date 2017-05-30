@@ -37,7 +37,10 @@ import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultConve
 import org.openmrs.module.ugandaemrreports.data.converter.CervixStatusDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FpPNCDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.IFODataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.IYCFDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ImmunizationDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.MNCDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.MotherDiagnosisDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeConverter;
@@ -154,8 +157,10 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
         PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
         PatientIdentifierType clientNo = MetadataUtils.existing(PatientIdentifierType.class, "758ef6e4-9ceb-4137-bc8d-9246dc7b41fe");
+        PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
         DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(clientNo.getName(), clientNo), identifierFormatter);
+        DataDefinition identifierDefPre = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
 
 
 
@@ -163,7 +168,6 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Client No", identifierDef, "");
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
-        //dsd.addColumn("Father Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", attribute), "", new PersonAttributeConverter());
         dsd.addColumn("Age-10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultConverter());
@@ -176,22 +180,29 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("FP", sdd.definition("FP", getConcept("dc7620b3-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FpPNCDataConverter());
         dsd.addColumn("Breast Status", sdd.definition("Breast Status", getConcept("07c10f5c-17fd-4a7e-8d72-c2252f589da0")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BreastStatusDataConverter());
         dsd.addColumn("Cervix Status", sdd.definition("Cervix Status", getConcept("d858f8cb-fe9e-4131-8d91-cd9929cc53de")), "onOrAfter=${startDate},onOrBefore=${endDate}", new CervixStatusDataConverter());
-        dsd.addColumn("WHMI-M", weightHeightMuacInr(), "onDate=${endDate}", new CalculationResultConverter());
+        dsd.addColumn("Weight", sdd.definition("Weight",  getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("MUAC", sdd.definition("MUAC",  getConcept("5f86d19d-9546-4466-89c0-6f80c101191b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MUACDataConverter());
+        dsd.addColumn("INR NO", sdd.definition("INR NO",  getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
         dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesConverter());
-        dsd.addColumn("ARVs drugs/Pre-ART No", arvDrugsPreArtNumber(), "onDate=${endDate}",  new CalculationResultConverter());
+        dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
+        dsd.addColumn("Pre-ART No", identifierDefPre, "");
         dsd.addColumn("Iron", sdd.definition("Iron", getConcept("315825e8-8ba4-4551-bdd1-aa4e02a36639")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Folic Acid", sdd.definition("Folic Acid", getConcept("8c346216-c444-4528-a174-5139922218ed")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Vit A", sdd.definition("Vit A", getConcept("88ec2c8b-eb7b-4595-8612-1871568507a5")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("CTX", sdd.definition("CTX", getConcept("d12abd7f-c90d-4798-9240-0f2f81977183")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Diagnosis-M", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MotherDiagnosisDataConverter());
-        dsd.addColumn("WHO/CD4/VL", whoCd4Vl(), "onDate=${endDate}", new CalculationResultConverter());
+        dsd.addColumn("WHO", sdd.definition("WHO", getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
+        dsd.addColumn("CD4", whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultConverter());
+        dsd.addColumn("VL", whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultConverter());
         dsd.addColumn("Other treatment mother", sdd.definition("Other treatment mother", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Baby status", sdd.definition("Baby status", getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BabyStatusDataConveter());
         dsd.addColumn("Age", sdd.definition("Age", getConcept("164438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WT", sdd.definition("WT", getConcept("94e4aeea-84d0-4207-aacb-ce38fe8e109c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Diagnosis-C", sdd.definition("Diagnosis-C", getConcept("a16b3a8e-6412-4344-908a-2a96344fa017")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("IFO/IYCF/MNC", ifoIycfMnc(), "onDate=${endDate}", new CalculationResultConverter());
+        dsd.addColumn("IFO", sdd.definition("IFO", getConcept("dc9a00a2-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IFODataConverter());
+        dsd.addColumn("IYCF", sdd.definition("IYCF", getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFDataConverter());
+        dsd.addColumn("MNC", sdd.definition("MNC", getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
         dsd.addColumn("BCG", sdd.definition("BCG", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("OPV", sdd.definition("OPV", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("DPT", sdd.definition("DPT", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
@@ -219,24 +230,11 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cdf;
     }
-    private DataDefinition weightHeightMuacInr() {
-        CalculationDataDefinition cdf = new CalculationDataDefinition("WHMI", new WeightHeightMuacInrCalcultion());
-        cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cdf;
-    }
-    private DataDefinition arvDrugsPreArtNumber(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("ARVs drugs/Pre-ART No", new ArvDrugsPreArtNumberCalcultion());
+    private DataDefinition whoCd4Vl(String q, String a){
+        CalculationDataDefinition cd = new CalculationDataDefinition("", new WhoCd4VLCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
-    private DataDefinition whoCd4Vl(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("WHO/CD4/VL", new WhoCd4VLCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
-    private DataDefinition ifoIycfMnc(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("IFO/IYCF/MNC", new IfoIycfMncCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        cd.addCalculationParameter("question", q);
+        cd.addCalculationParameter("answer", a);
         return cd;
     }
 
