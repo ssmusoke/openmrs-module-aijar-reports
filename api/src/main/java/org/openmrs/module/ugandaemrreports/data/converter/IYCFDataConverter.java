@@ -13,25 +13,36 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.PersonAttribute;
+import org.openmrs.Concept;
+import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 4/28/17.
+ * Created by Nicholas Ingosi on 5/29/17.
  */
-public class PersonAttributeConverter implements DataConverter {
+public class IYCFDataConverter implements DataConverter{
     @Override
     public Object convert(Object obj) {
+
         if (obj == null) {
             return "";
         }
+        Concept iyfcResults = ((Obs) obj).getValueCoded();
 
-        return ((PersonAttribute)obj).getValue();
+        if(iyfcResults != null && iyfcResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
+            return "Y";
+        }
+
+        else if(iyfcResults != null && iyfcResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+            return "N";
+        }
+        return null;
     }
 
     @Override
     public Class<?> getInputDataType() {
-        return PersonAttribute.class;
+        return Obs.class;
     }
 
     @Override

@@ -13,30 +13,30 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
+import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/2/17.
+ * Created by Nicholas Ingosi on 5/29/17.
  */
-public class Anc1TimingConverter implements DataConverter {
+public class MUACDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
         if (obj == null) {
             return "";
         }
-        Obs obs = ((Obs) obj);
-
-        if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-            return "✔";
+        Concept value = ((Obs)obj).getValueCoded();
+        if(value != null && value.equals(Dictionary.getConcept("a3b1734c-4743-4b9d-8e71-08d0459d29b9"))) {
+            return "Y";
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-            return "x";
+        else if(value != null && value.equals(Dictionary.getConcept("de330d01-5586-4eed-a645-e04b6bd13701"))) {
+            return "R";
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))) {
-            return "NA";
+        else if(value != null && value.equals(Dictionary.getConcept("8846c03f-67bf-4aeb-8ca7-39bf79b4ebf3"))) {
+            return "G";
         }
         return null;
     }
