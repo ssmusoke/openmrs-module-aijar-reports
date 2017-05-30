@@ -93,9 +93,6 @@ public class SetupMOH105AntenatalReportBuilder extends UgandaEMRDataExportManage
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForAnc(), "onDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
-        dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
-
         //define columns
         ColumnParameters female10To19 = new ColumnParameters("f10to19", "10-19", "gender=F|age=<11");
         ColumnParameters female20To24 = new ColumnParameters("f20to24", "20-24", "gender=F|age=<21");
