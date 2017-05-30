@@ -21,7 +21,7 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 /**
  * Created by Nicholas Ingosi on 4/29/17.
  */
-public class EmctCodesConverter implements DataConverter {
+public class EmctCodesDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
