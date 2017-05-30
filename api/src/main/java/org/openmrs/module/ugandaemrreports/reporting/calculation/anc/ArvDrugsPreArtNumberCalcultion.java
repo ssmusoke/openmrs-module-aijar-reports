@@ -40,7 +40,6 @@ public class ArvDrugsPreArtNumberCalcultion extends AbstractPatientCalculation {
         PatientIdentifierDataDefinition dfn = new PatientIdentifierDataDefinition("preARTNo", Context.getPatientService().getPatientIdentifierTypeByUuid("e1731641-30ab-102d-86b0-7a5022ba4115"));
         CalculationResultMap identifier = CalculationUtils.evaluateWithReporting(dfn, cohort, params, null, context);
 
-
         for(Integer ptId: cohort){
             String results = "";
             String arvResults = "";

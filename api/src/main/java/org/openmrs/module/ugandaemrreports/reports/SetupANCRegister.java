@@ -38,7 +38,6 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WeightHeigh
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -64,7 +63,14 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "581d401a-3562-11e7-8a67-507b9dc4c741";
+        return "e8ef4fe4-3c78-11e7-899c-507b9dc4c741";
+    }
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -77,7 +83,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:ANC-DSD");
+        props.put("repeatingSections", "sheet:1,row:10,dataset:ANC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -85,7 +91,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getUuid() {
-        return "d63d0202-25ca-11e7-8479-507b9dc4c741";
+        return "f717a684-3c78-11e7-adec-507b9dc4c741";
     }
 
     @Override
@@ -106,13 +112,15 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
-        rd.addDataSetDefinition("ANC-DSD", Mapped.mapStraightThrough(dataSetDefinition()));
+
+        rd.addDataSetDefinition("ANC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.12";
+
+        return "0.1";
     }
 
     @Override
@@ -184,7 +192,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        dsd.setName(getName());
+        dsd.setName("ANC");
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "044daI6d-f80e-48fe-aba9-037f241905Pe"), "startDate=${startDate},endDate=${endDate}");
 
