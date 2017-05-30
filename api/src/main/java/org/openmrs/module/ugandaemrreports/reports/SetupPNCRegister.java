@@ -103,7 +103,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:PNC");
+        props.put("repeatingSections", "sheet:1,row:8-10,dataset:PNC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
