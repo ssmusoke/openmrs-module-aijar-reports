@@ -90,7 +90,7 @@ public class SetupMOH105MaternityReportBuilder extends UgandaEMRDataExportManage
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForMaternity(), "onDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForMaternity(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));

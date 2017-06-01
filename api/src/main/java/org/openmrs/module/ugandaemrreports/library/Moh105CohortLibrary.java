@@ -150,8 +150,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Deliveries in unit 10-19");
         cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("maternalDeaths AND Age10To19");
+        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age10To19");
         return cd;
     }    
 
@@ -165,8 +165,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Deliveries in unit 20-24");
         cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("maternalDeaths AND Age20To24");
+        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age20To24");
         return cd;
     }    
 
@@ -180,8 +180,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Deliveries in unit 25 and above");
         cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age25AndABove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("maternalDeaths AND Age25AndABove");
+        cd.addSearch("Age25AndABove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age25AndABove");
         return cd;
     }    
     
@@ -296,7 +296,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Maternal deaths 10-19");
         cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "endDate=${onOrBefore}"));
         cd.setCompositionString("maternalDeaths AND Age10To19");
         return cd;
     }
@@ -311,7 +311,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Maternal deaths 20-24");
         cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "endDate=${onOrBefore}"));
         cd.setCompositionString("maternalDeaths AND Age20To24");
         return cd;
     }
@@ -326,7 +326,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Maternal deaths 25 and above");
         cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age25AndAbove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("Age25AndAbove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "endDate=${onOrBefore}"));
         cd.setCompositionString("maternalDeaths AND Age25AndAbove");
         return cd;
     }

@@ -412,7 +412,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator babiesBornWithDefect() {
-        return cohortIndicator("Babies born with defect", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da02")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Babies born with defect", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
