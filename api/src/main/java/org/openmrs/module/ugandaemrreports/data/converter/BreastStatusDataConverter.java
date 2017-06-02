@@ -31,10 +31,10 @@ public class BreastStatusDataConverter implements DataConverter {
 
         Concept concept = ((Obs) obj).getValueCoded();
 
-        if(concept.equals(Dictionary.getConcept("e4c6b70d-aaa6-490b-8edc-01c44d982cb2"))) {
+        if(concept != null && concept.equals(Dictionary.getConcept("e4c6b70d-aaa6-490b-8edc-01c44d982cb2"))) {
             return "FOM";
         }
-        else if(concept.equals(Dictionary.getConcept("5e416f86-aaf1-4ae4-96f0-30226b9fdd5f"))) {
+        else if(concept != null && concept.equals(Dictionary.getConcept("5e416f86-aaf1-4ae4-96f0-30226b9fdd5f"))) {
             return "SS";
         }
 

@@ -29,16 +29,16 @@ public class TimingForPNCDataConverter implements DataConverter {
             return "";
         }
         Concept concept = ((Obs) obj).getValueCoded();
-        if(concept.equals(Dictionary.getConcept("1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+        if(concept != null && concept.equals(Dictionary.getConcept("1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "✔";
         }
-        else if(concept.equals(Dictionary.getConcept("1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+        else if(concept != null && concept.equals(Dictionary.getConcept("1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "✔";
         }
-        else if(concept.equals(Dictionary.getConcept("1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+        else if(concept != null && concept.equals(Dictionary.getConcept("1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "✔";
         }
-        else if(concept.equals(Dictionary.getConcept("1074AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+        else if(concept != null && concept.equals(Dictionary.getConcept("1074AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "✔";
         }
 

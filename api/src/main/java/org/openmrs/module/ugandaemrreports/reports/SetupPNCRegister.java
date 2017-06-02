@@ -156,12 +156,9 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
         PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
-        //PatientIdentifierType clientNo = MetadataUtils.existing(PatientIdentifierType.class, "758ef6e4-9ceb-4137-bc8d-9246dc7b41fe");
         PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-        //DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(clientNo.getName(), clientNo), identifierFormatter);
         DataDefinition identifierDefPre = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
-
 
 
         //start adding columns

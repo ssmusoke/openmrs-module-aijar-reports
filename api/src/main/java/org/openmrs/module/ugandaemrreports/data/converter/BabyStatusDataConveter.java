@@ -30,13 +30,13 @@ public class BabyStatusDataConveter implements DataConverter {
         }
         Concept concept = ((Obs) obj).getValueCoded();
 
-        if(concept.equals(Dictionary.getConcept("9d9e6b5a-8b5d-4b8c-8ab7-9fdabb279493"))){
+        if(concept != null && concept.equals(Dictionary.getConcept("9d9e6b5a-8b5d-4b8c-8ab7-9fdabb279493"))){
             return "AL";
         }
-        else if(concept.equals(Dictionary.getConcept("811ff634-8d81-454f-9b9d-2850345796d6"))){
+        else if(concept != null && concept.equals(Dictionary.getConcept("811ff634-8d81-454f-9b9d-2850345796d6"))){
             return "NND7";
         }
-        else if(concept.equals(Dictionary.getConcept("95121db8-6c2a-48e0-b281-cf2dc8229dd1"))){
+        else if(concept != null && concept.equals(Dictionary.getConcept("95121db8-6c2a-48e0-b281-cf2dc8229dd1"))){
             return "NND28";
         }
         return null;

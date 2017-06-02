@@ -30,16 +30,16 @@ public class MotherDiagnosisDataConverter implements DataConverter {
         }
 
         Concept concept = ((Obs) obj).getValueCoded();
-        if(concept.equals(Dictionary.getConcept("132678AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+        if(concept != null && concept.equals(Dictionary.getConcept("132678AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
             return "Normal pregnancy";
         }
-        else if(concept.equals(Dictionary.getConcept("116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+        else if(concept != null && concept.equals(Dictionary.getConcept("116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
             return "Malaria";
         }
-        else if(concept.equals(Dictionary.getConcept("dc55064a-30ab-102d-86b0-7a5022ba4115"))){
+        else if(concept != null && concept.equals(Dictionary.getConcept("dc55064a-30ab-102d-86b0-7a5022ba4115"))){
             return "High blood pressure";
         }
-        else if(concept.equals(Dictionary.getConcept("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+        else if(concept != null && concept.equals(Dictionary.getConcept("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
             return "Other";
         }
         return null;

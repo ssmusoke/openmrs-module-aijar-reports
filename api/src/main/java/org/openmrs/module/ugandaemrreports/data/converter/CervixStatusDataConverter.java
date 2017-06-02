@@ -31,10 +31,10 @@ public class CervixStatusDataConverter implements DataConverter {
 
         Concept concept = ((Obs) obj).getValueCoded();
 
-        if(concept.equals(Dictionary.getConcept("14556e6e-9ee4-439c-98ac-079e12fc98fa"))) {
+        if(concept != null && concept.equals(Dictionary.getConcept("14556e6e-9ee4-439c-98ac-079e12fc98fa"))) {
             return "FOM";
         }
-        else if(concept.equals(Dictionary.getConcept("ec3a0208-0261-450a-a13b-b524e160b8fd"))) {
+        else if(concept != null && concept.equals(Dictionary.getConcept("ec3a0208-0261-450a-a13b-b524e160b8fd"))) {
             return "SS";
         }
         return null;
