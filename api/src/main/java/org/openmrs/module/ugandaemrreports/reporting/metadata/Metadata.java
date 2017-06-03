@@ -50,6 +50,7 @@ public class Metadata {
         public final static String ART_SUMMARY_PAGE = "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f";
         public final static String ART_ENCOUNTER_PAGE = "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f";
         public final static String ART_HEALTH_EDUCATION_PAGE = "6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e";
+        public final static String EID_SUMMARY_PAGE = "9fcfcc91-ad60-4d84-9710-11cc25258719";
 
 
     }

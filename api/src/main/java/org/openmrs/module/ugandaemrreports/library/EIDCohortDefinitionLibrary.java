@@ -1,6 +1,11 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.Concept;
+import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.common.BooleanOperator;
+import org.openmrs.module.reporting.common.DurationUnit;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
@@ -10,13 +15,16 @@ import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
- * Defines all the Cohort Definitions instances from the ART clinic
+ * Defines all the Cohort Definitions instances from the EID clinic
  */
 @Component
 public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
@@ -61,7 +69,70 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getAllEIDPatients() {
         return df.getAnyEncounterOfType(hivMetadata.getEIDSummaryPageEncounterType());
     }
-
+    
+    public CohortDefinition getExposedInfants() {
+        EncounterCohortDefinition eid = new EncounterCohortDefinition();
+        eid.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
+        eid.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        eid.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        return eid;
+    }
+    
+    /**
+     * Exposed infants are due for first PCR when they are 6 weeks old
+     * @return
+     */
+    public CohortDefinition getExposedInfantsDueForFirstPCR() {
+        CompositionCohortDefinition infantsOfAge = new CompositionCohortDefinition();
+        infantsOfAge.addParameter(new Parameter("endDate", "End Date", Date.class));
+        infantsOfAge.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        // get all exposed infants who are 6 weeks and above
+        infantsOfAge.initializeFromQueries(BooleanOperator.AND, getExposedInfants(), getInfants6weeksAndOlder());
+    
+        // infants of age less those who have already had their first DNA PCF
+        CompositionCohortDefinition dueForFirstPCR = new CompositionCohortDefinition();
+        dueForFirstPCR.initializeFromQueries(BooleanOperator.NOT, infantsOfAge, getEIDPatientsTestedUsingFirstDNAPCR());
+        
+        return dueForFirstPCR;
+    }
+    
+    /**
+     * Infants who are 6 weeks and above
+     * @return
+     */
+    public CohortDefinition getInfants6weeksAndOlder() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 6 weeks old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(6);
+        cd.setMinAgeUnit(DurationUnit.WEEKS);
+        return cd;
+    }
+    /**
+     * Infants who are 13 months and above
+     * @return
+     */
+    public CohortDefinition getInfants13monthsAndOlder() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 13 months old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(13);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+    
+    /**
+     * Infants who are 18 months and above
+     * @return
+     */
+    public CohortDefinition getInfants18monthsAndOlder() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 18 months old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(18);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
     public CohortDefinition getEIDPatientsGivenNVP() {
         return df.getObsWithEncounters(hivMetadata.getDateOfNVP(), hivMetadata.getEIDSummaryPageEncounterType());
     }
