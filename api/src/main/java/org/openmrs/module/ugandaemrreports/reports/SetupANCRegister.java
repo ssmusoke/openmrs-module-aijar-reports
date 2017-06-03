@@ -120,12 +120,14 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
+
         rd.addDataSetDefinition("ANC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
 
     @Override
     public String getVersion() {
+
         return "0.1";
     }
 

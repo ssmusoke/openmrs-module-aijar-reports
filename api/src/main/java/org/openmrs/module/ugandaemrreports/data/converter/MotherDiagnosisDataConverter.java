@@ -19,34 +19,39 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/29/17.
+ * Created by Nicholas Ingosi on 5/16/17.
  */
-public class MNCDataConverter implements DataConverter{
+public class MotherDiagnosisDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
-        if (obj == null) {
+        if(obj == null){
             return "";
         }
-        Concept mncResults = ((Obs) obj).getValueCoded();
 
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
-            return "Y";
+        Concept concept = ((Obs) obj).getValueCoded();
+        if(concept.equals(Dictionary.getConcept("132678AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+            return "Normal pregnancy";
         }
-
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return  "N";
+        else if(concept.equals(Dictionary.getConcept("116128AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+            return "Malaria";
+        }
+        else if(concept.equals(Dictionary.getConcept("dc55064a-30ab-102d-86b0-7a5022ba4115"))){
+            return "High blood pressure";
+        }
+        else if(concept.equals(Dictionary.getConcept("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+            return "Other";
         }
         return null;
     }
 
     @Override
     public Class<?> getInputDataType() {
-        return Obs.class;
+        return null;
     }
 
     @Override
     public Class<?> getDataType() {
-        return String.class;
+        return null;
     }
 }

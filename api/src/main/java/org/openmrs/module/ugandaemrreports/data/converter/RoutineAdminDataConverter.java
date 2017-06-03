@@ -16,26 +16,19 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/29/17.
+ * Created by Nicholas Ingosi on 5/16/17.
  */
-public class MNCDataConverter implements DataConverter{
+public class RoutineAdminDataConverter implements DataConverter{
     @Override
     public Object convert(Object obj) {
-
-        if (obj == null) {
+        if(obj == null){
             return "";
         }
-        Concept mncResults = ((Obs) obj).getValueCoded();
-
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
-            return "Y";
-        }
-
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return  "N";
+        Concept concept = ((Obs) obj).getValueCoded();
+        if(concept != null){
+            return "✔";
         }
         return null;
     }

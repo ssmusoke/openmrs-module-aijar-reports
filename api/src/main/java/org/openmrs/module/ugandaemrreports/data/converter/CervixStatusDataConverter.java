@@ -19,23 +19,23 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/29/17.
+ * Created by Nicholas Ingosi on 5/16/17.
  */
-public class MNCDataConverter implements DataConverter{
+public class CervixStatusDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
         if (obj == null) {
             return "";
         }
-        Concept mncResults = ((Obs) obj).getValueCoded();
 
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
-            return "Y";
+        Concept concept = ((Obs) obj).getValueCoded();
+
+        if(concept.equals(Dictionary.getConcept("14556e6e-9ee4-439c-98ac-079e12fc98fa"))) {
+            return "FOM";
         }
-
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return  "N";
+        else if(concept.equals(Dictionary.getConcept("ec3a0208-0261-450a-a13b-b524e160b8fd"))) {
+            return "SS";
         }
         return null;
     }

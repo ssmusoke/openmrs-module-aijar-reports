@@ -19,24 +19,29 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/29/17.
+ * Created by Nicholas Ingosi on 5/15/17.
  */
-public class MNCDataConverter implements DataConverter{
+public class TimingForPNCDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-
+        //1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1074AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         if (obj == null) {
             return "";
         }
-        Concept mncResults = ((Obs) obj).getValueCoded();
-
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
-            return "Y";
+        Concept concept = ((Obs) obj).getValueCoded();
+        if(concept.equals(Dictionary.getConcept("1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "✔";
+        }
+        else if(concept.equals(Dictionary.getConcept("1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "✔";
+        }
+        else if(concept.equals(Dictionary.getConcept("1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "✔";
+        }
+        else if(concept.equals(Dictionary.getConcept("1074AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "✔";
         }
 
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return  "N";
-        }
         return null;
     }
 

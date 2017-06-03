@@ -38,6 +38,7 @@ public class BloodPressureCalculation extends AbstractPatientCalculation {
 
         for(Integer ptId: cohort) {
             String fullBp = "";
+
             Double systollicObs = EmrCalculationUtils.numericObsResultForPatient(systollicObsMap, ptId);
             Double diastollicObs = EmrCalculationUtils.numericObsResultForPatient(diastollicObsMap, ptId);
 
