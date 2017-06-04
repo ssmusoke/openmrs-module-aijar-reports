@@ -16,6 +16,7 @@ package org.openmrs.module.ugandaemrreports.library;
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +30,7 @@ import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUt
 @Component
 public class Moh105IndicatorLibrary {
 
-    @Autowired
+	@Autowired
     private Moh105CohortLibrary cohortLibrary;
 
     @Autowired
@@ -461,6 +462,108 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator babiesReceivedPncAt6Hours() {
         return cohortIndicator("Babies received PNC at 6 hours", map(cclibrary.hasObs(Dictionary.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     *F1-Oral : Lo-Femenal
+     * @return CohortIndicator
+     */
+    public CohortIndicator oralLofemenalFamilyPlanningUsers() {
+        return cohortIndicator("Oral : Lo-Femenal", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("38aa1dc0-1aaa-4bdd-b26f-28f960dfb16c")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F2-Oral: Microgynon
+     * @return CohortIndicator
+     */
+    public CohortIndicator oralMicrogynonFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Microgynon", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("4b0899f2-395e-4e0f-8b58-d304b214615e")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F3-Oral: Ovrette or another POP
+     * @return CohortIndicator
+     */
+    public CohortIndicator oralOvretteFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Ovrette", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("82624AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F4-Oral: Others
+     * @return CohortIndicator
+     */
+    public CohortIndicator oralOtherFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Others", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("670b7048-d71e-483a-b2ec-f10d2326dd84")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F5-Female condoms
+     * @return CohortIndicator
+     */
+    public CohortIndicator femaleCondomsFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Female Condoms", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("dc882c84-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     *F6-Male condoms
+     * @return CohortIndicator
+     */
+    public CohortIndicator maleCondomsFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Male Condoms", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("aeee4ccf-cbf8-473c-9d9f-846643afbf11")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F7-IUDs
+     * @return CohortIndicator
+     */
+    public CohortIndicator iudFamilyPlanningUsers() {
+        return cohortIndicator("Oral: IUDs", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConceptList("dcb2f595-30ab-102d-86b0-7a5022ba4115,fed07c37-7bb6-4baa-adf9-596ce4c4e93c,dd4c3016-13cf-458a-8e93-fe54460be667")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F8-Injectable
+     * @return CohortIndicator
+     */
+    public CohortIndicator injectableFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Injectable", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("dcb30ba3-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F9-Natural
+     * @return CohortIndicator
+     */
+    public CohortIndicator naturalFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Injectable", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),Dictionary.getConcept("dcb30381-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F10-Other methods
+     * @return CohortIndicator
+     */
+    public CohortIndicator otherFamilyPlanningUsers() {
+        return cohortIndicator("Oral: Other Method", map(cclibrary.hasObs(
+        	Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),
+        	Dictionary.getConceptList("5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+        		+ "dcb2fba9-30ab-102d-86b0-7a5022ba4115,"
+        		+ "dcdd8d8d-30ab-102d-86b0-7a5022ba4115,"
+        		+ "bb83fd9d-24c5-4d49-89c0-97e13c792aaf,"
+        		+ "dcdd91a7-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *Total family planning users
+     * @return CohortIndicator
+     */
+    public CohortIndicator allFamilyPlanningUsers() {
+        return cohortIndicator("Total family planning users", map(cohortLibrary.allFamilyPlanningUsers(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     *F11: Number HIV+ FP users
+     * @return CohortIndicator
+     */
+    public CohortIndicator hivPositiveFamilyPlanningUsers() {
+        return cohortIndicator("Total family planning users", map(cohortLibrary.hivPositiveFamilyPlanningUsers(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
 }

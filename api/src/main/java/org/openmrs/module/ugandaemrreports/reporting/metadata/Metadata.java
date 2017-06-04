@@ -42,6 +42,9 @@ public class Metadata {
         public static final String TB_TREATMENT_START_DATE = "dce02eca-30ab-102d-86b0-7a5022ba4115";
         public static final String ON_TB_TREATMENT = "dcdaa6b4-30ab-102d-86b0-7a5022ba4115";
         public static final String ASSESSED_FOR_MALNUTRITION = "dc655734-30ab-102d-86b0-7a5022ba4115";
+
+        public static final String FAMILY_PLANNING_METHOD = "dc7620b3-30ab-102d-86b0-7a5022ba4115";
+
     }
     public static class Identifier{
 

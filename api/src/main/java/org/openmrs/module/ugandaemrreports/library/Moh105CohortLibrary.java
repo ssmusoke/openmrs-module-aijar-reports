@@ -88,7 +88,7 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("femaleAndHasAncVisit AND (takingIron OR takingFolic)");
         return cd;
     }
-
+    
     /**
      * HIV+ pregnant women assessed by CD4 or WHO clinical stage for the 1st time
      * @return CohortDefinition
@@ -117,6 +117,14 @@ public class Moh105CohortLibrary {
         return cd;
     }    
 
+	/**
+	 * HIV Positive Persons
+	 * @return CohortDefinition 
+	 */
+    public CohortDefinition hivPositivePersons() {
+    	return definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
+    }    
+    
     /**
      * HIV+ women
      * @return CohortDefinition
@@ -127,7 +135,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("HIV+ Women");
         cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
-        cd.addSearch("hivPositive", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("female AND hivPositive");
         return cd;
     }
@@ -330,5 +338,51 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("maternalDeaths AND Age25AndAbove");
         return cd;
     }
+
+    /**
+     * All Family Planning Users
+     * @return CohortDefinition
+     */    
+	public CohortDefinition allFamilyPlanningUsers() {
+		return definitionLibrary.hasObs(
+			Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),
+			Dictionary.getConceptList("38aa1dc0-1aaa-4bdd-b26f-28f960dfb16c,"
+				+ "4b0899f2-395e-4e0f-8b58-d304b214615e,"
+				+ "82624AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+				+ "670b7048-d71e-483a-b2ec-f10d2326dd84,"
+				+ "dc882c84-30ab-102d-86b0-7a5022ba4115,"
+				+ "aeee4ccf-cbf8-473c-9d9f-846643afbf11,"
+				+ "dcb2f595-30ab-102d-86b0-7a5022ba4115,"
+				+ "fed07c37-7bb6-4baa-adf9-596ce4c4e93c,"
+				+ "dd4c3016-13cf-458a-8e93-fe54460be667,"
+				+ "dcb30ba3-30ab-102d-86b0-7a5022ba4115,"
+				+ "dcb30381-30ab-102d-86b0-7a5022ba4115,"
+				+ "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+				+ "dcb2fba9-30ab-102d-86b0-7a5022ba4115,"
+				+ "dcdd8d8d-30ab-102d-86b0-7a5022ba4115,"
+				+ "bb83fd9d-24c5-4d49-89c0-97e13c792aaf,"
+				+ "dcdd91a7-30ab-102d-86b0-7a5022ba4115,"
+				+ "efbe5bf3-3411-4949-855b-636ada05f5e7,"
+				+ "336650b2-65f7-4202-80eb-3c6437878262,"
+				+ "3e18cafc-8edc-4648-94b3-835de371a2f2,"
+				+ "aa14bbbb-cbbe-445d-8958-9f521220b0fd,"
+				+ "dc692ad3-30ab-102d-86b0-7a5022ba4115"));
+	}
+	
+    /**
+     * HIV+ Family Planning Users 
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveFamilyPlanningUsers() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ And Family Planning Users");
+        cd.addSearch("fpUsers", ReportUtils.map(allFamilyPlanningUsers(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("fpUsers AND hivPositive");
+        return cd;
+    }
+	
     
 }
