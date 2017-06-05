@@ -155,7 +155,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
-        PersonAttributeType attribute = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+        PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
         PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
         DataDefinition identifierDefPre = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
@@ -166,7 +166,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Client No", sdd.definition("Client No", getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter()         );
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", attribute), "", new PersonAttributeDataConverter());
+        dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
         dsd.addColumn("Age-10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Age-20-24yrs", age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Age-25+yrs", age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
