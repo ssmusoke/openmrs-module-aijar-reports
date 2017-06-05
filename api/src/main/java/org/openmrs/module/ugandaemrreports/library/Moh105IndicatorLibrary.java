@@ -464,6 +464,8 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Babies received PNC at 6 hours", map(cclibrary.hasObs(Dictionary.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
+    // Begin Family planning section
+    
     /**
      *F1-Oral : Lo-Femenal
      * @return CohortIndicator
@@ -566,4 +568,43 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Total family planning users", map(cohortLibrary.hivPositiveFamilyPlanningUsers(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
+    //End Family planning section
+ 
+    //Begin HIV/AIDS counseling and testing (HCT)
+    
+    /**
+     * H1-Number of Individuals counseled
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselled() {
+        return cohortIndicator("Number of Individuals counseled", map(cohortLibrary.counseledAsIndividuals(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H2-Number of Individuals tested
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTested() {
+        return cohortIndicator("Number of Individuals tested", map(cohortLibrary.individualsTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H3-Number of Individuals who received HIV test results
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoReceivedHIVTestResults() {
+        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.individualsWhoReceivedHIVTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H4- Number of individuals who received HIV results in the last 12months
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoReceivedHIVTestResultsInLast12Months() {
+        return cohortIndicator("Number of Individuals who received HIV test results in last 12 Months", map(cohortLibrary.individualsWhoReceivedHIVTestResultsInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    
+    
+    //End HIV/AIDS counseling and testing (HCT)        
 }

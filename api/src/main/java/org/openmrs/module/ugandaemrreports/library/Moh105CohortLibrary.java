@@ -14,7 +14,9 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.Concept;
+import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition.TimeModifier;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
@@ -41,7 +43,7 @@ import java.util.Date;
 @Component
 public class Moh105CohortLibrary {
 
-    @Autowired
+	@Autowired
     CommonCohortDefinitionLibrary definitionLibrary;
 
     public CohortDefinition femaleAndHasAncVisit(double lower, double upper){
@@ -383,6 +385,135 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("fpUsers AND hivPositive");
         return cd;
     }
-	
+    
+    //Begin HCT Section
+    
+    /**
+     * Pre-test Counseling done
+     * @return CohortDefinition
+     */
+    public CohortDefinition pretestCounselingDone() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PRETEST_COUNSELING_DONE),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"));
+    }
+
+    /**
+     * Counseled as individuals
+     * @return CohortDefinition
+     */
+    public CohortDefinition counseledAsIndividuals() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELING_SESSION_TYPE),Dictionary.getConcept("c61ea879-2a23-484d-bec1-ab177a926265"));
+    }
+
+    /**
+     * Counseled as couples
+     * @return CohortDefinition
+     */
+    public CohortDefinition counseledAsCouples() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELING_SESSION_TYPE),Dictionary.getConcept("6ef3d796-7940-44fe-b0d9-06ab1b824e5b"));
+    }
+
+    /**
+     * Individuals Counseled 
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsCounseled() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Counseled");
+        cd.addSearch("PretestCounselingDone", ReportUtils.map(pretestCounselingDone(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PretestCounselingDone AND counseledAsIndividuals");
+        return cd;
+    }
+
+    /**
+     * With HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition withHivTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS));
+    }
+    
+    
+    /**
+     * Individuals Tested 
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsTested() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Tested");
+        cd.addSearch("withHivTestResults", ReportUtils.map(withHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("withHivTestResults AND counseledAsIndividuals");
+        return cd;
+    }
+
+    /**
+     * Received HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition receivedHivTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+    }
+
+    /**
+     * Tested in last 12 Months
+     * @return CohortDefinition
+     */
+    public CohortDefinition testedInLast12Months() {
+    	return (new DataFactory()).getPatientsWithNumericObsDuringPeriod(
+    		Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),
+    		null,
+    		RangeComparator.GREATER_THAN,
+    		(double) 0,
+    		BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+    
+    
+    /**
+     * Individuals who received HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsWhoReceivedHIVTestResults() {
+	    /**
+	     * Individuals Who Received HIV Test Results
+	     * @return CohortDefinition
+	     */
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results");
+        cd.addSearch("receivedHivTestResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("receivedHivTestResults AND counseledAsIndividuals");
+        return cd;
+	}    
+
+    /**
+     * Number of individuals who received HIV results in the last 12months
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsWhoReceivedHIVTestResultsInLast12Months() {
+	    /**
+	     * Individuals Who Received HIV Test Results
+	     * @return CohortDefinition
+	     */
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results in Last 12 Months");
+        cd.addSearch("receivedHivTestResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("TestedInLast12Months", ReportUtils.map(testedInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("receivedHivTestResults AND counseledAsIndividuals AND TestedInLast12Months");
+        return cd;
+	}    
+    
+    
+    
+    //End HCT Section
     
 }
