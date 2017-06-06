@@ -5,11 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Form;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -398,6 +400,30 @@ public class Cohorts {
         }
 
         return obsCohortDefinition;
+    }
+
+    public static CohortDefinition genderAndHasAncEncounter(boolean female, boolean male,  String uuid){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+
+        GenderCohortDefinition gender = new GenderCohortDefinition();
+        gender.setName("gender female "+female+" and male "+male);
+        gender.setFemaleIncluded(female);
+        gender.setMaleIncluded(male);
+
+        EncounterCohortDefinition encounter = new EncounterCohortDefinition();
+        encounter.setName("Has encounter");
+        encounter.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        encounter.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        encounter.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid(uuid));
+
+        cd.setName("Is specific gender and has "+Context.getEncounterService().getEncounterTypeByUuid(uuid).getName()+" encounter");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addSearch("gender", ReportUtils.map(gender));
+        cd.addSearch("encounter", ReportUtils.map(encounter, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("gender AND encounter");
+
+        return cd;
     }
 
 
