@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
  * Created by @Moshonk on 06/04/17.
  */
 @Component
-public class SetupMOH105FPReportBuilder extends UgandaEMRDataExportManager {
+public class SetupMOH105OPDReferralsReportBuilder extends UgandaEMRDataExportManager {
 
     @Autowired
     private CommonReportDimensionLibrary dimensionLibrary;
@@ -49,7 +49,7 @@ public class SetupMOH105FPReportBuilder extends UgandaEMRDataExportManager {
 
     @Override
     public String getExcelDesignUuid() {
-        return "75cf89c0-62ae-4ea8-a666-308a4e050554";
+        return "163f122a-9507-4f9e-afad-5219edab747e";
     }
 
     /**
@@ -60,22 +60,22 @@ public class SetupMOH105FPReportBuilder extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "105FamilyPlanningMethods.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "105OPDReferrals-1.1.xls");
     }
 
     @Override
     public String getUuid() {
-        return "8790164d-77a7-49c8-9a4c-644100fdd849";
+        return "2517f238-8895-4cbe-a0fe-51c980b81b26";
     }
 
     @Override
     public String getName() {
-        return "HMIS 105 - SECTION 2.5: FAMILY PLANNING METHODS";
+        return "HMIS 105 - SECTION 1.2: OPD REFERRALS";
     }
 
     @Override
     public String getDescription() {
-        return "Health Unit Outpatient Monthly Report, Maternal and Child Health 2.2 Maternity";
+        return "Health Unit Outpatient Monthly Report, OPD Referrals Section 1.2";
     }
 
 
@@ -90,36 +90,31 @@ public class SetupMOH105FPReportBuilder extends UgandaEMRDataExportManager {
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForMaternity(), "effectiveDate=${endDate}"));
-        //dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForOutPatient(), "effectiveDate=${endDate}"));
+        dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
         //start building the columns for the report
-        addColumns(dsd, "F1", "F1-Oral : Lo-Femenal", indicatorLibrary.oralLofemenalFamilyPlanningUsers());
-        addColumns(dsd, "F2", "F2-Oral: Microgynon", indicatorLibrary.oralMicrogynonFamilyPlanningUsers());
-        addColumns(dsd, "F3", "F3-Oral: Ovrette", indicatorLibrary.oralOvretteFamilyPlanningUsers());
-        addColumns(dsd, "F4", "F4-Oral: Others", indicatorLibrary.oralOtherFamilyPlanningUsers());
-        addColumns(dsd, "F5", "F5-Female condoms", indicatorLibrary.femaleCondomsFamilyPlanningUsers());
-        addColumns(dsd, "F6", "F6-Male condoms", indicatorLibrary.maleCondomsFamilyPlanningUsers());
-        addColumns(dsd, "F7", "F7-IUDs", indicatorLibrary.iudFamilyPlanningUsers());
-        addColumns(dsd, "F8", "F8-Injectable", indicatorLibrary.injectableFamilyPlanningUsers());
-        addColumns(dsd, "F9", "F9-Natural", indicatorLibrary.naturalFamilyPlanningUsers());
-        addColumns(dsd, "F10", "F10-Other methods", indicatorLibrary.otherFamilyPlanningUsers());
-        addColumns(dsd, "Total", "Total family planning users", indicatorLibrary.allFamilyPlanningUsers());
-        addIndicator(dsd, "F11", "F11: Number HIV+ FP users", indicatorLibrary.hivPositiveFamilyPlanningUsers(), "");
+        addColumns(dsd, "1.2T", "1.2 OUTPATIENT REFERRALS - Referrals to unit", indicatorLibrary.referralsToOPDUnit());
+        addColumns(dsd, "1.2F", "1.2 OUTPATIENT REFERRALS - Referrals from unit", indicatorLibrary.referralFromOPDUnit());
                         
         //connect the report definition to the dsd
-        rd.addDataSetDefinition("2.5-indicators", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("1.1-OutPatientAttendance", Mapped.mapStraightThrough(dsd));
 
         return rd;
     }
 
     public void addColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
-        addIndicator(dsd, key + "a", label + " (Between 10 and 19)", cohortIndicator, "age=Between10And19");
-        addIndicator(dsd, key + "b", label + " (Between 20 and 14)", cohortIndicator, "age=Between20And24");
-        addIndicator(dsd, key + "c", label + " (>= 25)", cohortIndicator, "age=GreaterOrEqualTo25");
+        addIndicator(dsd, key + "aM", label + " (Between 0 and 28 Days) Male", cohortIndicator, "gender=M|age=Between0And28Days");
+        addIndicator(dsd, key + "aF", label + " (Between 0 and 28 Days) Female", cohortIndicator, "gender=F|age=Between0And28Days");
+        addIndicator(dsd, key + "bM", label + " (Between 29 Days and 4 Years) Male", cohortIndicator, "gender=M|age=Between29DaysAnd4Yrs");
+        addIndicator(dsd, key + "bF", label + " (Between 29 Days and 4 Years) Female", cohortIndicator, "gender=F|age=Between29DaysAnd4Yrs");
+        addIndicator(dsd, key + "cM", label + " (Between 5 and 59 Years) Male", cohortIndicator, "gender=M|age=Between5And59Yrs");
+        addIndicator(dsd, key + "cF", label + " (Between 5 and 59 Years) Female", cohortIndicator, "gender=F|age=Between5And59Yrs");
+        addIndicator(dsd, key + "dM", label + " (>=60) Male", cohortIndicator, "gender=M|age=GreaterOrEqualTo60Yrs");
+        addIndicator(dsd, key + "dF", label + " (>=60) Female", cohortIndicator, "gender=F|age=GreaterOrEqualTo60Yrs");
     }
     
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {

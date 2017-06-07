@@ -4,9 +4,11 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Program;
 import org.openmrs.module.reporting.cohort.definition.*;
+import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -69,6 +71,7 @@ public class CommonCohortLibrary {
         cd.setName("aged at least " + minAge);
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
         return cd;
     }
 
@@ -82,7 +85,9 @@ public class CommonCohortLibrary {
         cd.setName("aged between " + minAge + " and " + maxAge + " years");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
         cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(DurationUnit.YEARS);
         return cd;
     }
 
@@ -191,6 +196,38 @@ public class CommonCohortLibrary {
     public CohortDefinition MoHAdult(){
         return agedAtLeast(15);
     }
+
+    /**
+     * Patients who are at least minAge Days old and at most maxAge days old on ${effectiveDate}
+     *
+     * @return the cohort definition
+     */
+	public CohortDefinition agedAtLeastDaysAgedAtMostDays(int minAge, int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged between " + minAge + " and " + maxAge + " days");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.DAYS);
+        cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(DurationUnit.DAYS);
+        return cd;
+	}
+
+    /**
+     * Patients who are at least minAge Days old and at most maxAge years old on ${effectiveDate}
+     *
+     * @return the cohort definition
+     */
+	public CohortDefinition agedAtLeastDaysAgedAtMostYears(int minAge, int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged between " + minAge + " days and " + maxAge + " years");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.DAYS);
+        cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(DurationUnit.YEARS);
+        return cd;
+	}
     
 }
 

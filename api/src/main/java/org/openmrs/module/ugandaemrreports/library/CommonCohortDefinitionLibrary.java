@@ -1,25 +1,26 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.TextObsCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * Library of common Cohort definitions
@@ -231,4 +232,43 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
+    
+    /**
+     * Patients who have a numeric obs between ${onOrAfter} and ${onOrBefore}
+     * @param question the question concept
+     * @param Operator 1
+     * @param Value 1
+     * @param Operator 2
+     * @param Value 2
+     * @return the cohort definition
+     */
+    public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1, RangeComparator operator2, Double value2) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator1(operator1);
+        cd.setValue1(value1);
+        if ( operator2 != null) {
+        	cd.setOperator2(operator2);
+        }
+        if ( value2 != null) {
+        	cd.setValue2(value2);
+        }
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return cd;    	
+    }
+    
+    /**
+     * Patients who have a numeric obs between ${onOrAfter} and ${onOrBefore}
+     * @param question the question concept
+     * @param Operator 1
+     * @param Value 1
+     * @return the cohort definition
+     */
+    public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
+        return hasNumericObs(question, operator1, value1, null, null);
+    }
+
 }

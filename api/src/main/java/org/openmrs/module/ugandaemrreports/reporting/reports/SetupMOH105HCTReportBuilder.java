@@ -70,7 +70,7 @@ public class SetupMOH105HCTReportBuilder extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "HMIS 105 - 4. HIV/AIDS COUNSELING AND TESTING (HCT)";
+        return "HMIS 105 - SECTION 4: HIV/AIDS COUNSELING AND TESTING (HCT)";
     }
 
     @Override
@@ -97,21 +97,25 @@ public class SetupMOH105HCTReportBuilder extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
         //start building the columns for the report
-        addColumns(dsd, "F1", "F1-Oral : Lo-Femenal", indicatorLibrary.oralLofemenalFamilyPlanningUsers());
-        addColumns(dsd, "F2", "F2-Oral: Microgynon", indicatorLibrary.oralMicrogynonFamilyPlanningUsers());
-        addColumns(dsd, "F3", "F3-Oral: Ovrette", indicatorLibrary.oralOvretteFamilyPlanningUsers());
-        addColumns(dsd, "F4", "F4-Oral: Others", indicatorLibrary.oralOtherFamilyPlanningUsers());
-        addColumns(dsd, "F5", "F5-Female condoms", indicatorLibrary.femaleCondomsFamilyPlanningUsers());
-        addColumns(dsd, "F6", "F6-Male condoms", indicatorLibrary.maleCondomsFamilyPlanningUsers());
-        addColumns(dsd, "F7", "F7-IUDs", indicatorLibrary.iudFamilyPlanningUsers());
-        addColumns(dsd, "F8", "F8-Injectable", indicatorLibrary.injectableFamilyPlanningUsers());
-        addColumns(dsd, "F9", "F9-Natural", indicatorLibrary.naturalFamilyPlanningUsers());
-        addColumns(dsd, "F10", "F10-Other methods", indicatorLibrary.otherFamilyPlanningUsers());
-        addColumns(dsd, "Total", "Total family planning users", indicatorLibrary.allFamilyPlanningUsers());
-        addIndicator(dsd, "F11", "F11: Number HIV+ FP users", indicatorLibrary.hivPositiveFamilyPlanningUsers(), "");
+        addIndicator(dsd, "H1", "H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled(), "");
+        addIndicator(dsd, "H2", "H2-Number of Individuals tested", indicatorLibrary.individualsTested(), "");
+        addIndicator(dsd, "H3", "H3-Number of Individuals who received HIV test results", indicatorLibrary.individualsWhoReceivedHIVTestResults(), "");
+        addIndicator(dsd, "H4", "H4- Number of individuals who received HIV results in the last 12months", indicatorLibrary.individualsWhoReceivedHIVTestResultsInLast12Months(), "");
+        addIndicator(dsd, "H5", "H5 – Number of individuals tested for the first time", indicatorLibrary.individualsTestedForTheFirstTime(), "");
+        addIndicator(dsd, "H6", "H6-Number of Individuals who tested HIV positive", indicatorLibrary.individualsWhoTestedHivPositive(), "");
+        addIndicator(dsd, "H7", "H7-HIV positive individuals with presumptive TB", indicatorLibrary.individualsWhoTestedHivPositiveAndWithPresumptiveTb(), "");
+        addIndicator(dsd, "H8", "H8-Number of Individuals tested more than twice in the last 12 months", indicatorLibrary.individualsTestedMoreThanTwiceInLast12Months(), "");
+        addIndicator(dsd, "H9", "H9-Number of individuals who were Counseled and Tested together as a Couple", indicatorLibrary.individualsCounseledAndTestedAsCouple(), "");
+        addIndicator(dsd, "H10", "H10-Number of individuals who were Tested and Received results together as a Couple", indicatorLibrary.individualsTestedAndReceivedResultsAsACouple(), "");
+        addIndicator(dsd, "H11", "H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults(), "");
+        addIndicator(dsd, "H12", "H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults(), "");
+        addIndicator(dsd, "H13", "H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep(), "");
+        addIndicator(dsd, "H14", "H14-Number of individuals tested as MARPS", indicatorLibrary.individualsCounselledAndTestedMarps(), "");
+        addIndicator(dsd, "H15", "H15-Number of positive individuals who tested at an early stage (CD4>500μ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage(), "");
+        addIndicator(dsd, "H16", "H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare(), "");
                         
         //connect the report definition to the dsd
-        rd.addDataSetDefinition("2.5-indicators", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("SECTION 4-indicators", Mapped.mapStraightThrough(dsd));
 
         return rd;
     }

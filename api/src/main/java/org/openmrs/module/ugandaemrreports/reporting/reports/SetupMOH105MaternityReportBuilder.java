@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.ugandaemrreports.reporting.reports;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -20,18 +24,10 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.utils.ColumnParameters;
-import org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by @Moshonk on 5/28/17.
@@ -70,7 +66,7 @@ public class SetupMOH105MaternityReportBuilder extends UgandaEMRDataExportManage
 
     @Override
     public String getName() {
-        return "HMIS 105 MCH - 2.2 MATERNITY";
+        return "HMIS 105 - SECTION 2.2: MATERNITY";
     }
 
     @Override

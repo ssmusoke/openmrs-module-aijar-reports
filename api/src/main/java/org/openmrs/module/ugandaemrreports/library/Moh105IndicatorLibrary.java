@@ -237,7 +237,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator referralsToMaternityUnit() {
-        return cohortIndicator("Referrals to maternity unit", map(cclibrary.hasTextObs(Dictionary.getConcept("c9159851-557b-4c09-8942-65b7989aa20a"), "REF"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Referrals to maternity unit", map(cclibrary.hasTextObs(Dictionary.getConcept(Metadata.Concept.REFERRAL_NUMBER), "REF"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -604,7 +604,1723 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Number of Individuals who received HIV test results in last 12 Months", map(cohortLibrary.individualsWhoReceivedHIVTestResultsInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
+    /**
+     * H5 – Number of individuals tested for the first time
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedForTheFirstTime() {
+        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestedFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     
+    /**
+     * H6-Number of Individuals who tested HIV positive
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoTestedHivPositive() {
+        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.individualsWhoTestedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H7-HIV positive individuals with presumptive TB
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoTestedHivPositiveAndWithPresumptiveTb() {
+        return cohortIndicator("HIV positive individuals with presumptive TB", map(cohortLibrary.individualsWhoTestedHivPositiveAndWithPresumptiveTB(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     
+    /**
+     * H8-Number of Individuals tested more than twice in the last 12 months
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedMoreThanTwiceInLast12Months() {
+        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.individualsTestedMoreThanTwiceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H9-Number of individuals who were Counseled and Tested together as a Couple
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounseledAndTestedAsCouple() {
+        return cohortIndicator("Number of individuals who were Counseled and Tested together as a Couple", map(cohortLibrary.individualsCounseledAndTestedAsACouple(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H10-Number of individuals who were Tested and Received results together as a Couple
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedAndReceivedResultsAsACouple() {
+        return cohortIndicator("Number of individuals who were Tested and Received results together as a Couple", map(cohortLibrary.individualsTestedAndReceivedResultsAsACouple(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H11-Number of couples with Concordant positive results
+     * @return CohortIndicator
+     */
+    public CohortIndicator couplesWithConcordantPositiveResults() {
+        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPostiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }    
+
+    /**
+     * H12- Number of couples with Discordant results
+     * @return CohortIndicator
+     */
+    public CohortIndicator couplesWithDiscordantResults() {
+        return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.couplesWithDiscordantResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }    
+    
+    /**
+     * H13-Individuals counseled and tested for PEP
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselledAndTestedForPep() {
+        return cohortIndicator("Individuals counseled and tested for PEP", map(cohortLibrary.individualsCounseledAndTestedForPep(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H14-Number of individuals tested as MARPS
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselledAndTestedMarps() {
+        return cohortIndicator("Individuals counseled and tested as MARPS", map(cohortLibrary.individualsCounseledAndTestedAsMarps(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H15-Number of positive individuals who tested at an early stage (CD4>500μ)
+     * @return CohortIndicator
+     */
+    public CohortIndicator hivPositiveIndividualsTestedAtAnEarlyStage() {
+        return cohortIndicator("Number of positive individuals who tested at an early stage (CD4>500μ)", map(cohortLibrary.hivPositiveIndividualsTestedAtAnEarlyStage(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H16-Number of clients who have been linked to care
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsLinkedToCare() {
+        return cohortIndicator("Number of clients who have been linked to care", map(cohortLibrary.clientsLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     //End HIV/AIDS counseling and testing (HCT)        
+    
+    //Begin Outpatient attendance
+    /**
+     * 1.1 OUTPATIENT ATTENDANCE - Total Attendance
+     * @return CohortIndicator
+     */
+	public CohortIndicator totalOutPatientAttendance() {
+        return cohortIndicator("OUTPATIENT ATTENDANCE - Total Attendance", map(cohortLibrary.totalOutPatientAttendance(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+    /**
+     * 1.1 OUTPATIENT ATTENDANCE - New Attendance
+     * @return CohortIndicator
+     */
+	public CohortIndicator newOutPatientAttendance() {
+        return cohortIndicator("OUTPATIENT ATTENDANCE - New Attendance", map(cohortLibrary.newOutPatientAttendance(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+    /**
+     * 1.1 OUTPATIENT ATTENDANCE - Re-Attendance
+     * @return CohortIndicator
+     */
+	public CohortIndicator repeatOutPatientAttendance() {
+        return cohortIndicator("OUTPATIENT ATTENDANCE - Re-Attendance", map(cohortLibrary.repeatOutPatientAttendance(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	//End OUtpatient attendance
+	
+	//Begin Outpatient referrals
+    /**
+     * 1.2 OUTPATIENT REFERRALS - Referrals to unit
+     * @return CohortIndicator
+     */
+	public CohortIndicator referralsToOPDUnit() {
+        return cohortIndicator("OUTPATIENT REFERRALS - Referrals to unit", map(cohortLibrary.referralsToOPDUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));		
+	}
+
+    /**
+     * 1.2 OUTPATIENT REFERRALS - Referrals from unit
+     * @return CohortIndicator
+     */
+	public CohortIndicator referralFromOPDUnit() {
+        return cohortIndicator("OUTPATIENT REFERRALS - Referrals from unit", map(cohortLibrary.referralsFromOPDUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));		
+	}
+	//End Outpatient Referrals
+	
+	//Begin Outpatient Diagnosis
+	/**
+	 * 1.3.1.1 Acute Flaccid Paralysis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAcuteFlaccidParalysisDiagnosis() {
+		return cohortIndicator("Acute Flaccid Paralysis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ACUTE_FLACCID_PARALYSIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.2. Animal Bites (suspected rabies)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnimalBitesDiagnosis() {
+		return cohortIndicator("Animal Bites (suspected rabies)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ANIMAL_BITE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.3 Cholera
+	 * 
+	 * @return CohortIndicator
+	 */
+	
+	public CohortIndicator opdCholeraDiagnosis() {
+		return cohortIndicator("Cholera", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CHOLERA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.4 Dysentery
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDysenteryDiagnosis() {
+		return cohortIndicator("Dysentery", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DYSENTERY)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.5 Guinea Worm
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdGuineaWormDiagnosis() {
+		return cohortIndicator("Guinea Worm", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.GUINEA_WORM)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.6 Malaria -Total
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdMalariaTotalDiagnosis() {
+		return cohortIndicator("Malaria -Total", map(cohortLibrary.totalOpdMalariaDiagnoses(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.6 Malaria -Confirmed
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdMalariaConfirmedDiagnosis() {
+		return cohortIndicator("Malaria -Total", map(cohortLibrary.totalConfirmedOpdMalariaDiagnoses(), "onOrAfter=${startDate},onOrBefore=${endDate}"));		
+	}
+	
+	/**
+	 * 1.3.1.7 Measles
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdMeaslesDiagnosis() {
+		return cohortIndicator("Measles", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.MEASLES)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.8 Bacterial Meningitis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdBacterialMeningitisDiagnosis() {
+		return cohortIndicator("Bacterial Meningitis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.BACTERIAL_MENINGITIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.9 Neonatal tetanus
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalTetanusDiagnosis() {
+		return cohortIndicator(
+		    "Neonatal tetanus", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.NEONATAL_TETANUS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.10 Plague
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPlagueDiagnosis() {
+		return cohortIndicator("Plague", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.PLAGUE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.11 Yellow Fever
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdYellowFeverDiagnosis() {
+		return cohortIndicator("Yellow Fever", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.YELLOW_FEVER)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.12 Other Viral Hemorrhagic Fevers
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherViralHemorrhagicFeversDiagnosis() {
+		return cohortIndicator("Other Viral Hemorrhagic Fevers",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_VIRAL_HEMORRHAGIC_FEVERS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.13 Severe Acute Respiratory Infection
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSevereAcuteRespiratoryInfectionDiagnosis() {
+		return cohortIndicator("Severe Acute Respiratory Infection",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.SEVERE_ACUTE_RESPIRATORY_INFECTION)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.14 Adverse Events Following Immunization
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAdverseEventsFollowingImmunizationDiagnosis() {
+		return cohortIndicator("Adverse Events Following Immunization",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ADVERSE_EVENTS_FOLLOWING_IMMUNIZATION)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.15 Typhoid Fever
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdTyphoidFeverDiagnosis() {
+		return cohortIndicator("Typhoid Fever", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.TYPHOID_FEVER)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.16 Presumptive MDR TB cases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPresumptiveMdrTbCasesDiagnosis() {
+		return cohortIndicator("Presumptive MDR TB cases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.PRESUMPTIVE_MDR_TB_CASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.1.17 Other Emerging infectious Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherEmergingInfectiousDiseasesDiagnosis() {
+		return cohortIndicator("Other Emerging infectious Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_EMERGING_INFECTIOUS_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+	/**
+	 * 1.3.2.17 Acute Diarrhoea
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAcuteDiarrhoeaDiagnosis() {
+		return cohortIndicator(
+		    "Acute Diarrhoea ", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.ACUTE_DIARRHOEA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.18 Persistent Diarrhoea
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPersistentDiarrhoeaDiagnosis() {
+		return cohortIndicator("Persistent Diarrhoea ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.PERSISTENT_DIARRHOEA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.19 Urethral discharges
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdUrethralDischargesDiagnosis() {
+		return cohortIndicator("Urethral discharges ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.URETHRAL_DISCHARGES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.20 Genital ulcers
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdGenitalUlcersDiagnosis() {
+		return cohortIndicator(
+		    "Genital ulcers ", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.GENITAL_ULCERS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.21 Sexually Transmitted Infection due to Sexual Gender Based Violence
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSexuallyTransmittedInfectionDueToSexualGenderBasedViolenceDiagnosis() {
+		return cohortIndicator(
+		    "Sexually Transmitted Infection due to Sexual Gender Based Violence ", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(
+		                Metadata.Concept.SEXUALLY_TRANSMITTED_INFECTION_DUE_TO_SEXUAL_GENDER_BASED_VIOLENCE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.22 Other Sexually Transmitted Infections
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherSexuallyTransmittedInfectionsDiagnosis() {
+		return cohortIndicator("Other Sexually Transmitted Infections ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_SEXUALLY_TRANSMITTED_INFECTIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.23 Urinary Tract Infections
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdUrinaryTractInfectionsDiagnosis() {
+		return cohortIndicator("Urinary Tract Infections ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.URINARY_TRACT_INFECTIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.24 Intestinal Worms
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdIntestinalWormsDiagnosis() {
+		return cohortIndicator(
+		    "Intestinal Worms ", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.INTESTINAL_WORMS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.25 Hematological Meningitis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHematologicalMeningitisDiagnosis() {
+		return cohortIndicator("Hematological Meningitis ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.HEMATOLOGICAL_MENINGITIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.26 Other types of meningitis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherTypesOfMeningitisDiagnosis() {
+		return cohortIndicator("Other types of meningitis ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_TYPES_OF_MENINGITIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.27 No pneumonia - Cough or cold
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNoPneumoniaCoughOrColdDiagnosis() {
+		return cohortIndicator("No pneumonia - Cough or cold ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NO_PNEUMONIA__COUGH_OR_COLD)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.28 Pneumonia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPneumoniaDiagnosis() {
+		return cohortIndicator("Pneumonia ", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.PNEUMONIA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.29 Skin Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSkinDiseasesDiagnosis() {
+		return cohortIndicator(
+		    "Skin Diseases ", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.SKIN_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.30 New TB cases diagnosed - Bacteriologically confirmed
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNewTbCasesDiagnosedBacteriologicallyConfirmedDiagnosis() {
+		return cohortIndicator("New TB cases diagnosed - Bacteriologically confirmed ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEW_TB_CASES_DIAGNOSED__BACTERIOLOGICALLY_CONFIRMED)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.30 New TB cases diagnosed - Clinically Diagnosed
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNewTbCasesDiagnosedClinicallyDiagnosedDiagnosis() {
+		return cohortIndicator("New TB cases diagnosed - Clinically Diagnosed ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEW_TB_CASES_DIAGNOSED__CLINICALLY_DIAGNOSED)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.30 New TB cases diagnosed - EPTB
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNewTbCasesDiagnosedEptbDiagnosis() {
+		return cohortIndicator("New TB cases diagnosed - EPTB ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEW_TB_CASES_DIAGNOSED__EPTB)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.31 Leprosy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdLeprosyDiagnosis() {
+		return cohortIndicator("Leprosy ", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.LEPROSY)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.32 Tuberculosis MDR/XDR cases started on treatment
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator tuberculosisMdrXdrCasesStartedOnTreatment() {
+		return cohortIndicator("Tuberculosis MDR/XDR cases started on treatment ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TB_TREATMENT_OUTCOME),
+		        Dictionary.getConcept(Metadata.Concept.TREATMENT_FAILURE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.33 Tetanus
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdTetanusDiagnosis() {
+		return cohortIndicator("Tetanus ", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.TETANUS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.34 Sleeping sickness
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSleepingSicknessDiagnosis() {
+		return cohortIndicator("Sleeping sickness ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.SLEEPING_SICKNESS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.35 Pelvic Inflammatory Disease
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPelvicInflammatoryDiseaseDiagnosis() {
+		return cohortIndicator("Pelvic Inflammatory Disease ",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.PELVIC_INFLAMMATORY_DISEASE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.2.36 Brucellosis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdBrucellosisDiagnosis() {
+		return cohortIndicator("Brucellosis ", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.BRUCELLOSIS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+	/**
+	 * 1.3.3.37 Neonatal Sepsis (0-7days)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalSepsis07DaysDiagnosis() {
+		return cohortIndicator("Neonatal Sepsis (0-7days)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEONATAL_SEPSIS_07DAYS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.38 Neonatal Sepsis (8-28days)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalSepsis828DaysDiagnosis() {
+		return cohortIndicator("Neonatal Sepsis (8-28days)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEONATAL_SEPSIS_828DAYS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.39 Neonatal Pneumonia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalPneumoniaDiagnosis() {
+		return cohortIndicator("Neonatal Pneumonia",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEONATAL_PNEUMONIA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.40 Neonatal Meningitis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalMeningitisDiagnosis() {
+		return cohortIndicator("Neonatal Meningitis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.NEONATAL_MENINGITIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.41 Neonatal Jaundice
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdNeonatalJaundiceDiagnosis() {
+		return cohortIndicator(
+		    "Neonatal Jaundice", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.NEONATAL_JAUNDICE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.42 Premature baby (as a condition for management)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPrematureBabyAsAConditionForManagementDiagnosis() {
+		return cohortIndicator("Premature baby (as a condition for management)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.PREMATURE_BABY_AS_A_CONDITION_FOR_MANAGEMENT)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.3.43 Other Neonatal Conditions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherNeonatalConditionsDiagnosis() {
+		return cohortIndicator("Other Neonatal Conditions",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_NEONATAL_CONDITIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.44 Sickle Cell Anaemia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSickleCellAnaemiaDiagnosis() {
+		return cohortIndicator("Sickle Cell Anaemia",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.SICKLE_CELL_ANAEMIA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.45 Other types of Anaemia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherTypesOfAnaemiaDiagnosis() {
+		return cohortIndicator("Other types of Anaemia",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_TYPES_OF_ANAEMIA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.46 Gastro-Intestinal Disorders (non-Infective)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdGastroIntestinalDisordersNonInfectiveDiagnosis() {
+		return cohortIndicator("Gastro-Intestinal Disorders (non-Infective)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.GASTROINTESTINAL_DISORDERS_NONINFECTIVE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.47 Pain Requiring Palliative Care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPainRequiringPalliativeCareDiagnosis() {
+		return cohortIndicator("Pain Requiring Palliative Care",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.PAIN_REQUIRING_PALLIATIVE_CARE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.48 Dental Caries
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDentalCariesDiagnosis() {
+		return cohortIndicator("Dental Caries", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DENTAL_CARIES)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.49 Gingivitis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdGingivitisDiagnosis() {
+		return cohortIndicator("Gingivitis", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.GINGIVITIS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.50 HIV-Oral lesions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHivOralLesionsDiagnosis() {
+		return cohortIndicator(
+		    "HIV-Oral lesions", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConceptList(Metadata.Concept.ORAL_CANDIDIASIS + "," + Metadata.Concept.ORAL_HAIRY_LEUKOPLAKIA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.51 Oral Cancers
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOralCancersDiagnosis() {
+		return cohortIndicator("Oral Cancers", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+	        Dictionary.getConceptList(Metadata.Concept.MALIGNANT_NEOPLASM_OF_ORAL_CAVITY + "," + Metadata.Concept.ORAL_NEOPLASM)),
+	        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.52 Other Oral Conditions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherOralConditionsDiagnosis() {
+		return cohortIndicator("Other Oral Conditions",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConceptList(Metadata.Concept.HERPETIFORM_APHTHOUS_STOMATITIS + "," + Metadata.Concept.APHTHOUS_ULCERATION + "," + Metadata.Concept.PERIADENITIS_MUCOSA_NECROTICA_RECURRENS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.53 Otitis media
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtitisMediaDiagnosis() {
+		return cohortIndicator("Otitis media", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.OTITIS_MEDIA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.54 Hearing loss
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHearingLossDiagnosis() {
+		return cohortIndicator("Hearing loss", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.HEARING_LOSS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.55 Other ENT conditions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherEntConditionsDiagnosis() {
+		return cohortIndicator("Other ENT conditions",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_ENT_CONDITIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.56 Ophthalmia neonatorum
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOphthalmiaNeonatorumDiagnosis() {
+		return cohortIndicator("Ophthalmia neonatorum",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OPHTHALMIA_NEONATORUM)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.57 Cataracts
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCataractsDiagnosis() {
+		return cohortIndicator("Cataracts", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CATARACTS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.58 Refractive errors
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdRefractiveErrorsDiagnosis() {
+		return cohortIndicator(
+		    "Refractive errors", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.REFRACTIVE_ERRORS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.59 Glaucoma
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdGlaucomaDiagnosis() {
+		return cohortIndicator("Glaucoma", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.GLAUCOMA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.60 Trachoma
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdTrachomaDiagnosis() {
+		return cohortIndicator("Trachoma", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.TRACHOMA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.61 Tumors
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdTumorsDiagnosis() {
+		return cohortIndicator("Tumors", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.TUMORS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.62 Blindness
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdBlindnessDiagnosis() {
+		return cohortIndicator("Blindness", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.BLINDNESS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.63 Diabetic Retinopathy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDiabeticRetinopathyDiagnosis() {
+		return cohortIndicator("Diabetic Retinopathy",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.DIABETIC_RETINOPATHY)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.64 Other eye conditions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherEyeConditionsDiagnosis() {
+		return cohortIndicator("Other eye conditions",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_EYE_CONDITIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.65 Bipolar disorders
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdBipolarDisordersDiagnosis() {
+		return cohortIndicator(
+		    "Bipolar disorders", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.BIPOLAR_DISORDERS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.66 Depression
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDepressionDiagnosis() {
+		return cohortIndicator("Depression", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DEPRESSION)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.67 Epilepsy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdEpilepsyDiagnosis() {
+		return cohortIndicator("Epilepsy", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.EPILEPSY)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.68 Dementia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDementiaDiagnosis() {
+		return cohortIndicator("Dementia", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DEMENTIA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.69 Childhood Mental Disorders
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdChildhoodMentalDisordersDiagnosis() {
+		return cohortIndicator("Childhood Mental Disorders",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.CHILDHOOD_MENTAL_DISORDERS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.70 Schizophrenia
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSchizophreniaDiagnosis() {
+		return cohortIndicator("Schizophrenia", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.SCHIZOPHRENIA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.71 HIV related psychosis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHivRelatedPsychosisDiagnosis() {
+		return cohortIndicator("HIV related psychosis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.HIV_RELATED_PSYCHOSIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.72 Anxiety disorders
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnxietyDisordersDiagnosis() {
+		return cohortIndicator(
+		    "Anxiety disorders", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.ANXIETY_DISORDERS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.73 Alcohol abuse
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAlcoholAbuseDiagnosis() {
+		return cohortIndicator("Alcohol abuse", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.ALCOHOL_ABUSE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.74 Drug abuse
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDrugAbuseDiagnosis() {
+		return cohortIndicator("Drug abuse", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DRUG_ABUSE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.75 Other Mental Health Conditions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherMentalHealthConditionsDiagnosis() {
+		return cohortIndicator("Other Mental Health Conditions",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_MENTAL_HEALTH_CONDITIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.76 Asthma
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAsthmaDiagnosis() {
+		return cohortIndicator("Asthma", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.ASTHMA)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.77 Chronic Obstructive Pulmonary Disease (COPD)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdChronicObstructivePulmonaryDiseaseCopdDiagnosis() {
+		return cohortIndicator("Chronic Obstructive Pulmonary Disease (COPD)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.CHRONIC_OBSTRUCTIVE_PULMONARY_DISEASE_COPD)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.78 Cancer Cervix
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerCervixDiagnosis() {
+		return cohortIndicator("Cancer Cervix", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_CERVIX)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.79 Cancer Prostate
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerProstateDiagnosis() {
+		return cohortIndicator(
+		    "Cancer Prostate", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.CANCER_PROSTATE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.80 Cancer Breast
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerBreastDiagnosis() {
+		return cohortIndicator("Cancer Breast", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_BREAST)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.81 Cancer Lung
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerLungDiagnosis() {
+		return cohortIndicator("Cancer Lung", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_LUNG)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.82 Cancer Liver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerLiverDiagnosis() {
+		return cohortIndicator("Cancer Liver", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_LIVER)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.83 Cancer Colon
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerColonDiagnosis() {
+		return cohortIndicator("Cancer Colon", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_COLON)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.84 Kaposis Sarcoma
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdKaposisSarcomaDiagnosis() {
+		return cohortIndicator(
+		    "Kaposis Sarcoma", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.KAPOSIS_SARCOMA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.85 Cancer Others
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCancerOthersDiagnosis() {
+		return cohortIndicator("Cancer Others", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.CANCER_OTHERS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.86 Cardiovascular Accident
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdCardiovascularAccidentDiagnosis() {
+		return cohortIndicator("Cardiovascular Accident",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.CARDIOVASCULAR_ACCIDENT)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.87 Hypertension
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHypertensionDiagnosis() {
+		return cohortIndicator("Hypertension", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.HYPERTENSION)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.88 Heart failure
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHeartFailureDiagnosis() {
+		return cohortIndicator("Heart failure", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.HEART_FAILURE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.89 Ischemic Heart Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdIschemicHeartDiseasesDiagnosis() {
+		return cohortIndicator("Ischemic Heart Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ISCHEMIC_HEART_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.88 Rheumatic Heart Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdRheumaticHeartDiseasesDiagnosis() {
+		return cohortIndicator("Rheumatic Heart Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.RHEUMATIC_HEART_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.90 Chronic Heart Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdChronicHeartDiseasesDiagnosis() {
+		return cohortIndicator("Chronic Heart Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.CHRONIC_HEART_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.91 Other Cardiovascular Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherCardiovascularDiseasesDiagnosis() {
+		return cohortIndicator("Other Cardiovascular Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_CARDIOVASCULAR_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.92 Diabetes mellitus
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDiabetesMellitusDiagnosis() {
+		return cohortIndicator(
+		    "Diabetes mellitus", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.DIABETES_MELLITUS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.93 Thyroid Disease
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdThyroidDiseaseDiagnosis() {
+		return cohortIndicator(
+		    "Thyroid Disease", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.THYROID_DISEASE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.94 Other Endocrine and Metabolic Diseases
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherEndocrineAndMetabolicDiseasesDiagnosis() {
+		return cohortIndicator("Other Endocrine and Metabolic Diseases",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_ENDOCRINE_AND_METABOLIC_DISEASES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.95 Severe Acute Malnutrition with oedema
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSevereAcuteMalnutritionWithOedemaDiagnosis() {
+		return cohortIndicator("Severe Acute Malnutrition with oedema",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.SEVERE_ACUTE_MALNUTRITION_WITH_OEDEMA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.95 Severe Acute Malnutrition Without oedema
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSevereAcuteMalnutritionWithoutOedemaDiagnosis() {
+		return cohortIndicator("Severe Acute Malnutrition Without oedema",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.SEVERE_ACUTE_MALNUTRITION_WITHOUT_OEDEMA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.96 Mild Acute Malnutrition
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdMildAcuteMalnutritionDiagnosis() {
+		return cohortIndicator("Mild Acute Malnutrition",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.MILD_ACUTE_MALNUTRITION)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.97 Jaw injuries
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdJawInjuriesDiagnosis() {
+		return cohortIndicator("Jaw injuries", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.JAW_INJURIES)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.98 Injuries- Road traffic Accidents
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdInjuriesRoadTrafficAccidentsDiagnosis() {
+		return cohortIndicator("Injuries- Road traffic Accidents",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.INJURIES_ROAD_TRAFFIC_ACCIDENTS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.99 Injuries due to motorcycle(boda-boda)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdInjuriesDueToMotorcyclebodaBodaDiagnosis() {
+		return cohortIndicator("Injuries due to motorcycle(boda-boda)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.INJURIES_DUE_TO_MOTORCYCLEBODABODA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.100 Injuries due to Gender based violence
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdInjuriesDueToGenderBasedViolenceDiagnosis() {
+		return cohortIndicator("Injuries due to Gender based violence",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.INJURIES_DUE_TO_GENDER_BASED_VIOLENCE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.101 Injuries (Trauma due to other causes)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdInjuriesTraumaDueToOtherCausesDiagnosis() {
+		return cohortIndicator("Injuries (Trauma due to other causes)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.INJURIES_TRAUMA_DUE_TO_OTHER_CAUSES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.102 Animal bites Domestic
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnimalBitesDomesticDiagnosis() {
+		return cohortIndicator("Animal bites Domestic",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ANIMAL_BITES_DOMESTIC)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.102 Animal bites Wild
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnimalBitesWildDiagnosis() {
+		return cohortIndicator(
+		    "Animal bites Wild", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.ANIMAL_BITES_WILD)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.102 Animal bites Insects
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnimalBitesInsectsDiagnosis() {
+		return cohortIndicator("Animal bites Insects",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ANIMAL_BITES_INSECTS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.4.103 Snake bites
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdSnakeBitesDiagnosis() {
+		return cohortIndicator("Snake bites", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.SNAKE_BITES)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.5.104 Tooth extractions
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdToothExtractionsDiagnosis() {
+		return cohortIndicator(
+		    "Tooth extractions", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.TOOTH_EXTRACTIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.5.105 Dental Fillings
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDentalFillingsDiagnosis() {
+		return cohortIndicator(
+		    "Dental Fillings", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.DENTAL_FILLINGS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.5.106 Other Minor Operations
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherMinorOperationsDiagnosis() {
+		return cohortIndicator("Other Minor Operations",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.OTHER_MINOR_OPERATIONS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.107 Leishmaniasis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdLeishmaniasisDiagnosis() {
+		return cohortIndicator("Leishmaniasis", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.LEISHMANIASIS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.108 Lymphatic Filariasis (hydrocele)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdLymphaticFilariasisHydroceleDiagnosis() {
+		return cohortIndicator("Lymphatic Filariasis (hydrocele)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.LYMPHATIC_FILARIASIS_HYDROCELE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.109 Lymphatic Filariasis (Lympoedema)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdLymphaticFilariasisLympoedemaDiagnosis() {
+		return cohortIndicator("Lymphatic Filariasis (Lympoedema)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.LYMPHATIC_FILARIASIS_LYMPOEDEMA)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.110 Urinary Schistosomiasis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdUrinarySchistosomiasisDiagnosis() {
+		return cohortIndicator("Urinary Schistosomiasis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.URINARY_SCHISTOSOMIASIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.111 Intestinal Schistosomiasis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdIntestinalSchistosomiasisDiagnosis() {
+		return cohortIndicator("Intestinal Schistosomiasis",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.INTESTINAL_SCHISTOSOMIASIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.6.112 Onchocerciasis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOnchocerciasisDiagnosis() {
+		return cohortIndicator(
+		    "Onchocerciasis", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.ONCHOCERCIASIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.113 Abortions due to Gender-Based Violence (GBV)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAbortionsDueToGenderBasedViolenceGbvDiagnosis() {
+		return cohortIndicator("Abortions due to Gender-Based Violence (GBV)",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ABORTIONS_DUE_TO_GENDERBASED_VIOLENCE_GBV)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.114 Abortions due to other causes
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAbortionsDueToOtherCausesDiagnosis() {
+		return cohortIndicator("Abortions due to other causes",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.ABORTIONS_DUE_TO_OTHER_CAUSES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.115 Malaria in pregnancy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdMalariaInPregnancyDiagnosis() {
+		return cohortIndicator("Malaria in pregnancy",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.MALARIA_IN_PREGNANCY)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.116 High blood pressure in pregnancy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHighBloodPressureInPregnancyDiagnosis() {
+		return cohortIndicator("High blood pressure in pregnancy",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.HIGH_BLOOD_PRESSURE_IN_PREGNANCY)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.117 Obstructed labour
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdObstructedLabourDiagnosis() {
+		return cohortIndicator(
+		    "Obstructed labour", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.OBSTRUCTED_LABOUR)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.118 Puerperal sepsis
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdPuerperalSepsisDiagnosis() {
+		return cohortIndicator(
+		    "Puerperal sepsis", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.PUERPERAL_SEPSIS)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.7.119 Haemorrhage related to pregnancy
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdHaemorrhageRelatedToPregnancyDiagnosis() {
+		return cohortIndicator("Haemorrhage related to pregnancy",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConceptList(Metadata.Concept.ANTEPARTUM_HAEMORRHAGE + "," + Metadata.Concept.POSTPARTUM_HAEMORRHAGE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.8.120 Other diagnoses
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdOtherDiagnosesDiagnosis() {
+		return cohortIndicator(
+		    "Other diagnoses", map(
+		        cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		            Dictionary.getConcept(Metadata.Concept.OTHER_DIAGNOSES)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.8.121 Deaths in OPD
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdDeathsInOpdDiagnosis() {
+		return cohortIndicator("Deaths in OPD", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConcept(Metadata.Concept.DEATHS_IN_OPD)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.8.122 All others
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAllOthersDiagnosis() {
+		return cohortIndicator("All others", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConceptList(Metadata.Concept.OTHERS_NON_CODED + "," + Metadata.Concept.OTHER_SPECIFY)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+	/**
+	 * All diagnoses
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator allDiagnoses() {
+		return cohortIndicator("All diagnoses", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	//End Outpatient Diagnosis
+	
+	/**
+	 * 1.3.9.R1 Alcohol use
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator alcoholUsers() {
+		return cohortIndicator("Alcohol use", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.ALCOHOL_USE),
+		    Dictionary.getConcept(Metadata.Concept.YES_CIEL)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.9.R2 Tobacco use
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator tobaccoUsers() {
+		return cohortIndicator("Tobacco use", map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TOBACCO_USE),
+		    Dictionary.getConcept(Metadata.Concept.YES_CIEL)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.10.B1 Severely Underweight (BMI<16)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator severelyUnderweightBmi() {
+		return cohortIndicator("Severely Underweight (BMI<16)",
+		    map(cohortLibrary.bmiCount(0.0, 15.9), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.10.B2 Underweight (16<=BMI <18.5)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator underweightBmi() {
+		return cohortIndicator("Underweight (16<=BMI <18.5)",
+		    map(cohortLibrary.bmiCount(16.0, 18.4), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.10.B3 Normal (18.5<= BMI <=25)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator normalBmi() {
+		return cohortIndicator("Normal (18.5<= BMI <=25)",
+		    map(cohortLibrary.bmiCount(18.5, 25.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.10.B4 Over weight (25< BMI <=30
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator overweightBmi() {
+		return cohortIndicator("Over weight (25< BMI <=30",
+		    map(cohortLibrary.bmiCount(24.9, 30.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * 1.3.10.B5 Obese ( BMI>30)
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator obeseBmi() {
+		return cohortIndicator("Obese ( BMI>30)",
+		    map(cohortLibrary.bmiCount(30.1, 100.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
 }
