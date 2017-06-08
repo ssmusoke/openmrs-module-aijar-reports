@@ -46,11 +46,11 @@ public class OPDDatasetDefinitionEvaluator implements DataSetEvaluator {
         String sql = "SELECT \r\n" +
         		"\tSERIAL_NO.value_text \tAS serial_no,\r\n" +
         		"\tCONCAT(PN.family_name, ' ', PN.given_name)\tAS patientName,\r\n" +
-        		"\tCONCAT('Village: ', IFNULL(UCASE(PA.address5),''), '\\r\\n',\r\n" +
-        		"\t'Parish: ', IFNULL(UCASE(PA.address4),''), '\\r\\n', \r\n" +
-        		"\t'Sub-county: ', IFNULL(UCASE(PA.address3),''), '\\r\\n', \r\n" +
-        		"\t'County: ',   IFNULL(UCASE(PA.state_province),''), '\\r\\n', \r\n" +
-        		"\t'District: ', IFNULL(UCASE(PA.county_district),''))\tAS residence,\r\n" +
+        		"\tCONCAT(IFNULL(UCASE(PA.address5),''), '\\r\\n',\r\n" +
+        		"\tIFNULL(UCASE(PA.address4),''), '\\r\\n', \r\n" +
+        		"\tIFNULL(UCASE(PA.address3),''), '\\r\\n', \r\n" +
+        		"\tIFNULL(UCASE(PA.state_province),''), '\\r\\n', \r\n" +
+        		"\tIFNULL(UCASE(PA.county_district),''))\tAS residence,\r\n" +
         		"\tDATEDIFF(A.encounter_datetime,P.birthdate) \tAS ageInDays,\r\n" +
         		"\tYEAR(A.encounter_datetime) - YEAR(P.birthdate) - (RIGHT(A.encounter_datetime, 5) < RIGHT(P.birthdate, 5)) \tAS ageInYears,\r\n" +
         		"\tP.gender\tAS sex,\t\r\n" +
