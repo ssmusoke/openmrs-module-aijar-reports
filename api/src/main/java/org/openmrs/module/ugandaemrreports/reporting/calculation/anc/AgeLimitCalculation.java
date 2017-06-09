@@ -35,7 +35,7 @@ public class AgeLimitCalculation extends AbstractPatientCalculation {
         Integer upperLimit = (params != null && params.containsKey("upperLimit")) ? (Integer) params.get("upperLimit") : null;
         CalculationResultMap ages = Calculations.ages(cohort, context);
 
-
+        System.out.println("The date passed is ::::"+context.getNow());
         for (int ptId : cohort) {
             Integer age = null;
             Integer ageInyears = ((Age) ages.get(ptId).getValue()).getFullYears();

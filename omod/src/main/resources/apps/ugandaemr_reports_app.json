@@ -143,7 +143,15 @@
         "label": "PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
         "order": 21
-      }
+      },
+      {
+        "id": "HMIS 105 Section 2.1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.1",
+        "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
+        "order": 23
+      },
     ]
   }
 ]
