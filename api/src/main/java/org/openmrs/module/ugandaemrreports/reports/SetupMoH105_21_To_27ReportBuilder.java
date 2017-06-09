@@ -29,6 +29,7 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +51,13 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
     @Override
     public String getExcelDesignUuid() {
         return "57616c8e-3f92-11e7-aeaa-507b9dc4c741";
+    }
+
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -110,7 +118,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.setName("Antenatal");
+        dsd.setName("A");
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForAnc(), "onDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
@@ -161,7 +169,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.setName("Postnatal");
+        dsd.setName("P");
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForAnc(), "onDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
