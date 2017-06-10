@@ -20,7 +20,7 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.DateConverter;
 
 /**
- * Who Stage data converter
+ * Birth date convertor
  */
 public class BirthDateConverter implements DataConverter {
 
