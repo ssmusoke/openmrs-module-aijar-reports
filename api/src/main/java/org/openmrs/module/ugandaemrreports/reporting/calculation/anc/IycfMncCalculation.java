@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.ugandaemrreports.reporting.calculation.anc;
 
+import org.openmrs.Concept;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
@@ -21,56 +22,47 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 
 /**
  * Created by Nicholas Ingosi on 4/30/17.
  */
-public class WhoCd4VLCalculation extends AbstractPatientCalculation {
+public class IycfMncCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> params, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
 
-        String question = (params != null && params.containsKey("question")) ? (String) params.get("question") : null;
-        String answer = (params != null && params.containsKey("answer")) ? (String) params.get("answer") : null;
+        CalculationResultMap iyfcMap = Calculations.lastObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"), cohort, context);
+        CalculationResultMap mncMap = Calculations.lastObs(Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"), cohort, context);
 
-        CalculationResultMap questionMap = Calculations.lastObs(Dictionary.getConcept(question), cohort, context);
-        CalculationResultMap dateMap = Calculations.lastObs(Dictionary.getConcept(answer), cohort, context);
-
-        for(Integer ptId : cohort) {
-            String value = "";
-            String date = "";
+        for(Integer ptId: cohort) {
+            String resultsIyfc = "";
+            String resultsMnc = "";
             String results = "";
+            Concept iyfcResults = EmrCalculationUtils.codedObsResultForPatient(iyfcMap, ptId);
+            Concept mncResults = EmrCalculationUtils.codedObsResultForPatient(mncMap, ptId);
 
-            Double  questionMapResults = EmrCalculationUtils.numericObsResultForPatient(questionMap, ptId);
-            Date dateMapResults = EmrCalculationUtils.datetimeObsResultForPatient(dateMap, ptId);
-
-            if(questionMapResults != null){
-                value = questionMapResults.toString();
+            if(iyfcResults != null && iyfcResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
+                resultsIyfc = "Y";
             }
 
-            if(dateMapResults != null){
-                date = formatDate(dateMapResults);
+            else if(iyfcResults != null && iyfcResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+                resultsIyfc = "N";
             }
 
-            results = value+"  "+date;
+            if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
+                resultsMnc = "Y";
+            }
 
+            else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
+                resultsMnc = "N";
+            }
+
+            results = resultsIyfc + "\n" + resultsMnc;
             ret.put(ptId, new SimpleResult(results, this));
         }
 
         return ret;
-    }
-
-    private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-        if (date == null) {
-            return "";
-        }
-
-        return dateFormatter.format(date);
     }
 }

@@ -15,7 +15,6 @@
 package org.openmrs.module.ugandaemrreports.reporting.library.dimension;
 
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,4 +73,18 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("15+", map(commonCohortLibrary.MoHAdult(), "effectiveDate=${endDate}"));
         return dim;
 	}
+
+    /**
+     * Dimension of age using the 3 standard age groups for anc
+     * @return the dimension
+     */
+    public CohortDefinitionDimension standardAgeGroupsForAnc() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (<10, <19, 25+)");
+        dim.addParameter(new Parameter("onDate", "On Date", Date.class));
+        dim.addCohortDefinition("10-19", map(commonCohortLibrary.agedAtMost(10), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("20-24", map(commonCohortLibrary.agedAtMost(20), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition(">=25", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${onDate}"));
+        return dim;
+    }
 }
