@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -25,7 +25,7 @@
         <developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-ugandaemr-reports.git
         </developerConnection>
         <url>scm:git:https://github.com/METS-Programme/openmrs-module-ugandaemr-reports</url>
-        <tag>1.1.1</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
