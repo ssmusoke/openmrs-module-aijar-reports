@@ -3,8 +3,11 @@ package org.openmrs.module.ugandaemrreports.library;
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.ObsInEncounterCohortDefinition;
 import org.openmrs.module.reporting.common.BooleanOperator;
 import org.openmrs.module.reporting.common.DurationUnit;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
@@ -17,6 +20,7 @@ import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,22 +83,83 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
     
     /**
-     * Exposed infants are due for first PCR when they are 6 weeks old
+     * Exposed infants are due for first PCR when they are 6 weeks old excluding those for whom the PCR test has already been done
      * @return
      */
     public CohortDefinition getExposedInfantsDueForFirstPCR() {
-        CompositionCohortDefinition infantsOfAge = new CompositionCohortDefinition();
-        infantsOfAge.addParameter(new Parameter("endDate", "End Date", Date.class));
-        infantsOfAge.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        // get all exposed infants who are 6 weeks and above
-        infantsOfAge.initializeFromQueries(BooleanOperator.AND, getExposedInfants(), getInfants6weeksAndOlder());
-    
-        // infants of age less those who have already had their first DNA PCF
-        CompositionCohortDefinition dueForFirstPCR = new CompositionCohortDefinition();
-        dueForFirstPCR.initializeFromQueries(BooleanOperator.NOT, infantsOfAge, getEIDPatientsTestedUsingFirstDNAPCR());
+        CompositionCohortDefinition infantsDueForFirstPCR = new CompositionCohortDefinition();
+        infantsDueForFirstPCR.setName("Infants Due for 1st DNA PCR at 6 weeks");
+        infantsDueForFirstPCR.addParameter(new Parameter("endDate", "End Date", Date.class));
+        infantsDueForFirstPCR.addParameter(new Parameter("startDate", "Start Date", Date.class));
         
-        return dueForFirstPCR;
+        // all exposed infants
+        infantsDueForFirstPCR.addSearch("allExposedInfants", ReportUtils.map(getExposedInfants(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        // get all exposed infants who are 6 weeks and older
+        infantsDueForFirstPCR.addSearch("exposedInfantsOlderThan6Weeks", ReportUtils.map(getInfants6weeksAndOlder(), "effectiveDate=${endDate}"));
+    
+        // infants who have already had their first DNA PCR done
+        infantsDueForFirstPCR.addSearch("exposedInfantsWith1stPCRDone", ReportUtils.map(getEIDInfantsWithFirstDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        
+        infantsDueForFirstPCR.setCompositionString("(allExposedInfants AND exposedInfantsOlderThan6Weeks) NOT exposedInfantsWith1stPCRDone");
+        return infantsDueForFirstPCR;
     }
+    
+    /**
+     * Exposed infants are due for second PCR:
+     * - when they are 13 months old
+     * - 6 weeks after cessation of breastfeeding
+     * - Must have done a first DNA PCR
+     *
+     * excludes those who have already had a second DNA PCR done
+     * @return
+     */
+    public CohortDefinition getExposedInfantsDueForSecondPCR() {
+        CompositionCohortDefinition infantsDueForFirstPCR = new CompositionCohortDefinition();
+        infantsDueForFirstPCR.setName("Infants Due for 2nd DNA PCR at 13 weeks and cessation of breast feeding");
+        infantsDueForFirstPCR.addParameter(new Parameter("endDate", "End Date", Date.class));
+        infantsDueForFirstPCR.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        
+        // all exposed infants
+        infantsDueForFirstPCR.addSearch("allExposedInfants", ReportUtils.map(getExposedInfants(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        
+        // get all exposed infants who are 13 months and older
+        infantsDueForFirstPCR.addSearch("exposedInfantsOlderThan13Months", ReportUtils.map(getInfants13monthsAndOlder(), "effectiveDate=${endDate}"));
+        
+        // infants who have already had their second DNA PCR done
+        infantsDueForFirstPCR.addSearch("exposedInfantsWith2ndPCRDone", ReportUtils.map(getEIDInfantsWithSecondDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        
+        infantsDueForFirstPCR.setCompositionString("(allExposedInfants AND exposedInfantsOlderThan13Months) NOT exposedInfantsWith2ndPCRDone");
+        return infantsDueForFirstPCR;
+    }
+    
+    /**
+     * Get all EID Infants with first DNA PCR, this method is unlike getEIDPatientsTestedUsingFirstDNAPCR which only returns patients with DNA PCR in a specific month
+     * @return
+     */
+    public CohortDefinition getEIDInfantsWithFirstDNAPCR() {
+        DateObsCohortDefinition dateObsCohortDefinition = new DateObsCohortDefinition();
+        dateObsCohortDefinition.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
+        dateObsCohortDefinition.setQuestion(hivMetadata.getFirstPCRTestDate());
+        dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        return dateObsCohortDefinition;
+    }
+    
+    /**
+     * Get all EID Infants with second DNA PCR, this method is unlike getEIDPatientsTestedUsingFirstDNAPCR which only returns patients with DNA PCR in a specific month
+     * @return
+     */
+    public CohortDefinition getEIDInfantsWithSecondDNAPCR() {
+        DateObsCohortDefinition dateObsCohortDefinition = new DateObsCohortDefinition();
+        dateObsCohortDefinition.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
+        dateObsCohortDefinition.setQuestion(hivMetadata.getSecondPCRTestDate());
+        dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        return dateObsCohortDefinition;
+    }
+    
     
     /**
      * Infants who are 6 weeks and above

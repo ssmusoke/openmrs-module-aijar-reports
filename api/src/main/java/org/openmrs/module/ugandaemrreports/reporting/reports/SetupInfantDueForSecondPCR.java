@@ -18,6 +18,7 @@ import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefiniti
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.RelationshipsForPersonDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -25,17 +26,13 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.InfantFirstDNAPCRDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
-import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,7 +40,7 @@ import org.springframework.stereotype.Component;
  * Infants due for 1st PCR which is at 6 weeks of age
  */
 @Component
-public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
+public class SetupInfantDueForSecondPCR extends UgandaEMRDataExportManager {
 	
 	@Autowired
 	private DataFactory df;
@@ -59,12 +56,12 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getExcelDesignUuid() {
-		return "fd9327b4-9e4a-4afc-95c7-842361018510";
+		return "8bfd016f-cd68-406a-82cd-ffbfb7c72b9b";
 	}
 	
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForFirstPCR.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForSecondPCR.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:7,dataset:PCR");
 		props.put("sortWeight", "5000");
@@ -74,17 +71,17 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "47bbb9e4-a160-47f7-a547-619fcc5dff0d";
+		return "cd8b4a66-f4e6-43b6-a4fd-061e57823cc4";
 	}
 	
 	@Override
 	public String getName() {
-		return "Infants Due for 1st DNA PCR";
+		return "Infants Due for 2nd DNA PCR";
 	}
 	
 	@Override
 	public String getDescription() {
-		return "Infants Due for 1st DNA PCR at 6 weeks of age";
+		return "Infants Due for 2nd DNA PCR at 13 weeks of age or completion of breast feeding";
 	}
 	
 	@Override
@@ -116,7 +113,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("PCR");
 		dsd.addParameters(getParameters());
-		dsd.addRowFilter(eidCohortDefinitionLibrary.getExposedInfantsDueForFirstPCR(), "endDate=${endDate}");
+		dsd.addRowFilter(eidCohortDefinitionLibrary.getExposedInfantsDueForSecondPCR(), "endDate=${endDate}");
 		
 		//identifier
 		// TODO: Standardize this as a external method that takes the UUID of the PatientIdentifier
@@ -131,7 +128,8 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 		dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
 		
 		dsd.addColumn("Mother ART No", sdd.definition("Mother ART No",  hivMetadata.getExposedInfantMotherARTNumber()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("1stPCRDueDate", getFirstDNAPCRDate(6, "w"), "", new CalculationResultDataConverter());
+		dsd.addColumn("1st PCR Date", sdd.definition("1st PCR Date",  hivMetadata.getFirstPCRTestDate()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("1st PCR Results", sdd.definition("1st PCR Results",  hivMetadata.getFirstPCRTestResults()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		
 		return dsd;
 	}

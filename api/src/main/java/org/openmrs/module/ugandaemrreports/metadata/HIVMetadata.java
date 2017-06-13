@@ -50,7 +50,11 @@ public class HIVMetadata extends Metadata {
     public Concept getDateOfCPT() {
         return getConcept("e4ca65ac-dc1d-485d-bdb2-b73c2f892aca");
     }
-
+    
+    public Concept getExposedInfantMotherARTNumber() {
+        return getConcept("85097a99-4126-4ad3-894e-25c1a7e91dee");
+    }
+    
     public Concept getFirstPCRTestDate() {
         return getConcept("51941f01-307f-44ca-9351-401bc008a208");
     }
