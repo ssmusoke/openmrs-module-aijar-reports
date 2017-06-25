@@ -81,6 +81,34 @@
         "label": "Facility Death List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
         "order": 30
+      },{
+        "id": "Exposed Infants Due for 1st PCR",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Exposed Infants Due for 1st PCR",
+        "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
+        "order": 35
+      },{
+        "id": "Exposed Infants Due for 2nd PCR",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Exposed Infants Due for 2nd PCR",
+        "url": "reportingui/runReport.page?reportDefinition=cd8b4a66-f4e6-43b6-a4fd-061e57823cc4",
+        "order": 40
+      },{
+        "id": "Exposed Infants Due for Rapid Test",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Exposed Infants Due for Rapid Test",
+        "url": "reportingui/runReport.page?reportDefinition=1ff3e32c-5526-11e7-b407-15be7a295d59",
+        "order": 45
+      },{
+        "id": "Exposed Infants Due for Appointment",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Exposed Infants Due for Appointment",
+        "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
+        "order": 50
       },
       {
         "id": "Pre-ART Register",

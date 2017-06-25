@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.common.BooleanOperator;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
@@ -74,6 +75,10 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getAnyEncounterOfType(hivMetadata.getEIDSummaryPageEncounterType());
     }
     
+    /**
+     * Get all Exposed Infants
+     * @return
+     */
     public CohortDefinition getExposedInfants() {
         EncounterCohortDefinition eid = new EncounterCohortDefinition();
         eid.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
@@ -114,23 +119,28 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
      * @return
      */
     public CohortDefinition getExposedInfantsDueForSecondPCR() {
-        CompositionCohortDefinition infantsDueForFirstPCR = new CompositionCohortDefinition();
-        infantsDueForFirstPCR.setName("Infants Due for 2nd DNA PCR at 13 weeks and cessation of breast feeding");
-        infantsDueForFirstPCR.addParameter(new Parameter("endDate", "End Date", Date.class));
-        infantsDueForFirstPCR.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        CompositionCohortDefinition infantsDueForSecond = new CompositionCohortDefinition();
+        infantsDueForSecond.setName("Infants Due for 2nd DNA PCR at 13 weeks and cessation of breast feeding");
+        infantsDueForSecond.addParameter(new Parameter("endDate", "End Date", Date.class));
+        infantsDueForSecond.addParameter(new Parameter("startDate", "Start Date", Date.class));
         
-        // all exposed infants
-        infantsDueForFirstPCR.addSearch("allExposedInfants", ReportUtils.map(getExposedInfants(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        // Exposed infants with first DNA PCR done
+        infantsDueForSecond.addSearch("exposedInfantsWith1stPCRDone", ReportUtils.map(getEIDInfantsWithFirstDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         
         // get all exposed infants who are 13 months and older
-        infantsDueForFirstPCR.addSearch("exposedInfantsOlderThan13Months", ReportUtils.map(getInfants13monthsAndOlder(), "effectiveDate=${endDate}"));
+        infantsDueForSecond.addSearch("exposedInfantsOlderThan13Months", ReportUtils.map(getInfants13monthsAndOlder(), "effectiveDate=${endDate}"));
         
         // infants who have already had their second DNA PCR done
-        infantsDueForFirstPCR.addSearch("exposedInfantsWith2ndPCRDone", ReportUtils.map(getEIDInfantsWithSecondDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        infantsDueForSecond.addSearch("exposedInfantsWith2ndPCRDone", ReportUtils.map(getEIDInfantsWithSecondDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         
-        infantsDueForFirstPCR.setCompositionString("(allExposedInfants AND exposedInfantsOlderThan13Months) NOT exposedInfantsWith2ndPCRDone");
-        return infantsDueForFirstPCR;
+        // infants who ceased breast feeding at least 6 weeks ago
+        infantsDueForSecond.addSearch("exposedInfantsCeasedBreastFeeding", ReportUtils.map(getInfantsWhoCeasedBreastFeeding(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        
+        infantsDueForSecond.setCompositionString("(exposedInfantsWith1stPCRDone AND (exposedInfantsOlderThan13Months OR exposedInfantsCeasedBreastFeeding)) NOT exposedInfantsWith2ndPCRDone");
+        return infantsDueForSecond;
     }
+    
+    
     
     /**
      * Get all EID Infants with first DNA PCR, this method is unlike getEIDPatientsTestedUsingFirstDNAPCR which only returns patients with DNA PCR in a specific month
@@ -143,6 +153,20 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        return dateObsCohortDefinition;
+    }
+    
+    /**
+     * Get all EID Infants due for appointment
+     * @return
+     */
+    public CohortDefinition getEIDInfantsDueForAppointment() {
+        DateObsCohortDefinition dateObsCohortDefinition = new DateObsCohortDefinition();
+        dateObsCohortDefinition.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_ENCOUNTER_PAGE)));
+        dateObsCohortDefinition.setQuestion(hivMetadata.getReturnVisitDate());
+        dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.LAST);
         return dateObsCohortDefinition;
     }
     
@@ -212,6 +236,10 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getEIDPatientsTestedUsingSecondDNAPCR() {
         return df.getObsWithEncounters(hivMetadata.getSecondPCRTestDate(), hivMetadata.getEIDSummaryPageEncounterType());
+    }
+    
+    public CohortDefinition getInfantsWhoCeasedBreastFeeding() {
+        return df.getObsWithEncounters(hivMetadata.getBreastFeedingStatus(), hivMetadata.getEIDEncounterPageEncounterType(), Arrays.asList(hivMetadata.getBreastFeedingStatusNoLongerBreastFeeding()));
     }
 
     public CohortDefinition getEIDPatientsTestedUsingABTest() {

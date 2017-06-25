@@ -12,9 +12,9 @@ import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 
 /**
- * The date when the infant is due for the first DNA PCR
+ * A computation from the date of birth of a patient
  */
-public class InfantFirstDNAPCRDateCalculation extends AbstractPatientCalculation {
+public class DateFromBirthDateCalculation extends AbstractPatientCalculation {
 	
 	@Override
 	public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> params,

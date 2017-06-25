@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +25,14 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.InfantFirstDNAPCRDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.DateFromBirthDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherPhoneNumberCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +111,13 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 		return l;
 	}
 	
+	@Override
+	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+		List<ReportDesign> l = new ArrayList<ReportDesign>();
+		l.add(buildReportDesign(reportDefinition));
+		return l;
+	}
+	
 	private DataSetDefinition constructDataSetDefinition() {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("PCR");
@@ -127,23 +133,19 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 		dsd.addColumn("EID No", identifierDef, (String) null);
 		dsd.addColumn("Infant Name", new PreferredNameDataDefinition(), (String) null);
 		dsd.addColumn("Birth Date", new BirthdateDataDefinition(), "", new BirthdateConverter("MMM d, yyyy"));
-		dsd.addColumn("Age (months)", new AgeDataDefinition(), "", new AgeConverter("{m}"));
+		dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{m}"));
 		dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-		
+		dsd.addColumn("Mother Name", new CalculationDataDefinition("Mother Name", new ExposedInfantMotherCalculation()), "", new CalculationResultDataConverter());
+		dsd.addColumn("Mother Phone", new CalculationDataDefinition("Mother Phone", new ExposedInfantMotherPhoneNumberCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother ART No", sdd.definition("Mother ART No",  hivMetadata.getExposedInfantMotherARTNumber()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		
 		dsd.addColumn("1stPCRDueDate", getFirstDNAPCRDate(6, "w"), "", new CalculationResultDataConverter());
 		
 		return dsd;
 	}
 	
-	private RelationshipsForPersonDataDefinition getMother() {
-		RelationshipsForPersonDataDefinition mother = new RelationshipsForPersonDataDefinition();
-		
-		return mother;
-	}
-	
 	private DataDefinition getFirstDNAPCRDate(Integer duration, String durationType) {
-		CalculationDataDefinition cdf = new CalculationDataDefinition("Date of 1st DNA PCR",  new InfantFirstDNAPCRDateCalculation());
+		CalculationDataDefinition cdf = new CalculationDataDefinition("Date of 1st DNA PCR",  new DateFromBirthDateCalculation());
 		cdf.addCalculationParameter("duration", duration);
 		cdf.addCalculationParameter("durationType", durationType);
 		return cdf;
