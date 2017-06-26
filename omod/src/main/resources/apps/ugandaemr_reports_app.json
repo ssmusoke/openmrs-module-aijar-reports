@@ -107,7 +107,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for Appointment",
-        "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
+        "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
         "order": 50
       },
       {
