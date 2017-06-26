@@ -134,12 +134,34 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         infantsDueForSecond.addSearch("exposedInfantsWith2ndPCRDone", ReportUtils.map(getEIDInfantsWithSecondDNAPCR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         
         // infants who ceased breast feeding at least 6 weeks ago
-        infantsDueForSecond.addSearch("exposedInfantsCeasedBreastFeeding", ReportUtils.map(getInfantsWhoCeasedBreastFeeding(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        infantsDueForSecond.addSearch("exposedInfantsCeasedBreastFeeding", ReportUtils.map(getExposedInfantsWhoHaveCeasedBreastFeeding(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         
         infantsDueForSecond.setCompositionString("(exposedInfantsWith1stPCRDone AND (exposedInfantsOlderThan13Months OR exposedInfantsCeasedBreastFeeding)) NOT exposedInfantsWith2ndPCRDone");
         return infantsDueForSecond;
     }
     
+    /**
+     * Exposed infants due for a rapid test must be 18 months and older
+     * @return
+     */
+    public CohortDefinition getExposedInfantsDueForRapidTest() {
+        CompositionCohortDefinition infantsDueForRapidTest = new CompositionCohortDefinition();
+        infantsDueForRapidTest.setName("Infants Due for Rapid Test 18 months");
+        infantsDueForRapidTest.addParameter(new Parameter("endDate", "End Date", Date.class));
+        infantsDueForRapidTest.addParameter(new Parameter("startDate", "Start Date", Date.class));
+    
+        // All Exposed infants
+        infantsDueForRapidTest.addSearch("allExposedInfants", ReportUtils.map(getExposedInfants(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    
+        // get all exposed infants who are 13 months and older
+        infantsDueForRapidTest.addSearch("exposedInfantsOlderThan18Months", ReportUtils.map(getInfants18monthsAndOlder(), "effectiveDate=${endDate}"));
+        
+        // infants who have had a rapid test
+        infantsDueForRapidTest.addSearch("exposedInfantsWithRapidTest", ReportUtils.map(getEIDInfantsWithRapidTest(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    
+        infantsDueForRapidTest.setCompositionString("((allExposedInfants AND exposedInfantsOlderThan18Months) NOT exposedInfantsWithRapidTest");
+        return infantsDueForRapidTest;
+    }
     
     
     /**
@@ -154,6 +176,22 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         return dateObsCohortDefinition;
+    }
+    
+    /**
+     * Get all Exposed Infants with who have ceased breast feeding
+     * @return
+     */
+    public CohortDefinition getExposedInfantsWhoHaveCeasedBreastFeeding() {
+        CodedObsCohortDefinition infantsCeasedBreastFeeding = new CodedObsCohortDefinition();
+        infantsCeasedBreastFeeding.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_ENCOUNTER_PAGE)));
+        infantsCeasedBreastFeeding.setQuestion(hivMetadata.getBreastFeedingStatus());
+        infantsCeasedBreastFeeding.setValueList(Arrays.asList(hivMetadata.getBreastFeedingStatusNoLongerBreastFeeding()));
+        infantsCeasedBreastFeeding.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        infantsCeasedBreastFeeding.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        infantsCeasedBreastFeeding.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        infantsCeasedBreastFeeding.setOperator(SetComparator.IN);
+        return infantsCeasedBreastFeeding;
     }
     
     /**
@@ -178,6 +216,20 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         DateObsCohortDefinition dateObsCohortDefinition = new DateObsCohortDefinition();
         dateObsCohortDefinition.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
         dateObsCohortDefinition.setQuestion(hivMetadata.getSecondPCRTestDate());
+        dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        return dateObsCohortDefinition;
+    }
+    
+    /**
+     * Get all EID Infants with rapid test done
+     * @return
+     */
+    public CohortDefinition getEIDInfantsWithRapidTest() {
+        DateObsCohortDefinition dateObsCohortDefinition = new DateObsCohortDefinition();
+        dateObsCohortDefinition.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.EID_SUMMARY_PAGE)));
+        dateObsCohortDefinition.setQuestion(hivMetadata.get18MonthsRapidPCRTestDate());
         dateObsCohortDefinition.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         dateObsCohortDefinition.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
@@ -301,4 +353,6 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsWithAnEIDNumber() {
         return df.getPatientsWithIdentifierOfType(hivMetadata.getPatientsWithEIDIdentifier());
     }
+    
+   
 }

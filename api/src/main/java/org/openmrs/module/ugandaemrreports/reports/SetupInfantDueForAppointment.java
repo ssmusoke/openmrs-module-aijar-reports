@@ -56,7 +56,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getExcelDesignUuid() {
-		return "edc668a9-fc10-4f5a-be59-3f57352d575c";
+		return "63dd99ad-db0d-4c15-b0da-f1f5676f3062";
 	}
 	
 	@Override
@@ -71,7 +71,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "47bbb9e4-a160-47f7-a547-619fcc5dff0d";
+		return "4f2cd763-6737-4e82-93e0-515d0633c58b";
 	}
 	
 	@Override

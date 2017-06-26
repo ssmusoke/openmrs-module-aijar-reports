@@ -123,7 +123,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("RapidTest");
 		dsd.addParameters(getParameters());
-		dsd.addRowFilter(eidCohortDefinitionLibrary.getExposedInfantsDueForSecondPCR(), "endDate=${endDate}");
+		dsd.addRowFilter(eidCohortDefinitionLibrary.getExposedInfantsDueForRapidTest(), "endDate=${endDate}");
 		
 		//identifier
 		// TODO: Standardize this as a external method that takes the UUID of the PatientIdentifier
