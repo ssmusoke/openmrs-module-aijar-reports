@@ -122,7 +122,7 @@
 				<filtering>true</filtering>
 				<excludes>
 					<!-- exclude binary files from filtering as this causes corruption of the files -->
-					<exclude>org/openmrs/module/ugandaemrreports/reports/*.xls</exclude>
+					<exclude>**/*.xls</exclude>
 				</excludes>
 			</resource>
 			<!-- Add the binary files to the omod without filtering -->
@@ -130,7 +130,7 @@
 				<directory>src/main/resources</directory>
 				<filtering>false</filtering>
 				<includes>
-					<include>org/openmrs/module/ugandaemrreports/reports/*.xls</include>
+					<include>**/*.xls</include>
 				</includes>
 			</resource>
 		</resources>
