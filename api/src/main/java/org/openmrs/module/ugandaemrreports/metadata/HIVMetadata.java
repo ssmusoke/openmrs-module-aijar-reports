@@ -50,7 +50,11 @@ public class HIVMetadata extends Metadata {
     public Concept getDateOfCPT() {
         return getConcept("e4ca65ac-dc1d-485d-bdb2-b73c2f892aca");
     }
-
+    
+    public Concept getExposedInfantMotherARTNumber() {
+        return getConcept("85097a99-4126-4ad3-894e-25c1a7e91dee");
+    }
+    
     public Concept getFirstPCRTestDate() {
         return getConcept("51941f01-307f-44ca-9351-401bc008a208");
     }
@@ -154,6 +158,12 @@ public class HIVMetadata extends Metadata {
     public List<EncounterType> getEIDSummaryPageEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "9fcfcc91-ad60-4d84-9710-11cc25258719"));
+        return l;
+    }
+    
+    public List<EncounterType> getEIDEncounterPageEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "4345dacb-909d-429c-99aa-045f2db77e2b"));
         return l;
     }
 
@@ -474,5 +484,13 @@ public class HIVMetadata extends Metadata {
 
     public Concept getViralLoadCopies() {
         return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
+    }
+	
+	public Concept getBreastFeedingStatus() {
+        return getConcept("151283c0-8ef7-442f-8b03-3d7382a9d9cd");
+	}
+	
+	public Concept getBreastFeedingStatusNoLongerBreastFeeding() {
+        return getConcept("0f46cbdc-54cb-40bd-8f75-72abcf6fc852");
     }
 }

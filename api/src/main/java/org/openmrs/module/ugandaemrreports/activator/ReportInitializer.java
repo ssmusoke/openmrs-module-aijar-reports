@@ -37,6 +37,7 @@ public class ReportInitializer implements Initializer {
 	@Override
 	public synchronized void started() {
 		removeOldReports();
+		
 		ReportManagerUtil.setupAllReports(UgandaEMRReportManager.class);
 		ReportUtil.updateGlobalProperty(ReportingConstants.GLOBAL_PROPERTY_DATA_EVALUATION_BATCH_SIZE, "-1");
 	}
