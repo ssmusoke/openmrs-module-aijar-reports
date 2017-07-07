@@ -15,6 +15,8 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Concept;
 import org.openmrs.Location;
+import org.openmrs.Person;
+import org.openmrs.PersonAttribute;
 import org.openmrs.calculation.result.CalculationResult;
 import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.reporting.data.converter.DataConverter;
@@ -63,6 +65,12 @@ public class CalculationResultDataConverter implements DataConverter {
         else if (value instanceof SimpleResult) {
             return ((SimpleResult) value).getValue();
         }
+        else if (value instanceof Person) {
+            return ((Person) value).getPersonName().getFullName();
+        }
+        else if (value instanceof PersonAttribute) {
+            return ((PersonAttribute) value).getValue();
+        }
 
 
         return null;
@@ -79,7 +87,7 @@ public class CalculationResultDataConverter implements DataConverter {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
         return date == null?"":dateFormatter.format(date);
     }
 }
