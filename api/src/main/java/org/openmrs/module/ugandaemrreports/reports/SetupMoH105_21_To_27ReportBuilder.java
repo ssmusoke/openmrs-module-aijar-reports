@@ -181,7 +181,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         String params = "startDate=${startDate},endDate=${endDate}";
 
         //start building the columns for the report
-        EmrReportingUtils.addRow(dsd, "P1-A", "P1: Post Natal Attendances - Age group", ReportUtils.map(indicatorLibrary.pncAttendances(), params), noTotalsColumns, Arrays.asList("01","02","03"));
+        EmrReportingUtils.addRow(dsd, "P1", "P1: Post Natal Attendances - Age group", ReportUtils.map(indicatorLibrary.pncAttendances(), params), noTotalsColumns, Arrays.asList("01","02","03"));
         dsd.addColumn("P1-6H", "P1-6 Hours", ReportUtils.map(indicatorLibrary.pncAttendances("1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
         dsd.addColumn("P1-6D", "P1-6 Days", ReportUtils.map(indicatorLibrary.pncAttendances("1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
         dsd.addColumn("P1-6W", "P1-6 Weeks", ReportUtils.map(indicatorLibrary.pncAttendances("1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
