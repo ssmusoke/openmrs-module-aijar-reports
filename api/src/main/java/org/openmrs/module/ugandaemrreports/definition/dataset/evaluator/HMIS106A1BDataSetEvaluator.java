@@ -77,14 +77,6 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
         List<LocalDate> q7 = Periods.subtractQuarters(date, 24);
 
         List<String> periods = new ArrayList<String>();
-        List<String> endDates = new ArrayList<String>();
-        endDates.add(q1.get(1).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(2).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(3).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(4).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(5).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(6).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(7).toString("yyyy-MM-dd"));
 
         periods.add(q1.get(0).toString("MMM") + " - " + q1.get(1).toString("MMM") + " " + q1.get(1).toString("yyyy"));
         periods.add(q2.get(0).toString("MMM") + " - " + q2.get(1).toString("MMM") + " " + q2.get(1).toString("yyyy"));
@@ -115,12 +107,6 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
 
         Map<String, String> results = evaluationService.evaluateToMap(q, String.class, String.class, evaluationContext);
 
-        CohortDefinition pregnant = hivCohortDefinitionLibrary.getPregnantPatientsAtArtStart();
-        CohortDefinition lactating = hivCohortDefinitionLibrary.getLactatingPatientsAtArtStart();
-        CohortDefinition pregnantOrLactating = df.getPatientsInAny(pregnant, lactating);
-
-        Cohort enrolledViaPMTCT = Context.getService(CohortDefinitionService.class).evaluate(pregnantOrLactating, null);
-
         CohortDefinition artTransferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtRegimenTransferInDate(), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition artTransferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
 
@@ -135,6 +121,7 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
         Map<Integer, Object> baselineCD4;
         Map<Integer, Object> baselineCD4Mothers;
 
+
         int months = 6;
         DecimalFormat df = new DecimalFormat("###.##");
 
@@ -144,13 +131,17 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
             }
             DataSetRow all = new DataSetRow();
             DataSetRow eMTCT = new DataSetRow();
-            Map<Integer, Object> above5AtArtStart = getPatientsAged5AndAbove(results.get(quarters.get(i)), endDates.get(i));
             Cohort allStarted = new Cohort(results.get(quarters.get(i)));
 
             Collection startedArt = CollectionUtils.subtract(allStarted.getMemberIds(), transferInPatients.getMemberIds());
             Collection transferIn = CollectionUtils.intersection(allStarted.getMemberIds(), transferInPatients.getMemberIds());
+            Collection enrolledViaPMTCT = new HashSet();
 
-            Collection allMothers = CollectionUtils.intersection(allStarted.getMemberIds(), enrolledViaPMTCT.getMemberIds());
+            if (allStarted.size() > 0) {
+                enrolledViaPMTCT = getPregnantAtArtStart(Joiner.on(',').join(allStarted.getMemberIds())).keySet();
+            }
+
+            Collection allMothers = CollectionUtils.intersection(allStarted.getMemberIds(), enrolledViaPMTCT);
             Collection allMotherStarted = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
             Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
 
@@ -287,8 +278,9 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
         return patientDataService.evaluate(definition, context).getData();
     }
 
-    private Map<Integer, Object> getPatientsAged5AndAbove(String cohort, String endDate) throws EvaluationException {
-        String sql = String.format("select person_id,birthdate, YEAR('%s') - YEAR(birthdate) - (RIGHT('%s', 5) < RIGHT(birthdate, 5)) as age from person where person_id in(%s) and  birthdate is not null HAVING  age > 5", endDate, endDate, cohort);
+    private Map<Integer, Object> getPregnantAtArtStart(String cohort) throws EvaluationException {
+        String sql = String.format("select person_id,value_coded from (select person_id,value_coded from obs where concept_id = 99072 and value_coded = 90003 group by person_id union all select person_id,value_coded from obs where concept_id = 99603 and value_coded = 90003 group by person_id) A where person_id in (%s) group by person_id", cohort);
+        System.out.println(sql);
         SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
         definition.setSql(sql);
         EvaluationContext context = new EvaluationContext();

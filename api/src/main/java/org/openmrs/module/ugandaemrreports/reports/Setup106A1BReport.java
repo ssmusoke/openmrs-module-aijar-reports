@@ -77,6 +77,6 @@ public class Setup106A1BReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.42";
+        return "0.43";
     }
 }
