@@ -71,6 +71,7 @@ public class SetupWeeklyOptionBPlusSMSReport extends UgandaEMRDataExportManager 
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
+        dsd.setName("indicators");
     
         dsd.addColumn("Total No ANC Visits 1", "1a", ReportUtils.map(moh105IndicatorLibrary.anc1stVisit(),params),  (String) null);
         dsd.addColumn("Total No ANC Tested", "2b", ReportUtils.map(moh105IndicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(),params),  (String) null);
