@@ -11,9 +11,10 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.ugandaemrreports.reporting.reports;
+package org.openmrs.module.ugandaemrreports.reports;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +27,6 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +52,11 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         return "1ef6634b-3467-470b-9db9-61283ecc539b";
     }
 
+    @Override
+    public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
+        return Arrays.asList(buildReportDesign(reportDefinition));
+    }    
+    
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
      *
@@ -60,7 +65,7 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "105OPDDiagnoses-1.1.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS 105-1.xls");
     }
 
     @Override
@@ -91,6 +96,7 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForOutPatient(), "effectiveDate=${endDate}"));
+        dsd.addDimension("age1", ReportUtils.map(dimensionLibrary.drugUseAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
@@ -129,8 +135,8 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         addRowWithColumns(dsd, "1.3.2.28","28. Pneumonia", indicatorLibrary.opdPneumoniaDiagnosis());
         addRowWithColumns(dsd, "1.3.2.29","29. Skin Diseases", indicatorLibrary.opdSkinDiseasesDiagnosis());
         addRowWithColumns(dsd, "1.3.2.30","30. New TB cases diagnosed - Bacteriologically confirmed", indicatorLibrary.opdNewTbCasesDiagnosedBacteriologicallyConfirmedDiagnosis());
-        addRowWithColumns(dsd, "1.3.2.30","30. New TB cases diagnosed - Clinically Diagnosed", indicatorLibrary.opdNewTbCasesDiagnosedClinicallyDiagnosedDiagnosis());
-        addRowWithColumns(dsd, "1.3.2.30","30. New TB cases diagnosed - EPTB", indicatorLibrary.opdNewTbCasesDiagnosedEptbDiagnosis());
+        addRowWithColumns(dsd, "1.3.2.128","128. New TB cases diagnosed - Clinically Diagnosed", indicatorLibrary.opdNewTbCasesDiagnosedClinicallyDiagnosedDiagnosis());
+        addRowWithColumns(dsd, "1.3.2.129","129. New TB cases diagnosed - EPTB", indicatorLibrary.opdNewTbCasesDiagnosedEptbDiagnosis());
         addRowWithColumns(dsd, "1.3.2.31","31. Leprosy", indicatorLibrary.opdLeprosyDiagnosis());
         addRowWithColumns(dsd, "1.3.2.32","32. Tuberculosis MDR/XDR cases started on treatment", indicatorLibrary.tuberculosisMdrXdrCasesStartedOnTreatment());
         addRowWithColumns(dsd, "1.3.2.33","33. Tetanus", indicatorLibrary.opdTetanusDiagnosis());
@@ -190,14 +196,14 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         addRowWithColumns(dsd, "1.3.4.87","87. Hypertension", indicatorLibrary.opdHypertensionDiagnosis());
         addRowWithColumns(dsd, "1.3.4.88","88. Heart failure", indicatorLibrary.opdHeartFailureDiagnosis());
         addRowWithColumns(dsd, "1.3.4.89","89. Ischemic Heart Diseases", indicatorLibrary.opdIschemicHeartDiseasesDiagnosis());
-        addRowWithColumns(dsd, "1.3.4.88","88. Rheumatic Heart Diseases", indicatorLibrary.opdRheumaticHeartDiseasesDiagnosis());
+        addRowWithColumns(dsd, "1.3.4.124","124. Rheumatic Heart Diseases", indicatorLibrary.opdRheumaticHeartDiseasesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.90","90. Chronic Heart Diseases", indicatorLibrary.opdChronicHeartDiseasesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.91","91. Other Cardiovascular Diseases", indicatorLibrary.opdOtherCardiovascularDiseasesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.92","92. Diabetes mellitus", indicatorLibrary.opdDiabetesMellitusDiagnosis());
         addRowWithColumns(dsd, "1.3.4.93","93. Thyroid Disease", indicatorLibrary.opdThyroidDiseaseDiagnosis());
         addRowWithColumns(dsd, "1.3.4.94","94. Other Endocrine and Metabolic Diseases", indicatorLibrary.opdOtherEndocrineAndMetabolicDiseasesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.95","95. Severe Acute Malnutrition with oedema", indicatorLibrary.opdSevereAcuteMalnutritionWithOedemaDiagnosis());
-        addRowWithColumns(dsd, "1.3.4.95","95. Severe Acute Malnutrition Without oedema", indicatorLibrary.opdSevereAcuteMalnutritionWithoutOedemaDiagnosis());
+        addRowWithColumns(dsd, "1.3.4.123","123. Severe Acute Malnutrition Without oedema", indicatorLibrary.opdSevereAcuteMalnutritionWithoutOedemaDiagnosis());
         addRowWithColumns(dsd, "1.3.4.96","96. Mild Acute Malnutrition", indicatorLibrary.opdMildAcuteMalnutritionDiagnosis());
         addRowWithColumns(dsd, "1.3.4.97","97. Jaw injuries", indicatorLibrary.opdJawInjuriesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.98","98. Injuries- Road traffic Accidents", indicatorLibrary.opdInjuriesRoadTrafficAccidentsDiagnosis());
@@ -205,8 +211,9 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         addRowWithColumns(dsd, "1.3.4.100","100. Injuries due to Gender based violence", indicatorLibrary.opdInjuriesDueToGenderBasedViolenceDiagnosis());
         addRowWithColumns(dsd, "1.3.4.101","101. Injuries (Trauma due to other causes)", indicatorLibrary.opdInjuriesTraumaDueToOtherCausesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.102","102. Animal bites Domestic", indicatorLibrary.opdAnimalBitesDomesticDiagnosis());
-        addRowWithColumns(dsd, "1.3.4.102","102. Animal bites Wild", indicatorLibrary.opdAnimalBitesWildDiagnosis());
-        addRowWithColumns(dsd, "1.3.4.102","102. Animal bites Insects", indicatorLibrary.opdAnimalBitesInsectsDiagnosis());
+        addRowWithColumns(dsd, "1.3.4.125","125. Animal bites Wild", indicatorLibrary.opdAnimalBitesWildDiagnosis());
+        addRowWithColumns(dsd, "1.3.4.126","126. Animal bites Insects", indicatorLibrary.opdAnimalBitesInsectsDiagnosis());
+        addRowWithColumns(dsd, "1.3.4.127","127. Animal bites (Suspected Rabies)", indicatorLibrary.opdAnimalBitesSuspectedRabiesDiagnosis());
         addRowWithColumns(dsd, "1.3.4.103","103. Snake bites", indicatorLibrary.opdSnakeBitesDiagnosis());
         addRowWithColumns(dsd, "1.3.5.104","104. Tooth extractions", indicatorLibrary.opdToothExtractionsDiagnosis());
         addRowWithColumns(dsd, "1.3.5.105","105. Dental Fillings", indicatorLibrary.opdDentalFillingsDiagnosis());
@@ -228,13 +235,18 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         addRowWithColumns(dsd, "1.3.8.121","121. Deaths in OPD", indicatorLibrary.opdDeathsInOpdDiagnosis());
         addRowWithColumns(dsd, "1.3.8.122","122. All others", indicatorLibrary.opdAllOthersDiagnosis());
         addRowWithColumns(dsd, "ALL_DIAGNOSES","All diagnoses", indicatorLibrary.allDiagnoses());
-        addRowWithColumns(dsd, "1.3.9.R1","R1-Alcohol use", indicatorLibrary.alcoholUsers());
-        addRowWithColumns(dsd, "1.3.9.R2","R2-Tobacco use", indicatorLibrary.tobaccoUsers());
+        addRowWithDrugUseColumns(dsd, "1.3.9.R1","R1-Alcohol use", indicatorLibrary.alcoholUsers());
+        addRowWithDrugUseColumns(dsd, "1.3.9.R2","R2-Tobacco use", indicatorLibrary.tobaccoUsers());
         addRowWithColumns(dsd, "1.3.10.B1","B1-Severely Underweight (BMI<16)", indicatorLibrary.severelyUnderweightBmi());
         addRowWithColumns(dsd, "1.3.10.B2","B2-Underweight (16<=BMI <18.5)", indicatorLibrary.underweightBmi());
         addRowWithColumns(dsd, "1.3.10.B3","B3-Normal (18.5<= BMI <=25)", indicatorLibrary.normalBmi());
         addRowWithColumns(dsd, "1.3.10.B4","B4-Over weight (25< BMI <=30", indicatorLibrary.overweightBmi());
         addRowWithColumns(dsd, "1.3.10.B5","B5-Obese ( BMI>30)", indicatorLibrary.obeseBmi());
+        addRowWithColumns(dsd, "1.2T", "1.2 OUTPATIENT REFERRALS - Referrals to unit", indicatorLibrary.referralsToOPDUnit());
+        addRowWithColumns(dsd, "1.2F", "1.2 OUTPATIENT REFERRALS - Referrals from unit", indicatorLibrary.referralFromOPDUnit());
+        addRowWithColumns(dsd, "1.1N", "1.1 OUTPATIENT ATTENDANCE - New Attendance", indicatorLibrary.newOutPatientAttendance());
+        addRowWithColumns(dsd, "1.1R", "1.1 OUTPATIENT ATTENDANCE - Re-attendance", indicatorLibrary.repeatOutPatientAttendance());
+        addRowWithColumns(dsd, "1.1T", "1.1 OUTPATIENT ATTENDANCE - Total attendance", indicatorLibrary.totalOutPatientAttendance());
 
         //connect the report definition to the dsd
         rd.addDataSetDefinition("1.3-OutPatientDiagnosis", Mapped.mapStraightThrough(dsd));
@@ -253,6 +265,18 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
         addIndicator(dsd, key + "dM", label + " (>=60) Male", cohortIndicator, "gender=M|age=GreaterOrEqualTo60Yrs");
         addIndicator(dsd, key + "dF", label + " (>=60) Female", cohortIndicator, "gender=F|age=GreaterOrEqualTo60Yrs");
         addIndicator(dsd, key + "e", label + " (Total) ", cohortIndicator, "");
+       
+    }
+
+    public void addRowWithDrugUseColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
+       	
+        addIndicator(dsd, key + "aM", label + " (Between 10 Years and 19 Years) Male", cohortIndicator, "gender=M|age1=Between10And19Yrs");
+        addIndicator(dsd, key + "aF", label + " (Between 10 Years and 19 Years) Female", cohortIndicator, "gender=F|age1=Between10And19Yrs");
+        addIndicator(dsd, key + "bM", label + " (Between 20 Years and 24 Years) Male", cohortIndicator, "gender=M|age1=Between20And24Yrs");
+        addIndicator(dsd, key + "bF", label + " (Between 20 Years and 24 Years) Female", cohortIndicator, "gender=F|age1=Between20And24Yrs");
+        addIndicator(dsd, key + "cM", label + " (>=25) Male", cohortIndicator, "gender=M|age=GreaterOrEqualTo25Yrs");
+        addIndicator(dsd, key + "cF", label + " (>=25) Female", cohortIndicator, "gender=F|age=GreaterOrEqualTo25Yrs");
+        addIndicator(dsd, key + "d", label + " (Total) ", cohortIndicator, "");
        
     }
     

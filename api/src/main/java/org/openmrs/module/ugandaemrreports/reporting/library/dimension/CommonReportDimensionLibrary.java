@@ -94,4 +94,15 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("GreaterOrEqualTo60Yrs", map(commonCohortLibrary.agedAtLeast(60), "effectiveDate=${endDate}"));
         return dim;
 	}
+
+	public CohortDefinitionDimension drugUseAgeGroups() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (10-19Yrs, 20-24Yrs, >=25)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Between10And19Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(10, 19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between20And24Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(20, 24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterOrEqualTo25Yrs", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
+        return dim;
+	}
+
 }

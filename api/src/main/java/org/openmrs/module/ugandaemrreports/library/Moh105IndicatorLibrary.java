@@ -2003,6 +2003,17 @@ public class Moh105IndicatorLibrary {
 		        Dictionary.getConcept(Metadata.Concept.ANIMAL_BITES_INSECTS)),
 		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
+	/**
+	 * 1.3.4.102 Animal bites Insects
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator opdAnimalBitesSuspectedRabiesDiagnosis() {
+		return cohortIndicator("Animal bites Insects",
+		    map(cclibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		        Dictionary.getConcept(Metadata.Concept.DOG_BITE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
 	
 	/**
 	 * 1.3.4.103 Snake bites

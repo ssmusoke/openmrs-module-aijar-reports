@@ -182,6 +182,7 @@ public class Metadata {
 		public static final String ANIMAL_BITES_DOMESTIC = "edfcdabf-8c97-40f7-ac09-05f6419f27ba";
 		public static final String ANIMAL_BITES_WILD = "1fed0451-a8e5-4f00-a5d0-5ef4eda73ccc";
 		public static final String ANIMAL_BITES_INSECTS = "116758AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		public static final String DOG_BITE = "dc68ac75-30ab-102d-86b0-7a5022ba4115";
 		public static final String SNAKE_BITES = "126323AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		public static final String TOOTH_EXTRACTIONS = "5b736186-3d5b-4401-83cb-d3f2b04d1695";
 		public static final String DENTAL_FILLINGS = "3d314ee1-ad7e-4cea-8f9b-53706a19d41c";
