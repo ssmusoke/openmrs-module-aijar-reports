@@ -133,6 +133,14 @@
         "order": 11
       },
       {
+        "id": "TB Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "TB Register",
+        "url": "reportingui/runReport.page?reportDefinition=00002c21-2c46-4ea1-9993-4ea63c3d7e06",
+        "order": 12
+      },
+      {
         "id": "Case Based Surveillance EID Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
@@ -171,7 +179,24 @@
         "label": "PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
         "order": 21
+      },
+      {
+        "id": "HMIS 105 - 1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 - 1",
+        "url": "reportingui/runReport.page?reportDefinition=85b9a42b-d16b-4b3c-992f-adbb806f0b00",
+        "order": 16
+      },
+      {
+        "id": "HMIS 106 A Refactored",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106 A Refactored",
+        "url": "reportingui/runReport.page?reportDefinition=c80ee1d9-9648-4749-bedc-03cc61b74399",
+        "order": 17
       }
+      
     ]
   }
 ]
