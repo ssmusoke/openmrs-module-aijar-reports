@@ -1,5 +1,7 @@
 package org.openmrs.module.ugandaemrreports.lucene;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Table;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -7,12 +9,10 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.module.ugandaemrreports.common.NormalizedObs;
 
 import java.io.IOException;
@@ -42,32 +42,107 @@ public class UgandaEMRLucene {
         titleType.setTokenized(true);
 
         Document doc1 = new Document();
-        for (Map.Entry<String, String> column : getColumnMappings().entrySet()) {
-            Field titleField1 = new Field(column.getKey(), String.valueOf(""), titleType);
+
+        ObjectMapper oMapper = new ObjectMapper();
+
+        Map<String, Object> map = oMapper.convertValue(doc, Map.class);
+
+        for (Map.Entry<String, Object> column : map.entrySet()) {
+            Field titleField1 = new Field(column.getKey(), String.valueOf(column.getValue()), titleType);
             doc1.add(titleField1);
         }
         return doc1;
     }
 
-    public static List<Map<String, String>> getData(String indexDirectory, String column, String value, List<String> columns) throws IOException, ParseException {
+    public static List<Map<String, String>> getData(String indexDirectory, String column, String value, Collection<String> columns) throws IOException, ParseException {
         List<Map<String, String>> result = new ArrayList<>();
         try {
             IndexSearcher searcher = createSearcher(indexDirectory);
             QueryParser qp = new QueryParser(column, new StandardAnalyzer());
             Query query = qp.parse(value);
-            TopDocs hits = searcher.search(query, 10000);
+            int total = searcher.count(query);
+            TopDocs hits = searcher.search(query, total);
             for (ScoreDoc sd : hits.scoreDocs) {
-                Document d = searcher.doc(sd.doc);
-                Map<String, String> data = new HashMap<>();
-                for (String c : columns) {
-                    data.put(c, d.get(c));
-                }
-                result.add(data);
+                result.add(convertDocumentToMap(searcher.doc(sd.doc), columns));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public static List<Map<String, String>> getData(String indexDirectory, String column, Map<String, String> search, Collection<String> columns) throws IOException, ParseException {
+        List<Map<String, String>> result = new ArrayList<>();
+        String searchString = Joiner.on(",").withKeyValueSeparator(":").join(search);
+        try {
+            IndexSearcher searcher = createSearcher(indexDirectory);
+            QueryParser qp = new QueryParser(column, new StandardAnalyzer());
+            int total = searcher.count(qp.parse(searchString));
+            TopDocs hits = searcher.search(qp.parse(searchString), total);
+            for (ScoreDoc sd : hits.scoreDocs) {
+                result.add(convertDocumentToMap(searcher.doc(sd.doc), columns));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /*public static List<NormalizedObs> getData(String indexDirectory, String column, String value) throws IOException, ParseException {
+        List<NormalizedObs> result = new ArrayList<>();
+        try {
+            IndexSearcher searcher = createSearcher(indexDirectory);
+            QueryParser qp = new QueryParser(column, new StandardAnalyzer());
+            Query query = qp.parse(value);
+            int total = searcher.count(query);
+            TopDocs hits = searcher.search(query, total);
+            for (ScoreDoc sd : hits.scoreDocs) {
+                result.add(convert(searcher.doc(sd.doc)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }*/
+
+    public static List<NormalizedObs> getData(String indexDirectory, String column, String search) throws IOException, ParseException {
+        List<NormalizedObs> result = new ArrayList<>();
+
+        try {
+            IndexSearcher searcher = createSearcher(indexDirectory);
+            QueryParser qp = new QueryParser(column, new StandardAnalyzer());
+            int total = searcher.count(qp.parse(search));
+            TopDocs hits = searcher.search(qp.parse(search), 1);
+            System.out.println(hits.totalHits);
+            for (ScoreDoc sd : hits.scoreDocs) {
+                result.add(convert(searcher.doc(sd.doc)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public static NormalizedObs convert(Map<String, String> object) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.convertValue(object, NormalizedObs.class);
+    }
+
+    private static NormalizedObs convert(Document document) throws IOException {
+        Map<String, String> data = new HashMap<>();
+        for (String c : getColumnMappings().values()) {
+            data.put(c, document.get(c).equals("null") ? null : document.get(c));
+        }
+        return convert(data);
+    }
+
+    public static Map<String, String> convertDocumentToMap(Document document, Collection<String> columns) {
+        Map<String, String> data = new HashMap<>();
+        for (String c : columns) {
+            data.put(c, document.get(c).equals("null") ? null : document.get(c));
+        }
+
+        return data;
     }
 
     public static Map<String, String> getColumnMappings() {
