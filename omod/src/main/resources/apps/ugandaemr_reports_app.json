@@ -117,7 +117,8 @@
         "label": "Pre-ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
         "order": 5
-      },{
+      },
+	  {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -131,6 +132,14 @@
         "label": "Maternity Register",
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
+      },
+	  {
+        "id": "OPD Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "OPD Register",
+        "url": "reportingui/runReport.page?reportDefinition=df041e1d-0043-4a01-815b-c9f66edcac7e",
+        "order": 13
       },
       {
         "id": "Case Based Surveillance EID Report",
