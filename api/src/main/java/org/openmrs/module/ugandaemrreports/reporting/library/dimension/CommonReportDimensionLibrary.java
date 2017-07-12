@@ -14,15 +14,15 @@
 
 package org.openmrs.module.ugandaemrreports.reporting.library.dimension;
 
+import static org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils.map;
+
+import java.util.Date;
+
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
-
-import static org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils.map;
 
 
 /**
@@ -87,4 +87,35 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${onDate}"));
         return dim;
     }
+	public CohortDefinitionDimension standardAgeGroupsForMaternity() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (10-19, 20-24, >=25)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Between10And19", map(commonCohortLibrary.agedAtLeastAgedAtMost(10,19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between20And24", map(commonCohortLibrary.agedAtLeastAgedAtMost(20,24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterOrEqualTo25", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
+        return dim;
+	}
+
+	public CohortDefinitionDimension standardAgeGroupsForOutPatient() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (0-28Days, 29Days-4Yrs, 5-59Yrs, >=60)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Between0And28Days", map(commonCohortLibrary.agedAtLeastDaysAgedAtMostDays(0,28), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between29DaysAnd4Yrs", map(commonCohortLibrary.agedAtLeastDaysAgedAtMostYears(29,4), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between5And59Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(5, 59), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterOrEqualTo60Yrs", map(commonCohortLibrary.agedAtLeast(60), "effectiveDate=${endDate}"));
+        return dim;
+	}
+
+	public CohortDefinitionDimension drugUseAgeGroups() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (10-19Yrs, 20-24Yrs, >=25)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Between10And19Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(10, 19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between20And24Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(20, 24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterOrEqualTo25Yrs", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
+        return dim;
+	}
+
 }
