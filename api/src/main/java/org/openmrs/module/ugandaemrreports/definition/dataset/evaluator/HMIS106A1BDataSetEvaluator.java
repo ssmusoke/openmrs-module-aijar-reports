@@ -1,19 +1,20 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.math3.stat.StatUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.Cohort;
-import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.definition.*;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
-import org.openmrs.module.reporting.common.RangeComparator;
-import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.dataset.DataSet;
@@ -78,14 +79,6 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
         List<LocalDate> q7 = Periods.subtractQuarters(date, 24);
 
         List<String> periods = new ArrayList<String>();
-        List<String> endDates = new ArrayList<String>();
-        endDates.add(q1.get(1).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(2).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(3).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(4).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(5).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(6).toString("yyyy-MM-dd"));
-        endDates.add(q1.get(7).toString("yyyy-MM-dd"));
 
         periods.add(q1.get(0).toString("MMM") + " - " + q1.get(1).toString("MMM") + " " + q1.get(1).toString("yyyy"));
         periods.add(q2.get(0).toString("MMM") + " - " + q2.get(1).toString("MMM") + " " + q2.get(1).toString("yyyy"));
@@ -97,30 +90,26 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
 
         List<String> quarters = new ArrayList<String>();
 
-        quarters.add(String.valueOf(q1.get(0).getYear()) + "Q" + String.valueOf(((q1.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q2.get(0).getYear()) + "Q" + String.valueOf(((q2.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q3.get(0).getYear()) + "Q" + String.valueOf(((q3.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q4.get(0).getYear()) + "Q" + String.valueOf(((q4.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q5.get(0).getYear()) + "Q" + String.valueOf(((q5.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q6.get(0).getYear()) + "Q" + String.valueOf(((q6.get(0).getMonthOfYear() - 1) / 3) + 1));
-        quarters.add(String.valueOf(q7.get(0).getYear()) + "Q" + String.valueOf(((q7.get(0).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q1.get(0).getYear()) + "Q" + String.valueOf(((q1.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q2.get(0).getYear()) + "Q" + String.valueOf(((q2.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q3.get(0).getYear()) + "Q" + String.valueOf(((q3.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q4.get(0).getYear()) + "Q" + String.valueOf(((q4.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q5.get(0).getYear()) + "Q" + String.valueOf(((q5.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q6.get(0).getYear()) + "Q" + String.valueOf(((q6.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q7.get(0).getYear()) + "Q" + String.valueOf(((q7.get(1).getMonthOfYear() - 1) / 3) + 1));
 
         String query = "SELECT\n" +
-                "  CONCAT_WS('',YEAR(value_datetime),'Q',quarter(value_datetime)),\n" +
-                "  group_concat(DISTINCT person_id)\n" +
-                "FROM obs\n" +
-                "WHERE concept_id = 99161\n" +
-                "GROUP BY CONCAT_WS('',YEAR(value_datetime),'Q',quarter(value_datetime))";
+                "     person_id,\n" +
+                "     CONCAT_WS('', YEAR(value_datetime), 'Q', quarter(value_datetime)) AS q\n" +
+                "   FROM obs\n" +
+                "   WHERE concept_id = 99161 and voided = 0";
         SqlQueryBuilder q = new SqlQueryBuilder();
         q.append(query);
 
-        Map<String, String> results = evaluationService.evaluateToMap(q, String.class, String.class, evaluationContext);
+        List<Object[]> results = evaluationService.evaluateToList(q, evaluationContext);
+        Multimap<String, Integer> finalData = convert(results);
 
-        CohortDefinition pregnant = hivCohortDefinitionLibrary.getPregnantPatientsAtArtStart();
-        CohortDefinition lactating = hivCohortDefinitionLibrary.getLactatingPatientsAtArtStart();
-        CohortDefinition pregnantOrLactating = df.getPatientsInAny(pregnant, lactating);
-
-        Cohort enrolledViaPMTCT = Context.getService(CohortDefinitionService.class).evaluate(pregnantOrLactating, null);
+        List<Integer> enrolledViaPMTCT = getPregnantAtArtStart(evaluationContext);
 
         CohortDefinition artTransferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtRegimenTransferInDate(), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition artTransferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -133,8 +122,9 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
 
         Cohort transferInPatients = Context.getService(CohortDefinitionService.class).evaluate(artTransferIn, null);
 
-        Map<Integer, Object> baselineCD4;
-        Map<Integer, Object> baselineCD4Mothers;
+        Map<Integer, Object> baselineCD4 = new HashMap<Integer, Object>();
+        Map<Integer, Object> baselineCD4Mothers = new HashMap<Integer, Object>();
+
 
         int months = 6;
         DecimalFormat df = new DecimalFormat("###.##");
@@ -145,15 +135,10 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
             }
             DataSetRow all = new DataSetRow();
             DataSetRow eMTCT = new DataSetRow();
-            Map<Integer, Object> above5AtArtStart = getPatientsAged5AndAbove(results.get(quarters.get(i)), endDates.get(i));
-            Cohort allStarted = new Cohort(results.get(quarters.get(i)));
+            Set<Integer> allStarted = new HashSet<Integer>(finalData.get(quarters.get(i)));
 
-            Collection startedArt = CollectionUtils.subtract(allStarted.getMemberIds(), transferInPatients.getMemberIds());
-            Collection transferIn = CollectionUtils.intersection(allStarted.getMemberIds(), transferInPatients.getMemberIds());
 
-            Collection allMothers = CollectionUtils.intersection(allStarted.getMemberIds(), enrolledViaPMTCT.getMemberIds());
-            Collection allMotherStarted = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
-            Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
+            Collection allMothers = CollectionUtils.intersection(allStarted, enrolledViaPMTCT);
 
 
             pdh.addCol(all, "patients", "All patients " + String.valueOf(months) + " months");
@@ -162,25 +147,50 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
             pdh.addCol(all, "when", periods.get(i));
             pdh.addCol(eMTCT, "when", periods.get(i));
 
-            pdh.addCol(all, "enrolled", startedArt.size());
-            pdh.addCol(eMTCT, "enrolled", allMotherStarted.size());
+            if (allStarted.size() > 0) {
+                Collection startedArt = CollectionUtils.subtract(allStarted, transferInPatients.getMemberIds());
+                Collection transferIn = CollectionUtils.intersection(allStarted, transferInPatients.getMemberIds());
 
-            if (startedArt.size() > 0) {
-                baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(startedArt));
-                Map<Integer, Object> cD4L500 = getPatientBaselineCD4DataLS500(baselineCD4);
-                Map<Integer, Object> transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate);
-                Collection net = CollectionUtils.subtract(allStarted.getMemberIds(), transferOut.keySet());
-                Map<String, Cohort> lost = getLostPatients(Joiner.on(",").join(net), endDate);
-                Set<Integer> stopped = getPatientStopped(Joiner.on(",").join(net), endDate);
-                Map<Integer, Object> dead = getDeadPatients(Joiner.on(",").join(net), endDate);
+                Map<Integer, Object> cD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> transferOut = new HashMap<Integer, Object>();
+                Map<Integer, Object> dead = new HashMap<Integer, Object>();
+                Map<String, Cohort> lost = new HashMap<String, Cohort>();
+                Set<Integer> stopped = new HashSet<Integer>();
+                Map<Integer, Object> cCD4 = new HashMap<Integer, Object>();
+                Map<Integer, Object> pCD4L500 = new HashMap<Integer, Object>();
+
+
+                if (startedArt.size() > 0) {
+                    baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(startedArt));
+                    cD4L500 = getPatientBaselineCD4DataLS500(baselineCD4);
+                    transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate);
+
+                }
+
+                Collection net = CollectionUtils.subtract(allStarted, transferOut.keySet());
+
+                if (net.size() > 0) {
+                    lost = getLostPatients(Joiner.on(",").join(net), endDate);
+                    stopped = getPatientStopped(Joiner.on(",").join(net), endDate);
+                    dead = getDeadPatients(Joiner.on(",").join(net), endDate);
+                }
+
+
                 Cohort patientsLost = lost.get("lost");
                 Cohort patientsDropped = lost.get("dropped");
 
                 Collection allLostAndDied = CollectionUtils.union(CollectionUtils.union(stopped, dead.keySet()), CollectionUtils.union(patientsLost.getMemberIds(), patientsDropped.getMemberIds()));
+
                 Collection alive = CollectionUtils.subtract(net, allLostAndDied);
 
-                Map<Integer, Object> cCD4 = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
-                Map<Integer, Object> pCD4L500 = getPatientBaselineCD4DataLS500(cCD4);
+                if (alive.size() > 0) {
+                    cCD4 = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
+                    pCD4L500 = getPatientBaselineCD4DataLS500(cCD4);
+                }
+
+                pdh.addCol(all, "enrolled", startedArt.size());
+                pdh.addCol(all, "transferIn", transferIn.size());
+
                 pdh.addCol(all, "baseFraction", df.format(((double) cD4L500.size()) / baselineCD4.size()));
                 pdh.addCol(all, "baseMedian", getMedianCD4(cD4L500));
                 pdh.addCol(all, "transferOut", getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate).size());
@@ -195,6 +205,8 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(all, "median", getMedianCD4(pCD4L500));
 
             } else {
+                pdh.addCol(all, "enrolled", 0);
+                pdh.addCol(all, "transferIn", 0);
                 pdh.addCol(all, "baseFraction", "-");
                 pdh.addCol(all, "baseMedian", "-");
                 pdh.addCol(all, "transferOut", 0);
@@ -209,20 +221,50 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(all, "median", "-");
             }
 
-            if (allMotherStarted.size() > 0) {
-                baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMotherStarted));
-                Map<Integer, Object> mothersCD4L500 = getPatientBaselineCD4DataLS500(baselineCD4Mothers);
-                Map<Integer, Object> transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStarted), endDate);
+            if (allMothers.size() > 0) {
+                Collection allMotherStarted = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
+                Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
+
+
+                Map<Integer, Object> mothersCD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> transferOutMothers = new HashMap<Integer, Object>();
+                Map<Integer, Object> deadMothers = new HashMap<Integer, Object>();
+                Map<String, Cohort> lostMothers = new HashMap<String, Cohort>();
+                Set<Integer> stoppedMothers = new HashSet<Integer>();
+                Map<Integer, Object> cCD4W = new HashMap<Integer, Object>();
+                Map<Integer, Object> pCD4L500W = new HashMap<Integer, Object>();
+
+
+                if (allMotherStarted.size() > 0) {
+                    baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMotherStarted));
+                    mothersCD4L500 = getPatientBaselineCD4DataLS500(baselineCD4Mothers);
+                    transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStarted), endDate);
+
+                }
                 Collection netMothers = CollectionUtils.subtract(allMothers, transferOutMothers.keySet());
-                Map<String, Cohort> lostMothers = getLostPatients(Joiner.on(",").join(netMothers), endDate);
-                Set<Integer> stoppedMothers = getPatientStopped(Joiner.on(",").join(netMothers), endDate);
-                Map<Integer, Object> deadMothers = getDeadPatients(Joiner.on(",").join(netMothers), endDate);
+
+                if (netMothers.size() > 0) {
+                    lostMothers = getLostPatients(Joiner.on(",").join(netMothers), endDate);
+                    stoppedMothers = getPatientStopped(Joiner.on(",").join(netMothers), endDate);
+                    deadMothers = getDeadPatients(Joiner.on(",").join(netMothers), endDate);
+                }
+
+
                 Cohort patientsLost = lostMothers.get("lost");
                 Cohort patientsDropped = lostMothers.get("dropped");
+
                 Collection allLostAndDied = CollectionUtils.union(CollectionUtils.union(stoppedMothers, deadMothers.keySet()), CollectionUtils.union(patientsLost.getMemberIds(), patientsDropped.getMemberIds()));
+
                 Collection alive = CollectionUtils.subtract(netMothers, allLostAndDied);
-                Map<Integer, Object> cCD4W = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
-                Map<Integer, Object> pCD4L500W = getPatientBaselineCD4DataLS500(cCD4W);
+
+                if (alive.size() > 0) {
+                    cCD4W = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
+                    pCD4L500W = getPatientBaselineCD4DataLS500(cCD4W);
+                }
+
+                pdh.addCol(eMTCT, "enrolled", allMotherStarted.size());
+                pdh.addCol(eMTCT, "transferIn", mothersTransferIn.size());
+
                 pdh.addCol(eMTCT, "baseFraction", df.format(((double) mothersCD4L500.size()) / baselineCD4Mothers.size()));
                 pdh.addCol(eMTCT, "baseMedian", getMedianCD4(mothersCD4L500));
                 pdh.addCol(eMTCT, "transferOut", transferOutMothers.size());
@@ -237,6 +279,9 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(eMTCT, "fraction", df.format(((double) pCD4L500W.size()) / cCD4W.size()));
                 pdh.addCol(eMTCT, "median", getMedianCD4(pCD4L500W));
             } else {
+                pdh.addCol(eMTCT, "enrolled", 0);
+                pdh.addCol(eMTCT, "transferIn", 0);
+
                 pdh.addCol(eMTCT, "baseFraction", "-");
                 pdh.addCol(eMTCT, "baseMedian", "-");
                 pdh.addCol(eMTCT, "transferOut", 0);
@@ -250,10 +295,6 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(eMTCT, "fraction", "-");
                 pdh.addCol(eMTCT, "median", "-");
             }
-
-            pdh.addCol(all, "transferIn", transferIn.size());
-            pdh.addCol(eMTCT, "transferIn", mothersTransferIn.size());
-
             dataSet.addRow(all);
             dataSet.addRow(eMTCT);
         }
@@ -262,7 +303,7 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
     }
 
     private Map<Integer, Object> getPatientBaselineCD4Data(String cohort) throws EvaluationException {
-        String sql = String.format("select o.person_id, o.value_numeric from obs o where o.concept_id = 99071 and person_id in (select o.person_id from obs o inner join person p using(person_id) where o.concept_id = 99161 and YEAR(o.value_datetime) - YEAR(p.birthdate) - (RIGHT(o.value_datetime, 5) < RIGHT(p.birthdate, 5)) > 5 and p.person_id in(%s))", cohort);
+        String sql = String.format("select o.person_id, o.value_numeric from obs o where o.voided = 0 and o.concept_id = 99071 and person_id in (select o.person_id from obs o inner join person p using(person_id) where o.concept_id = 99161 and o.voided = 0 and YEAR(o.value_datetime) - YEAR(p.birthdate) - (RIGHT(o.value_datetime, 5) < RIGHT(p.birthdate, 5)) > 5 and p.person_id in(%s))", cohort);
         SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
         definition.setSql(sql);
         EvaluationContext context = new EvaluationContext();
@@ -280,7 +321,7 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
     }
 
     private Map<Integer, Object> getPatientTransferredOut(String cohort, String endDate) throws EvaluationException {
-        String sql = String.format("select o.person_id, o.value_datetime from obs o where o.person_id in (%s) and o.concept_id = 99165 and o.value_datetime <= '%s'", cohort, endDate);
+        String sql = String.format("select o.person_id, o.value_datetime from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99165 and o.value_datetime <= '%s'", cohort, endDate);
         SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
         definition.setSql(sql);
         EvaluationContext context = new EvaluationContext();
@@ -288,18 +329,16 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
         return patientDataService.evaluate(definition, context).getData();
     }
 
-    private Map<Integer, Object> getPatientsAged5AndAbove(String cohort, String endDate) throws EvaluationException {
-        String sql = String.format("select person_id,birthdate, YEAR('%s') - YEAR(birthdate) - (RIGHT('%s', 5) < RIGHT(birthdate, 5)) as age from person where person_id in(%s) and  birthdate is not null HAVING  age > 5", endDate, endDate, cohort);
-        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
-        definition.setSql(sql);
-        EvaluationContext context = new EvaluationContext();
-        context.setBaseCohort(new Cohort(cohort));
-        return patientDataService.evaluate(definition, context).getData();
+    private List<Integer> getPregnantAtArtStart(EvaluationContext evaluationContext) throws EvaluationException {
+        String sql = "select person_id from (select person_id,value_coded from obs where concept_id = 99072 and value_coded = 90003 and voided = 0 group by person_id union all select person_id,value_coded from obs where concept_id = 99603 and value_coded = 90003 and voided = 0 group by person_id) A group by person_id";
+        SqlQueryBuilder q = new SqlQueryBuilder();
+        q.append(sql);
+        return evaluationService.evaluateToList(q, Integer.class, evaluationContext);
     }
 
     private Set<Integer> getPatientStopped(String cohort, String endDate) throws EvaluationException {
-        String sqlStopped = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.person_id in (%s) and o.concept_id = 99084 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
-        String sqlRestarted = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.person_id in (%s) and o.concept_id = 99085 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
+        String sqlStopped = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99084 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
+        String sqlRestarted = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99085 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
         SqlPatientDataDefinition stoppedDefinition = new SqlPatientDataDefinition();
         SqlPatientDataDefinition restartedDefinition = new SqlPatientDataDefinition();
 
@@ -328,7 +367,7 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
 
     private Map<Integer, Object> getDeadPatients(String cohort, String endDate) throws EvaluationException {
         String sql = "select * from\n" +
-                String.format("  (select person_id,Date(value_datetime) as death_date from obs where concept_id = 90272 and person_id in(%s) and value_datetime < '%s'\n", cohort, endDate) +
+                String.format("  (select person_id,Date(value_datetime) as death_date from obs where voided = 0 and concept_id = 90272 and person_id in(%s) and value_datetime < '%s'\n", cohort, endDate) +
                 "union\n" +
                 String.format("select person_id, DATE(death_date) from person WHERE death_date is not null and person_id in(%s) and death_date < '%s') A group by person_id", cohort, endDate);
         SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
@@ -376,28 +415,28 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
                 "     patient_id,\n" +
                 "     MAX(DATE(encounter_datetime)) AS encounter\n" +
                 "   FROM encounter\n" +
-                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND encounter_datetime < '2015-03-31'\n" +
+                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND voided = 0 AND encounter_datetime < '2015-03-31'\n" +
                 "   GROUP BY patient_id) A\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT\n" +
                 "     person_id,\n" +
                 "     MAX(DATE(value_datetime)) AS visit\n" +
                 "   FROM obs\n" +
-                "   WHERE concept_id = 5096 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime < '2015-03-31'\n" +
+                "   WHERE concept_id = 5096 AND voided = 0 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime < '2015-03-31'\n" +
                 "   GROUP BY person_id) B ON (A.patient_id = B.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT\n" +
                 "     person_id,\n" +
                 "     MIN(DATE(value_datetime)) AS nextVisit\n" +
                 "   FROM obs\n" +
-                "   WHERE concept_id = 5096 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime >= '2015-03-31') C\n" +
+                "   WHERE concept_id = 5096 AND voided = 0 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime >= '2015-03-31') C\n" +
                 "    ON (A.patient_id = C.person_id)\n" +
                 "  LEFT JOIN\n" +
                 "  (SELECT\n" +
                 "     patient_id,\n" +
                 "     MIN(DATE(encounter_datetime)) AS nextEncounter\n" +
                 "   FROM encounter\n" +
-                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND encounter_datetime >= '2015-03-31'\n" +
+                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND voided = 0 AND encounter_datetime >= '2015-03-31'\n" +
                 "   GROUP BY patient_id) D ON (A.patient_id = D.patient_id)";
 
         sql = sql.replace("2015-03-31", endDate).replace("1,2,3,4,5,6,7", cohort);
@@ -448,5 +487,14 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
             return StatUtils.percentile(medainData, 50);
         }
         return null;
+    }
+
+    private Multimap<String, Integer> convert(List<Object[]> results) {
+        Multimap<String, Integer> myMultimap = ArrayListMultimap.create();
+
+        for (Object[] patient : results) {
+            myMultimap.put(String.valueOf(patient[1]), Integer.valueOf(String.valueOf(patient[0])));
+        }
+        return myMultimap;
     }
 }
