@@ -75,12 +75,12 @@ public class SetupMOH105OPDDiagnosisReportBuilder extends UgandaEMRDataExportMan
 
     @Override
     public String getName() {
-        return "HMIS 105 - SECTION 1.3: OPD NEW DIAGNOSIS";
+        return "HMIS 105 - SECTION 1";
     }
 
     @Override
     public String getDescription() {
-        return "Health Unit Outpatient Monthly Report, OPD New Diagnosis Section 1.3";
+        return "Health Unit Outpatient Monthly Report, Section 1";
     }
 
 
