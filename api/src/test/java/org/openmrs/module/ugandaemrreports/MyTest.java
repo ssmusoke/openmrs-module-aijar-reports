@@ -18,43 +18,33 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MyTest {
+    Sql2o sql2o = new Sql2o("jdbc:mysql://localhost:3306/openmrs", "openmrs", "openmrs");
 
     @Test
     public void dummyTest() throws IOException {
 
         String indexDirectory = System.getProperty("user.dir") + File.separator + "lucene";
-
-        IndexWriter writer = UgandaEMRLucene.createWriter(indexDirectory);
-        writer.deleteAll();
-
-        Sql2o sql2o = new Sql2o("jdbc:mysql://localhost:3306/openmrs", "openmrs", "openmrs");
-        sql2o.setDefaultColumnMappings(UgandaEMRLucene.getColumnMappings());
-        String sql = "SELECT * FROM obs_normal LIMIT 10000";
-
-        try (Connection con = sql2o.open()) {
-            try (ResultSetIterable<NormalizedObs> normalizedObservations = con.createQuery(sql).executeAndFetchLazy(NormalizedObs.class)) {
-                for (NormalizedObs normalizedObs : normalizedObservations) {
-                    Document document = UgandaEMRLucene.createDoc(normalizedObs);
-                    writer.addDocument(document);
-                }
-
-                writer.commit();
-                writer.close();
-            }
-        }
-
-        assertNotNull(writer);
+        int total = UgandaEMRLucene.lucenizeNormalizedObs(indexDirectory, sql2o, "2017-07-31", false);
+        assertEquals(total, 0);
     }
 
     @Test
     public void testSearch() throws IOException, ParseException {
         String indexDirectory = System.getProperty("user.dir") + File.separator + "lucene";
-        List<NormalizedObs> data = UgandaEMRLucene.getData(indexDirectory, "personId", "personId:\"51\" AND encounterType: \"8d5b27bc-c2cc-11de-8d13-0010c6dffd0f\"");
+        String inQuery = UgandaEMRLucene.constructInQuery("personId", Arrays.asList("51", "54"));
+        List<NormalizedObs> data = UgandaEMRLucene.getData(indexDirectory, "personId", inQuery);
         System.out.println(data.size());
         assertNotEquals(0, data.size());
+    }
+
+    @Test
+    public void checkObsNormalTable() throws IOException, ParseException {
+        UgandaEMRLucene.normalizeObs("2017-06-30", sql2o);
+        assertNotEquals(0, 1);
     }
 }
