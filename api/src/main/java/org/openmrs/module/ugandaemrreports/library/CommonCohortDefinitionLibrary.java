@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
@@ -14,12 +15,14 @@ import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
+
 
 /**
  * Library of common Cohort definitions
@@ -199,6 +202,20 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         if (answers.length > 0) {
             cd.setValueList(Arrays.asList(answers));
         }
+        return cd;
+    }
+
+    
+    /**
+     * Has observations in an ANC encounter
+     * @param question the question concept
+     * @param answers the answers to include
+     * @return the cohort definition
+     */
+    public CohortDefinition hasANCObs(Concept question, Concept... answers) {
+        CodedObsCohortDefinition cd = (CodedObsCohortDefinition) hasObs(question, answers);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
+        
         return cd;
     }
 
