@@ -30,13 +30,15 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FaciltyAndOutReachDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.STIDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.HctDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.SmcProcedureDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AgeFromEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAdrressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.STICalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +150,13 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Age<49yrs", getAgeFromEncounterDate(49, 200), "onOrBefore=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Address", address(), "onOrBefore=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Facility/Outreach", sdd.definition("Facility/Outreach", getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FaciltyAndOutReachDataConverter());
-        dsd.addColumn("STI", sdd.definition("STI", getConcept("")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STIDataConverter());
+        dsd.addColumn("STI", sti(), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("HTCM", sdd.definition("HTCM", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
+        //dsd.addColumn("HTCP", sdd.definition("HTCP", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
+        dsd.addColumn("HTCC", sdd.definition("HTCC", getConcept("8e1b2249-dca4-400d-b465-6eab5b5a1c98")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
+        dsd.addColumn("Procedure", sdd.definition("Procedure", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
+        //dsd.addColumn("Type anasthesia", sdd.definition("Type anasthesia", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
+        //dsd.addColumn("Circumciser name", sdd.definition("Circumciser name", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
 
         return dsd;
     }
@@ -175,5 +183,11 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
 
     private Concept getConcept(String uuid) {
         return Dictionary.getConcept(uuid);
+    }
+
+    private DataDefinition sti(){
+        CalculationDataDefinition cd = new CalculationDataDefinition("sti", new STICalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
     }
 }
