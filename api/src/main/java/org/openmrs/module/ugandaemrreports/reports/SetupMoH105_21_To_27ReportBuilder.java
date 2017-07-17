@@ -95,8 +95,8 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         rd.setParameters(getParameters());
 
         //connect the report definition to the datasets
-        rd.addDataSetDefinition("antenatal", Mapped.mapStraightThrough(antenatal()));
-        rd.addDataSetDefinition("postnatal", Mapped.mapStraightThrough(postnatal()));
+        rd.addDataSetDefinition("A", Mapped.mapStraightThrough(antenatal()));
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(postnatal()));
 
         return rd;
     }
