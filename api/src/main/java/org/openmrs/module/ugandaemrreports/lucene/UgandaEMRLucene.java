@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.lucene;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Table;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -9,11 +8,17 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.joda.time.LocalDate;
+import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.NormalizedObs;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
+import org.openmrs.module.ugandaemrreports.common.SummarizedObs;
 import org.sql2o.Connection;
 import org.sql2o.ResultSetIterable;
 import org.sql2o.Sql2o;
@@ -21,6 +26,8 @@ import org.sql2o.Sql2o;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static org.openmrs.module.reporting.common.RangeComparator.LESS_THAN;
 
 /**
  * Created by carapai on 10/07/2017.
@@ -38,7 +45,8 @@ public class UgandaEMRLucene {
         return new IndexSearcher(reader);
     }
 
-    public static Document createDoc(NormalizedObs doc) {
+
+    public static Document createDoc(Object doc) {
         FieldType titleType = new FieldType();
         titleType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
         titleType.setStored(true);
@@ -49,51 +57,46 @@ public class UgandaEMRLucene {
         ObjectMapper oMapper = new ObjectMapper();
 
         Map<String, Object> map = oMapper.convertValue(doc, Map.class);
+        System.out.println(map);
 
-        for (Map.Entry<String, Object> column : map.entrySet()) {
+        /*for (Map.Entry<String, Object> column : map.entrySet()) {
             Field titleField1 = new Field(column.getKey(), String.valueOf(column.getValue()), titleType);
             doc1.add(titleField1);
-        }
+        }*/
         return doc1;
     }
 
-    public static List<Map<String, String>> getData(String indexDirectory, String column, String search, Collection<String> columns) throws IOException, ParseException {
-        List<Map<String, String>> result = new ArrayList<>();
-        try {
-            IndexSearcher searcher = createSearcher(indexDirectory);
-            QueryParser qp = new QueryParser(column, new StandardAnalyzer());
-            int total = searcher.count(qp.parse(search));
-
-            if (total > 0) {
-                ScoreDoc[] sDocs = searcher.search(qp.parse(search), total).scoreDocs;
-                for (ScoreDoc sd : sDocs) {
-                    result.add(convert(searcher.doc(sd.doc), columns));
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public static List<NormalizedObs> getData(String indexDirectory, String column, String search) throws IOException, ParseException {
-        List<NormalizedObs> result = new ArrayList<>();
+        List<ScoreDoc> result = new ArrayList<>();
+        List<NormalizedObs> normalizedResult = new ArrayList<>();
 
         try {
             IndexSearcher searcher = createSearcher(indexDirectory);
             QueryParser qp = new QueryParser(column, new StandardAnalyzer());
             int total = searcher.count(qp.parse(search));
             if (total > 0) {
-                ScoreDoc[] sDocs = searcher.search(qp.parse(search), total).scoreDocs;
-                for (ScoreDoc sd : sDocs) {
-                    result.add(convert(searcher.doc(sd.doc)));
+                for (int i = 0; i < total / 100 + 1; i++) {
+                    ScoreDoc[] sDocs;
+                    if (i == 0) {
+                        sDocs = searcher.search(qp.parse(search), 100).scoreDocs;
+                    } else {
+                        sDocs = searcher.searchAfter(result.get((100 * i) - 1), qp.parse(search), 100).scoreDocs;
+                    }
+
+                    NormalizedObs[] normalizedObs = new NormalizedObs[sDocs.length];
+
+                    for (int j = 0; j < sDocs.length; j++) {
+                        normalizedObs[j] = convert(searcher.doc(sDocs[j].doc));
+                    }
+                    Collections.addAll(result, sDocs);
+                    Collections.addAll(normalizedResult, normalizedObs);
                 }
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
+        return normalizedResult;
     }
 
     public static NormalizedObs convert(Map<String, String> object) throws IOException {
@@ -103,7 +106,7 @@ public class UgandaEMRLucene {
 
     private static NormalizedObs convert(Document document) throws IOException {
         Map<String, String> data = new HashMap<>();
-        for (String c : getColumnMappings().values()) {
+        for (String c : getNormalizedObsColumnMappings().values()) {
             data.put(c, document.get(c).equals("null") ? null : document.get(c));
         }
         return convert(data);
@@ -118,7 +121,7 @@ public class UgandaEMRLucene {
         return data;
     }
 
-    public static Map<String, String> getColumnMappings() {
+    public static Map<String, String> getNormalizedObsColumnMappings() {
         Map<String, String> colMaps = new HashMap<String, String>();
 
         colMaps.put("person_id", "personId");
@@ -183,7 +186,42 @@ public class UgandaEMRLucene {
 
     }
 
-    public static String constructInQuery(String column, List<String> values) {
+    public static Map<String, String> getSummarizedObsColumnMappings() {
+        Map<String, String> colMaps = new HashMap<String, String>();
+        colMaps.put("encounter_type", "encounterType");
+        colMaps.put("encounter_type_name", "encounterTypeName");
+        colMaps.put("concept", "concept");
+        colMaps.put("concept_name", "conceptName");
+        colMaps.put("value_coded", "valueCoded");
+        colMaps.put("value_coded_name", "valueCodedName");
+        colMaps.put("report_name", "reportName");
+        colMaps.put("period", "period");
+        colMaps.put("patients", "patients");
+        colMaps.put("total", "total");
+        colMaps.put("period_type", "periodType");
+        colMaps.put("date_generated", "dateGenerated");
+        colMaps.put("period_grouped_by", "periodGroupedBy");
+        return colMaps;
+
+    }
+
+    public static String constructLuceneBetweenQuery(String column, String value1, String value2) {
+        return column + ":[\"" + value1 + "\" TO \"" + value2 + "\"]";
+    }
+
+    public static String constructLuceneGreaterThanQuery(String column, String value) {
+        return column + ":[*" + " TO \"" + value + "\"]";
+    }
+
+    public static String constructLuceneLessThanQuery(String column, String value) {
+        return column + ":[\"" + value + "\" TO *]";
+    }
+
+    public static String constructLuceneQuery(String column, String value) {
+        return column + ":\"" + value + "\"";
+    }
+
+    public static String constructLuceneInQuery(String column, List<String> values) {
         column += ":(\"" + values.get(0) + "\" ";
         StringBuilder columnBuilder = new StringBuilder(column);
         for (String value : values.subList(1, values.size())) {
@@ -191,6 +229,27 @@ public class UgandaEMRLucene {
         }
         column = columnBuilder.toString();
         return column + ")";
+    }
+
+
+    public static String constructSQLBetweenQuery(String column, String value1, String value2) {
+        return column + " BETWEEN '" + value1 + "' AND '" + value2 + "'";
+    }
+
+    public static String constructSQLQuery(String column, String rangeComparator, String value) {
+        return column + " " + rangeComparator + " '" + value + "'";
+    }
+
+    public static String constructSQLInQuery(String column, Collection<?> values) {
+        return column + " IN(" + Joiner.on(",").join(values) + ")";
+    }
+
+    public static String constructSQLInQuery(String column, String values) {
+        return column + " IN(" + values + ")";
+    }
+
+    public static String joinQuery(String query1, String query2, Enums.UgandaEMRJoiner joiner) {
+        return query1 + " " + joiner.toString() + " " + query2;
     }
 
     public static void createNormalizedObsTable(Sql2o sql2o) {
@@ -254,6 +313,30 @@ public class UgandaEMRLucene {
                 "  form_namespace_and_path VARCHAR(255) NULL,\n" +
                 "  status                  VARCHAR(10)  NOT NULL\n" +
                 ")  ENGINE = MYISAM;";
+
+        try (Connection con = sql2o.open()) {
+            con.createQuery(sql).executeUpdate();
+        }
+    }
+
+    public static void createSummarizedObsTable(Sql2o sql2o) {
+        String sql = "CREATE TABLE IF NOT EXISTS obs_summary\n" +
+                "(\n" +
+                "  encounter_type      CHAR(38)     NULL,\n" +
+                "  encounter_type_name VARCHAR(255) NULL,\n" +
+                "  concept             CHAR(38)     NULL,\n" +
+                "  concept_name        VARCHAR(255) NULL,\n" +
+                "  value_coded         CHAR(38)     NULL,\n" +
+                "  value_coded_name    VARCHAR(255) NULL,\n" +
+                "  report_name         VARCHAR(255) NULL,\n" +
+                "  peroid              CHAR(6)      NULL,\n" +
+                "  patients            LONGTEXT     NULL,\n" +
+                "  total               INT(32)      NULL,\n" +
+                "  period_type         CHAR(10)     NULL,\n" +
+                "  date_generated      DATETIME     NULL,\n" +
+                "  period_grouped_by   CHAR(20)     NULL\n" +
+                ")\n" +
+                "  ENGINE = MYISAM;";
 
         try (Connection con = sql2o.open()) {
             con.createQuery(sql).executeUpdate();
@@ -503,12 +586,256 @@ public class UgandaEMRLucene {
                 "  FROM obs o\n" +
                 String.format("  WHERE o.date_created > '%s' OR o.date_voided > '%s';", startDate, startDate);
         try (Connection con = sql2o.open()) {
-            String table = con.createQuery("SHOW TABLES LIKE 'obs_normal';").executeScalar(String.class);
+            createNormalizedObsTable(sql2o);
+            con.createQuery(sql).executeUpdate();
+        }
+    }
 
-            if (table.equals("null")) {
-                createNormalizedObsTable(sql2o);
-            }
+    public static void summarizeObs(String startDate, Sql2o sql2o) {
 
+        String sql = "INSERT INTO obs_summary (\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  concept,\n" +
+                "  concept_name,\n" +
+                "  value_coded,\n" +
+                "  value_coded_name,\n" +
+                "  report_name,\n" +
+                "  peroid,\n" +
+                "  patients,\n" +
+                "  total,\n" +
+                "  period_type,\n" +
+                "  date_generated,\n" +
+                "  period_grouped_by)\n" +
+                "\n" +
+                "-- obs_datetime grouped by years\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    obs_datetime_year,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'yearly',\n" +
+                "    NOW(),\n" +
+                "    'obs_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_year\n" +
+                "  UNION ALL\n" +
+                "  -- obs_datetime grouped by months\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    obs_datetime_month,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'obs_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_month\n" +
+                "  UNION ALL\n" +
+                "  -- obs_datetime grouped by quarters\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    obs_datetime_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'obs_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_quarter\n" +
+                "  UNION ALL\n" +
+                "  -- value_datetime grouped by years\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    value_datetime_year,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'yearly',\n" +
+                "    NOW(),\n" +
+                "    'value_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_datetime_year\n" +
+                "  UNION ALL\n" +
+                "  -- value_datetime grouped by months\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    value_datetime_month,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'value_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_datetime_month\n" +
+                "  UNION ALL\n" +
+                "  -- value_datetime grouped by quarters\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    value_datetime_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'value_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_datetime_quarter\n" +
+                "  UNION ALL\n" +
+                "  -- concepts grouped by encounter date\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    encounter_year,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'yearly',\n" +
+                "    NOW(),\n" +
+                "    'encounter_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, concept, value_coded, encounter_year\n" +
+                "  UNION ALL\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    encounter_month,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'encounter_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01' AND encounter_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_coded, encounter_month\n" +
+                "  UNION ALL\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    encounter_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'encounter_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01' AND encounter_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_coded, encounter_quarter\n" +
+                "  UNION ALL\n" +
+                "  -- encounters grouped by years\n" +
+                "\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    NULL,\n" +
+                "    encounter_year,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'yearly',\n" +
+                "    NOW(),\n" +
+                "    'all encounters'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, encounter_year\n" +
+                "  UNION ALL\n" +
+                "\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    NULL,\n" +
+                "    encounter_month,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'all encounters'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, encounter_month\n" +
+                "  UNION ALL\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    'all',\n" +
+                "    NULL,\n" +
+                "    encounter_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'all encounters'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, encounter_quarter;";
+        sql = sql.replace("1900-01-01", startDate);
+        try (Connection con = sql2o.open()) {
+            createSummarizedObsTable(sql2o);
             con.createQuery(sql).executeUpdate();
         }
     }
@@ -528,7 +855,7 @@ public class UgandaEMRLucene {
             for (int i = 0; i < total / 10000 + 1; i++) {
                 String offset = String.valueOf(i * 10000);
                 String sql = String.format("SELECT * FROM obs_normal WHERE date_created > '%s' OR date_voided > '%s' LIMIT %s,%s", startDate, startDate, offset, 10000);
-                sql2o.setDefaultColumnMappings(UgandaEMRLucene.getColumnMappings());
+                sql2o.setDefaultColumnMappings(UgandaEMRLucene.getNormalizedObsColumnMappings());
                 try (ResultSetIterable<NormalizedObs> normalizedObservations = con.createQuery(sql).executeAndFetchLazy(NormalizedObs.class)) {
                     for (NormalizedObs normalizedObs : normalizedObservations) {
                         Document document = UgandaEMRLucene.createDoc(normalizedObs);
@@ -536,12 +863,55 @@ public class UgandaEMRLucene {
                     }
                 }
             }
-
             writer.commit();
             writer.close();
         }
-
         return total;
+    }
 
+    public static int lucenizeSummarizedObs(String indexDirectory, Sql2o sql2o, String startDate, boolean deleteIndexes) throws IOException {
+        int total;
+        IndexWriter writer = createWriter(indexDirectory);
+        if (deleteIndexes) {
+            writer.deleteAll();
+        }
+
+        String all = String.format("SELECT count(*) FROM obs_summary WHERE date_generated > '%s'", startDate);
+
+        try (Connection con = sql2o.open()) {
+            total = con.createQuery(all).executeScalar(Integer.class);
+
+            for (int i = 0; i < total / 10000 + 1; i++) {
+                String offset = String.valueOf(i * 10000);
+                String sql = String.format("SELECT * FROM obs_summary WHERE date_generated > '%s' LIMIT %s,%s", startDate, offset, 10000);
+                sql2o.setDefaultColumnMappings(UgandaEMRLucene.getSummarizedObsColumnMappings());
+                try (ResultSetIterable<SummarizedObs> summarizedObservations = con.createQuery(sql).executeAndFetchLazy(SummarizedObs.class)) {
+                    for (SummarizedObs summarizedObs : summarizedObservations) {
+                        Document document = UgandaEMRLucene.createDoc(summarizedObs);
+                        writer.addDocument(document);
+                    }
+                }
+            }
+            writer.commit();
+            writer.close();
+        }
+        return total;
+    }
+
+
+    public static String getObsPeriod(Date period, Enums.Period periodType) {
+        LocalDate localDate = StubDate.dateOf(period);
+
+        if (periodType == Enums.Period.YEARLY) {
+            return localDate.toString("yyyy");
+        } else if (periodType == Enums.Period.MONTHLY) {
+            return localDate.toString("yyyyMM");
+        } else if (periodType == Enums.Period.QUARTERLY) {
+            return String.valueOf(localDate.getYear()) + "Q" + String.valueOf(((localDate.getMonthOfYear() - 1) / 3) + 1);
+        } else if (periodType == Enums.Period.WEEKLY) {
+            return localDate.getWeekyear() + "W" + localDate.weekOfWeekyear().get();
+        }
+
+        return null;
     }
 }

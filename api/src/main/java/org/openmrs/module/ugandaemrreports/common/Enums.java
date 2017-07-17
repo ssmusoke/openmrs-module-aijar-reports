@@ -16,8 +16,18 @@ public class Enums {
 
     public static enum PeriodInterval {
         BEFORE,
-        AFTER;
+        AFTER,
+        ON;
         private PeriodInterval() {
+        }
+    }
+
+    public static enum UgandaEMRJoiner {
+        AND,
+        OR,
+        IN;
+
+        private UgandaEMRJoiner() {
         }
     }
 
@@ -25,7 +35,8 @@ public class Enums {
 
         MONTHLY("MONTH"),
         QUARTERLY("QUARTER"),
-        YEARLY("YEAR");
+        YEARLY("YEAR"),
+        WEEKLY("WEEK");
 
         private final String name;
 
@@ -34,7 +45,7 @@ public class Enums {
         }
 
         public boolean equalsName(String otherName) {
-            return (otherName == null) ? false : name.equals(otherName);
+            return otherName != null && name.equals(otherName);
         }
 
         public String toString() {
