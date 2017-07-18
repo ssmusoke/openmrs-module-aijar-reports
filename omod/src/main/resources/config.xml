@@ -45,12 +45,6 @@
 			org.openmrs.module.reportingcompatibility
 		</require_module>
 	</require_modules>
-
-	<globalProperty>
-		<property>ugandaemr.dhis2.organizationuuid</property>
-		<description>The organization code</description>
-	</globalProperty>
-	
 	
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
