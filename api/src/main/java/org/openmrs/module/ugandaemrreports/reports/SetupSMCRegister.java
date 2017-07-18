@@ -34,6 +34,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.DuringSurgeryDateDataC
 import org.openmrs.module.ugandaemrreports.data.converter.FaciltyAndOutReachDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.GradeDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.HctDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.SmcProcedureDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.TypeOfAeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
@@ -146,24 +147,26 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
         DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(serialNo.getName(), serialNo), identifierFormatter);
 
-        dsd.addColumn("Date", getEncounterDate(), "onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Date", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Serial No", identifierDef, "");
         dsd.addColumn("Names of Client", new PreferredNameDataDefinition(), (String) null);
-        dsd.addColumn("Age<2yrs", getAgeFromEncounterDate(0, 2), "onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age2<5yrs", getAgeFromEncounterDate(2, 5), "onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age5<15yrs", getAgeFromEncounterDate(5, 15), "onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age15<49yrs", getAgeFromEncounterDate(15, 49), "onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age<49yrs", getAgeFromEncounterDate(49, 200), "onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Address", address(), "onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age<2yrs", getAgeFromEncounterDate(0, 2), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age2<5yrs", getAgeFromEncounterDate(2, 5), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age5<15yrs", getAgeFromEncounterDate(5, 15), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age15<49yrs", getAgeFromEncounterDate(15, 49), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age<49yrs", getAgeFromEncounterDate(49, 200), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Address", address(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Facility/Outreach", sdd.definition("Facility/Outreach", getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FaciltyAndOutReachDataConverter());
-        dsd.addColumn("STI", sti(), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("STI", sti(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("HTC", sdd.definition("HTCM", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
+        dsd.addColumn("Date of TT1", sdd.definition("Date of TT1", getConcept("ed8eebcb-0d31-4c85-ab37-402ba2b9f78d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Date of TT2", sdd.definition("Date of TT1", getConcept("5d50f724-6766-421b-bcb1-1133054b7621")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Procedure", sdd.definition("Procedure", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
-        dsd.addColumn("Type anasthesia", anaesthesia(), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Type anasthesia", anaesthesia(), "onDate=${endDate}", new CalculationResultDataConverter());
         //dsd.addColumn("Circumciser name", sdd.definition("Circumciser name", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
-        dsd.addColumn("48hrs", followUps(1), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("7days", followUps(2), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn(">7days", followUps(3), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("48hrs", followUps(3), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn(">7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("During surgery", sdd.definition("During surgery", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDataConverter());
         dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
         dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAeDataConverter());
@@ -211,6 +214,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     private DataDefinition followUps(Integer visit) {
         CalculationDataDefinition cd = new CalculationDataDefinition("visits", new FollowUpCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        cd.addCalculationParameter("visit", visit);
         return cd;
     }
 }
