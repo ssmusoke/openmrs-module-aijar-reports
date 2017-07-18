@@ -18,9 +18,9 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by codehub on 7/11/17.
+ * Created by Nicholas Ingosi on 7/17/17.
  */
-public class HctDataConverter implements DataConverter {
+public class DuringSurgeryDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
@@ -29,12 +29,16 @@ public class HctDataConverter implements DataConverter {
         }
 
         Obs obs = ((Obs) obj);
-        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115"))) {
-            return "+ve";
+        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("58da0526-00d2-49f8-98e7-4ed0cb6bd672"))){
+            return "5";
         }
-        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115"))) {
-            return "-ve";
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("d99b872e-8116-4697-941d-fc14e98d5612"))){
+            return "2";
         }
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115"))){
+            return "6";
+        }
+
 
         return null;
     }

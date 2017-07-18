@@ -55,33 +55,22 @@ public class STICalculation extends AbstractPatientCalculation {
             Obs retracting = EmrCalculationUtils.obsResultForPatient(retractingForeSkinMap, ptId);
             Obs erectile = EmrCalculationUtils.obsResultForPatient(erectileDisfunctionMap, ptId);
 
-            if(bleeding != null && bleeding.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = "1";
-            }
             if(urethera != null && urethera.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
                 results = results+" 1";
             }
             if(pain != null && pain.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
-            }
-            if(swelling != null && swelling.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
+                results = results+" 2";
             }
             if(other != null) {
                 results = results+" 9";;
             }
             if(genital != null && genital.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
+                results = results+" 5";
             }
             if(penile != null && penile.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
+                results = results+" 6";
             }
-            if(retracting != null && retracting.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
-            }
-            if(erectile != null && erectile.getValueCoded().equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                results = results+" 1";
-            }
+
 
 
             ret.put(ptId, new SimpleResult(results, this));

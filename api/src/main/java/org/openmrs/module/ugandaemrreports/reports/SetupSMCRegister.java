@@ -29,13 +29,19 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.DuringSurgeryDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.DuringSurgeryDateDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FaciltyAndOutReachDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.GradeDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.HctDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.SmcProcedureDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.TypeOfAeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AgeFromEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AnaesthesiaCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.FollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAdrressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.STICalculation;
@@ -151,12 +157,17 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Address", address(), "onOrBefore=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Facility/Outreach", sdd.definition("Facility/Outreach", getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FaciltyAndOutReachDataConverter());
         dsd.addColumn("STI", sti(), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("HTCM", sdd.definition("HTCM", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
-        //dsd.addColumn("HTCP", sdd.definition("HTCP", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
-        dsd.addColumn("HTCC", sdd.definition("HTCC", getConcept("8e1b2249-dca4-400d-b465-6eab5b5a1c98")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
+        dsd.addColumn("HTC", sdd.definition("HTCM", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
         dsd.addColumn("Procedure", sdd.definition("Procedure", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
-        //dsd.addColumn("Type anasthesia", sdd.definition("Type anasthesia", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
+        dsd.addColumn("Type anasthesia", anaesthesia(), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
         //dsd.addColumn("Circumciser name", sdd.definition("Circumciser name", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
+        dsd.addColumn("48hrs", followUps(1), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("7days", followUps(2), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn(">7days", followUps(3), "onOrAfter=${startDate},onOrBefore=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("During surgery", sdd.definition("During surgery", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDataConverter());
+        dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
+        dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAeDataConverter());
+        dsd.addColumn("Grade of AE", sdd.definition("Grade of AE", getConcept("e34976b9-1aff-489d-b959-4da1f7272499")), "onOrAfter=${startDate},onOrBefore=${endDate}", new GradeDataConverter());
 
         return dsd;
     }
@@ -187,6 +198,18 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
 
     private DataDefinition sti(){
         CalculationDataDefinition cd = new CalculationDataDefinition("sti", new STICalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    private DataDefinition anaesthesia() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("anaesthesia", new AnaesthesiaCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    private DataDefinition followUps(Integer visit) {
+        CalculationDataDefinition cd = new CalculationDataDefinition("visits", new FollowUpCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }

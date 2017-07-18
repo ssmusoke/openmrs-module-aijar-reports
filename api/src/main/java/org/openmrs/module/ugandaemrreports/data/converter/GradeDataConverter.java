@@ -18,22 +18,21 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by codehub on 7/11/17.
+ * Created by Nicholas Ingosi on 7/17/17.
  */
-public class HctDataConverter implements DataConverter {
+public class GradeDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
         if (obj == null) {
             return "";
         }
-
         Obs obs = ((Obs) obj);
-        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115"))) {
-            return "+ve";
+        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("ba7ae66b-8108-45b6-a34d-e842cf31c623"))) {
+            return "M";
         }
-        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115"))) {
-            return "-ve";
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("44f95fcb-1054-466f-906d-45a41ef07297"))) {
+            return "S";
         }
 
         return null;
