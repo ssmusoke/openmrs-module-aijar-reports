@@ -20,6 +20,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CustomParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -68,6 +69,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+        System.out.println("The definitions are ::"+reportDefinition.getDataSetDefinitions());
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS_105-2.1-2.7.xls");
     }
 
@@ -96,6 +98,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
 
 
         //connect the report definition to the datasets
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("A", Mapped.mapStraightThrough(antenatal()));
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(postnatal()));
 
@@ -201,6 +204,12 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         dsd.addColumn("P9", "Clients with pre-malignant condition of cervix", ReportUtils.map(indicatorLibrary.hasObs("d858f8cb-fe9e-4131-8d91-cd9929cc53de", "ec3a0208-0261-450a-a13b-b524e160b8fd"), params), "");
 
         return dsd;
+    }
+    protected DataSetDefinition settings() {
+        CustomParametersDatasetDefinition cst = new CustomParametersDatasetDefinition();
+        cst.setName("S");
+        cst.setGp("ugandaemr.dhis2.organizationuuid");
+        return cst;
     }
 
 

@@ -45,7 +45,7 @@
 			org.openmrs.module.reportingcompatibility
 		</require_module>
 	</require_modules>
-	
+
 	<!-- Maps hibernate file's, if present -->
 	<mappingFiles>
 
