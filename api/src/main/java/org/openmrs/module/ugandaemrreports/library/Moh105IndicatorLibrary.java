@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
+
 /**
  * Created by Nicholas Ingosi on 6/7/17.
  */
@@ -27,6 +28,7 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator anc1stVisit(){
         return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.femaleAndHasAncVisit(0.0, 1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -123,9 +125,20 @@ public class Moh105IndicatorLibrary {
     }
 
     /**
-     * Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit
-     * @return CohortIndicator
+     *
+     * @return
      */
+
+    public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyAndTestedHIVPositive() {
+        return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasANCObs(
+                Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
+        /**
+         * Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit
+         * @return CohortIndicator
+         */
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRR() {
         return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"),  Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -176,6 +189,7 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator retestedTrTrrPlus(){
         return cohortIndicator("Pregnant Women re-tested later in pregnancy (TR+&TRR+))", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -308,5 +322,13 @@ public class Moh105IndicatorLibrary {
 
 
         return cohortIndicator("Breastfeeding mothers tested for HIV+  test during postnatal", map(cclibrary.hasObs(question, trPlus), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * Missed appointment in the period
+     * @return
+     */
+    public CohortIndicator missedANCAppointment() {
+        return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.missedANCAppointment(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 }

@@ -1,86 +1,100 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.data.patient.service.PatientDataService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HMIS106A1BDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.OPDDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
 /**
- * Created by carapai on 07/06/2016.
+ * OPD Register
  */
 @Component
+public class SetupOPDRegister extends UgandaEMRDataExportManager {
 
-public class Setup106A1BReport extends UgandaEMRDataExportManager {
+    @Autowired
+    private DataFactory df;
 
+    /**
+     * @return the uuid for the report design for exporting to Excel
+     */
     @Override
     public String getExcelDesignUuid() {
-        return "b98ab976-9c9d-4a28-9760-ac3119c0ef23";
+        return "6f935ab6-3407-4321-ae00-26c75ca2166f";
     }
 
     @Override
     public String getUuid() {
-        return "167cf668-071e-488b-b159-d5f391774038";
+        return "df041e1d-0043-4a01-815b-c9f66edcac7e";
     }
 
     @Override
     public String getName() {
-        return "HMIS 106A1B";
+        return "OPD Register";
     }
 
     @Override
     public String getDescription() {
-        return "HMIS 106A1B";
+        return "OPD Register";
     }
 
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
-        l.add(new Parameter("startDate", "Start date (Start of quarter)", Date.class));
-        l.add(new Parameter("endDate", "End date (End of quarter)", Date.class));
+        l.add(df.getStartDateParameter());
         return l;
     }
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
     }
 
+    /**
+     * Build the report design for the specified report, this allows a user to override the report design by adding
+     * properties and other metadata to the report design
+     *
+     * @param reportDefinition
+     * @return The report design
+     */
     @Override
+
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1BReport.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "031-OutPatientRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:HMIS106A1B");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:OPD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
-
     }
 
     @Override
     public ReportDefinition constructReportDefinition() {
+
         ReportDefinition rd = new ReportDefinition();
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        HMIS106A1BDataSetDefinition dsd = new HMIS106A1BDataSetDefinition();
+        OPDDatasetDefinition dsd = new OPDDatasetDefinition();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("HMIS106A1B", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("OPD", Mapped.mapStraightThrough(dsd));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.42";
+        return "0.1";
     }
 }

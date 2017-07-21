@@ -44,31 +44,40 @@ public class FollowUpCalculation extends AbstractPatientCalculation {
         Integer visit = (map != null && map.containsKey("visit")) ? (Integer) map.get("visit") : null;
         EncounterType type = Context.getEncounterService().getEncounterTypeByUuid("d0f9e0b7-f336-43bd-bf50-0a7243857fa6");
 
-        CalculationResultMap encounters = Calculations.allEncounters(type, cohort, context);
+        CalculationResultMap followUpEncounters = Calculations.allEncounters(type, cohort, context);
         CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), cohort, context);
 
         for(Integer ptId: cohort) {
-            String date = "";
             String value = "";
-            Date dateReturned = null;
             Date circumDate = EmrCalculationUtils.datetimeResultForPatient(encounterDate, ptId);
-            ListResult encounterList = (ListResult) encounters.get(ptId);
+            ListResult encounterList = (ListResult) followUpEncounters.get(ptId);
             List<Encounter> listResult = CalculationUtils.extractResultValues(encounterList);
-            //calculate the date suppossed to be seen
-            if(circumDate != null && visit != null) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(circumDate);
-                c.add(Calendar.DATE, visit);
-                dateReturned = c.getTime();
-            }
+
             if(listResult.size() > 0){
                 for(Encounter enc: listResult) {
-                    if(visit != null && visit > 8 && circumDate != null ){
-                        value = "Y"+"\n"+formatDate(enc.getDateCreated());
-                        break;
+                    if(visit != null && visit > 7 && circumDate != null && enc.getEncounterDatetime() != null){
+                        if((enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7)){
+                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
+                        }
+                        else {
+                            value = "N";
+                        }
+
                     }
-                    else if(visit != null && visit <= 8 && circumDate != null && dateReturned != null && enc.getDateCreated().after(circumDate) && enc.getDateCreated().before(dateReturned)) {
-                        value = "Y"+"\n"+formatDate(enc.getDateCreated());
+                    else if(visit != null && visit <= 7 && circumDate != null &&  enc.getEncounterDatetime() != null) {
+                        if(visit == 2 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 2)){
+                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
+                        }
+                        else  if(visit == 2 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 2)){
+                            value = "N";
+                        }
+
+                        else  if(visit == 7 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7)){
+                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
+                        }
+                        else  if(visit == 7 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7)){
+                            value = "N";
+                        }
                     }
                 }
 
@@ -81,5 +90,12 @@ public class FollowUpCalculation extends AbstractPatientCalculation {
     private String formatDate(Date date) {
         DateFormat dateFormatter = new SimpleDateFormat("dd, MMM, yyyy");
         return date == null?"":dateFormatter.format(date);
+    }
+    private long convertDaysIntoTime(Date d, int days){
+        Calendar c = Calendar.getInstance();
+        c.setTime(d);
+        c.add(Calendar.DATE, days);
+
+        return c.getTimeInMillis();
     }
 }

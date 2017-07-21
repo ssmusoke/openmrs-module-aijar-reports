@@ -13,19 +13,25 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -36,6 +42,12 @@ public class Moh105CohortLibrary {
 
     @Autowired
     CommonCohortDefinitionLibrary definitionLibrary;
+    
+    @Autowired
+    HIVMetadata hivMetadata;
+    
+    @Autowired
+    private DataFactory df;
 
     public CohortDefinition femaleAndHasAncVisit(double lower, double upper){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -63,6 +75,7 @@ public class Moh105CohortLibrary {
         cd.setValue1(lower);
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.setValue2(upper);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
         return cd;
     }
 
@@ -80,6 +93,14 @@ public class Moh105CohortLibrary {
         cd.addSearch("takingFolic", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("8c346216-c444-4528-a174-5139922218ed"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("femaleAndHasAncVisit AND (takingIron OR takingFolic)");
         return cd;
+    }
+    
+    /**
+     * HIV Positive before first ANC
+     * @return
+     */
+    public CohortDefinition hivPostiveBeforeFirstANCVisit() {
+        return definitionLibrary.hasANCObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
     }
 
     /**
@@ -134,5 +155,17 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("hasEncounter AND babyAl");
         return cd;
     }
-
+    
+    public CohortDefinition missedANCAppointment() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("hasAppointment", ReportUtils.map(
+                df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), BaseObsCohortDefinition.TimeModifier.ANY), "startDate=${onOrAfter},endDate=${onOrBefore}"));
+        
+        cd.addSearch("hasVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+    
+        cd.setCompositionString("hasAppointment NOT hasVisit");
+        return cd;
+    }
 }

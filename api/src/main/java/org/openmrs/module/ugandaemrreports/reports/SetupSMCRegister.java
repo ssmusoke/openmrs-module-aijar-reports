@@ -42,6 +42,7 @@ import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AgeFromEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AnaesthesiaCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumciserNameCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.FollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAdrressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
@@ -163,9 +164,9 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Date of TT2", sdd.definition("Date of TT1", getConcept("5d50f724-6766-421b-bcb1-1133054b7621")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Procedure", sdd.definition("Procedure", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
         dsd.addColumn("Type anasthesia", anaesthesia(), "onDate=${endDate}", new CalculationResultDataConverter());
-        //dsd.addColumn("Circumciser name", sdd.definition("Circumciser name", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
-        dsd.addColumn("48hrs", followUps(3), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Circumciser name", circumcisoName(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("48hrs", followUps(2), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("7days", followUps(7), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn(">7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("During surgery", sdd.definition("During surgery", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDataConverter());
         dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
@@ -217,4 +218,12 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         cd.addCalculationParameter("visit", visit);
         return cd;
     }
+
+    private DataDefinition circumcisoName() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Circumciser name", new CircumciserNameCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+
 }
