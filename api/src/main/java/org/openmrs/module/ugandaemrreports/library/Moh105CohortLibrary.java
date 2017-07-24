@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -36,15 +35,16 @@ import java.util.Date;
 
 /**
  * Created by Nicholas Ingosi on 5/23/17.
+ * Cohorts for the MoH 105 report
  */
 @Component
 public class Moh105CohortLibrary {
 
     @Autowired
-    CommonCohortDefinitionLibrary definitionLibrary;
+    private CommonCohortDefinitionLibrary definitionLibrary;
     
     @Autowired
-    HIVMetadata hivMetadata;
+    private HIVMetadata hivMetadata;
     
     @Autowired
     private DataFactory df;
@@ -160,11 +160,8 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("hasAppointment", ReportUtils.map(
-                df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), BaseObsCohortDefinition.TimeModifier.ANY), "startDate=${onOrAfter},endDate=${onOrBefore}"));
-        
+        cd.addSearch("hasAppointment", ReportUtils.map(df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), BaseObsCohortDefinition.TimeModifier.ANY), "startDate=${onOrAfter},endDate=${onOrBefore}"));
         cd.addSearch("hasVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-    
         cd.setCompositionString("hasAppointment NOT hasVisit");
         return cd;
     }

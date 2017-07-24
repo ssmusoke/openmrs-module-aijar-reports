@@ -1,15 +1,14 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
-
+import static org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils.map;
 
 /**
  * Created by Nicholas Ingosi on 6/7/17.
@@ -90,6 +89,7 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator iptDose(Concept answer){
         return cohortIndicator("Ipt dose on "+answer.getName().getName(), map(cclibrary.hasObs(Dictionary.getConcept("1da3cb98-59d8-4bfd-b0bb-c9c1bcd058c6"), answer), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -123,24 +123,23 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR() {
         return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7"), Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-
     /**
-     *
-     * @return
-     */
-
-    public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyAndTestedHIVPositive() {
-        return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasANCObs(
-                Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-
-        /**
          * Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit
          * @return CohortIndicator
          */
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRR() {
-        return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"),  Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cclibrary.hasANCObs(
+		        Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7"), Dictionary
+				        .getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit
+     * @return CohortIndicator
+     */
+    public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyAndTestedHIVPositive() {
+        return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasANCObs(
+		        Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"),  Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -157,6 +156,7 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator hivPositiveInitiatedART() {
         return cohortIndicator("Pregnant Women tested HIV+ and initiated on ART", map(cclibrary.hasObs(Dictionary.getConcept("a615f932-26ee-449c-8e20-e50a15232763"),  Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -164,7 +164,9 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pregnantTrkTrrk() {
-        return cohortIndicator("Pregnant women who knew status before 1st ANC total (TRK+TRRK)", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant women who knew status before 1st ANC total (TRK+TRRK)", map(cclibrary.hasANCObs(
+		        Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"), Dictionary
+				        .getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -173,6 +175,7 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator pregnantTrrk() {
         return cohortIndicator("Pregnant women who knew status before 1st ANC total TRRK", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
