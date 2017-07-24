@@ -1,11 +1,8 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
 
-import org.openmrs.Concept;
 import org.openmrs.EncounterType;
+import org.openmrs.Concept;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
@@ -22,6 +19,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Library of common Cohort definitions
@@ -123,6 +124,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition below2Years() {
         return agedAtMost(1);
     }
+
     public CohortDefinition below5Years() {
         return agedAtMost(4);
     }
@@ -163,20 +165,22 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between0And10years() {
         return agedAtMost(10);
     }
-    
+
     /**
      * MoH definition of children who is anybody 14 years and below
+     *
      * @return
      */
-    public CohortDefinition MoHChildren(){
+    public CohortDefinition MoHChildren() {
         return agedAtMost(14);
     }
-    
+
     /**
      * MoH definition of adults who are 15 years and older
+     *
      * @return
      */
-    public CohortDefinition MoHAdult(){
+    public CohortDefinition MoHAdult() {
         return agedAtLeast(15);
     }
 
@@ -186,8 +190,9 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
     /**
      * Patients who have an obs between ${onOrAfter} and ${onOrBefore}
+     *
      * @param question the question concept
-     * @param answers the answers to include
+     * @param answers  the answers to include
      * @return the cohort definition
      */
     public CohortDefinition hasObs(Concept question, Concept... answers) {
@@ -203,22 +208,24 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
-    
+
     /**
      * Has observations in an ANC encounter
+     *
      * @param question the question concept
-     * @param answers the answers to include
+     * @param answers  the answers to include
      * @return the cohort definition
      */
     public CohortDefinition hasANCObs(Concept question, Concept... answers) {
         CodedObsCohortDefinition cd = (CodedObsCohortDefinition) hasObs(question, answers);
         cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
-        
+
         return cd;
     }
 
     /**
      * Patients who have an encounter between ${onOrAfter} and ${onOrBefore}
+     *
      * @param types the encounter types
      * @return the cohort definition
      */
@@ -233,7 +240,4 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
-
-    
-
 }

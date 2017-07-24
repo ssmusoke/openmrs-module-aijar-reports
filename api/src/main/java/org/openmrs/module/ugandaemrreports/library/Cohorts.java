@@ -416,7 +416,6 @@ public class Cohorts {
         encounter.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         encounter.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid(uuid));
 
-        cd.setName("Is specific gender and has "+Context.getEncounterService().getEncounterTypeByUuid(uuid).getName()+" encounter");
         cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         cd.addParameter(new Parameter("endDate", "End Date", Date.class));
         cd.addSearch("gender", ReportUtils.map(gender));
