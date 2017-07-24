@@ -202,7 +202,7 @@
         "type": "link",
         "label": "SMC Register",
         "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
-        "order": 21
+        "order": 30
       }
     ]
   }

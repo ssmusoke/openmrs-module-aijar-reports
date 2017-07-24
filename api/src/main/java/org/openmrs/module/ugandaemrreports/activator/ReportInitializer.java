@@ -18,11 +18,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRReportManager;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.openmrs.module.reporting.report.util.ReportUtil;
+import org.openmrs.module.ugandaemrreports.reports.UgandaEMRReportManager;
 
 /**
  * Initializes reports
@@ -57,7 +56,7 @@ public class ReportInitializer implements Initializer {
 		as.executeSQL("delete from reporting_report_design;", false);
 		as.executeSQL("delete from reporting_report_request;", false);
 		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-		as.executeSQL("delete from serialized_object WHERE type LIKE 'org.openmrs.module.reporting.report%'", false);
+		as.executeSQL("delete from serialized_object WHERE type LIKE 'org.openmrs.module.reporting.report%';", false);
 		ReportUtil.updateGlobalProperty("ugandaemr.reports.oldReportsRemoved", "true");
 	}
 }

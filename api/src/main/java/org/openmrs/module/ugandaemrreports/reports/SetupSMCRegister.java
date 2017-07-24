@@ -92,7 +92,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "SMCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:10,dataset:SMC-DSD");
+        props.put("repeatingSections", "sheet:1,row:10,dataset:SMC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -121,7 +121,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
-        rd.addDataSetDefinition("SMC-DSD", Mapped.mapStraightThrough(dataSetDefinition()));
+        rd.addDataSetDefinition("SMC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
 
@@ -140,7 +140,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
 
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        dsd.setName(getName());
+        dsd.setName("SMC");
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(false, true, "244da86d-f80e-48fe-aba9-067f241905ee"), "startDate=${startDate},endDate=${endDate}");
 
