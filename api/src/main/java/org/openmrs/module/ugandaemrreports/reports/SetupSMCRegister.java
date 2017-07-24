@@ -16,6 +16,8 @@ package org.openmrs.module.ugandaemrreports.reports;
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
@@ -49,6 +51,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounte
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.STICalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -138,11 +141,21 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         return l;
     }
 
+    private CohortDefinition getSmcUsedEncounters(){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addSearch("client", ReportUtils.map(Cohorts.genderAndHasAncEncounter(false, true, "244da86d-f80e-48fe-aba9-067f241905ee"), "startDate=${startDate},endDate=${endDate}"));
+        cd.addSearch("followup", ReportUtils.map(Cohorts.genderAndHasAncEncounter(false, true, "d0f9e0b7-f336-43bd-bf50-0a7243857fa6"), "startDate=${startDate},endDate=${endDate}"));
+        cd.setCompositionString("client OR followup");
+        return cd;
+    }
+
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("SMC");
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(false, true, "244da86d-f80e-48fe-aba9-067f241905ee"), "startDate=${startDate},endDate=${endDate}");
+        dsd.addRowFilter(getSmcUsedEncounters(), "startDate=${startDate},endDate=${endDate}");
 
         PatientIdentifierType serialNo= MetadataUtils.existing(PatientIdentifierType.class, "37601abe-2ee0-4493-8ac7-22b4972190cf");
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
@@ -172,6 +185,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
         dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAeDataConverter());
         dsd.addColumn("Grade of AE", sdd.definition("Grade of AE", getConcept("e34976b9-1aff-489d-b959-4da1f7272499")), "onOrAfter=${startDate},onOrBefore=${endDate}", new GradeDataConverter());
+        //dsd.addColumn("Action", sdd.definition("Action", getConcept("")), "onOrAfter=${startDate},onOrBefore=${endDate}", null);
 
         return dsd;
     }
