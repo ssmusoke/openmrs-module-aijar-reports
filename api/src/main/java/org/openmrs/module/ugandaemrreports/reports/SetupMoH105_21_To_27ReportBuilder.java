@@ -20,7 +20,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CustomParametersDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -69,7 +69,6 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        System.out.println("The definitions are ::"+reportDefinition.getDataSetDefinitions());
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS_105-2.1-2.7.xls");
     }
 
@@ -129,7 +128,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         //define columns
         ColumnParameters female10To19 = new ColumnParameters("f10to19", "10-19", "gender=F|age=10-19");
         ColumnParameters female20To24 = new ColumnParameters("f20to24", "20-24", "gender=F|age=20-24");
-        ColumnParameters female25Plus = new ColumnParameters("f25plus", ">=25", "gender=F|age=25+");
+        ColumnParameters female25Plus = new ColumnParameters("f25plus", "25+", "gender=F|age=25+");
         ColumnParameters femaleTotals = new ColumnParameters("fTotals", "Total", "");
 
         //buils list of columns
@@ -179,13 +178,13 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
 
         ColumnParameters female10To19 = new ColumnParameters("f10to19", "10-19", "gender=F|age=10-19");
         ColumnParameters female20To24 = new ColumnParameters("f20to24", "20-24", "gender=F|age=20-24");
-        ColumnParameters female25Plus = new ColumnParameters("f25plus", ">=25", "gender=F|age=25+");
+        ColumnParameters female25Plus = new ColumnParameters("f25plus", "25+", "gender=F|age=25+");
 
         List<ColumnParameters> noTotalsColumns = Arrays.asList(female10To19, female20To24, female25Plus);
         String params = "startDate=${startDate},endDate=${endDate}";
 
         //start building the columns for the report
-        EmrReportingUtils.addRow(dsd, "P1", "P1: Post Natal Attendances - Age group", ReportUtils.map(indicatorLibrary.pncAttendances(), params), noTotalsColumns, Arrays.asList("01","02","03"));
+        EmrReportingUtils.addRow(dsd, "P1", "P1: Post Natal Attendances", ReportUtils.map(indicatorLibrary.pncAttendances(), params), noTotalsColumns, Arrays.asList("01","02","03"));
         dsd.addColumn("P1-6H", "P1-6 Hours", ReportUtils.map(indicatorLibrary.pncAttendances("1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
         dsd.addColumn("P1-6D", "P1-6 Days", ReportUtils.map(indicatorLibrary.pncAttendances("1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
         dsd.addColumn("P1-6W", "P1-6 Weeks", ReportUtils.map(indicatorLibrary.pncAttendances("1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), params), "");
@@ -206,7 +205,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         return dsd;
     }
     protected DataSetDefinition settings() {
-        CustomParametersDatasetDefinition cst = new CustomParametersDatasetDefinition();
+        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
         cst.setName("S");
         cst.setGp("ugandaemr.dhis2.organizationuuid");
         return cst;

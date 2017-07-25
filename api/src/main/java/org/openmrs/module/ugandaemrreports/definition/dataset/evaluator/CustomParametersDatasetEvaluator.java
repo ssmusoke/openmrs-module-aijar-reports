@@ -27,7 +27,7 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CustomParametersDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by codehub on 7/19/17.
  */
-@Handler(supports = CustomParametersDatasetDefinition.class)
+@Handler(supports = GlobalPropertyParametersDatasetDefinition.class)
 public class CustomParametersDatasetEvaluator implements DataSetEvaluator {
 
     private final Log log = LogFactory.getLog(getClass());
@@ -46,7 +46,7 @@ public class CustomParametersDatasetEvaluator implements DataSetEvaluator {
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 
-        CustomParametersDatasetDefinition dsd = (CustomParametersDatasetDefinition) dataSetDefinition;
+        GlobalPropertyParametersDatasetDefinition dsd = (GlobalPropertyParametersDatasetDefinition) dataSetDefinition;
         String nonCoded = ObjectUtil.nvl(dsd.getGp(),null);
 
         StringBuilder sqlQuery = new StringBuilder("select gp.property_value");

@@ -22,7 +22,7 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
  * Custom dataset that will be used to supply additional information in the evaluation contex
  * such that they can be used on a reporting template just like any other columns
  */
-public class CustomParametersDatasetDefinition extends BaseDataSetDefinition {
+public class GlobalPropertyParametersDatasetDefinition extends BaseDataSetDefinition {
 
     public static final long serialVersionUID = 1L;
 
