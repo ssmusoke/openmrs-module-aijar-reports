@@ -2,12 +2,14 @@ package org.openmrs.module.ugandaemrreports.library;
 
 
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
@@ -323,6 +325,65 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator missedANCAppointment() {
         return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.missedANCAppointment(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    //indicators for the SMC section follow here
+
+    /**
+     * Facility surgical smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator facilityAndSurgicalSmc(){
+        return cohortIndicator("facility and surgical", map(cohortLibrary.siteTypeFacilitySc(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Facility device smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator facilityAndDeviceSmc(){
+        return cohortIndicator("facility and device", map(cohortLibrary.siteTypeFacilityDc(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Outreach surgical smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator outreachAndSurgicalSmc(){
+        return cohortIndicator("Outreach and surgical", map(cohortLibrary.siteTypeOutReachSc(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Outreach device smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator outreachAndDeviceSmc(){
+        return cohortIndicator("Outreach and device", map(cohortLibrary.siteTypeOutReachDc(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * counselled and tested for HIV with results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTestedWithResuls(Concept ans) {
+        return cohortIndicator("Counseled and tested with results", map(cohortLibrary.counseledTestedForHivResults(ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * counselled and tested for HIV regardless of the results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTested() {
+        return cohortIndicator("Counseled and tested", map(cohortLibrary.counseledTestedForHiv(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * expected number of SMC performed(monthly targets)
+     * @return cohort indicator
+     */
+    public CohortIndicator expectedNumberOfSmcPerfomed() {
+        EncounterType smc = MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee");
+        return cohortIndicator("expected number of SMC performed", map(cclibrary.hasEncounter(smc), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
 }

@@ -87,4 +87,20 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${onDate}"));
         return dim;
     }
+
+    /**
+     * Dimension for age using 5 age group for smc
+     * @return a dimension
+     */
+    public CohortDefinitionDimension standardAgeGroupsForSmc() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (<2, 2<5, 5<15, 15-49, >49)");
+        dim.addParameter(new Parameter("onDate", "On Date", Date.class));
+        dim.addCohortDefinition("<2", map(commonCohortLibrary.agedAtMost(2), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("2<5", map(commonCohortLibrary.agedAtLeastAgedAtMost(3, 4), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("5<15", map(commonCohortLibrary.agedAtLeastAgedAtMost(6, 14), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("15-49", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 49), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("49+", map(commonCohortLibrary.agedAtLeast(49), "effectiveDate=${onDate}"));
+        return dim;
+    }
 }
