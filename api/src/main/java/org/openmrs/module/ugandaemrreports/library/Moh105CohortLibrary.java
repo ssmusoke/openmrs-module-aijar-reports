@@ -13,9 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -26,15 +23,16 @@ import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinitio
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.VisitsForWomenInTrimester;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -59,7 +57,6 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
         cd.addSearch("ancVist", ReportUtils.map(totalAncVisits(lower, upper), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("ancVist", ReportUtils.map(totalAncVisits(lower, upper), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("female AND ancVist");
         return cd;
     }
@@ -75,7 +72,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setQuestion(Dictionary.getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb"));
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
-        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setOperator1(RangeComparator.GREATER_THAN);
         cd.setValue1(lower);
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.setValue2(upper);
@@ -116,7 +113,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("HIV+ assed by "+question.getName().getName());
-        cd.addSearch("hivPositive", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveMothersInAnc(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("assessedBy", ReportUtils.map(definitionLibrary.hasObs(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("hivPositive AND assessedBy");
         return cd;
@@ -129,7 +126,7 @@ public class Moh105CohortLibrary {
      *Client tested HIV+ on a re-test
      * Client tested on previous visit with known HIV+ status
      */
-    public CohortDefinition totaHivPositiveMothers() {
+    public CohortDefinition hivPositiveMothersInAnc() {
         Concept emtctQ = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
         Concept hivStatus = Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115");
         Concept hivPositive = Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115");
@@ -171,6 +168,30 @@ public class Moh105CohortLibrary {
         cd.addSearch("hasVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
     
         cd.setCompositionString("hasAppointment NOT hasVisit");
+        return cd;
+    }
+
+    /**
+     * @return CohortDefinition
+     */
+    public CohortDefinition visitsForWomenInFirstTrimester(Integer trisemster) {
+        CalculationCohortDefinition cd = new CalculationCohortDefinition("visitsT1", new VisitsForWomenInTrimester());
+        cd.addParameter(new Parameter("onDate", "End Date", Date.class));
+        cd.addCalculationParameter("trisemster", trisemster);
+        return cd;
+    }
+
+    /**
+     * pregnantWomenNewlyTestedForHivThisPregnancyTRR at any visit
+     * @return CohortDefinition
+     */
+    public CohortDefinition pregnantWomenNewlyTestedForHivThisPregnancyTRRAnyVisit(){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("trr", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("anyVisit", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("trr AND anyVisit");
         return cd;
     }
 }

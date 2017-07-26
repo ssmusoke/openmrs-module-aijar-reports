@@ -138,6 +138,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         String params = "startDate=${startDate},endDate=${endDate}";
         //start building the columns for the report
         EmrReportingUtils.addRow(dsd, "A1", "A1: ANC 1st Visit for women", ReportUtils.map(indicatorLibrary.anc1stVisit(), params), allColumns, Arrays.asList("01","02","03","04"));
+        dsd.addColumn("A1T", "ANC 1st Visit number in 1st Trimester", ReportUtils.map(indicatorLibrary.visitsForWomenInFirstTrimester(3), params), "");
         EmrReportingUtils.addRow(dsd, "A2", "A2: ANC 4th Visit for women", ReportUtils.map(indicatorLibrary.anc4thVisit(), params), noTotalsColumns, Arrays.asList("01","02","03"));
         dsd.addColumn("A3", "A3: ANC 4+ visits for Women", ReportUtils.map(indicatorLibrary.anc4thPlusVisit(), params), "");
         EmrReportingUtils.addRow(dsd, "A4", "A4- Total ANC visits (new clients + Re-attendances)", ReportUtils.map(indicatorLibrary.totalAncVisits(), params), noTotalsColumns, Arrays.asList("01","02","03"));
