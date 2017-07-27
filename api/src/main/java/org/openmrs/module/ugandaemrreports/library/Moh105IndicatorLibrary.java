@@ -42,7 +42,7 @@ public class Moh105IndicatorLibrary {
      * Number of female patients with ANC 4th visit and above
      */
     public CohortIndicator anc4thPlusVisit(){
-        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(3.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(4.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -329,8 +329,9 @@ public class Moh105IndicatorLibrary {
      * Visit for women - No in 1st trimester
      * @return CohortIndicator
      */
-    public CohortIndicator visitsForWomenInFirstTrimester(int trisemster){
-        return cohortIndicator("Visit for women - No in 1st trimester", map(cohortLibrary.visitsForWomenInFirstTrimester(trisemster), "onDate=${endDate}"));
+    public CohortIndicator visitsForWomenInFirstTrimester(){
+        Concept anc1 = Dictionary.getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e");
+        return cohortIndicator("Visit for women - No in 1st trimester", map(cclibrary.hasObs(anc1, Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
 }

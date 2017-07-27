@@ -24,8 +24,6 @@ import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.VisitsForWomenInTrimester;
-import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -172,16 +170,6 @@ public class Moh105CohortLibrary {
     }
 
     /**
-     * @return CohortDefinition
-     */
-    public CohortDefinition visitsForWomenInFirstTrimester(Integer trisemster) {
-        CalculationCohortDefinition cd = new CalculationCohortDefinition("visitsT1", new VisitsForWomenInTrimester());
-        cd.addParameter(new Parameter("onDate", "End Date", Date.class));
-        cd.addCalculationParameter("trisemster", trisemster);
-        return cd;
-    }
-
-    /**
      * pregnantWomenNewlyTestedForHivThisPregnancyTRR at any visit
      * @return CohortDefinition
      */
@@ -189,8 +177,8 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("trr", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.addSearch("anyVisit", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("trr", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("anyVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("trr AND anyVisit");
         return cd;
     }
