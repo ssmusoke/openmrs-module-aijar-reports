@@ -105,6 +105,20 @@ public class Moh105CohortLibrary {
     }
 
     /**
+     * Assessed by
+     * @return CohortDefinition
+     */
+    public CohortDefinition assessedByNumericValues(Concept question) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Numeric obs based on question");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setQuestion(question);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        return cd;
+    }
+
+    /**
      * HIV+ pregnant women assessed by CD4 or WHO clinical stage for the 1st time
      * @return CohortDefinition
      */
@@ -113,10 +127,9 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("HIV+ assed by "+question.getName().getName());
-        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveMothersInAnc(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("assessedBy", ReportUtils.map(definitionLibrary.hasObs(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("assessedBy", ReportUtils.map(assessedByNumericValues(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("hivPositive AND assessedBy AND ancEncounter");
+        cd.setCompositionString("assessedBy AND ancEncounter");
         return cd;
     }
 
@@ -129,8 +142,6 @@ public class Moh105CohortLibrary {
      */
     public CohortDefinition hivPositiveMothersInAnc() {
         Concept emtctQ = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
-        Concept hivStatus = Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115");
-        Concept hivPositive = Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115");
         Concept trr = Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a");
         Concept trrPlus = Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f");
         Concept trrTick = Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3");
@@ -138,7 +149,6 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        //cd.addSearch("hivStatusPositive", ReportUtils.map(definitionLibrary.hasObs(hivStatus, hivPositive), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("emctCodes", ReportUtils.map(definitionLibrary.hasObs(emtctQ, trr, trrPlus, trrTick), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.PNC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("emctCodes AND ancEncounter");
