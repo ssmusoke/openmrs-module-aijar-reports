@@ -1,9 +1,5 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.UUID;
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
@@ -22,6 +18,11 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.UUID;
+
 
 /**
  * Library of common Cohort definitions
@@ -203,6 +204,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
+
     
     /**
      * Has observations in an ANC encounter
@@ -233,7 +235,5 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
-
-    
 
 }
