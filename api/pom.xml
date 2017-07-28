@@ -115,7 +115,7 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <dependency>
+        <!--<dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
         </dependency>
@@ -143,11 +143,7 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-grouping</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.sql2o</groupId>
-            <artifactId>sql2o</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -177,6 +173,4 @@
             </testResource>
         </testResources>
     </build>
-
-
 </project>

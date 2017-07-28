@@ -1,19 +1,16 @@
 package org.openmrs.module.ugandaemrreports.common;
 
+import java.lang.reflect.Field;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by carapai on 11/07/2017.
  */
 public class NormalizedObs {
+    private Integer obsId;
     private Integer personId;
     private String person;
-    private Date birthDate;
-    private Integer birthDateEstimated;
-    private String identifiers;
-    private String attributes;
-    private String names;
-    private String addresses;
     private String encounterType;
     private String encounterTypeName;
     private String form;
@@ -26,7 +23,6 @@ public class NormalizedObs {
     private String encounterQuarter;
     private String concept;
     private String conceptName;
-    private String order;
     private Date obsDatetime;
     private Integer obsDatetimeYear;
     private Integer obsDatetimeMonth;
@@ -35,8 +31,8 @@ public class NormalizedObs {
     private String location;
     private String locationName;
     private String obsGroup;
-    private String accessionNumber;
     private String valueGroup;
+    private Integer valueCodedId;
     private Integer valueBoolean;
     private String valueCoded;
     private String valueCodedName1;
@@ -49,20 +45,16 @@ public class NormalizedObs {
     private Integer valueDatetimeMonth;
     private String valueDatetimeQuarter;
     private Double valueNumeric;
-    private String valueModifier;
     private String valueText;
-    private String valueComplex;
-    private String comments;
-    private String creator;
     private Date dateCreated;
-    private String voided;
-    private String voidedBy;
-    private Date dateVoided;
-    private String voidReason;
-    private String uuid;
-    private String previousVersion;
-    private String formNamespaceAndPath;
-    private String status;
+
+    public Integer getObsId() {
+        return obsId;
+    }
+
+    public void setObsId(Integer obsId) {
+        this.obsId = obsId;
+    }
 
     public Integer getPersonId() {
         return personId;
@@ -80,53 +72,6 @@ public class NormalizedObs {
         this.person = person;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public Integer getBirthDateEstimated() {
-        return birthDateEstimated;
-    }
-
-    public void setBirthDateEstimated(Integer birthDateEstimated) {
-        this.birthDateEstimated = birthDateEstimated;
-    }
-
-    public String getIdentifiers() {
-        return identifiers;
-    }
-
-    public void setIdentifiers(String identifiers) {
-        this.identifiers = identifiers;
-    }
-
-    public String getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(String attributes) {
-        this.attributes = attributes;
-    }
-
-    public String getNames() {
-        return names;
-    }
-
-    public void setNames(String names) {
-        this.names = names;
-    }
-
-    public String getAddresses() {
-        return addresses;
-    }
-
-    public void setAddresses(String addresses) {
-        this.addresses = addresses;
-    }
 
     public String getEncounterType() {
         return encounterType;
@@ -224,14 +169,6 @@ public class NormalizedObs {
         this.conceptName = conceptName;
     }
 
-    public String getOrder() {
-        return order;
-    }
-
-    public void setOrder(String order) {
-        this.order = order;
-    }
-
     public Date getObsDatetime() {
         return obsDatetime;
     }
@@ -296,14 +233,6 @@ public class NormalizedObs {
         this.obsGroup = obsGroup;
     }
 
-    public String getAccessionNumber() {
-        return accessionNumber;
-    }
-
-    public void setAccessionNumber(String accessionNumber) {
-        this.accessionNumber = accessionNumber;
-    }
-
     public String getValueGroup() {
         return valueGroup;
     }
@@ -360,14 +289,6 @@ public class NormalizedObs {
         this.valueDrug = valueDrug;
     }
 
-    public Date getValueDatetime() {
-        return valueDatetime;
-    }
-
-    public void setValueDatetime(Date valueDatetime) {
-        this.valueDatetime = valueDatetime;
-    }
-
     public Integer getAgeAtValueDatetime() {
         return ageAtValueDatetime;
     }
@@ -408,44 +329,12 @@ public class NormalizedObs {
         this.valueNumeric = valueNumeric;
     }
 
-    public String getValueModifier() {
-        return valueModifier;
-    }
-
-    public void setValueModifier(String valueModifier) {
-        this.valueModifier = valueModifier;
-    }
-
     public String getValueText() {
         return valueText;
     }
 
     public void setValueText(String valueText) {
         this.valueText = valueText;
-    }
-
-    public String getValueComplex() {
-        return valueComplex;
-    }
-
-    public void setValueComplex(String valueComplex) {
-        this.valueComplex = valueComplex;
-    }
-
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
     }
 
     public Date getDateCreated() {
@@ -456,67 +345,19 @@ public class NormalizedObs {
         this.dateCreated = dateCreated;
     }
 
-    public String getVoided() {
-        return voided;
+    public Integer getValueCodedId() {
+        return valueCodedId;
     }
 
-    public void setVoided(String voided) {
-        this.voided = voided;
+    public void setValueCodedId(Integer valueCodedId) {
+        this.valueCodedId = valueCodedId;
     }
 
-    public String getVoidedBy() {
-        return voidedBy;
+    public Date getValueDatetime() {
+        return valueDatetime;
     }
 
-    public void setVoidedBy(String voidedBy) {
-        this.voidedBy = voidedBy;
-    }
-
-    public Date getDateVoided() {
-        return dateVoided;
-    }
-
-    public void setDateVoided(Date dateVoided) {
-        this.dateVoided = dateVoided;
-    }
-
-    public String getVoidReason() {
-        return voidReason;
-    }
-
-    public void setVoidReason(String voidReason) {
-        this.voidReason = voidReason;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
-    }
-
-    public String getPreviousVersion() {
-        return previousVersion;
-    }
-
-    public void setPreviousVersion(String previousVersion) {
-        this.previousVersion = previousVersion;
-    }
-
-    public String getFormNamespaceAndPath() {
-        return formNamespaceAndPath;
-    }
-
-    public void setFormNamespaceAndPath(String formNamespaceAndPath) {
-        this.formNamespaceAndPath = formNamespaceAndPath;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setValueDatetime(Date valueDatetime) {
+        this.valueDatetime = valueDatetime;
     }
 }

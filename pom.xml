@@ -43,7 +43,7 @@
         <appuiVersion>1.6</appuiVersion>
         <calculationVersion>1.1</calculationVersion>
         <guavaVersion>19.0</guavaVersion>
-        <luceneVersion>6.6.0</luceneVersion>
+        <!--<luceneVersion>6.6.0</luceneVersion>-->
         <metadatadeployVersion>1.6</metadatadeployVersion>
         <metadatamappingVersion>1.0.2</metadatamappingVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
@@ -178,7 +178,7 @@
 
             <!-- lucene dependencies -->
 
-            <dependency>
+            <!--<dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
                 <version>${luceneVersion}</version>
@@ -212,12 +212,7 @@
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-grouping</artifactId>
                 <version>${luceneVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.sql2o</groupId>
-                <artifactId>sql2o</artifactId>
-                <version>1.5.4</version>
-            </dependency>
+            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
