@@ -34,11 +34,11 @@ import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataC
 import org.openmrs.module.ugandaemrreports.data.converter.DuringSurgeryDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.DuringSurgeryDateDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.FaciltyAndOutReachDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.GradeDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.GradeOfAdverseEventDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.HctDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.SmcProcedureDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.TypeOfAeDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.TypeOfAdverseEventDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -183,8 +183,8 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn(">7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("During surgery", sdd.definition("During surgery", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDataConverter());
         dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
-        dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAeDataConverter());
-        dsd.addColumn("Grade of AE", sdd.definition("Grade of AE", getConcept("e34976b9-1aff-489d-b959-4da1f7272499")), "onOrAfter=${startDate},onOrBefore=${endDate}", new GradeDataConverter());
+        dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAdverseEventDataConverter());
+        dsd.addColumn("Grade of AE", sdd.definition("Grade of AE", getConcept("e34976b9-1aff-489d-b959-4da1f7272499")), "onOrAfter=${startDate},onOrBefore=${endDate}", new GradeOfAdverseEventDataConverter());
         //dsd.addColumn("Action", sdd.definition("Action", getConcept("")), "onOrAfter=${startDate},onOrBefore=${endDate}", null);
 
         return dsd;

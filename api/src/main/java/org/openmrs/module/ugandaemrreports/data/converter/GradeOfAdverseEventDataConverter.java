@@ -20,7 +20,7 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 /**
  * Created by Nicholas Ingosi on 7/17/17.
  */
-public class GradeDataConverter implements DataConverter {
+public class GradeOfAdverseEventDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
