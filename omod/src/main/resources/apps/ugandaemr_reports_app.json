@@ -109,6 +109,13 @@
         "label": "Exposed Infants Due for Appointment",
         "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
         "order": 50
+      },{
+        "id": "OptionB+ Weekly SMS Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "OptionB+ Weekly SMS Report",
+        "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
+        "order": 55
       },
       {
         "id": "Pre-ART Register",
@@ -117,7 +124,8 @@
         "label": "Pre-ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
         "order": 5
-      },{
+      },
+	  {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -131,6 +139,14 @@
         "label": "Maternity Register",
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
+      },
+	  {
+        "id": "OPD Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "OPD Register",
+        "url": "reportingui/runReport.page?reportDefinition=df041e1d-0043-4a01-815b-c9f66edcac7e",
+        "order": 13
       },
       {
         "id": "Case Based Surveillance EID Report",
@@ -171,6 +187,14 @@
         "label": "PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
         "order": 21
+      },
+      {
+        "id": "HMIS 105 Section 2.1 to 2.7",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.1 to 2.7",
+        "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
+        "order": 23
       }
     ]
   }

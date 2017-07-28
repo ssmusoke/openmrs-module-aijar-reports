@@ -1,8 +1,22 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.math3.stat.StatUtils;
+import org.joda.time.LocalDate;
+import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -13,10 +27,16 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
+import org.openmrs.module.ugandaemrreports.common.Periods;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HMIS106A1BDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * Created by carapai on 17/10/2016.
@@ -25,6 +45,16 @@ import java.util.List;
 public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
     @Autowired
     private EvaluationService evaluationService;
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+    @Autowired
+    DataFactory df;
+    @Autowired
+    private CohortDefinitionService cohortDefinitionService;
+    @Autowired
+    private HIVMetadata hivMetadata;
+    @Autowired
+    private PatientDataService patientDataService;
 
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext evaluationContext) throws EvaluationException {
@@ -39,178 +69,432 @@ public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {
 
         PatientDataHelper pdh = new PatientDataHelper();
 
-        String sql = "SELECT\n" +
-                "  A.person_id,\n" +
-                "  A.dt,\n" +
-                "  B.cd4,\n" +
-                "  C.ti,\n" +
-                "  D.tout,\n" +
-                "  E.to_date,\n" +
-                "  F.stopped,\n" +
-                "  G.stopped_date,\n" +
-                "  H.dead,\n" +
-                "  I.death_date,\n" +
-                "  J.missed,\n" +
-                "  K.lost,\n" +
-                "  L.lost_date,\n" +
-                "  M.dead,\n" +
-                "  M.death_date,\n" +
-                "  M.gender,\n" +
-                "  N.preg_or_lact,\n" +
-                "  O.regimen\n" +
-                "FROM\n" +
-                "  (SELECT\n" +
-                "     F.person_id,\n" +
-                "     F.dt\n" +
-                "   FROM (SELECT\n" +
-                "           C.person_id,\n" +
-                "           e.encounter_datetime AS dt\n" +
-                "         FROM (SELECT\n" +
-                "                 A.person_id,\n" +
-                "                 B.encounter_id\n" +
-                "               FROM (SELECT person_id\n" +
-                "                     FROM obs\n" +
-                "                     WHERE person_id NOT IN (SELECT person_id\n" +
-                "                                             FROM obs\n" +
-                "                                             WHERE concept_id = 99161)\n" +
-                "                     GROUP BY person_id) A INNER JOIN (SELECT\n" +
-                "                                                         person_id,\n" +
-                "                                                         min(encounter_id) AS encounter_id\n" +
-                "                                                       FROM obs\n" +
-                "                                                       WHERE concept_id = 90315\n" +
-                "                                                       GROUP BY person_id) B\n" +
-                "                   ON (A.person_id = B.person_id)) C INNER JOIN encounter e ON (e.encounter_id = C.encounter_id)\n" +
-                "         UNION ALL SELECT\n" +
-                "                     person_id,\n" +
-                "                     value_datetime AS dt\n" +
-                "                   FROM obs\n" +
-                "                   WHERE concept_id = 99161) F\n" +
-                "   WHERE F.dt BETWEEN DATE_ADD('2016-01-01', INTERVAL -72 MONTH) AND DATE_ADD('2016-03-31', INTERVAL -6 MONTH)) A\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_numeric, '|', DATE(obs_datetime))) AS cd4\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99071\n" +
-                "   GROUP BY person_id) B\n" +
-                "    ON (A.person_id = B.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS ti\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99110\n" +
-                "   GROUP BY person_id) C\n" +
-                "    ON (A.person_id = C.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS tout\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 90306\n" +
-                "   GROUP BY person_id) D\n" +
-                "    ON (A.person_id = D.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', DATE(value_datetime), '|', DATE(obs_datetime))) AS to_date\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99165\n" +
-                "   GROUP BY person_id) E\n" +
-                "    ON (A.person_id = E.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS stopped\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99132 AND value_coded = 1363\n" +
-                "   GROUP BY person_id) F\n" +
-                "    ON (A.person_id = F.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', DATE(value_datetime), '|', DATE(obs_datetime))) AS stopped_date\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99084\n" +
-                "   GROUP BY person_id) G\n" +
-                "    ON (A.person_id = G.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS dead\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99112\n" +
-                "   GROUP BY person_id) H\n" +
-                "    ON (A.person_id = H.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', DATE(value_datetime), '|', DATE(obs_datetime))) AS death_date\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 90272\n" +
-                "   GROUP BY person_id) I\n" +
-                "    ON (A.person_id = I.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS missed\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 99132 AND value_coded = 99133\n" +
-                "   GROUP BY person_id) J\n" +
-                "    ON (A.person_id = J.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS lost\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 5240\n" +
-                "   GROUP BY person_id) K\n" +
-                "    ON (A.person_id = K.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', DATE(value_datetime), '|', DATE(obs_datetime))) AS lost_date\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 90209\n" +
-                "   GROUP BY person_id) L\n" +
-                "    ON (A.person_id = L.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     gender,\n" +
-                "     birthdate,\n" +
-                "     dead,\n" +
-                "     death_date\n" +
-                "   FROM person\n" +
-                "   GROUP BY person_id) M\n" +
-                "    ON (A.person_id = M.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS preg_or_lact\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id IN (99072, 99603)\n" +
-                "   GROUP BY person_id) N\n" +
-                "    ON (A.person_id = N.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT\n" +
-                "     person_id,\n" +
-                "     group_concat(concat(encounter_id, '|', value_coded, '|', DATE(obs_datetime))) AS regimen\n" +
-                "   FROM obs\n" +
-                "   WHERE concept_id = 90315\n" +
-                "   GROUP BY person_id) O\n" +
-                "    ON (A.person_id = O.person_id)";
+        LocalDate date = StubDate.dateOf(definition.getStartDate());
+        List<LocalDate> q1 = Periods.subtractQuarters(date, 2);
+        List<LocalDate> q2 = Periods.subtractQuarters(date, 4);
+        List<LocalDate> q3 = Periods.subtractQuarters(date, 8);
+        List<LocalDate> q4 = Periods.subtractQuarters(date, 12);
+        List<LocalDate> q5 = Periods.subtractQuarters(date, 16);
+        List<LocalDate> q6 = Periods.subtractQuarters(date, 20);
+        List<LocalDate> q7 = Periods.subtractQuarters(date, 24);
 
-        SqlQueryBuilder q = new SqlQueryBuilder(sql);
+        List<String> periods = new ArrayList<String>();
+
+        periods.add(q1.get(0).toString("MMM") + " - " + q1.get(1).toString("MMM") + " " + q1.get(1).toString("yyyy"));
+        periods.add(q2.get(0).toString("MMM") + " - " + q2.get(1).toString("MMM") + " " + q2.get(1).toString("yyyy"));
+        periods.add(q3.get(0).toString("MMM") + " - " + q3.get(1).toString("MMM") + " " + q3.get(1).toString("yyyy"));
+        periods.add(q4.get(0).toString("MMM") + " - " + q4.get(1).toString("MMM") + " " + q4.get(1).toString("yyyy"));
+        periods.add(q5.get(0).toString("MMM") + " - " + q5.get(1).toString("MMM") + " " + q5.get(1).toString("yyyy"));
+        periods.add(q6.get(0).toString("MMM") + " - " + q6.get(1).toString("MMM") + " " + q6.get(1).toString("yyyy"));
+        periods.add(q7.get(0).toString("MMM") + " - " + q7.get(1).toString("MMM") + " " + q7.get(1).toString("yyyy"));
+
+        List<String> quarters = new ArrayList<String>();
+
+        quarters.add(String.valueOf(q1.get(0).getYear()) + "Q" + String.valueOf(((q1.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q2.get(0).getYear()) + "Q" + String.valueOf(((q2.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q3.get(0).getYear()) + "Q" + String.valueOf(((q3.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q4.get(0).getYear()) + "Q" + String.valueOf(((q4.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q5.get(0).getYear()) + "Q" + String.valueOf(((q5.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q6.get(0).getYear()) + "Q" + String.valueOf(((q6.get(1).getMonthOfYear() - 1) / 3) + 1));
+        quarters.add(String.valueOf(q7.get(0).getYear()) + "Q" + String.valueOf(((q7.get(1).getMonthOfYear() - 1) / 3) + 1));
+
+        String query = "SELECT\n" +
+                "     person_id,\n" +
+                "     CONCAT_WS('', YEAR(value_datetime), 'Q', quarter(value_datetime)) AS q\n" +
+                "   FROM obs\n" +
+                "   WHERE concept_id = 99161 and voided = 0";
+        SqlQueryBuilder q = new SqlQueryBuilder();
+        q.append(query);
 
         List<Object[]> results = evaluationService.evaluateToList(q, evaluationContext);
+        Multimap<String, Integer> finalData = convert(results);
 
-        for (Object[] r : results) {
-            DataSetRow row = new DataSetRow();
+        List<Integer> enrolledViaPMTCT = getPregnantAtArtStart(evaluationContext);
 
-            pdh.addCol(row, "Name", r[1]);
+        CohortDefinition artTransferInRegimen = df.getPatientsWithConcept(hivMetadata.getArtRegimenTransferInDate(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition artTransferInRegimenOther = df.getPatientsWithConcept(hivMetadata.getOtherArtTransferInRegimen(), BaseObsCohortDefinition.TimeModifier.ANY);
+
+        DateObsCohortDefinition artTransferInDate = new DateObsCohortDefinition();
+        artTransferInDate.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        artTransferInDate.setQuestion(hivMetadata.getArtRegimenTransferInDate());
+
+        CohortDefinition artTransferIn = df.getPatientsInAny(artTransferInRegimen, artTransferInRegimenOther, artTransferInDate);
+
+        Cohort transferInPatients = Context.getService(CohortDefinitionService.class).evaluate(artTransferIn, null);
+
+        Map<Integer, Object> baselineCD4 = new HashMap<Integer, Object>();
+        Map<Integer, Object> baselineCD4Mothers = new HashMap<Integer, Object>();
+
+
+        int months = 6;
+        DecimalFormat df = new DecimalFormat("###.##");
+
+        for (int i = 0; i < periods.size(); i++) {
+            if (i > 0) {
+                months = i * 12;
+            }
+            DataSetRow all = new DataSetRow();
+            DataSetRow eMTCT = new DataSetRow();
+            Set<Integer> allStarted = new HashSet<Integer>(finalData.get(quarters.get(i)));
+
+
+            Collection allMothers = CollectionUtils.intersection(allStarted, enrolledViaPMTCT);
+
+
+            pdh.addCol(all, "patients", "All patients " + String.valueOf(months) + " months");
+            pdh.addCol(eMTCT, "patients", "eMTCT Mothers " + String.valueOf(months) + " months");
+
+            pdh.addCol(all, "when", periods.get(i));
+            pdh.addCol(eMTCT, "when", periods.get(i));
+
+            if (allStarted.size() > 0) {
+                Collection startedArt = CollectionUtils.subtract(allStarted, transferInPatients.getMemberIds());
+                Collection transferIn = CollectionUtils.intersection(allStarted, transferInPatients.getMemberIds());
+
+                Map<Integer, Object> cD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> transferOut = new HashMap<Integer, Object>();
+                Map<Integer, Object> dead = new HashMap<Integer, Object>();
+                Map<String, Cohort> lost = new HashMap<String, Cohort>();
+                Set<Integer> stopped = new HashSet<Integer>();
+                Map<Integer, Object> cCD4 = new HashMap<Integer, Object>();
+                Map<Integer, Object> pCD4L500 = new HashMap<Integer, Object>();
+
+
+                if (startedArt.size() > 0) {
+                    baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(startedArt));
+                    cD4L500 = getPatientBaselineCD4DataLS500(baselineCD4);
+                    transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate);
+
+                }
+
+                Collection net = CollectionUtils.subtract(allStarted, transferOut.keySet());
+
+                if (net.size() > 0) {
+                    lost = getLostPatients(Joiner.on(",").join(net), endDate);
+                    stopped = getPatientStopped(Joiner.on(",").join(net), endDate);
+                    dead = getDeadPatients(Joiner.on(",").join(net), endDate);
+                }
+
+
+                Cohort patientsLost = lost.get("lost");
+                Cohort patientsDropped = lost.get("dropped");
+
+                Collection allLostAndDied = CollectionUtils.union(CollectionUtils.union(stopped, dead.keySet()), CollectionUtils.union(patientsLost.getMemberIds(), patientsDropped.getMemberIds()));
+
+                Collection alive = CollectionUtils.subtract(net, allLostAndDied);
+
+                if (alive.size() > 0) {
+                    cCD4 = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
+                    pCD4L500 = getPatientBaselineCD4DataLS500(cCD4);
+                }
+
+                pdh.addCol(all, "enrolled", startedArt.size());
+                pdh.addCol(all, "transferIn", transferIn.size());
+
+                pdh.addCol(all, "baseFraction", df.format(((double) cD4L500.size()) / baselineCD4.size()));
+                pdh.addCol(all, "baseMedian", getMedianCD4(cD4L500));
+                pdh.addCol(all, "transferOut", getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate).size());
+                pdh.addCol(all, "netCohort", net.size());
+                pdh.addCol(all, "stopped", stopped.size());
+                pdh.addCol(all, "died", dead.size());
+                pdh.addCol(all, "lost", patientsLost.getSize());
+                pdh.addCol(all, "dropped", patientsDropped.getSize());
+                pdh.addCol(all, "alive", alive.size());
+                pdh.addCol(all, "percentageAlive", df.format((alive.size() * 100.00) / net.size()));
+                pdh.addCol(all, "fraction", df.format(((double) pCD4L500.size()) / cCD4.size()));
+                pdh.addCol(all, "median", getMedianCD4(pCD4L500));
+
+            } else {
+                pdh.addCol(all, "enrolled", 0);
+                pdh.addCol(all, "transferIn", 0);
+                pdh.addCol(all, "baseFraction", "-");
+                pdh.addCol(all, "baseMedian", "-");
+                pdh.addCol(all, "transferOut", 0);
+                pdh.addCol(all, "netCohort", 0);
+                pdh.addCol(all, "stopped", 0);
+                pdh.addCol(all, "died", 0);
+                pdh.addCol(all, "lost", 0);
+                pdh.addCol(all, "dropped", 0);
+                pdh.addCol(all, "alive", 0);
+                pdh.addCol(all, "percentageAlive", 0);
+                pdh.addCol(all, "fraction", "-");
+                pdh.addCol(all, "median", "-");
+            }
+
+            if (allMothers.size() > 0) {
+                Collection allMotherStarted = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
+                Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
+
+
+                Map<Integer, Object> mothersCD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> transferOutMothers = new HashMap<Integer, Object>();
+                Map<Integer, Object> deadMothers = new HashMap<Integer, Object>();
+                Map<String, Cohort> lostMothers = new HashMap<String, Cohort>();
+                Set<Integer> stoppedMothers = new HashSet<Integer>();
+                Map<Integer, Object> cCD4W = new HashMap<Integer, Object>();
+                Map<Integer, Object> pCD4L500W = new HashMap<Integer, Object>();
+
+
+                if (allMotherStarted.size() > 0) {
+                    baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMotherStarted));
+                    mothersCD4L500 = getPatientBaselineCD4DataLS500(baselineCD4Mothers);
+                    transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStarted), endDate);
+
+                }
+                Collection netMothers = CollectionUtils.subtract(allMothers, transferOutMothers.keySet());
+
+                if (netMothers.size() > 0) {
+                    lostMothers = getLostPatients(Joiner.on(",").join(netMothers), endDate);
+                    stoppedMothers = getPatientStopped(Joiner.on(",").join(netMothers), endDate);
+                    deadMothers = getDeadPatients(Joiner.on(",").join(netMothers), endDate);
+                }
+
+
+                Cohort patientsLost = lostMothers.get("lost");
+                Cohort patientsDropped = lostMothers.get("dropped");
+
+                Collection allLostAndDied = CollectionUtils.union(CollectionUtils.union(stoppedMothers, deadMothers.keySet()), CollectionUtils.union(patientsLost.getMemberIds(), patientsDropped.getMemberIds()));
+
+                Collection alive = CollectionUtils.subtract(netMothers, allLostAndDied);
+
+                if (alive.size() > 0) {
+                    cCD4W = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
+                    pCD4L500W = getPatientBaselineCD4DataLS500(cCD4W);
+                }
+
+                pdh.addCol(eMTCT, "enrolled", allMotherStarted.size());
+                pdh.addCol(eMTCT, "transferIn", mothersTransferIn.size());
+
+                pdh.addCol(eMTCT, "baseFraction", df.format(((double) mothersCD4L500.size()) / baselineCD4Mothers.size()));
+                pdh.addCol(eMTCT, "baseMedian", getMedianCD4(mothersCD4L500));
+                pdh.addCol(eMTCT, "transferOut", transferOutMothers.size());
+                pdh.addCol(eMTCT, "netCohort", netMothers.size());
+                pdh.addCol(eMTCT, "stopped", getPatientStopped(Joiner.on(",").join(netMothers), endDate));
+                pdh.addCol(eMTCT, "died", getDeadPatients(Joiner.on(",").join(netMothers), endDate).size());
+                pdh.addCol(eMTCT, "lost", lostMothers.get("lost").getSize());
+                pdh.addCol(eMTCT, "dropped", lostMothers.get("dropped").getSize());
+                pdh.addCol(eMTCT, "alive", alive.size());
+                pdh.addCol(eMTCT, "percentageAlive", df.format((alive.size() * 100.00) / netMothers.size()));
+
+                pdh.addCol(eMTCT, "fraction", df.format(((double) pCD4L500W.size()) / cCD4W.size()));
+                pdh.addCol(eMTCT, "median", getMedianCD4(pCD4L500W));
+            } else {
+                pdh.addCol(eMTCT, "enrolled", 0);
+                pdh.addCol(eMTCT, "transferIn", 0);
+
+                pdh.addCol(eMTCT, "baseFraction", "-");
+                pdh.addCol(eMTCT, "baseMedian", "-");
+                pdh.addCol(eMTCT, "transferOut", 0);
+                pdh.addCol(eMTCT, "netCohort", 0);
+                pdh.addCol(eMTCT, "stopped", 0);
+                pdh.addCol(eMTCT, "died", 0);
+                pdh.addCol(eMTCT, "lost", 0);
+                pdh.addCol(eMTCT, "dropped", 0);
+                pdh.addCol(eMTCT, "alive", 0);
+                pdh.addCol(eMTCT, "percentageAlive", 0.0);
+                pdh.addCol(eMTCT, "fraction", "-");
+                pdh.addCol(eMTCT, "median", "-");
+            }
+            dataSet.addRow(all);
+            dataSet.addRow(eMTCT);
         }
 
+        return dataSet;
+    }
+
+    private Map<Integer, Object> getPatientBaselineCD4Data(String cohort) throws EvaluationException {
+        String sql = String.format("select o.person_id, o.value_numeric from obs o where o.voided = 0 and o.concept_id = 99071 and person_id in (select o.person_id from obs o inner join person p using(person_id) where o.concept_id = 99161 and o.voided = 0 and YEAR(o.value_datetime) - YEAR(p.birthdate) - (RIGHT(o.value_datetime, 5) < RIGHT(p.birthdate, 5)) > 5 and p.person_id in(%s))", cohort);
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql(sql);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        return patientDataService.evaluate(definition, context).getData();
+    }
+
+    private Map<Integer, Object> getPatientWithRecentCD4(String cohort, String endDate) throws EvaluationException {
+        String sql = String.format("select DISTINCT A.person_id,A.value_numeric from (select o.person_id, o.value_numeric,o.obs_datetime from obs o where o.person_id in (%s) and o.concept_id = 5497 and obs_datetime <= '%s' and voided = 0) A  LEFT JOIN (select o.person_id, o.value_numeric,o.obs_datetime from obs o where o.person_id in (%s) and o.concept_id = 5497 and obs_datetime <= '%s' and voided = 0) B ON(A.person_id = B.person_id AND A.obs_datetime < B.obs_datetime) WHERE B.person_id IS NULL", cohort, endDate, cohort, endDate);
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql(sql);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        return patientDataService.evaluate(definition, context).getData();
+    }
+
+    private Map<Integer, Object> getPatientTransferredOut(String cohort, String endDate) throws EvaluationException {
+        String sql = String.format("select o.person_id, o.value_datetime from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99165 and o.value_datetime <= '%s'", cohort, endDate);
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql(sql);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        return patientDataService.evaluate(definition, context).getData();
+    }
+
+    private List<Integer> getPregnantAtArtStart(EvaluationContext evaluationContext) throws EvaluationException {
+        String sql = "select person_id from (select person_id,value_coded from obs where concept_id = 99072 and value_coded = 90003 and voided = 0 group by person_id union all select person_id,value_coded from obs where concept_id = 99603 and value_coded = 90003 and voided = 0 group by person_id) A group by person_id";
+        SqlQueryBuilder q = new SqlQueryBuilder();
+        q.append(sql);
+        return evaluationService.evaluateToList(q, Integer.class, evaluationContext);
+    }
+
+    private Set<Integer> getPatientStopped(String cohort, String endDate) throws EvaluationException {
+        String sqlStopped = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99084 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
+        String sqlRestarted = String.format("select person_id, MAX(DATE(o.value_datetime)) from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99085 and o.value_datetime <= '%s' group by person_id", cohort, endDate);
+        SqlPatientDataDefinition stoppedDefinition = new SqlPatientDataDefinition();
+        SqlPatientDataDefinition restartedDefinition = new SqlPatientDataDefinition();
+
+        stoppedDefinition.setSql(sqlStopped);
+        restartedDefinition.setSql(sqlRestarted);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        Set<Integer> clients = new HashSet<Integer>();
+
+        Map<Integer, Object> stoppedPatients = patientDataService.evaluate(stoppedDefinition, context).getData();
+        Map<Integer, Object> restartedPatients = patientDataService.evaluate(restartedDefinition, context).getData();
+        for (Map.Entry<Integer, Object> o : stoppedPatients.entrySet()) {
+            Date stopDate = DateUtil.parseDate(String.valueOf(o.getValue()), "yyyy-MM-dd");
+            Object restartDate = restartedPatients.get(o.getKey());
+            if (restartDate != null) {
+                Date r = DateUtil.parseDate(String.valueOf(restartDate), "yyyy-MM-dd");
+                if (r.before(stopDate)) {
+                    clients.add(o.getKey());
+                }
+            } else {
+                clients.add(o.getKey());
+            }
+        }
+        return clients;
+    }
+
+    private Map<Integer, Object> getDeadPatients(String cohort, String endDate) throws EvaluationException {
+        String sql = "select * from\n" +
+                String.format("  (select person_id,Date(value_datetime) as death_date from obs where voided = 0 and concept_id = 90272 and person_id in(%s) and value_datetime < '%s'\n", cohort, endDate) +
+                "union\n" +
+                String.format("select person_id, DATE(death_date) from person WHERE death_date is not null and person_id in(%s) and death_date < '%s') A group by person_id", cohort, endDate);
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql(sql);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        return patientDataService.evaluate(definition, context).getData();
+    }
+
+    private Map<String, Cohort> getLostPatients(String cohort, String endDate) throws EvaluationException {
+        Map<String, Cohort> l = new HashMap<String, Cohort>();
+        String sql = "SELECT\n" +
+                "  A.patient_id,\n" +
+                "  CASE\n" +
+                "  WHEN B.visit IS NULL\n" +
+                "    THEN\n" +
+                "      CASE\n" +
+                "      WHEN DATEDIFF('2015-03-31', A.encounter) BETWEEN 8 AND 89\n" +
+                "        THEN 'LOST'\n" +
+                "      WHEN DATEDIFF('2015-03-31', A.encounter) >= 90\n" +
+                "        THEN 'DROPPED'\n" +
+                "      ELSE 'ACTIVE'\n" +
+                "      END\n" +
+                "  WHEN A.encounter >= B.visit AND B.visit IS NOT NULL\n" +
+                "    THEN\n" +
+                "      CASE\n" +
+                "      WHEN DATEDIFF(A.encounter, B.visit) BETWEEN 8 AND 89\n" +
+                "        THEN 'LOST'\n" +
+                "      WHEN DATEDIFF(A.encounter, B.visit) >= 90\n" +
+                "        THEN 'DROPPED'\n" +
+                "      ELSE 'ACTIVE'\n" +
+                "      END\n" +
+                "  WHEN B.visit > A.encounter AND B.visit IS NOT NULL\n" +
+                "    THEN\n" +
+                "      CASE\n" +
+                "      WHEN DATEDIFF('2015-03-31', B.visit) BETWEEN 8 AND 89\n" +
+                "        THEN 'LOST'\n" +
+                "      WHEN DATEDIFF('2015-03-31', B.visit) >= 90\n" +
+                "        THEN 'DROPPED'\n" +
+                "      ELSE 'ACTIVE'\n" +
+                "      END\n" +
+                "  END as status\n" +
+                "FROM\n" +
+                "  (SELECT\n" +
+                "     patient_id,\n" +
+                "     MAX(DATE(encounter_datetime)) AS encounter\n" +
+                "   FROM encounter\n" +
+                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND voided = 0 AND encounter_datetime < '2015-03-31'\n" +
+                "   GROUP BY patient_id) A\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT\n" +
+                "     person_id,\n" +
+                "     MAX(DATE(value_datetime)) AS visit\n" +
+                "   FROM obs\n" +
+                "   WHERE concept_id = 5096 AND voided = 0 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime < '2015-03-31'\n" +
+                "   GROUP BY person_id) B ON (A.patient_id = B.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT\n" +
+                "     person_id,\n" +
+                "     MIN(DATE(value_datetime)) AS nextVisit\n" +
+                "   FROM obs\n" +
+                "   WHERE concept_id = 5096 AND voided = 0 AND person_id IN(1,2,3,4,5,6,7) AND value_datetime >= '2015-03-31') C\n" +
+                "    ON (A.patient_id = C.person_id)\n" +
+                "  LEFT JOIN\n" +
+                "  (SELECT\n" +
+                "     patient_id,\n" +
+                "     MIN(DATE(encounter_datetime)) AS nextEncounter\n" +
+                "   FROM encounter\n" +
+                "   WHERE patient_id IN(1,2,3,4,5,6,7) AND voided = 0 AND encounter_datetime >= '2015-03-31'\n" +
+                "   GROUP BY patient_id) D ON (A.patient_id = D.patient_id)";
+
+        sql = sql.replace("2015-03-31", endDate).replace("1,2,3,4,5,6,7", cohort);
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql(sql);
+        EvaluationContext context = new EvaluationContext();
+        context.setBaseCohort(new Cohort(cohort));
+        Set<Integer> lost = new HashSet<Integer>();
+        Set<Integer> dropped = new HashSet<Integer>();
+        Map<Integer, Object> data = patientDataService.evaluate(definition, context).getData();
+        for (Map.Entry<Integer, Object> o : data.entrySet()) {
+            if (String.valueOf(o.getValue()).contains("LOST")) {
+                lost.add(o.getKey());
+            }
+
+            if (String.valueOf(o.getValue()).contains("DROPPED")) {
+                dropped.add(o.getKey());
+            }
+        }
+
+        Cohort lostPatients = new Cohort();
+        lostPatients.setMemberIds(lost);
+        Cohort droppedPatients = new Cohort();
+        droppedPatients.setMemberIds(dropped);
+        l.put("lost", lostPatients);
+        l.put("dropped", droppedPatients);
+        return l;
+    }
+
+    private Map<Integer, Object> getPatientBaselineCD4DataLS500(Map<Integer, Object> data) {
+        Map<Integer, Object> result = new HashMap<Integer, Object>();
+        for (Map.Entry<Integer, Object> o : data.entrySet()) {
+            if (Double.valueOf(String.valueOf(o.getValue())) < 500.0) {
+                result.put(o.getKey(), o.getValue());
+            }
+        }
+        return result;
+    }
+
+    private Double getMedianCD4(Map<Integer, Object> data) {
+        double[] medainData = new double[data.keySet().size()];
+        int i = 0;
+        for (Map.Entry<Integer, Object> o : data.entrySet()) {
+            medainData[i++] = Double.valueOf(String.valueOf(o.getValue()));
+        }
+
+        if (medainData.length > 0) {
+            return StatUtils.percentile(medainData, 50);
+        }
         return null;
+    }
+
+    private Multimap<String, Integer> convert(List<Object[]> results) {
+        Multimap<String, Integer> myMultimap = ArrayListMultimap.create();
+
+        for (Object[] patient : results) {
+            myMultimap.put(String.valueOf(patient[1]), Integer.valueOf(String.valueOf(patient[0])));
+        }
+        return myMultimap;
     }
 }
