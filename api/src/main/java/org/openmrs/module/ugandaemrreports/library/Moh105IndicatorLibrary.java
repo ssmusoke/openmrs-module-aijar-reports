@@ -32,6 +32,7 @@ public class Moh105IndicatorLibrary {
 
     String ANC_UUID = Metadata.EncounterType.ANC_ENCOUNTER;
     String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
+    String EID_UUID = Metadata.EncounterType.EID_ENCOUNTER_PAGE;
     @Autowired
     private Moh105CohortLibrary cohortLibrary;
 
@@ -550,29 +551,13 @@ public class Moh105IndicatorLibrary {
     }
 
     /**
-     *M16: Maternal deaths 10-19
+     *M16: Maternal deaths
      * @return CohortIndicator
      */
-    public CohortIndicator maternalDeaths10To19() {
-        return cohortIndicator("Maternal deaths 10-19", map(cohortLibrary.maternalDeathsAge10To19(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     *M16: Maternal deaths 20-24
-     * @return CohortIndicator
-     */
-    public CohortIndicator maternalDeaths20To24() {
-        return cohortIndicator("Maternal deaths 20-24", map(cohortLibrary.maternalDeathsAge20To24(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
+    public CohortIndicator maternalDeaths() {
+        return cohortIndicator("Maternal deaths", map(cohortLibrary.maternalDeaths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }    
     
-    /**
-     *M16: Maternal deaths 25 and above
-     * @return CohortIndicator
-     */
-    public CohortIndicator maternalDeaths25AndAbove() {
-        return cohortIndicator("Maternal deaths 25 and above", map(cohortLibrary.maternalDeathsAge25AndAbove(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
     /**
      *M18: Birth asphyxia
      * @return CohortIndicator
@@ -2457,6 +2442,152 @@ public class Moh105IndicatorLibrary {
 	public CohortIndicator obeseBmi() {
 		return cohortIndicator("Obese ( BMI>30)",
 		    map(cohortLibrary.bmiCount(30.1, 100.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
+	/**
+	 * HIV Exposed Infants - EID
+	 */
+	
+	/**
+	 * E1A Exposed infants tested for HIV below 18 months of age - 1st PCR
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator exposedInfantsTestedForHivBelow18MonthsOfAge1StPcr() {
+		return cohortIndicator("Exposed infants tested for HIV below 18 months of age - 1st PCR",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID, Dictionary.getConcept(Metadata.Concept.DATE_OF_FIRST_PCR_TEST)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E1B Exposed infants tested for HIV below 18 months of age - 2nd PCR
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator exposedInfantsTestedForHivBelow18MonthsOfAge2NdPcr() {
+		return cohortIndicator("Exposed infants tested for HIV below 18 months of age - 2nd PCR",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID, Dictionary.getConcept(Metadata.Concept.DATE_OF_SECOND_PCR_TEST)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E1C Exposed infants tested for HIV below 18 months of age - 18month rapid test
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator exposedInfantsTestedForHivBelow18MonthsOfAge18MonthRapidTest() {
+		return cohortIndicator("Exposed infants tested for HIV below 18 months of age - 18month rapid test",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID,
+		        Dictionary.getConcept(Metadata.Concept.DATE_OF_18_MONTH_RAPID_PCR_TEST)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E2A 1st DNA PCR result returned
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator firstDnaPcrResultReturned() {
+		return cohortIndicator("1st DNA PCR result returned",
+		    map(cohortLibrary.firstDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E2B 1st DNA PCR result returned - HIV+
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator firstDnaPcrResultReturnedHivPositive() {
+		return cohortIndicator("1st DNA PCR result returned - HIV+",
+		    map(cohortLibrary.firstDnaPCRResultsReturnedFromTheLabHivPositive(),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E3A 2nd DNA PCR result returned
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator secondDnaPcrResultReturned() {
+		return cohortIndicator("2nd DNA PCR result returned",
+		    map(cohortLibrary.secondDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E3B 2nd DNA PCR result returned - HIV+
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator secondDnaPcrResultReturnedHivPositive() {
+		return cohortIndicator("2nd DNA PCR result returned - HIV+",
+		    map(cohortLibrary.secondDnaPCRResultsReturnedFromTheLabHivPositive(),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E4A Number of DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator numberOfDnaPcrResultsReturnedFromTheLab() {
+		return cohortIndicator("Number of DNA PCR results returned from the lab",
+		    map(cohortLibrary.dnaPcrResultsReturnedFromTheLab(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E4B Number of DNA PCR results returned from the lab - given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator dnaPcrResultsReturnedFromTheLabGivenToCareGiver() {
+		return cohortIndicator("Number of DNA PCR results returned from the lab - given to care giver",
+		    map(cohortLibrary.dnaPcrResultsReturnedFromTheLabGivenToCareGiver(),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E5A Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator hivExposedInfantsTestedBySerologyRapidhivTestAt18Months() {
+		return cohortIndicator("Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID,
+		        Dictionary.getConcept(Metadata.Concept.RAPID_HIV_TEST_AT_18_MONTHS_DATE)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E5B Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months - HIV+
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator hivExposedInfantsTestedBySerologyRapidhivTestAt18MonthsHivPositive() {
+		return cohortIndicator("Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months - HIV+",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID,
+		        Dictionary.getConcept(Metadata.Concept.RAPID_HIV_TEST_AT_18_MONTHS_TEST_RESULT),
+		        Dictionary.getConcept(Metadata.Concept.POSITIVE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E6A Number of HIV+ infants from EID enrolled in care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator hivPositiveInfantsFromEidEnrolledInCare() {
+		return cohortIndicator("Number of HIV+ infants from EID enrolled in care",
+		    map(cohortLibrary.hivPositiveInfantsFromEidEnrolledInCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+	
+	/**
+	 * E7 HIV exposed infants started on CPT
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator hivExposedInfantsStartedOnCpt() {
+		return cohortIndicator("HIV exposed infants started on CPT",
+		    map(cohortLibrary.hasObsAndEncounter(EID_UUID, Dictionary.getConcept(Metadata.Concept.STARTED_ON_CPT)),
+		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
 	
 }

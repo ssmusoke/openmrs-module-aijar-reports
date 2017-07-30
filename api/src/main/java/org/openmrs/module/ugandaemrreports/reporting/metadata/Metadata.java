@@ -210,6 +210,19 @@ public class Metadata {
 		public static final String BMI = "dca1f717-30ab-102d-86b0-7a5022ba4115";
 		public static final String ALCOHOL_USE = "159449AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		public static final String TOBACCO_USE = "163731AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		public static final String STARTED_ON_CPT = "9fc5bf9d-a79e-4548-9207-b2afbbeba796";
+		public static final String ENROLLED_IN_HIV_CARE_PROGRAM = "d697d1db-32ff-4efe-a9d9-563e7c5f0827";
+		public static final String FINAL_EID_PCR_TEST_RESULT = "977b16f4-2d3e-40d2-ba51-54794c98f7ef";
+		public static final String RAPID_HIV_TEST_AT_18_MONTHS_DATE = "7065b181-abb0-4ad6-8082-62e99398f735";
+		public static final String RAPID_HIV_TEST_AT_18_MONTHS_TEST_RESULT = "71e135e8-cf63-4031-adc7-09a0a9b61c33";
+		public static final String FIRST_EID_PCR_TEST_RESULT = "b6a6210b-ccdf-45fc-80dd-1567f65e2d98";
+		public static final String SECOND_EID_PCR_TEST_RESULT = "e1b4efbf-0dff-4e9e-a2f2-34edcb02a5d0";
+		public static final String DATE_FIRST_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER = "f4d8932c-2b95-46c5-8aac-1fc345c3f01f";
+		public static final String DATE_SECOND_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER = "358cbf29-0d6f-4be0-9af4-5844049d5f28";
+		public static final String DATE_OF_FIRST_PCR_TEST = "51941f01-307f-44ca-9351-401bc008a208";
+		public static final String DATE_OF_SECOND_PCR_TEST = "1f627527-2f97-4f21-9b61-2b79d887950f";
+		public static final String DATE_OF_18_MONTH_RAPID_PCR_TEST = "7065b181-abb0-4ad6-8082-62e99398f735";
+
     }
     public static class Identifier{
 

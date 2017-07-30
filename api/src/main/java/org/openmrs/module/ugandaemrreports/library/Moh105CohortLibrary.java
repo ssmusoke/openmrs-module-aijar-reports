@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -31,9 +34,6 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Nicholas Ingosi on 5/23/17.
@@ -324,21 +324,6 @@ public class Moh105CohortLibrary {
      */
     public CohortDefinition maternalDeaths() {
         return definitionLibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"),Dictionary.getConcept("17fcfd67-a1a2-4361-9915-ad4e81a7a61d"));
-    }
-
-    /**
-     * Maternal deaths - Age 10-19
-     * @return CohortDefinition
-     */
-    public CohortDefinition maternalDeathsAge10To19() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Maternal deaths 10-19");
-        cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "endDate=${onOrBefore}"));
-        cd.setCompositionString("maternalDeaths AND Age10To19");
-        return cd;
     }
 
     /**
@@ -1021,5 +1006,144 @@ public class Moh105CohortLibrary {
 	 public CohortDefinition bmiCount(Double minValue, Double maxValue) {
 			return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.BMI), RangeComparator.GREATER_EQUAL, minValue, RangeComparator.LESS_EQUAL, maxValue);
 	 }
+	 	
+	/**
+	 * Number of HIV+ infants from EID Enrolled in care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition hivPositiveInfantsFromEidEnrolledInCare() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of HIV+ infants from EID enrolled in care");
+		cd.addSearch("hivPositiveInfantsFromEid",
+		    ReportUtils.map(hivPositiveInfantsFromEid(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("infantsFromEidEnrolledInCare",
+		    ReportUtils.map(infantsFromEidEnrolledInCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString("hivPositiveInfantsFromEid AND infantsFromEidEnrolledInCare");
+		return cd;
+	}
 	
+	/**
+	 * Number of infants from EID Enrolled in care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition infantsFromEidEnrolledInCare() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.ENROLLED_IN_HIV_CARE_PROGRAM),
+		    Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+	}
+	
+	/**
+	 * Number of HIV+ infants from EID
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition hivPositiveInfantsFromEid() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FINAL_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+	
+	/**
+	 * Number of DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition dnaPcrResultsReturnedFromTheLab() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of DNA PCR results returned from the lab");
+		cd.addSearch("firstDnaPCRResultsReturnedFromTheLab",
+		    ReportUtils.map(firstDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("secondDnaPCRResultsReturnedFromTheLab",
+		    ReportUtils.map(secondDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString("firstDnaPCRResultsReturnedFromTheLab AND secondDnaPCRResultsReturnedFromTheLab");
+		return cd;
+	}
+	
+	/**
+	 * Number of DNA PCR results returned from the lab - given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition dnaPcrResultsReturnedFromTheLabGivenToCareGiver() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of DNA PCR results returned from the lab - given to care giver");
+		cd.addSearch("firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver", ReportUtils.map(
+		    firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver", ReportUtils.map(
+		    secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString(
+		    "firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver AND secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver");
+		return cd;
+	}
+	
+	/**
+	 * Number of 1st DNA PCR results returned from the lab given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.DATE_FIRST_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER));
+	}
+	
+	/**
+	 * Number of 2nd DNA PCR results returned from the lab given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.DATE_SECOND_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER));
+	}
+	
+	/**
+	 * Number of 1st DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLab() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FIRST_EID_PCR_TEST_RESULT));
+	}
+	
+	/**
+	 * Number of 2nd DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLab() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.SECOND_EID_PCR_TEST_RESULT));
+	}
+	
+	/**
+	 * Number of HIV+ 1st DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLabHivPositive() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FIRST_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+	
+	/**
+	 * Number of HIV+ 2nd DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLabHivPositive() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.SECOND_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+
 }

@@ -100,6 +100,8 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("A", Mapped.mapStraightThrough(antenatal()));
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(postnatal()));
+        rd.addDataSetDefinition("M", Mapped.mapStraightThrough(maternity()));
+        rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
 
         return rd;
     }
@@ -165,7 +167,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         dsd.addColumn("A21", "Pregnant Women initiated on Cotrimoxazole", ReportUtils.map(indicatorLibrary.initiatedOnCtx(), params), "");
         dsd.addColumn("A22-T", "Male partners received HIV test results in eMTCT - Total", ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "");
         dsd.addColumn("A22-HIVp", "Male partners received HIV test results in eMTCT - HIV+", ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params), "");
-
+                      
         return dsd;
 
     }
@@ -212,7 +214,71 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         return cst;
     }
 
+    protected DataSetDefinition maternity() {
+        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        dsd.setParameters(getParameters());
+        dsd.setName("M");
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForMaternity(), "onDate=${endDate}"));
 
+        ColumnParameters age10To19 = new ColumnParameters("a10to19", "10-19", "age=Between10And19");
+        ColumnParameters age20To24 = new ColumnParameters("a20to24", "20-24", "age=Between20And24");
+        ColumnParameters age25Plus = new ColumnParameters("a25plus", "25+", "age=GreaterOrEqualTo25");
+        
+        List<ColumnParameters> noTotalsColumns = Arrays.asList(age10To19, age20To24, age25Plus);
+        String params = "startDate=${startDate},endDate=${endDate}";
+        
+    	dsd.addColumn("M1", "M1: Maternity Admissions", ReportUtils.map(indicatorLibrary.maternityAdmissions(), params), "");
+        dsd.addColumn("M2", "M2: Referrals to maternity unit", ReportUtils.map(indicatorLibrary.referralsToMaternityUnit(), params), "");
+        dsd.addColumn("M3", "M3: Maternity referrals out", ReportUtils.map(indicatorLibrary.maternityReferralsOut(), params), "");        
+        EmrReportingUtils.addRow(dsd, "M4", "M4: Deliveries in unit", ReportUtils.map(indicatorLibrary.maternityReferralsOut(), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        dsd.addColumn("M4A", "Fresh Still birth", ReportUtils.map(indicatorLibrary.freshStillBirthDeliveries(), params), "");
+        dsd.addColumn("M4B", "Macerated still birth", ReportUtils.map(indicatorLibrary.maceratedStillBirthDeliveries(), params), "");
+        dsd.addColumn("M4C", "Live births", ReportUtils.map(indicatorLibrary.liveBirthDeliveries(), params), "");
+        dsd.addColumn("M4D", "Pre-Term births", ReportUtils.map(indicatorLibrary.pretermBirthDeliveries(), params), "");
+        dsd.addColumn("M5A", "M5: Women tested for HIV in labour - 1st time pregnancy", ReportUtils.map(indicatorLibrary.womenTestedForHivInLabourFirstTimePregnancy(), params), "");
+        dsd.addColumn("M5B", "M5: Women tested for HIV in labour - Retest this pregancy", ReportUtils.map(indicatorLibrary.womenTestedForHivInLabourRetestThisPregnancy(), params), "");
+        dsd.addColumn("M6A", "M6: Women testing HIV+ in labour - 1st time this Pregnancy", ReportUtils.map(indicatorLibrary.womenTestingHivPositiveInLabourFirstTimePregnancy(), params), "");
+        dsd.addColumn("M6B", "M6: Women testing HIV+ in labour - Retest this Pregnancy", ReportUtils.map(indicatorLibrary.womenTestingHivPositiveInLabourRetestThisPregnancy(), params), "");
+        dsd.addColumn("M7", "M7: HIV+ women initiating ART in maternity", ReportUtils.map(indicatorLibrary.hivPositiveWomenInitiatingArtInMaternity(), params), "");
+        dsd.addColumn("M8A", "M8: Deliveries to HIV+ women in unit - Total", ReportUtils.map(indicatorLibrary.deliveriesTohivPositiveWomen(), params), "");
+        dsd.addColumn("M8B", "M8: Deliveries to HIV+ women in unit - Live births", ReportUtils.map(indicatorLibrary.liveBirthDeliveriesTohivPositiveWomen(), params), "");
+        dsd.addColumn("M9", "M9: HIV-exposed babies given ARVs", ReportUtils.map(indicatorLibrary.hivExposedBabiesGivenArvs(), params), "");
+        dsd.addColumn("M10A", "M10: No. of mothers who initiated breastfeeding within the 1st hour after delivery - Total", ReportUtils.map(indicatorLibrary.initiatedBreastfeedingWithinFirstHourAfterDelivery(), params), "");
+        dsd.addColumn("M10B", "M10: No. of mothers who initiated breastfeeding within the 1st hour after delivery - Hiv+", ReportUtils.map(indicatorLibrary.initiatedBreastfeedingWithinFirstHourAfterDeliveryAndHivPositive(), params), "");
+        dsd.addColumn("M11", "M11: Babies born with low birth weight (<2.5kg)", ReportUtils.map(indicatorLibrary.babiesBornWithLowBirthWeight(), params), "");
+        dsd.addColumn("M12", "M12: Live babies", ReportUtils.map(indicatorLibrary.liveBabies(), params), "");
+        dsd.addColumn("M13", "M13: Babies born with defect", ReportUtils.map(indicatorLibrary.babiesBornWithDefect(), params), "");
+        dsd.addColumn("M15", "M15: Newborn deaths (0-7 days)", ReportUtils.map(indicatorLibrary.newBornDeaths(), params), "");
+        EmrReportingUtils.addRow(dsd, "M16", "M16: Maternal deaths", ReportUtils.map(indicatorLibrary.maternalDeaths(), params), noTotalsColumns, Arrays.asList("01", "02", "03"));
+        dsd.addColumn("M18", "M18: Birth asphyxia", ReportUtils.map(indicatorLibrary.birthAsphyxia(), params), "");
+        dsd.addColumn("M19", "M19: No. of babies who received PNC at 6 hours", ReportUtils.map(indicatorLibrary.babiesReceivedPncAt6Hours(), params), "");
 
+        return dsd;
+    }
+
+    protected DataSetDefinition eid() {
+        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        dsd.setParameters(getParameters());
+        dsd.setName("E");
+        
+        String params = "startDate=${startDate},endDate=${endDate}";
+        
+        dsd.addColumn("E1A","E1: -Exposed infants tested for HIV below 18 months of age - 1st PCR", ReportUtils.map(indicatorLibrary.exposedInfantsTestedForHivBelow18MonthsOfAge1StPcr()),params);
+        dsd.addColumn("E1B","E1: -Exposed infants tested for HIV below 18 months of age - 2nd PCR", ReportUtils.map(indicatorLibrary.exposedInfantsTestedForHivBelow18MonthsOfAge2NdPcr()),params);
+        dsd.addColumn("E1C","E1: -Exposed infants tested for HIV below 18 months of age - 18month rapid test", ReportUtils.map(indicatorLibrary.exposedInfantsTestedForHivBelow18MonthsOfAge18MonthRapidTest()),params);
+        dsd.addColumn("E2A","E2:-1st DNA PCR result returned", ReportUtils.map(indicatorLibrary.firstDnaPcrResultReturned()),params);
+        dsd.addColumn("E2B","E2:-1st DNA PCR result returned - HIV+", ReportUtils.map(indicatorLibrary.firstDnaPcrResultReturnedHivPositive()),params);
+        dsd.addColumn("E3A","E3:-2nd DNA PCR result returned", ReportUtils.map(indicatorLibrary.secondDnaPcrResultReturned()),params);
+        dsd.addColumn("E3B","E3:-2nd DNA PCR result returned - HIV+", ReportUtils.map(indicatorLibrary.secondDnaPcrResultReturnedHivPositive()),params);
+        dsd.addColumn("E4A","E4:-Number of DNA PCR results returned from the lab", ReportUtils.map(indicatorLibrary.numberOfDnaPcrResultsReturnedFromTheLab()),params);
+        dsd.addColumn("E4B","E4:-Number of DNA PCR results returned from the lab - given to care giver", ReportUtils.map(indicatorLibrary.dnaPcrResultsReturnedFromTheLabGivenToCareGiver()),params);
+        dsd.addColumn("E5A","E5:-Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months", ReportUtils.map(indicatorLibrary.hivExposedInfantsTestedBySerologyRapidhivTestAt18Months()),params);
+        dsd.addColumn("E5B","E5:-Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months - HIV+", ReportUtils.map(indicatorLibrary.hivExposedInfantsTestedBySerologyRapidhivTestAt18MonthsHivPositive()),params);
+        dsd.addColumn("E6A","E6:-Number of HIV+ infants from EID enrolled in care", ReportUtils.map(indicatorLibrary.hivPositiveInfantsFromEidEnrolledInCare()),params);
+        dsd.addColumn("E7A","E7:-HIV exposed infants started on CPT", ReportUtils.map(indicatorLibrary.hivExposedInfantsStartedOnCpt()),params);
+
+        return dsd;
+    }
+    
 
 }
