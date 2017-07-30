@@ -19,11 +19,13 @@ import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi on 5/19/17.
@@ -32,11 +34,12 @@ public class AgeFromEncounterDateCalculation extends AbstractPatientCalculation 
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> params, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
+        Set<Integer> male = Filters.male(cohort, context);
         Integer lower = (params != null && params.containsKey("lower")) ? (Integer) params.get("lower") : null;
         Integer upper = (params != null && params.containsKey("upper")) ? (Integer) params.get("upper") : null;
 
-        CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), cohort, context);
-        for(Integer ptId:cohort) {
+        CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), male, context);
+        for(Integer ptId:male) {
             Date dateAtRegistration;
             Integer ageAtRegistration = null;
             Integer age = null;

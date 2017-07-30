@@ -22,10 +22,12 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi on 5/19/17.
@@ -36,9 +38,10 @@ public class SMCEncounterDateCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
+        Set<Integer> male = Filters.male(cohort, context);
 
-        CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), cohort, context);
-        for(Integer ptId: cohort){
+        CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), male, context);
+        for(Integer ptId: male){
             Date encounterDate = null;
             Encounter enc = EmrCalculationUtils.encounterResultForPatient(encounter, ptId);
             if(enc != null) {

@@ -23,6 +23,7 @@ import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CalculationUtils;
 
 import java.text.DateFormat;
@@ -32,6 +33,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi on 7/17/17.
@@ -41,13 +43,14 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
 
         CalculationResultMap ret = new CalculationResultMap();
+        Set<Integer> male = Filters.male(cohort, context);
         Integer visit = (map != null && map.containsKey("visit")) ? (Integer) map.get("visit") : null;
         EncounterType type = Context.getEncounterService().getEncounterTypeByUuid("d0f9e0b7-f336-43bd-bf50-0a7243857fa6");
 
-        CalculationResultMap followUpEncounters = Calculations.allEncounters(type, cohort, context);
-        CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), cohort, context);
+        CalculationResultMap followUpEncounters = Calculations.allEncounters(type, male, context);
+        CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), male, context);
 
-        for(Integer ptId: cohort) {
+        for(Integer ptId: male) {
             String value = "";
             Date circumDate = EmrCalculationUtils.datetimeResultForPatient(encounterDate, ptId);
             ListResult encounterList = (ListResult) followUpEncounters.get(ptId);

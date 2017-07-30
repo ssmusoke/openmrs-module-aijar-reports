@@ -23,10 +23,12 @@ import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi on 7/21/17.
@@ -35,10 +37,11 @@ public class CircumciserNameCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
+        Set<Integer> male = Filters.male(cohort, context);
         EncounterService service = Context.getEncounterService();
         EncounterRole role = service.getEncounterRoleByUuid("240b26f9-dd88-4172-823d-4a8bfeb7841f");
-        CalculationResultMap cadreMap = Calculations.lastObs(Dictionary.getConcept("911c5daf-e6ce-4255-abae-5ceb8fdcb5a2"), cohort, context);
-        for(Integer ptId: cohort) {
+        CalculationResultMap cadreMap = Calculations.lastObs(Dictionary.getConcept("911c5daf-e6ce-4255-abae-5ceb8fdcb5a2"), male, context);
+        for(Integer ptId: male) {
             String name = "";
             Obs cadreMapObs = EmrCalculationUtils.obsResultForPatient(cadreMap, ptId);
             if(role != null && cadreMapObs != null){

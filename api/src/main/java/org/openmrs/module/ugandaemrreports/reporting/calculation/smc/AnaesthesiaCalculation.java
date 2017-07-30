@@ -20,10 +20,12 @@ import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi on 7/17/17.
@@ -32,11 +34,12 @@ public class AnaesthesiaCalculation extends AbstractPatientCalculation{
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
-        CalculationResultMap local = Calculations.lastObs(Dictionary.getConcept("db9f397b-0632-4e43-b022-585ce3a48656"), cohort, context);
-        CalculationResultMap anticeptic = Calculations.lastObs(Dictionary.getConcept("941571fc-9264-4675-b200-1c1fdb78a1c7"), cohort, context);
-        CalculationResultMap other = Calculations.lastObs(Dictionary.getConcept("1d8d0ca2-8973-4838-8955-3d09340044a8"), cohort, context);
+        Set<Integer> male = Filters.male(cohort, context);
+        CalculationResultMap local = Calculations.lastObs(Dictionary.getConcept("db9f397b-0632-4e43-b022-585ce3a48656"), male, context);
+        CalculationResultMap anticeptic = Calculations.lastObs(Dictionary.getConcept("941571fc-9264-4675-b200-1c1fdb78a1c7"), male, context);
+        CalculationResultMap other = Calculations.lastObs(Dictionary.getConcept("1d8d0ca2-8973-4838-8955-3d09340044a8"), male, context);
 
-        for(Integer ptId:cohort) {
+        for(Integer ptId:male) {
             String results = "";
             Obs localObs = EmrCalculationUtils.obsResultForPatient(local, ptId);
             Obs anticepticObs = EmrCalculationUtils.obsResultForPatient(anticeptic, ptId);
