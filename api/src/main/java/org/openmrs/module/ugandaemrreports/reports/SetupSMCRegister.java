@@ -45,7 +45,7 @@ import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AgeFromEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AnaesthesiaCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumciserNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.FollowUpCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumcisionFollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAdrressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.STICalculation;
@@ -227,7 +227,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     }
 
     private DataDefinition followUps(Integer visit) {
-        CalculationDataDefinition cd = new CalculationDataDefinition("visits", new FollowUpCalculation());
+        CalculationDataDefinition cd = new CalculationDataDefinition("visits", new CircumcisionFollowUpCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         cd.addCalculationParameter("visit", visit);
         return cd;

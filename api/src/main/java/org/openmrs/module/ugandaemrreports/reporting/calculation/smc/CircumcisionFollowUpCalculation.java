@@ -36,7 +36,7 @@ import java.util.Map;
 /**
  * Created by Nicholas Ingosi on 7/17/17.
  */
-public class FollowUpCalculation extends AbstractPatientCalculation {
+public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
 
