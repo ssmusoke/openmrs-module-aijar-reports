@@ -46,7 +46,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AgeFromEnco
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.AnaesthesiaCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumciserNameCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumcisionFollowUpCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAdrressCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAddressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.STICalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -202,7 +202,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         return cd;
     }
     private DataDefinition address() {
-        CalculationDataDefinition cd = new CalculationDataDefinition("address", new SMCAdrressCalculation());
+        CalculationDataDefinition cd = new CalculationDataDefinition("address", new SMCAddressCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
 

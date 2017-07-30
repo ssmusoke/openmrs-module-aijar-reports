@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Created by Nicholas Ingosi  on 5/22/17.
  */
-public class SMCAdrressCalculation extends AbstractPatientCalculation {
+public class SMCAddressCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
