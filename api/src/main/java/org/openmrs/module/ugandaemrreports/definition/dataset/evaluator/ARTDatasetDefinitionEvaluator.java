@@ -11,11 +11,9 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,9 +29,6 @@ import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.pat
  */
 @Handler(supports = {ARTDatasetDefinition.class})
 public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
-
-    @Autowired
-    private EvaluationService evaluationService;
 
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
@@ -94,6 +89,9 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 List<NormalizedObs> weights = patientOtherEncounters != null ? patientOtherEncounters.get("dce09e2f-30ab-102d-86b0-7a5022ba4115") : null;
                 List<NormalizedObs> cd4s = patientOtherEncounters != null ? patientOtherEncounters.get("dcbcba2c-30ab-102d-86b0-7a5022ba4115") : null;
                 List<NormalizedObs> vls = patientOtherEncounters != null ? patientOtherEncounters.get("dc8d83e3-30ab-102d-86b0-7a5022ba4115") : null;
+                List<NormalizedObs> vlDates = patientOtherEncounters != null ? patientOtherEncounters.get("0b434cfa-b11c-4d14-aaa2-9aed6ca2da88") : null;
+                List<SummarizedObs> functionalStatus = multimap.get(month).get("dce09a15-30ab-102d-86b0-7a5022ba4115");
+                // List<NormalizedObs> vlQualitative = patientOtherEncounters != null ? patientOtherEncounters.get("dca12261-30ab-102d-86b0-7a5022ba4115") : null;
                 List<NormalizedObs> arvDays = patientOtherEncounters != null ? patientOtherEncounters.get("7593ede6-6574-4326-a8a6-3d742e843659") : null;
 
                 if ((artTI != null && artTI.size() > 0) || (entry != null && entry.size() > 0 && entry.get(0).getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
@@ -109,8 +107,14 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "Age", artStartDate.get(0).getAgeAtValueDatetime());
                 // TODO display address correctly
                 pdh.addCol(row, "Address", personDemos.getAddresses());
-                // TODO get first functional status at art start
-                pdh.addCol(row, "FUS", "");
+
+                SummarizedObs currentFunctionalStatus = patientInGroup(functionalStatus, patient, "obs_datetime");
+
+                if (currentFunctionalStatus != null) {
+                    pdh.addCol(row, "FUS", currentFunctionalStatus.getValueCodedName());
+                } else {
+                    pdh.addCol(row, "FUS", "");
+                }
 
                 if (baselineWeight != null && baselineWeight.size() > 0) {
                     pdh.addCol(row, "Weight", baselineWeight.get(0).getValueNumeric());
@@ -162,10 +166,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         List<SummarizedObs> arvs = patientData.get("dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
                         List<SummarizedObs> appointments = patientData.get("dcac04cf-30ab-102d-86b0-7a5022ba4115");
                         List<SummarizedObs> deaths = patientData.get("deaths");
-
                         List<SummarizedObs> clinicalStages = patientData.get("dcdff274-30ab-102d-86b0-7a5022ba4115");
-                        List<SummarizedObs> viralLoadsDates = patientData.get("0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-                        List<SummarizedObs> viralLoadQualitative = patientData.get("ddca12261-30ab-102d-86b0-7a5022ba4115");
 
                         String tbStatus = "";
                         String adherence = "";
@@ -175,12 +176,12 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         String status = "";
                         String adherenceAndCPT = "";
 
-                        SummarizedObs currentTbStatus = patientInGroup(patient, tb, "obs_datetime");
-                        SummarizedObs currentADH = patientInGroup(patient, adh, "obs_datetime");
-                        SummarizedObs currentCPT = patientInGroup(patient, cpt, "obs_datetime");
-                        SummarizedObs currentARV = patientInGroup(patient, arvs, "obs_datetime");
-                        SummarizedObs currentAppointment = patientInGroup(patient, appointments, "value_datetime");
-                        SummarizedObs currentlyDead = patientInGroup(patient, deaths, "deaths");
+                        SummarizedObs currentTbStatus = patientInGroup(tb, patient, "obs_datetime");
+                        SummarizedObs currentADH = patientInGroup(adh, patient, "obs_datetime");
+                        SummarizedObs currentCPT = patientInGroup(cpt, patient, "obs_datetime");
+                        SummarizedObs currentARV = patientInGroup(arvs, patient, "obs_datetime");
+                        SummarizedObs currentAppointment = patientInGroup(appointments, patient, "value_datetime");
+                        SummarizedObs currentlyDead = patientInGroup(deaths, patient, "deaths");
 
 
                         NormalizedObs currentStops = patientInGroup(patient, stop, "monthly", workingMonth);
@@ -221,7 +222,6 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         } else if (currentAppointment != null) {
                             regimen = "3";
                         } else {
-
                             NormalizedObs currentDays1MonthsAgo = patientInGroup(patient, arvDays, "obs_datetime", String.valueOf(period - 1));
                             NormalizedObs currentDays2MonthsAgo = patientInGroup(patient, arvDays, "obs_datetime", String.valueOf(period - 2));
 
@@ -256,8 +256,12 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                             NormalizedObs currentWeight = patientInGroup(patient, weights, "obs_datetime", workingMonth);
                             NormalizedObs currentCD4 = patientInGroup(patient, cd4s, "obs_datetime", workingMonth);
-                            NormalizedObs currentVL = patientInGroup(patient, vls, "value_datetime", workingMonth);
+                            NormalizedObs currentViralLoadDate = patientInGroup(patient, vlDates, "monthly", workingMonth);
+
                             SummarizedObs currentClinicalStage = patientInGroup(patient, workingMonth, clinicalStages, "obs_datetime");
+
+                            String cd4 = "";
+                            String vl = "";
 
                             if (currentClinicalStage != null) {
                                 pdh.addCol(row, "CI" + String.valueOf(i), currentClinicalStage.getReportName());
@@ -272,10 +276,17 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             }
 
                             if (currentCD4 != null) {
-                                pdh.addCol(row, "CDVL" + String.valueOf(i), currentCD4.getValueNumeric());
-                            } else {
-                                pdh.addCol(row, "CDVL" + String.valueOf(i), "");
+                                cd4 = String.valueOf(currentCD4.getValueNumeric());
                             }
+
+                            if (currentViralLoadDate != null) {
+                                NormalizedObs vlValue = patientInGroup(patient, vls, currentViralLoadDate.getEncounter());
+                                if (vlValue != null) {
+                                    vl = String.valueOf(vlValue.getValueNumeric());
+                                }
+                            }
+
+                            pdh.addCol(row, "CDVL" + String.valueOf(i), cd4 + "\n" + vl);
                         }
                     } else {
                         pdh.addCol(row, "FUS" + String.valueOf(i), "");

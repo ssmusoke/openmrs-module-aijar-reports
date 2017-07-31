@@ -8,6 +8,7 @@ import org.joda.time.LocalDate;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ugandaemrreports.common.*;
+import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsEncounterPredicate;
 import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsPredicate;
 import org.openmrs.module.ugandaemrreports.definition.predicates.ReportTypePredicate;
 
@@ -888,7 +889,7 @@ public class UgandaEMRReporting {
                 "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
                 "  GROUP BY CONCAT(YEAR(death_date), 'Q', QUARTER(death_date));";
         sql = sql.replace("1900-01-01", startDate);
-        executeQuery("SET SESSION group_concat_max_len = 1000000;",connection);
+        executeQuery("SET SESSION group_concat_max_len = 1000000;", connection);
         executeQuery(sql, connection);
     }
 
@@ -922,8 +923,7 @@ public class UgandaEMRReporting {
         concepts.put("current regimen", "dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
         concepts.put("return date", "dcac04cf-30ab-102d-86b0-7a5022ba4115");
         concepts.put("clinical stage", "dcdff274-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-        concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("functional status", "dce09a15-30ab-102d-86b0-7a5022ba4115");
         concepts.put("deaths", "deaths");
 
         return concepts;
@@ -949,6 +949,9 @@ public class UgandaEMRReporting {
         concepts.put("weight", "dce09e2f-30ab-102d-86b0-7a5022ba4115");
         concepts.put("cd4", "dcbcba2c-30ab-102d-86b0-7a5022ba4115");
         concepts.put("vl", "dc8d83e3-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
+        // concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("functional status", "dce09a15-30ab-102d-86b0-7a5022ba4115");
         concepts.put("arvdays", "7593ede6-6574-4326-a8a6-3d742e843659");
         return concepts;
     }
@@ -969,7 +972,7 @@ public class UgandaEMRReporting {
         return stmt.executeUpdate();
     }
 
-    public static SummarizedObs patientInGroup(String patient, List<SummarizedObs> patients, String groupedBy) {
+    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient, String groupedBy) {
 
         if (patients == null || patients.size() == 0) {
             return null;
@@ -1013,6 +1016,23 @@ public class UgandaEMRReporting {
             return null;
         } else {
             Collection<NormalizedObs> normalizedObs = Collections2.filter(patients, new NormalizedObsPredicate(periodType, period));
+            if (normalizedObs != null && normalizedObs.size() > 0) {
+                for (NormalizedObs obs : normalizedObs) {
+                    if (obs != null && Objects.equals(obs.getPersonId(), Integer.valueOf(patient))) {
+                        return obs;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static NormalizedObs patientInGroup(String patient, List<NormalizedObs> patients, String encounter) {
+
+        if (patients == null || patients.size() == 0) {
+            return null;
+        } else {
+            Collection<NormalizedObs> normalizedObs = Collections2.filter(patients, new NormalizedObsEncounterPredicate(encounter));
             if (normalizedObs != null && normalizedObs.size() > 0) {
                 for (NormalizedObs obs : normalizedObs) {
                     if (obs != null && Objects.equals(obs.getPersonId(), Integer.valueOf(patient))) {
