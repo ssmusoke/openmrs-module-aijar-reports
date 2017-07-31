@@ -74,9 +74,9 @@ public class MyTest {
         }
     }*/
 
-    @Test
+    /*@Test
     public void shouldReturnSqlConnection() throws SQLException, ClassNotFoundException {
         assertNotNull(UgandaEMRReporting.testSqlConnection());
-    }
+    }*/
 
 }
