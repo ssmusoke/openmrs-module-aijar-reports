@@ -58,28 +58,34 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
 
             if(listResult.size() > 0){
                 for(Encounter enc: listResult) {
-                    if(visit != null && visit > 7 && circumDate != null && enc.getEncounterDatetime() != null){
-                        if((enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7)){
-                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
+                    if(visit != null && visit > 7 && circumDate != null){
+                        if(enc.getEncounterDatetime() != null && ((enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7))){
+                            if(enc.getEncounterDatetime().after(getDate(circumDate, 7))) {
+                                value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            }
                         }
-                        else {
-                            value = "N";
+                        else if(enc.getEncounterDatetime() != null && ((enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7))){
+                            value = "";
                         }
 
                     }
-                    else if(visit != null && visit <= 7 && circumDate != null &&  enc.getEncounterDatetime() != null) {
-                        if(visit == 2 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 2)){
+                    else if(visit != null && visit <= 7 && circumDate != null) {
+                        if(visit == 2 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 2)){
                             value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
                         }
-                        else  if(visit == 2 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 2)){
+                        else  if(visit == 2 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 2)){
                             value = "N";
                         }
 
-                        else  if(visit == 7 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7)){
-                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
+                        else  if(visit == 7 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7)){
+                            if(enc.getEncounterDatetime().after(getDate(circumDate, 2))) {
+                                value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            }
                         }
                         else  if(visit == 7 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7)){
-                            value = "N";
+                            if(enc.getEncounterDatetime().after(getDate(circumDate, 2))) {
+                                value = "N";
+                            }
                         }
                     }
                 }
@@ -91,7 +97,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd, MMM, yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         return date == null?"":dateFormatter.format(date);
     }
     private long convertDaysIntoTime(Date d, int days){
@@ -100,5 +106,12 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
         c.add(Calendar.DATE, days);
 
         return c.getTimeInMillis();
+    }
+
+    private Date getDate(Date date, int days){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, days);
+        return calendar.getTime();
     }
 }

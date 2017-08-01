@@ -18,7 +18,7 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingodi on 7/17/17.
+ * Created by Nicholas Ingosi on 7/17/17.
  */
 public class TypeOfAdverseEventDataConverter implements DataConverter {
     @Override

@@ -48,7 +48,7 @@ public class DuringSurgeryDateDataConverter implements DataConverter {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("MMM d, yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         return dateFormatter.format(date);
     }
 }
