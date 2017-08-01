@@ -24,6 +24,8 @@ import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SmcReturnFollowUpCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -273,6 +275,18 @@ public class Moh105CohortLibrary {
         cd.addSearch("counseled", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("cd8a8a72-4046-4595-94d0-52138534272a"), Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("tested", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("counseled AND tested");
+        return cd;
+    }
+
+    /**
+     * Number of clients circumcised who returned for a follow up within 6 weeks
+     * @return CohortDefinition
+     */
+    public CohortDefinition clientsCircumcisedAndReturnedWithin6Weeks(Integer visit){
+        CalculationCohortDefinition cd = new CalculationCohortDefinition("returned", new SmcReturnFollowUpCalculation());
+        cd.setName("clients returned for visit");
+        cd.addParameter(new Parameter("onDate", "End Date", Date.class ));
+        cd.addCalculationParameter("visit", visit);
         return cd;
     }
 

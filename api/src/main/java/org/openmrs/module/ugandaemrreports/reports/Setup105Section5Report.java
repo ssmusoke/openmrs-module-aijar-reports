@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -78,12 +79,12 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
 
     @Override
     public String getName() {
-        return "HMIS 105 Section 5 To 6";
+        return "HMIS 105 Section 5";
     }
 
     @Override
     public String getDescription() {
-        return "Health Unit Outpatient Monthly Report, HMIS 105 Section 5 To 6";
+        return "Health Unit Outpatient Monthly Report, HMIS 105 Section 5";
     }
 
     @Override
@@ -140,6 +141,13 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         List<ColumnParameters> allColumns = Arrays.asList(mUnder2, m2Under5, m5Under15, m15To49, m49Plus, mTotals);
         String params = "startDate=${startDate},endDate=${endDate}";
 
+        Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
+        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
+        Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
+        Concept other = Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115");
+        Concept managedLocally = Dictionary.getConcept("");
+        Concept referred = Dictionary.getConcept("");
+
         dsd.addColumn("S1", "Expected Number of SMC's Performed(Monthly Targets)", ReportUtils.map(indicatorLibrary.expectedNumberOfSmcPerfomed(), params), "");
         EmrReportingUtils.addRow(dsd, "S2FS", "Number of male circumcised - Facility/Surgical", ReportUtils.map(indicatorLibrary.facilityAndSurgicalSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
         EmrReportingUtils.addRow(dsd, "S2FD", "Number of male circumcised - Facility/Device", ReportUtils.map(indicatorLibrary.facilityAndDeviceSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
@@ -148,6 +156,18 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         dsd.addColumn("S3HP", "SMC Clients Counseled, Tested/HIV+", ReportUtils.map(indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")), params), "");
         dsd.addColumn("S3HN", "SMC Clients Counseled, Tested/HIV-", ReportUtils.map(indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")), params), "");
         dsd.addColumn("S3HT", "Total SSMC Clients Counseled, Tested", ReportUtils.map(indicatorLibrary.counseledAndTested(), params), "");
+        dsd.addColumn("S448H", "First follow up visit within 48 Hours", ReportUtils.map(indicatorLibrary.smcFollowUps(2), params), "");
+        dsd.addColumn("S47D", "Second follow up visit within 7 Days", ReportUtils.map(indicatorLibrary.smcFollowUps(7), params), "");
+        dsd.addColumn("S47DB", "Further Follow up visit Beyonds 7 Days", ReportUtils.map(indicatorLibrary.smcFollowUps(8), params), "");
+        dsd.addColumn("S5M", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("ba7ae66b-8108-45b6-a34d-e842cf31c623")), params), "");
+        dsd.addColumn("S5S", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("44f95fcb-1054-466f-906d-45a41ef07297")), params), "");
+        dsd.addColumn("S5T", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(), params), "");
+        dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(dorsal, sleeve), params),"");
+        dsd.addColumn("S6DC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(forceps), params),"");
+        dsd.addColumn("S6OT", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(other), params),"");
+        dsd.addColumn("S7M", "Managed locally", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(managedLocally), params),"");
+        dsd.addColumn("S7R", "Referred", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(referred), params),"");
+
         return dsd;
     }
 

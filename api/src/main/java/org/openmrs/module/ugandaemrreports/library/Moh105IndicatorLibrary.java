@@ -386,4 +386,41 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("expected number of SMC performed", map(cclibrary.hasEncounter(smc), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    /**
+     * Clients circumcised who experinced one or more adverse evenets
+     * @return CohortIndicator
+     */
+    public CohortIndicator circumcisedAndExperiencedAdverseEvents(Concept ... ans){
+        Concept adQuestion = Dictionary.getConcept("e34976b9-1aff-489d-b959-4da1f7272499");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(adQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    /**
+     * Clients circumcised by used Technique
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsCircumcisedWithTechnique(Concept ... ans) {
+        Concept techQuestion = Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(techQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Action taken
+     * @return CohortIndicator
+     */
+    public CohortIndicator actionTaken(Concept ... ans){
+        Concept actionTakenQuetion = Dictionary.getConcept("");
+        return cohortIndicator("action taken", map(cclibrary.hasObs(actionTakenQuetion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    /**
+     * follow up visits in SMC
+     * @return CohortIndicator
+     */
+    public CohortIndicator smcFollowUps(int visit){
+        return cohortIndicator("action taken", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6Weeks(visit), "onDate=${endDate}"));
+    }
+
 }
