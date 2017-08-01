@@ -91,9 +91,9 @@ public class CommonReportDimensionLibrary {
         CohortDefinitionDimension dim = new CohortDefinitionDimension();
         dim.setName("age groups (10-19, 20-24, >=25)");
         dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-        dim.addCohortDefinition("Between10And19", map(commonCohortLibrary.agedAtLeastAgedAtMost(10,19), "effectiveDate=${endDate}"));
-        dim.addCohortDefinition("Between20And24", map(commonCohortLibrary.agedAtLeastAgedAtMost(20,24), "effectiveDate=${endDate}"));
-        dim.addCohortDefinition("GreaterOrEqualTo25", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("10-19", map(commonCohortLibrary.agedAtLeastAgedAtMost(10,19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("20-24", map(commonCohortLibrary.agedAtLeastAgedAtMost(20,24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
         return dim;
 	}
 

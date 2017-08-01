@@ -220,9 +220,9 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         dsd.setName("M");
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForMaternity(), "onDate=${endDate}"));
 
-        ColumnParameters age10To19 = new ColumnParameters("a10to19", "10-19", "age=Between10And19");
-        ColumnParameters age20To24 = new ColumnParameters("a20to24", "20-24", "age=Between20And24");
-        ColumnParameters age25Plus = new ColumnParameters("a25plus", "25+", "age=GreaterOrEqualTo25");
+        ColumnParameters age10To19 = new ColumnParameters("a10to19", "10-19", "age=10-19");
+        ColumnParameters age20To24 = new ColumnParameters("a20to24", "20-24", "age=20-24");
+        ColumnParameters age25Plus = new ColumnParameters("a25plus", "25+", "age=25+");
         
         List<ColumnParameters> noTotalsColumns = Arrays.asList(age10To19, age20To24, age25Plus);
         String params = "startDate=${startDate},endDate=${endDate}";
