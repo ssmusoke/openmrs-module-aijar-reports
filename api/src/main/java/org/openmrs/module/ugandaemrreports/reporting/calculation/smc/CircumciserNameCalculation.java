@@ -13,18 +13,20 @@
  */
 package org.openmrs.module.ugandaemrreports.reporting.calculation.smc;
 
+import org.openmrs.Encounter;
+import org.openmrs.EncounterProvider;
 import org.openmrs.EncounterRole;
-import org.openmrs.Obs;
+import org.openmrs.EncounterType;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
 import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
 import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 import java.util.Collection;
 import java.util.Map;
@@ -40,14 +42,19 @@ public class CircumciserNameCalculation extends AbstractPatientCalculation {
         Set<Integer> male = Filters.male(cohort, context);
         EncounterService service = Context.getEncounterService();
         EncounterRole role = service.getEncounterRoleByUuid("240b26f9-dd88-4172-823d-4a8bfeb7841f");
-        CalculationResultMap cadreMap = Calculations.lastObs(Dictionary.getConcept("911c5daf-e6ce-4255-abae-5ceb8fdcb5a2"), male, context);
-        for(Integer ptId: male) {
-            String name = "";
-            Obs cadreMapObs = EmrCalculationUtils.obsResultForPatient(cadreMap, ptId);
-            if(role != null && cadreMapObs != null){
-                name = role.getName()+" - "+cadreMapObs.getValueText();
+        CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), cohort, context);
+        for(Integer ptId: male){
+            String provider = "";
+            Encounter enc = EmrCalculationUtils.encounterResultForPatient(encounter, ptId);
+            if(enc != null){
+                Set<EncounterProvider> providerSet = enc.getEncounterProviders();
+                for(EncounterProvider encounterProvider:providerSet){
+                    if(encounterProvider.getEncounterRole().equals(role)){
+                        provider = encounterProvider.getProvider().getPerson().getPersonName().getFullName();
+                    }
+                }
             }
-            ret.put(ptId, new SimpleResult(name, this));
+            ret.put(ptId, new SimpleResult(provider, this));
         }
         return ret;
     }
