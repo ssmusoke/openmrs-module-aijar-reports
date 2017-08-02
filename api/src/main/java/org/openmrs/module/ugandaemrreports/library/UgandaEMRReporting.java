@@ -8,6 +8,7 @@ import org.joda.time.LocalDate;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ugandaemrreports.common.*;
+import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsConceptsPredicate;
 import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsEncounterPredicate;
 import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsPredicate;
 import org.openmrs.module.ugandaemrreports.definition.predicates.ReportTypePredicate;
@@ -104,6 +105,24 @@ public class UgandaEMRReporting {
 
         return summarizedObs;
 
+    }
+
+    public static List<SummarizedObs> getSummarizedObs(java.sql.Connection connection, String period, String groupedBy, String concept) throws SQLException {
+        String sql = String.format("select * from obs_summary where period = '%s' and period_grouped_by = '%s' and concept = '%s'", period, groupedBy, concept);
+        return getSummarizedObs(connection, sql);
+
+    }
+
+    public static Map<String, Map<String, List<SummarizedObs>>> getSummarizedObs(java.sql.Connection connection, String period, List<String> concepts, String encounterType) throws SQLException {
+        String where = joinQuery("period >= " + period, constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
+        where = joinQuery(where, "encounter_type = '" + encounterType + "'", Enums.UgandaEMRJoiner.AND);
+        String sql = "select * from obs_summary where " + where;
+        Map<String, Map<String, List<SummarizedObs>>> data = getSummarizedObs(connection, sql).stream().collect(Collectors.groupingBy(SummarizedObs::getPeriod, Collectors.groupingBy(SummarizedObs::getConcept)));
+
+        if (data != null) {
+            return data;
+        }
+        return new HashMap<>();
     }
 
     public static List<PersonDemographics> getPersonDemographics(java.sql.Connection connection, String sql) throws SQLException {
@@ -212,7 +231,7 @@ public class UgandaEMRReporting {
                 "  encounter_type_name VARCHAR(255) NULL,\n" +
                 "  concept             CHAR(38)     NULL,\n" +
                 "  concept_name        VARCHAR(255) NULL,\n" +
-                "  value_coded         CHAR(38)     NULL,\n" +
+                "  value_coded         LONGTEXT     NULL,\n" +
                 "  value_coded_name    VARCHAR(255) NULL,\n" +
                 "  report_name         VARCHAR(255) NULL,\n" +
                 "  period              CHAR(6)      NULL,\n" +
@@ -225,6 +244,22 @@ public class UgandaEMRReporting {
                 "  ENGINE = MYISAM;";
 
         executeQuery(sql, connection);
+    }
+
+
+    public static Map<String, String> getConceptsTypes(Connection connection) throws SQLException {
+        String sql = "SELECT\n" + "  (SELECT name\n" + "   FROM concept_datatype\n" + "   WHERE concept_datatype_id = datatype_id) AS name,\n" + "  GROUP_CONCAT(uuid) AS concepts\n" + "FROM concept\n" + "WHERE concept_id IN (SELECT concept_id\n" + "                     FROM obs\n" + "                     GROUP BY concept_id)\n" + "GROUP BY datatype_id;";
+        Map<String, String> result = new HashMap<>();
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            result.put(rs.getString("name"), rs.getString("concepts"));
+        }
+        rs.close();
+        stmt.close();
+
+        return result;
     }
 
     public static void normalizeObs(String startDate, java.sql.Connection connection, int number) throws SQLException {
@@ -526,8 +561,7 @@ public class UgandaEMRReporting {
         }
     }
 
-    public static void summarizeObs(String startDate, java.sql.Connection connection) throws SQLException {
-        createSummarizedObsTable(connection);
+    public static String obsSummaryMonthQuery(String startDate) {
         String sql = "INSERT INTO obs_summary (\n" +
                 "  encounter_type,\n" +
                 "  encounter_type_name,\n" +
@@ -543,26 +577,7 @@ public class UgandaEMRReporting {
                 "  date_generated,\n" +
                 "  period_grouped_by)\n" +
                 "\n" +
-                "-- obs_datetime grouped by years\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    obs_datetime_year,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'obs_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_year\n" +
-                "  UNION ALL\n" +
-                "  -- obs_datetime grouped by months\n" +
+                "-- value_coded grouped by months\n" +
                 "  SELECT\n" +
                 "    encounter_type,\n" +
                 "    encounter_type_name,\n" +
@@ -578,46 +593,8 @@ public class UgandaEMRReporting {
                 "    NOW(),\n" +
                 "    'obs_datetime'\n" +
                 "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
+                "  WHERE date_created > '1900-01-01' AND value_coded IS NOT NULL\n" +
                 "  GROUP BY encounter_type, concept, value_coded, obs_datetime_month\n" +
-                "  UNION ALL\n" +
-                "  -- obs_datetime grouped by quarters\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    obs_datetime_quarter,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'quarterly',\n" +
-                "    NOW(),\n" +
-                "    'obs_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_quarter\n" +
-                "  UNION ALL\n" +
-                "  -- value_datetime grouped by years\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    value_datetime_year,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'value_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
-                "  GROUP BY encounter_type, concept, value_datetime_year\n" +
                 "  UNION ALL\n" +
                 "  -- value_datetime grouped by months\n" +
                 "  SELECT\n" +
@@ -625,9 +602,9 @@ public class UgandaEMRReporting {
                 "    encounter_type_name,\n" +
                 "    concept,\n" +
                 "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
                 "    value_datetime_month,\n" +
                 "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
@@ -638,101 +615,27 @@ public class UgandaEMRReporting {
                 "  WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
                 "  GROUP BY encounter_type, concept, value_datetime_month\n" +
                 "  UNION ALL\n" +
-                "  -- value_datetime grouped by quarters\n" +
+                "  -- values_numeric and values_text\n" +
                 "  SELECT\n" +
                 "    encounter_type,\n" +
                 "    encounter_type_name,\n" +
                 "    concept,\n" +
                 "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    value_datetime_quarter,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'quarterly',\n" +
-                "    NOW(),\n" +
-                "    'value_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
-                "  GROUP BY encounter_type, concept, value_datetime_quarter\n" +
-                "  UNION ALL\n" +
-                "  -- concepts grouped by encounter date\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    encounter_year,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'encounter_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, value_coded, encounter_year\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    encounter_month,\n" +
+                "    GROUP_CONCAT(DISTINCT\n" +
+                "                 CONCAT_WS(':', person_id, COALESCE(value_numeric, COALESCE(value_text, '')))\n" +
+                "                 ORDER BY person_id),\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
+                "    obs_datetime_month,\n" +
                 "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
                 "    'monthly',\n" +
                 "    NOW(),\n" +
                 "    'encounter_datetime'\n" +
                 "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01' AND encounter_datetime IS NOT NULL\n" +
-                "  GROUP BY encounter_type, concept, value_coded, encounter_month\n" +
+                "  WHERE date_created > '1900-01-01' AND (value_text IS NOT NULL OR value_numeric IS NOT NULL)\n" +
+                "  GROUP BY encounter_type, concept, obs_datetime_month\n" +
                 "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    concept,\n" +
-                "    concept_name,\n" +
-                "    value_coded,\n" +
-                "    value_coded_name1,\n" +
-                "    report_name,\n" +
-                "    encounter_quarter,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'quarterly',\n" +
-                "    NOW(),\n" +
-                "    'encounter_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01' AND encounter_datetime IS NOT NULL\n" +
-                "  GROUP BY encounter_type, concept, value_coded, encounter_quarter\n" +
-                "  UNION ALL\n" +
-                "  -- encounters grouped by years\n" +
-                "\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    NULL,\n" +
-                "    encounter_year,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'encounter_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, encounter_year\n" +
-                "  UNION ALL\n" +
-                "\n" +
                 "  SELECT\n" +
                 "    encounter_type,\n" +
                 "    encounter_type_name,\n" +
@@ -751,44 +654,7 @@ public class UgandaEMRReporting {
                 "  WHERE date_created > '1900-01-01'\n" +
                 "  GROUP BY encounter_type, encounter_month\n" +
                 "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    encounter_type,\n" +
-                "    encounter_type_name,\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    'encounters',\n" +
-                "    NULL,\n" +
-                "    encounter_quarter,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'quarterly',\n" +
-                "    NOW(),\n" +
-                "    'encounter_datetime'\n" +
-                "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, encounter_quarter\n" +
-                "\n" +
-                "  UNION ALL\n" +
-                "\n" +
-                "  SELECT\n" +
-                "    'births',\n" +
-                "    'births',\n" +
-                "    'births',\n" +
-                "    'births',\n" +
-                "    'births',\n" +
-                "    'births',\n" +
-                "    NULL,\n" +
-                "    YEAR(birthdate),\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'birth_date'\n" +
-                "  FROM person\n" +
-                "  WHERE date_created > '1900-01-01' AND birthdate IS NOT NULL\n" +
-                "  GROUP BY YEAR(birthdate)\n" +
-                "  UNION ALL\n" +
+                "  -- birth dates grouped by months\n" +
                 "  SELECT\n" +
                 "    'births',\n" +
                 "    'births',\n" +
@@ -810,6 +676,216 @@ public class UgandaEMRReporting {
                 "  GROUP BY CONCAT(YEAR(birthdate),\n" +
                 "                  if(MONTH(birthdate) < 10, CONCAT('0', MONTH(birthdate)),\n" +
                 "                     MONTH(birthdate)))\n" +
+                "  UNION ALL\n" +
+                "  -- death dates grouped by months\n" +
+                "  SELECT\n" +
+                "    'deaths',\n" +
+                "    'deaths',\n" +
+                "    'deaths',\n" +
+                "    'deaths',\n" +
+                "    'deaths',\n" +
+                "    'deaths',\n" +
+                "    NULL,\n" +
+                "    CONCAT(YEAR(death_date),\n" +
+                "           if(MONTH(death_date) < 10, CONCAT('0', MONTH(death_date)),\n" +
+                "              MONTH(death_date))),\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'death_date'\n" +
+                "  FROM person\n" +
+                "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
+                "  GROUP BY CONCAT(YEAR(death_date),\n" +
+                "                  if(MONTH(death_date) < 10, CONCAT('0', MONTH(death_date)),\n" +
+                "                     MONTH(death_date)));";
+
+        return sql.replace("1900-01-01", startDate);
+
+    }
+
+    public static String obsSummaryYearQuery(String startDate) {
+        String sql = "INSERT INTO obs_summary (\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  concept,\n" +
+                "  concept_name,\n" +
+                "  value_coded,\n" +
+                "  value_coded_name,\n" +
+                "  report_name,\n" +
+                "  period,\n" +
+                "  patients,\n" +
+                "  total,\n" +
+                "  period_type,\n" +
+                "  date_generated,\n" +
+                "  period_grouped_by)\n" +
+                "-- obs_datetime grouped by years\n" +
+                "SELECT\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  concept,\n" +
+                "  concept_name,\n" +
+                "  value_coded,\n" +
+                "  value_coded_name1,\n" +
+                "  report_name,\n" +
+                "  obs_datetime_year,\n" +
+                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  COUNT(DISTINCT person_id),\n" +
+                "  'yearly',\n" +
+                "  NOW(),\n" +
+                "  'obs_datetime'\n" +
+                "FROM obs_normal\n" +
+                "WHERE date_created > '1900-01-01' AND value_coded IS NOT NULL\n" +
+                "GROUP BY encounter_type, concept, value_coded, obs_datetime_year\n" +
+                "UNION ALL\n" +
+                "-- value_datetime grouped by years\n" +
+                "SELECT\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  concept,\n" +
+                "  concept_name,\n" +
+                "  NULL,\n" +
+                "  NULL,\n" +
+                "  NULL,\n" +
+                "  value_datetime_year,\n" +
+                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  COUNT(DISTINCT person_id),\n" +
+                "  'yearly',\n" +
+                "  NOW(),\n" +
+                "  'value_datetime'\n" +
+                "FROM obs_normal\n" +
+                "WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
+                "GROUP BY encounter_type, concept, value_datetime_year\n" +
+                "UNION ALL\n" +
+                "-- encounters grouped by years\n" +
+                "SELECT\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  'encounters',\n" +
+                "  'encounters',\n" +
+                "  'encounters',\n" +
+                "  'encounters',\n" +
+                "  NULL,\n" +
+                "  encounter_year,\n" +
+                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  COUNT(DISTINCT person_id),\n" +
+                "  'yearly',\n" +
+                "  NOW(),\n" +
+                "  'encounter_datetime'\n" +
+                "FROM obs_normal\n" +
+                "WHERE date_created > '1900-01-01'\n" +
+                "GROUP BY encounter_type, encounter_year\n" +
+                "UNION ALL\n" +
+                "SELECT\n" +
+                "  'births',\n" +
+                "  'births',\n" +
+                "  'births',\n" +
+                "  'births',\n" +
+                "  'births',\n" +
+                "  'births',\n" +
+                "  NULL,\n" +
+                "  YEAR(birthdate),\n" +
+                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  COUNT(DISTINCT person_id),\n" +
+                "  'yearly',\n" +
+                "  NOW(),\n" +
+                "  'birth_date'\n" +
+                "FROM person\n" +
+                "WHERE date_created > '1900-01-01' AND birthdate IS NOT NULL\n" +
+                "GROUP BY YEAR(birthdate)\n" +
+                "UNION ALL\n" +
+                "SELECT\n" +
+                "  'deaths',\n" +
+                "  'deaths',\n" +
+                "  'deaths',\n" +
+                "  'deaths',\n" +
+                "  'deaths',\n" +
+                "  'deaths',\n" +
+                "  NULL,\n" +
+                "  YEAR(death_date),\n" +
+                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  COUNT(DISTINCT person_id),\n" +
+                "  'yearly',\n" +
+                "  NOW(),\n" +
+                "  'death_date'\n" +
+                "FROM person\n" +
+                "WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
+                "GROUP BY YEAR(death_date);";
+
+        return sql.replace("1900-01-01", startDate);
+    }
+
+    public static String obsSummaryQuarterQuery(String startDate) {
+        String sql = "INSERT INTO obs_summary (\n" +
+                "  encounter_type,\n" +
+                "  encounter_type_name,\n" +
+                "  concept,\n" +
+                "  concept_name,\n" +
+                "  value_coded,\n" +
+                "  value_coded_name,\n" +
+                "  report_name,\n" +
+                "  period,\n" +
+                "  patients,\n" +
+                "  total,\n" +
+                "  period_type,\n" +
+                "  date_generated,\n" +
+                "  period_grouped_by)\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    value_coded,\n" +
+                "    value_coded_name1,\n" +
+                "    report_name,\n" +
+                "    obs_datetime_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'obs_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE date_created > '1900-01-01' AND value_coded IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_coded, obs_datetime_quarter\n" +
+                "  UNION ALL\n" +
+                "  -- value_datetime grouped by quarters\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
+                "    value_datetime_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'value_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, value_datetime_quarter\n" +
+                "  UNION ALL\n" +
+                "\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    'encounters',\n" +
+                "    'encounters',\n" +
+                "    'encounters',\n" +
+                "    'encounters',\n" +
+                "    NULL,\n" +
+                "    encounter_quarter,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'quarterly',\n" +
+                "    NOW(),\n" +
+                "    'encounter_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE date_created > '1900-01-01'\n" +
+                "  GROUP BY encounter_type, encounter_quarter\n" +
+                "\n" +
                 "  UNION ALL\n" +
                 "  SELECT\n" +
                 "    'births',\n" +
@@ -837,48 +913,6 @@ public class UgandaEMRReporting {
                 "    'deaths',\n" +
                 "    'deaths',\n" +
                 "    NULL,\n" +
-                "    YEAR(death_date),\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'yearly',\n" +
-                "    NOW(),\n" +
-                "    'death_date'\n" +
-                "  FROM person\n" +
-                "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
-                "  GROUP BY YEAR(death_date)\n" +
-                "  UNION ALL\n" +
-                "\n" +
-                "  SELECT\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    NULL,\n" +
-                "     CONCAT(YEAR(death_date),\n" +
-                "           if(MONTH(death_date) < 10, CONCAT('0', MONTH(death_date)),\n" +
-                "              MONTH(death_date))),\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
-                "    COUNT(DISTINCT person_id),\n" +
-                "    'monthly',\n" +
-                "    NOW(),\n" +
-                "    'death_date'\n" +
-                "  FROM person\n" +
-                "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
-                "  GROUP BY CONCAT(YEAR(death_date),\n" +
-                "                  if(MONTH(death_date) < 10, CONCAT('0', MONTH(death_date)),\n" +
-                "                     MONTH(death_date)))\n" +
-                "  UNION ALL\n" +
-                "\n" +
-                "  SELECT\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    'deaths',\n" +
-                "    NULL,\n" +
                 "    CONCAT(YEAR(death_date), 'Q', QUARTER(death_date)),\n" +
                 "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
@@ -888,9 +922,14 @@ public class UgandaEMRReporting {
                 "  FROM person\n" +
                 "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
                 "  GROUP BY CONCAT(YEAR(death_date), 'Q', QUARTER(death_date));";
-        sql = sql.replace("1900-01-01", startDate);
+
+        return sql.replace("1900-01-01", startDate);
+    }
+
+    public static int summarizeObs(String sql, java.sql.Connection connection) throws SQLException {
+        createSummarizedObsTable(connection);
         executeQuery("SET SESSION group_concat_max_len = 1000000;", connection);
-        executeQuery(sql, connection);
+        return executeQuery(sql, connection);
     }
 
 
@@ -949,8 +988,8 @@ public class UgandaEMRReporting {
         concepts.put("weight", "dce09e2f-30ab-102d-86b0-7a5022ba4115");
         concepts.put("cd4", "dcbcba2c-30ab-102d-86b0-7a5022ba4115");
         concepts.put("vl", "dc8d83e3-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-        // concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
+        //concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
+        concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
         concepts.put("functional status", "dce09a15-30ab-102d-86b0-7a5022ba4115");
         concepts.put("arvdays", "7593ede6-6574-4326-a8a6-3d742e843659");
         return concepts;
@@ -972,23 +1011,21 @@ public class UgandaEMRReporting {
         return stmt.executeUpdate();
     }
 
-    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient, String groupedBy) {
+    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient, String groupedBy, boolean sort) {
 
         if (patients == null || patients.size() == 0) {
             return null;
         } else {
-            Collection<SummarizedObs> summarizedObs = Collections2.filter(patients, new ReportTypePredicate(groupedBy));
-            if (summarizedObs != null && summarizedObs.size() > 0) {
-                for (SummarizedObs obs : summarizedObs) {
-                    if (obs != null && Splitter.on(",").splitToList(obs.getPatients()).contains(patient)) {
-                        return obs;
-                    }
-                }
+            List<SummarizedObs> summarizedObs = new ArrayList<>(Collections2.filter(patients, new ReportTypePredicate(groupedBy, patient)));
+            if (sort) {
+                summarizedObs.sort(Comparator.comparing(SummarizedObs::getPeriod));
+            }
+            if (summarizedObs.size() > 0) {
+                return summarizedObs.get(0);
             }
         }
         return null;
     }
-
 
     public static SummarizedObs patientInGroup(String patient, String period, List<SummarizedObs> patients, String groupedBy) {
 
@@ -1042,6 +1079,44 @@ public class UgandaEMRReporting {
             }
         }
         return null;
+    }
+
+    public static String viralLoad(List<NormalizedObs> vls, Integer no) {
+
+        Map<Integer, List<NormalizedObs>> vlsGroupedByEncounterDate;
+        if (vls != null && vls.size() > 0) {
+            vlsGroupedByEncounterDate = vls.stream().collect(Collectors.groupingBy(NormalizedObs::getEncounterMonth));
+            List<Integer> keys = new ArrayList<>(vlsGroupedByEncounterDate.keySet());
+
+            Collections.sort(keys);
+
+            Integer k = -1;
+
+            if (no == 6 && keys.size() > 0) {
+                k = 0;
+            } else if (no == 12 && keys.size() > 1) {
+                k = 1;
+            } else if (no == 24 && keys.size() > 2) {
+                k = 2;
+            } else if (no == 36 && keys.size() > 3) {
+                k = 3;
+            } else if (no == 48 && keys.size() > 4) {
+                k = 4;
+            } else if (no == 60 && keys.size() > 5) {
+                k = 5;
+            } else if (no == 72 && keys.size() > 6) {
+                k = 6;
+            }
+            if (k == -1) {
+                return "";
+            } else {
+                if (vlsGroupedByEncounterDate.get(k) != null && vlsGroupedByEncounterDate.get(k).size() > 0) {
+                    return String.valueOf(vlsGroupedByEncounterDate.get(k).get(0).getValueNumeric());
+                }
+            }
+        }
+
+        return "";
     }
 
 
@@ -1102,14 +1177,14 @@ public class UgandaEMRReporting {
         return result;
     }
 
-   /* public static java.sql.Connection testSqlConnection() throws SQLException, ClassNotFoundException {
+    public static java.sql.Connection testSqlConnection() throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
         props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
         props.setProperty("user", "openmrs");
         props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
-    }*/
+    }
 
     public static java.sql.Connection sqlConnection() throws SQLException, ClassNotFoundException {
 
@@ -1134,4 +1209,12 @@ public class UgandaEMRReporting {
         return Context.getAdministrationService().getGlobalProperty(property);
     }
 
+    public static String summarizedObsPatientsToString(List<SummarizedObs> summarizedObs) {
+        StringBuilder patientString = new StringBuilder(summarizedObs.get(0).getPatients());
+
+        for (SummarizedObs smo : summarizedObs.subList(1, summarizedObs.size())) {
+            patientString.append(",").append(smo.getPatients());
+        }
+        return patientString.toString();
+    }
 }
