@@ -56,38 +56,49 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
             ListResult encounterList = (ListResult) followUpEncounters.get(ptId);
             List<Encounter> listResult = CalculationUtils.extractResultValues(encounterList);
 
-            if(listResult.size() > 0){
-                for(Encounter enc: listResult) {
-                    if(visit != null && visit > 7 && circumDate != null){
-                        if(enc.getEncounterDatetime() != null && ((enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7))){
-                            if(enc.getEncounterDatetime().after(getDate(circumDate, 7))) {
-                                value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
-                            }
-                        }
-                        else if(enc.getEncounterDatetime() != null && ((enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7))){
-                            value = "";
-                        }
+            if(listResult.size() == 0 && circumDate != null && visit != null){
+                if(visit > 7 && today().after(getDate(circumDate, 8))){
+                    value = "N";
+                }
+                else if(visit == 7 && today().after(getDate(circumDate, 2)) && today().before(getDate(circumDate, 8))) {
+                   value = "N";
+                }
 
+                else if(visit == 2 && today().after(circumDate) && today().before(getDate(circumDate, 3))) {
+                    value = "N";
+                }
+
+            }
+            else if(listResult.size() > 0 && circumDate != null && visit != null){
+
+                for(Encounter enc: listResult) {
+                    if(visit > 7  && enc.getEncounterDatetime() != null && enc.getEncounterDatetime().after(getDate(circumDate, 7))){
+                        value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
                     }
-                    else if(visit != null && visit <= 7 && circumDate != null) {
-                        if(visit == 2 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 2)){
-                            value = "Y"+"\n"+formatDate(enc.getEncounterDatetime());
-                        }
-                        else  if(visit == 2 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 2)){
+                    else if(visit > 7  && enc.getEncounterDatetime() != null && today().after(getDate(enc.getEncounterDatetime(), 8))){
+                        value = "N";
+                    }
+                    else if(visit == 2 && enc.getEncounterDatetime() != null) {
+
+                        if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().before(getDate(circumDate, 3))) {
+                            value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                        } else if (today().after(circumDate) && today().before(getDate(enc.getEncounterDatetime(), 3))) {
+                            value = "N";
+                        } else if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().after(getDate(circumDate, 2)) && enc.getEncounterDatetime().before(getDate(circumDate, 4))) {
                             value = "N";
                         }
+                    }
+                    else if(visit == 7 && enc.getEncounterDatetime() != null){
+                        if ((enc.getEncounterDatetime().after(getDate(circumDate, 2))) && (enc.getEncounterDatetime().before(getDate(circumDate, 8)))) {
+                            value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
 
-                        else  if(visit == 7 && enc.getEncounterDatetime() != null && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) <= convertDaysIntoTime(circumDate, 7)){
-                            if(enc.getEncounterDatetime().after(getDate(circumDate, 2))) {
-                                value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
-                            }
-                        }
-                        else  if(visit == 7 && (enc.getEncounterDatetime().getTime() - circumDate.getTime()) > convertDaysIntoTime(circumDate, 7)){
-                            if(enc.getEncounterDatetime().after(getDate(circumDate, 2))) {
-                                value = "N";
-                            }
+                        } else if (today().after(getDate(enc.getEncounterDatetime(), 2)) && today().before(getDate(enc.getEncounterDatetime(), 8))) {
+                            value = "N";
+                        } else if (enc.getEncounterDatetime().after(getDate(circumDate, 7))) {
+                            value = "N";
                         }
                     }
+
                 }
 
             }
@@ -100,12 +111,10 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
         DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         return date == null?"":dateFormatter.format(date);
     }
-    private long convertDaysIntoTime(Date d, int days){
+    private Date today(){
         Calendar c = Calendar.getInstance();
-        c.setTime(d);
-        c.add(Calendar.DATE, days);
-
-        return c.getTimeInMillis();
+        c.setTime(new Date());
+        return c.getTime();
     }
 
     private Date getDate(Date date, int days){
