@@ -51,7 +51,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
         CalculationResultMap encounterDate = calculate(new SMCEncounterDateCalculation(), male, context);
 
         for(Integer ptId: male) {
-            String value = "";
+            String value = "N";
             Date circumDate = EmrCalculationUtils.datetimeResultForPatient(encounterDate, ptId);
             ListResult encounterList = (ListResult) followUpEncounters.get(ptId);
             List<Encounter> listResult = CalculationUtils.extractResultValues(encounterList);
@@ -74,6 +74,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
                 for(Encounter enc: listResult) {
                     if(visit > 7  && enc.getEncounterDatetime() != null && enc.getEncounterDatetime().after(getDate(circumDate, 7))){
                         value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                        break;
                     }
                     else if(visit > 7  && enc.getEncounterDatetime() != null && today().after(getDate(enc.getEncounterDatetime(), 8))){
                         value = "N";
@@ -82,15 +83,17 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
 
                         if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().before(getDate(circumDate, 3))) {
                             value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            break;
                         } else if (today().after(circumDate) && today().before(getDate(enc.getEncounterDatetime(), 3))) {
                             value = "N";
-                        } else if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().after(getDate(circumDate, 2)) && enc.getEncounterDatetime().before(getDate(circumDate, 4))) {
+                        } else if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().after(getDate(circumDate, 2)) && enc.getEncounterDatetime().before(getDate(circumDate, 7))) {
                             value = "N";
                         }
                     }
                     else if(visit == 7 && enc.getEncounterDatetime() != null){
                         if ((enc.getEncounterDatetime().after(getDate(circumDate, 2))) && (enc.getEncounterDatetime().before(getDate(circumDate, 8)))) {
                             value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            break;
 
                         } else if (today().after(getDate(enc.getEncounterDatetime(), 2)) && today().before(getDate(enc.getEncounterDatetime(), 8))) {
                             value = "N";
