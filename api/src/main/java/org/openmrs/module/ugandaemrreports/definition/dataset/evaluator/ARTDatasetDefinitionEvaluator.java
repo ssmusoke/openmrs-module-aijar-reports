@@ -1,8 +1,11 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Collections2;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -13,7 +16,11 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPatientPredicate;
+import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
+import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,101 +44,92 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
 
-       /* try {
-            List<SummarizedObs> startedArtThisMonth = getSummarizedObs(sqlConnection(), month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440");
-            String patients = summarizedObsPatientsToString(startedArtThisMonth);
+        try {
+            Connection connection = UgandaEMRReporting.sqlConnection();
+            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440");
+            String allPatients = summarizedObsPatientsToString(startedArtThisMonth);
 
-            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(sqlConnection(), patients);
+            List<String> patients = Splitter.on(",").splitToList(allPatients);
+
+            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, allPatients);
+
             List<String> encounterSummaryConcepts = new ArrayList<>(artRegisterConcepts().values());
-            List<String> summaryConcepts = new ArrayList<>(artRegisterSummaryConcepts().values());
-            List<String> encounterConcepts = new ArrayList<>(artRegisterEncounterConcepts().values());
 
-            Map<String, Map<String, List<SummarizedObs>>> summarizedObs = getSummarizedObs(sqlConnection(), month, encounterSummaryConcepts, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
-            Map<Integer, Map<String, List<NormalizedObs>>> artSummaryObs = getNormalizedObs(sqlConnection(), summaryConcepts, patients, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f");
-            Map<Integer, Map<String, List<NormalizedObs>>> artEncounterObs = getNormalizedObs(sqlConnection(), encounterConcepts, patients, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
+            List<SummarizedObs> summarizedObs = getSummarizedObs(connection, encounterSummaryConcepts, patients);
+
 
             PatientDataHelper pdh = new PatientDataHelper();
 
-            for (String patient : Splitter.on(",").splitToList(patients)) {
+            for (String patient : patients) {
                 DataSetRow row = new DataSetRow();
-                String ti = "";
                 List<PersonDemographics> personDemographics = demographics.get(Integer.valueOf(patient));
+                List<SummarizedObs> personObs = new ArrayList<>(Collections2.filter(summarizedObs, new SummarizedObsPatientPredicate(patient)));
 
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
-                Map<String, List<NormalizedObs>> patientSummaryPage = artSummaryObs.get(Integer.valueOf(patient));
-                Map<String, List<NormalizedObs>> patientOtherEncounters = artEncounterObs.get(Integer.valueOf(patient));
+                List<SummarizedObs> viralLoadResults = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dc8d83e3-30ab-102d-86b0-7a5022ba4115", null)));
 
-                List<NormalizedObs> stop = patientSummaryPage.get("cd36c403-d88c-4496-96e2-09af6da090c1");
-                List<NormalizedObs> restart = patientSummaryPage.get("406e1978-8c2e-40c5-b04e-ae214fdfed0e");
-                List<NormalizedObs> to = patientSummaryPage.get("fc1b1e96-4afb-423b-87e5-bb80d451c967");
-                List<NormalizedObs> artStartDate = patientSummaryPage.get("ab505422-26d9-41f1-a079-c3d222000440");
-                List<NormalizedObs> artTI = patientSummaryPage.get("f363f153-f659-438b-802f-9cc1828b5fa9");
-                List<NormalizedObs> entry = patientSummaryPage.get("dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+                String firstViralLoad = getSummarizedObsValue(viralLoad(viralLoadResults, 0), patient);
 
-                List<NormalizedObs> baselineWeight = patientSummaryPage.get("900b8fd9-2039-4efc-897b-9b8ce37396f5");
-                List<NormalizedObs> baselineCS = patientSummaryPage.get("39243cef-b375-44b1-9e79-cbf21bd10878");
-                List<NormalizedObs> baselineCD4 = patientSummaryPage.get("c17bd9df-23e6-4e65-ba42-eb6d9250ca3f");
-                List<NormalizedObs> baselineRegimen = patientSummaryPage.get("c3332e8d-2548-4ad6-931d-6855692694a3");
+                String baselineWeight = getSummarizedObsValue(getSummarizedObs(personObs, null, "900b8fd9-2039-4efc-897b-9b8ce37396f5"), patient);
+                SummarizedObs baselineCs = getSummarizedObs(personObs, null, "39243cef-b375-44b1-9e79-cbf21bd10878");
+                String baselineCd4 = getSummarizedObsValue(getSummarizedObs(personObs, null, "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f"), patient);
+                SummarizedObs baselineRegimen = getSummarizedObs(personObs, null, "c3332e8d-2548-4ad6-931d-6855692694a3");
+                String artStartDate = getSummarizedObsValue(getSummarizedObs(personObs, month, "ab505422-26d9-41f1-a079-c3d222000440"), patient);
 
-                List<NormalizedObs> weights = patientOtherEncounters.get("dce09e2f-30ab-102d-86b0-7a5022ba4115");
-                List<NormalizedObs> cd4s = patientOtherEncounters.get("dcbcba2c-30ab-102d-86b0-7a5022ba4115");
-                List<NormalizedObs> vls = patientOtherEncounters.get("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
-                List<NormalizedObs> vlDates = patientOtherEncounters.get("0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-                List<NormalizedObs> arvDays = patientOtherEncounters.get("7593ede6-6574-4326-a8a6-3d742e843659");
+                String tbStartDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "dce02eca-30ab-102d-86b0-7a5022ba4115"), patient);
+                String tbStopDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "dd2adde2-30ab-102d-86b0-7a5022ba4115"), patient);
 
-                List<SummarizedObs> functionalStatus = summarizedObs.get(month).get("dce09a15-30ab-102d-86b0-7a5022ba4115");
+                String tiDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "f363f153-f659-438b-802f-9cc1828b5fa9"), patient);
 
-                if ((artTI != null && artTI.size() > 0) || (entry != null && entry.size() > 0 && entry.get(0).getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
+                SummarizedObs entry = getSummarizedObs(personObs, null, "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+
+                SummarizedObs functionalStatusDuringArtStart = getSummarizedObs(personObs, month, "39243cef-b375-44b1-9e79-cbf21bd10878");
+
+                String ti = "";
+
+                Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(artStartDate));
+
+                if (!Strings.isNullOrEmpty(tiDate) || (entry != null && entry.getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
                     ti = "✔";
                 }
 
-                pdh.addCol(row, "Date ART Started", artStartDate.get(0).getValueDatetime());
+                pdh.addCol(row, "Date ART Started", artStartDate);
                 pdh.addCol(row, "Unique ID no", patient);
                 pdh.addCol(row, "TI", ti);
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
-                pdh.addCol(row, "Age", artStartDate.get(0).getAgeAtValueDatetime());
-                // TODO display address correctly
+                pdh.addCol(row, "Age", age.getYears());
                 pdh.addCol(row, "Address", personDemos.getAddresses());
+                pdh.addCol(row, "Weight", baselineWeight);
 
-                SummarizedObs currentFunctionalStatus = patientInGroup(functionalStatus, patient, "obs_datetime", true);
 
-                if (currentFunctionalStatus != null) {
-                    pdh.addCol(row, "FUS", currentFunctionalStatus.getValueCodedName());
+                if (functionalStatusDuringArtStart != null) {
+                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getReportName());
                 } else {
                     pdh.addCol(row, "FUS", "");
                 }
 
-                if (baselineWeight != null && baselineWeight.size() > 0) {
-                    pdh.addCol(row, "Weight", baselineWeight.get(0).getValueNumeric());
-                } else {
-                    pdh.addCol(row, "Weight", "");
-                }
 
-                if (baselineCS != null && baselineCS.size() > 0) {
-                    pdh.addCol(row, "CS", baselineCS.get(0).getReportName());
+                if (baselineCs != null) {
+                    pdh.addCol(row, "CS", baselineCs.getReportName());
                 } else {
                     pdh.addCol(row, "CS", "");
                 }
 
-                if (baselineCD4 != null && baselineCD4.size() > 0) {
-                    pdh.addCol(row, "CD4VL", baselineCD4.get(0).getValueNumeric());
-                } else {
-                    pdh.addCol(row, "CD4VL", "");
-                }
+                pdh.addCol(row, "CD4VL", baselineCd4 + "\n" + firstViralLoad);
 
                 pdh.addCol(row, "CPT", "");
                 pdh.addCol(row, "INH", "");
-                pdh.addCol(row, "TB", "");
+                pdh.addCol(row, "TB", tbStartDate + "\n" + tbStopDate);
                 pdh.addCol(row, "P1", "");
                 pdh.addCol(row, "P2", "");
                 pdh.addCol(row, "P3", "");
                 pdh.addCol(row, "P4", "");
 
-                if (baselineRegimen != null && baselineRegimen.size() > 0) {
-                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen.get(0).getReportName());
+                if (baselineRegimen != null) {
+                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen.getReportName());
                 } else {
                     pdh.addCol(row, "BASE REGIMEN", "");
                 }
@@ -141,49 +139,45 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "L3S", "");
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
 
+
                 for (int i = 0; i <= 72; i++) {
                     String workingMonth = getObsPeriod(Periods.addMonths(localDate, i).get(0).toDate(), Enums.Period.MONTHLY);
                     Integer period = Integer.valueOf(workingMonth);
-                    Map<String, List<SummarizedObs>> patientData = summarizedObs.get(workingMonth);
 
-                    if (period <= currentMonth && patientData != null) {
+                    if (period <= Integer.valueOf(currentMonth)) {
 
-                        List<SummarizedObs> tb = patientData.get("dce02aa1-30ab-102d-86b0-7a5022ba4115");
-                        List<SummarizedObs> adh = patientData.get("dce03b2f-30ab-102d-86b0-7a5022ba4115");
-                        List<SummarizedObs> cpt = patientData.get("38801143-01ac-4328-b0e1-a7b23c84c8a3");
-                        List<SummarizedObs> arvs = patientData.get("dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
-                        List<SummarizedObs> appointments = patientData.get("dcac04cf-30ab-102d-86b0-7a5022ba4115");
-                        List<SummarizedObs> deaths = patientData.get("deaths");
-                        List<SummarizedObs> clinicalStages = patientData.get("dcdff274-30ab-102d-86b0-7a5022ba4115");
+                        SummarizedObs tbStatus = getSummarizedObs(personObs, workingMonth, "dce02aa1-30ab-102d-86b0-7a5022ba4115");
+                        SummarizedObs arvAdh = getSummarizedObs(personObs, workingMonth, "dce03b2f-30ab-102d-86b0-7a5022ba4115");
 
-                        String tbStatus = "";
+                        String inhDosage = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "be211d29-1507-4e2e-9906-4bfeae4ddc1f"), patient);
+                        String cptDosage = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "38801143-01ac-4328-b0e1-a7b23c84c8a3"), patient);
+
+                        SummarizedObs currentRegimen = getSummarizedObs(personObs, workingMonth, "dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
+                        SummarizedObs returnDate = getSummarizedObs(personObs, workingMonth, "dcac04cf-30ab-102d-86b0-7a5022ba4115");
+
+                        String arvStopDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "cd36c403-d88c-4496-96e2-09af6da090c1"), patient);
+                        String arvRestartDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "406e1978-8c2e-40c5-b04e-ae214fdfed0e"), patient);
+                        String toDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "fc1b1e96-4afb-423b-87e5-bb80d451c967"), patient);
+
+                        SummarizedObs currentlyDead = getSummarizedObs(personObs, workingMonth, "deaths");
+
+                        String arvDays = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "7593ede6-6574-4326-a8a6-3d742e843659"), patient);
+
+                        String tb = "";
                         String adherence = "";
                         String cotrim = "";
                         String regimen = "";
-
                         String status = "";
                         String adherenceAndCPT = "";
 
-                        SummarizedObs currentTbStatus = patientInGroup(tb, patient, "obs_datetime", false);
-                        SummarizedObs currentADH = patientInGroup(adh, patient, "obs_datetime", false);
-                        SummarizedObs currentCPT = patientInGroup(cpt, patient, "obs_datetime", false);
-                        SummarizedObs currentARV = patientInGroup(arvs, patient, "obs_datetime", false);
-                        SummarizedObs currentAppointment = patientInGroup(appointments, patient, "value_datetime", false);
-                        SummarizedObs currentlyDead = patientInGroup(deaths, patient, "deaths", false);
-
-
-                        NormalizedObs currentStops = patientInGroup(patient, stop, "monthly", workingMonth);
-                        NormalizedObs currentRestarts = patientInGroup(patient, restart, "monthly", workingMonth);
-                        NormalizedObs currentTo = patientInGroup(patient, to, "monthly", workingMonth);
-
-                        if (currentTbStatus != null) {
-                            tbStatus = currentTbStatus.getReportName();
+                        if (tbStatus != null) {
+                            tb = tbStatus.getReportName();
                         }
 
-                        if (currentADH != null) {
-                            adherence = currentADH.getReportName();
+                        if (arvAdh != null) {
+                            adherence = arvAdh.getReportName();
                         }
-                        if (currentCPT != null) {
+                        if (!Strings.isNullOrEmpty(inhDosage) || !Strings.isNullOrEmpty(cptDosage)) {
                             cotrim = "Y";
                         }
 
@@ -191,45 +185,26 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             status = "1";
                         }
 
-                        if (currentStops != null) {
+                        if (arvStopDate != null) {
                             status = "2";
                         }
 
-                        if (currentRestarts != null) {
+                        if (arvRestartDate != null) {
                             status = "6";
                         }
 
-                        if (currentTo != null) {
+                        if (!Strings.isNullOrEmpty(toDate)) {
                             status = "5";
                         }
 
-                        if (currentARV != null) {
-                            regimen = currentARV.getReportName();
+                        if (currentRegimen != null) {
+                            regimen = currentRegimen.getReportName();
                         } else if (StringUtils.isNotBlank(status)) {
                             regimen = status;
-                        } else if (currentAppointment != null) {
+                        } else if (returnDate != null) {
                             regimen = "3";
                         } else {
-                            NormalizedObs currentDays1MonthsAgo = patientInGroup(patient, arvDays, "obs_datetime", String.valueOf(period - 1));
-                            NormalizedObs currentDays2MonthsAgo = patientInGroup(patient, arvDays, "obs_datetime", String.valueOf(period - 2));
-
-                            if (currentDays1MonthsAgo != null) {
-                                if (currentDays1MonthsAgo.getValueNumeric() == 30.0) {
-                                    regimen = "3";
-                                } else if (currentDays1MonthsAgo.getValueNumeric() == 60.0) {
-                                    regimen = "→";
-                                }
-                            } else {
-                                if (currentDays2MonthsAgo != null) {
-                                    if (currentDays2MonthsAgo.getValueNumeric() >= 30.0 && currentDays2MonthsAgo.getValueNumeric() <= 60.0) {
-                                        regimen = "3";
-                                    } else if (currentDays2MonthsAgo.getValueNumeric() == 90.0) {
-                                        regimen = "→";
-                                    }
-                                } else {
-                                    regimen = "4";
-                                }
-                            }
+                            regimen = "";
                         }
 
                         if (StringUtils.isNotBlank(adherence) && StringUtils.isNotBlank(cotrim)) {
@@ -239,40 +214,23 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         } else if (StringUtils.isNotBlank(cotrim)) {
                             adherenceAndCPT = cotrim;
                         }
-                        pdh.addCol(row, "FUS" + String.valueOf(i), regimen + "\n" + tbStatus + "\n" + adherenceAndCPT);
+                        pdh.addCol(row, "FUS" + String.valueOf(i), regimen + "\n" + tb + "\n" + adherenceAndCPT);
 
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
-                            NormalizedObs currentWeight = patientInGroup(patient, weights, "obs_datetime", workingMonth);
-                            NormalizedObs currentCD4 = patientInGroup(patient, cd4s, "obs_datetime", workingMonth);
-                            NormalizedObs currentViralLoadDate = patientInGroup(patient, vlDates, "value_datetime", workingMonth);
+                            String weight = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dce09e2f-30ab-102d-86b0-7a5022ba4115"), patient);
+                            String cd4 = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dcbcba2c-30ab-102d-86b0-7a5022ba4115"), patient);
+                            SummarizedObs clinicalStage = getSummarizedObs(personObs, workingMonth, "dcdff274-30ab-102d-86b0-7a5022ba4115");
 
-                            SummarizedObs currentClinicalStage = patientInGroup(patient, workingMonth, clinicalStages, "obs_datetime");
+                            String vl = getSummarizedObsValue(viralLoad(viralLoadResults, i), patient);
 
-                            String cd4 = "";
-                            String vl = viralLoad(vls, i);
 
-                            if (currentClinicalStage != null) {
-                                pdh.addCol(row, "CI" + String.valueOf(i), currentClinicalStage.getReportName());
+                            if (clinicalStage != null) {
+                                pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage.getReportName());
                             } else {
                                 pdh.addCol(row, "CI" + String.valueOf(i), "");
                             }
 
-                            if (currentWeight != null) {
-                                pdh.addCol(row, "W" + String.valueOf(i), currentWeight.getValueNumeric());
-                            } else {
-                                pdh.addCol(row, "W" + String.valueOf(i), "");
-                            }
-
-                            if (currentCD4 != null) {
-                                cd4 = String.valueOf(currentCD4.getValueNumeric());
-                            }
-
-                            if (currentViralLoadDate != null) {
-                                NormalizedObs vlValue = patientInGroup(patient, vls, currentViralLoadDate.getEncounter());
-                                if (vlValue != null) {
-                                    vl = String.valueOf(vlValue.getValueNumeric());
-                                }
-                            }
+                            pdh.addCol(row, "W" + String.valueOf(i), weight);
 
                             pdh.addCol(row, "CDVL" + String.valueOf(i), cd4 + "\n" + vl);
                         }
@@ -290,7 +248,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }*/
+        }
         return dataSet;
     }
 }

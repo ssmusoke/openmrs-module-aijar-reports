@@ -6,11 +6,13 @@ import com.google.common.collect.Collections2;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.junit.Test;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPatientPredicate;
+import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
 import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 
 import java.io.IOException;
@@ -133,6 +135,10 @@ public class MyTest {
 
             PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
+            List<SummarizedObs> viralLoadResults = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dc8d83e3-30ab-102d-86b0-7a5022ba4115", null)));
+
+            String firstViralLoad = getSummarizedObsValue(viralLoad(viralLoadResults, 0), patient);
+
             String baselineWeight = getSummarizedObsValue(getSummarizedObs(personObs, null, "900b8fd9-2039-4efc-897b-9b8ce37396f5"), patient);
             SummarizedObs baselineCs = getSummarizedObs(personObs, null, "39243cef-b375-44b1-9e79-cbf21bd10878");
             String baselineCd4 = getSummarizedObsValue(getSummarizedObs(personObs, null, "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f"), patient);
@@ -145,7 +151,12 @@ public class MyTest {
             String tiDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "f363f153-f659-438b-802f-9cc1828b5fa9"), patient);
 
             SummarizedObs entry = getSummarizedObs(personObs, null, "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+
+            SummarizedObs functionalStatusDuringArtStart = getSummarizedObs(personObs, month, "39243cef-b375-44b1-9e79-cbf21bd10878");
+
             String ti = "";
+
+            Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(artStartDate));
 
             if (!Strings.isNullOrEmpty(tiDate) || (entry != null && entry.getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
                 ti = "✔";
@@ -157,16 +168,16 @@ public class MyTest {
             pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
             pdh.addCol(row, "Name", personDemos.getNames());
             pdh.addCol(row, "Gender", personDemos.getGender());
-            // pdh.addCol(row, "Age", artStartDate.get(0).getAgeAtValueDatetime());
+            pdh.addCol(row, "Age", age.getYears());
             pdh.addCol(row, "Address", personDemos.getAddresses());
             pdh.addCol(row, "Weight", baselineWeight);
 
 
-            /*if (currentFunctionalStatus != null) {
-                pdh.addCol(row, "FUS", currentFunctionalStatus.getValueCodedName());
+            if (functionalStatusDuringArtStart != null) {
+                pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getReportName());
             } else {
                 pdh.addCol(row, "FUS", "");
-            }*/
+            }
 
 
             if (baselineCs != null) {
@@ -175,11 +186,11 @@ public class MyTest {
                 pdh.addCol(row, "CS", "");
             }
 
-            pdh.addCol(row, "CD4VL", baselineCd4);
+            pdh.addCol(row, "CD4VL", baselineCd4 + "\n" + firstViralLoad);
 
             pdh.addCol(row, "CPT", "");
             pdh.addCol(row, "INH", "");
-            pdh.addCol(row, "TB", "");
+            pdh.addCol(row, "TB", tbStartDate + "\n" + tbStopDate);
             pdh.addCol(row, "P1", "");
             pdh.addCol(row, "P2", "");
             pdh.addCol(row, "P3", "");
@@ -202,7 +213,6 @@ public class MyTest {
                 Integer period = Integer.valueOf(workingMonth);
 
                 if (period <= Integer.valueOf(currentMonth)) {
-                    SummarizedObs functionalStatus = getSummarizedObs(personObs, currentMonth, "dce09a15-30ab-102d-86b0-7a5022ba4115");
 
                     SummarizedObs tbStatus = getSummarizedObs(personObs, currentMonth, "dce02aa1-30ab-102d-86b0-7a5022ba4115");
                     SummarizedObs arvAdh = getSummarizedObs(personObs, currentMonth, "dce03b2f-30ab-102d-86b0-7a5022ba4115");
@@ -216,7 +226,6 @@ public class MyTest {
                     String arvStopDate = getSummarizedObsValue(getSummarizedObs(personObs, currentMonth, "cd36c403-d88c-4496-96e2-09af6da090c1"), patient);
                     String arvRestartDate = getSummarizedObsValue(getSummarizedObs(personObs, currentMonth, "406e1978-8c2e-40c5-b04e-ae214fdfed0e"), patient);
                     String toDate = getSummarizedObsValue(getSummarizedObs(personObs, currentMonth, "fc1b1e96-4afb-423b-87e5-bb80d451c967"), patient);
-
 
                     SummarizedObs currentlyDead = getSummarizedObs(personObs, currentMonth, "deaths");
 
@@ -273,18 +282,15 @@ public class MyTest {
                     } else if (StringUtils.isNotBlank(cotrim)) {
                         adherenceAndCPT = cotrim;
                     }
-                    pdh.addCol(row, "FUS" + String.valueOf(i), regimen + "\n" + tbStatus + "\n" + adherenceAndCPT);
+                    pdh.addCol(row, "FUS" + String.valueOf(i), regimen + "\n" + tb + "\n" + adherenceAndCPT);
 
                     if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                         String weight = getSummarizedObsValue(getSummarizedObs(personObs, currentMonth, "dce09e2f-30ab-102d-86b0-7a5022ba4115"), patient);
                         String cd4 = getSummarizedObsValue(getSummarizedObs(personObs, currentMonth, "dcbcba2c-30ab-102d-86b0-7a5022ba4115"), patient);
                         SummarizedObs clinicalStage = getSummarizedObs(personObs, currentMonth, "dcdff274-30ab-102d-86b0-7a5022ba4115");
-                        SummarizedObs vlDate = getSummarizedObs(personObs, currentMonth, "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-                        SummarizedObs vlQualitative = getSummarizedObs(personObs, currentMonth, "dca12261-30ab-102d-86b0-7a5022ba4115");
-                        SummarizedObs vl = getSummarizedObs(personObs, currentMonth, "dc8d83e3-30ab-102d-86b0-7a5022ba4115");
 
-                        String cd4At6 = "";
-                        // String vl = viralLoad(vls, i);
+                        String vl = getSummarizedObsValue(viralLoad(viralLoadResults, i), patient);
+
 
                         if (clinicalStage != null) {
                             pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage.getReportName());
@@ -294,7 +300,7 @@ public class MyTest {
 
                         pdh.addCol(row, "W" + String.valueOf(i), weight);
 
-                        pdh.addCol(row, "CDVL" + String.valueOf(i), cd4 + "\n" + "");
+                        pdh.addCol(row, "CDVL" + String.valueOf(i), cd4 + "\n" + vl);
                     }
                 } else {
                     pdh.addCol(row, "FUS" + String.valueOf(i), "");

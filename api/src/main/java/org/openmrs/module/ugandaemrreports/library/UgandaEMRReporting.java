@@ -1090,42 +1090,41 @@ public class UgandaEMRReporting {
         return null;
     }
 
-    public static String viralLoad(List<NormalizedObs> vls, Integer no) {
+    public static SummarizedObs viralLoad(List<SummarizedObs> vls, Integer no) {
 
-        Map<Integer, List<NormalizedObs>> vlsGroupedByEncounterDate;
+        Map<String, List<SummarizedObs>> vlsGroupedByEncounterDate;
         if (vls != null && vls.size() > 0) {
-            vlsGroupedByEncounterDate = vls.stream().collect(Collectors.groupingBy(NormalizedObs::getEncounterMonth));
-            List<Integer> keys = new ArrayList<>(vlsGroupedByEncounterDate.keySet());
+            vlsGroupedByEncounterDate = vls.stream().collect(Collectors.groupingBy(SummarizedObs::getPeriod));
+            List<String> keys = new ArrayList<>(vlsGroupedByEncounterDate.keySet());
 
             Collections.sort(keys);
 
-            Integer k = -1;
+            String k = "";
 
             if (no == 6 && keys.size() > 0) {
-                k = 0;
+                k = keys.get(0);
             } else if (no == 12 && keys.size() > 1) {
-                k = 1;
+                k = keys.get(1);
             } else if (no == 24 && keys.size() > 2) {
-                k = 2;
+                k = keys.get(2);
             } else if (no == 36 && keys.size() > 3) {
-                k = 3;
+                k = keys.get(3);
             } else if (no == 48 && keys.size() > 4) {
-                k = 4;
+                k = keys.get(4);
             } else if (no == 60 && keys.size() > 5) {
-                k = 5;
+                k = keys.get(5);
             } else if (no == 72 && keys.size() > 6) {
-                k = 6;
+                k = keys.get(6);
             }
-            if (k == -1) {
-                return "";
-            } else {
+            if (StringUtils.isNotBlank(k)) {
                 if (vlsGroupedByEncounterDate.get(k) != null && vlsGroupedByEncounterDate.get(k).size() > 0) {
-                    return String.valueOf(vlsGroupedByEncounterDate.get(k).get(0).getValueNumeric());
+                    return vlsGroupedByEncounterDate.get(k).get(0);
                 }
+            } else {
+                return null;
             }
         }
-
-        return "";
+        return null;
     }
 
 
