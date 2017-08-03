@@ -1,9 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reporting.metadata;
 
-import java.util.List;
-
-import org.openmrs.Concept;
-
 /**
  * Metadata for reporting functionality
  */
@@ -52,6 +48,8 @@ public class Metadata {
         public final static String ART_HEALTH_EDUCATION_PAGE = "6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e";
         public final static String EID_SUMMARY_PAGE = "9fcfcc91-ad60-4d84-9710-11cc25258719";
         public final static String EID_ENCOUNTER_PAGE = "4345dacb-909d-429c-99aa-045f2db77e2b";
+        public final static String ANC_ENCOUNTER = "044daI6d-f80e-48fe-aba9-037f241905Pe";
+        public final static String PNC_ENCOUNTER = "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074";
 
 
     }
