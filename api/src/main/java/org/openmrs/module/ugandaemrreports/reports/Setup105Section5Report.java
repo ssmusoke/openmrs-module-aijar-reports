@@ -145,8 +145,8 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
         Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
         Concept other = Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115");
-        Concept managedLocally = Dictionary.getConcept("");
-        Concept referred = Dictionary.getConcept("");
+        //Concept managedLocally = Dictionary.getConcept("");
+        //Concept referred = Dictionary.getConcept("");
 
         dsd.addColumn("S1", "Expected Number of SMC's Performed(Monthly Targets)", ReportUtils.map(indicatorLibrary.expectedNumberOfSmcPerfomed(), params), "");
         EmrReportingUtils.addRow(dsd, "S2FS", "Number of male circumcised - Facility/Surgical", ReportUtils.map(indicatorLibrary.facilityAndSurgicalSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
@@ -165,8 +165,8 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(dorsal, sleeve), params),"");
         dsd.addColumn("S6DC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(forceps), params),"");
         dsd.addColumn("S6OT", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(other), params),"");
-        dsd.addColumn("S7M", "Managed locally", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(managedLocally), params),"");
-        dsd.addColumn("S7R", "Referred", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(referred), params),"");
+        //dsd.addColumn("S7M", "Managed locally", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(managedLocally), params),"");
+        //dsd.addColumn("S7R", "Referred", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(referred), params),"");
 
         return dsd;
     }
