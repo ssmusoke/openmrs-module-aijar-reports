@@ -92,7 +92,7 @@ public class MyTest {
         assertNotNull(UgandaEMRReporting.testSqlConnection());
     }*/
 
-    @Test
+   /* @Test
     public void shouldReturnSqlConnection() throws SQLException, ClassNotFoundException {
         Connection connection = UgandaEMRReporting.testSqlConnection();
         Map<String, String> concepts = UgandaEMRReporting.getConceptsTypes(connection);
@@ -320,5 +320,5 @@ public class MyTest {
 
             }
         }
-    }
+    }*/
 }

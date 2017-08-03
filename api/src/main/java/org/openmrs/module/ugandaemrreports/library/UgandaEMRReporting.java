@@ -1188,14 +1188,14 @@ public class UgandaEMRReporting {
         return result;
     }
 
-    public static java.sql.Connection testSqlConnection() throws SQLException, ClassNotFoundException {
+   /* public static java.sql.Connection testSqlConnection() throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
         props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
         props.setProperty("user", "openmrs");
         props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
-    }
+    }*/
 
     public static java.sql.Connection sqlConnection() throws SQLException, ClassNotFoundException {
 
