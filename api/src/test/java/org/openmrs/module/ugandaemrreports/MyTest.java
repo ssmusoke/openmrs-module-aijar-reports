@@ -1,31 +1,16 @@
 package org.openmrs.module.ugandaemrreports;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
-import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.joda.time.LocalDate;
-import org.joda.time.Years;
 import org.junit.Test;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.dataset.DataSetRow;
-import org.openmrs.module.ugandaemrreports.common.*;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPatientPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.*;
-import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.artRegisterEncounterConcepts;
-import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.artRegisterSummaryConcepts;
 
 public class MyTest {
     Date d = DateUtil.parseDate("2015-07-01", "yyyy-MM-dd");

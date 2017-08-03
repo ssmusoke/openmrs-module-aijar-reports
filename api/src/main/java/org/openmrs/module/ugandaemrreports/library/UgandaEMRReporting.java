@@ -241,22 +241,6 @@ public class UgandaEMRReporting {
         executeQuery(sql, connection);
     }
 
-
-    public static Map<String, String> getConceptsTypes(Connection connection) throws SQLException {
-        String sql = "SELECT\n" + "  (SELECT name\n" + "   FROM concept_datatype\n" + "   WHERE concept_datatype_id = datatype_id) AS name,\n" + "  GROUP_CONCAT(uuid) AS concepts\n" + "FROM concept\n" + "WHERE concept_id IN (SELECT concept_id\n" + "                     FROM obs\n" + "                     GROUP BY concept_id)\n" + "GROUP BY datatype_id;";
-        Map<String, String> result = new HashMap<>();
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            result.put(rs.getString("name"), rs.getString("concepts"));
-        }
-        rs.close();
-        stmt.close();
-
-        return result;
-    }
-
     public static int normalizeObs(String startDate, java.sql.Connection connection, int number) throws SQLException {
         String all = String.format("SELECT count(*) AS rowcount FROM obs WHERE date_created > '%s' AND voided = 0", startDate);
 
@@ -998,19 +982,6 @@ public class UgandaEMRReporting {
         return concepts;
     }
 
-    public static Map<String, String> artRegisterSummaryConcepts() {
-        Map<String, String> concepts = new HashMap<>();
-
-        return concepts;
-    }
-
-    public static Map<String, String> artRegisterEncounterConcepts() {
-        Map<String, String> concepts = new HashMap<>();
-
-        return concepts;
-    }
-
-
     public static java.sql.Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
 
         String driverClassName = props.getProperty("driver.class");
@@ -1024,73 +995,6 @@ public class UgandaEMRReporting {
     public static Integer executeQuery(String query, java.sql.Connection dbConn) throws SQLException {
         PreparedStatement stmt = dbConn.prepareStatement(query);
         return stmt.executeUpdate();
-    }
-
-    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient) {
-
-        if (patients == null || patients.size() == 0) {
-            return null;
-        } else {
-            List<SummarizedObs> summarizedObs = new ArrayList<>(Collections2.filter(patients, new SummarizedObsPatientPredicate(patient)));
-            if (summarizedObs.size() > 0) {
-                return summarizedObs.get(0);
-            }
-        }
-        return null;
-    }
-
-    public static SummarizedObs patientInGroup(String patient, String period, List<SummarizedObs> patients, String groupedBy) {
-
-        if (patients == null || patients.size() == 0) {
-            return null;
-        } else {
-            Collection<SummarizedObs> summarizedObs = Collections2.filter(patients, new SummarizedObsPatientPredicate(groupedBy));
-
-            if (summarizedObs != null && summarizedObs.size() > 0) {
-                for (SummarizedObs obs : summarizedObs) {
-                    if (obs != null && Splitter.on(",").splitToList(obs.getPatients()).contains(patient) && obs.getPeriod().equals(period)) {
-                        return obs;
-                    }
-                }
-            }
-
-        }
-        return null;
-    }
-
-
-    public static NormalizedObs patientInGroup(String patient, List<NormalizedObs> patients, String periodType, String period) {
-
-        if (patients == null || patients.size() == 0) {
-            return null;
-        } else {
-            Collection<NormalizedObs> normalizedObs = Collections2.filter(patients, new NormalizedObsPredicate(periodType, period));
-            if (normalizedObs != null && normalizedObs.size() > 0) {
-                for (NormalizedObs obs : normalizedObs) {
-                    if (obs != null && Objects.equals(obs.getPersonId(), Integer.valueOf(patient))) {
-                        return obs;
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public static NormalizedObs patientInGroup(String patient, List<NormalizedObs> patients, String encounter) {
-
-        if (patients == null || patients.size() == 0) {
-            return null;
-        } else {
-            Collection<NormalizedObs> normalizedObs = Collections2.filter(patients, new NormalizedObsEncounterPredicate(encounter));
-            if (normalizedObs != null && normalizedObs.size() > 0) {
-                for (NormalizedObs obs : normalizedObs) {
-                    if (obs != null && Objects.equals(obs.getPersonId(), Integer.valueOf(patient))) {
-                        return obs;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     public static SummarizedObs viralLoad(List<SummarizedObs> vls, Integer no) {
@@ -1156,7 +1060,7 @@ public class UgandaEMRReporting {
                 "   WHERE p.person_id = pas.person_id) AS 'addresses'\n" +
                 "FROM person p where " + where;
 
-        List<PersonDemographics> personDemographics = UgandaEMRReporting.getPersonDemographics(connection, q);
+        List<PersonDemographics> personDemographics = getPersonDemographics(connection, q);
         return personDemographics.stream().collect(Collectors.groupingBy(PersonDemographics::getPersonId));
 
     }
@@ -1168,7 +1072,7 @@ public class UgandaEMRReporting {
 
         String normalizedSql = "select * from obs_normal where " + where;
 
-        List<NormalizedObs> normalizedObs = UgandaEMRReporting.getNormalizedObs(connection, normalizedSql);
+        List<NormalizedObs> normalizedObs = getNormalizedObs(connection, normalizedSql);
 
         return normalizedObs.stream().collect(Collectors.groupingBy(NormalizedObs::getPersonId, Collectors.groupingBy(NormalizedObs::getConcept)));
     }
