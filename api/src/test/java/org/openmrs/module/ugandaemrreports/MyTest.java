@@ -100,6 +100,13 @@ public class MyTest {
     }
 
     @Test
+    public void shouldDenormalizeObs() throws SQLException, ClassNotFoundException {
+        Connection connection = UgandaEMRReporting.testSqlConnection();
+        int response = UgandaEMRReporting.normalizeObs("1900-01-01", connection, 100000);
+        assertNotEquals(response, 0);
+    }
+
+    @Test
     public void shouldSummarizeObs() throws SQLException, ClassNotFoundException {
         Connection connection = UgandaEMRReporting.testSqlConnection();
         int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery("1900-01-01"), connection);

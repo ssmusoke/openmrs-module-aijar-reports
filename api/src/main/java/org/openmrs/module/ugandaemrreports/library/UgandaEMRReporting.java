@@ -257,7 +257,7 @@ public class UgandaEMRReporting {
         return result;
     }
 
-    public static void normalizeObs(String startDate, java.sql.Connection connection, int number) throws SQLException {
+    public static int normalizeObs(String startDate, java.sql.Connection connection, int number) throws SQLException {
         String all = String.format("SELECT count(*) AS rowcount FROM obs WHERE date_created > '%s' AND voided = 0", startDate);
 
         Statement s = connection.createStatement();
@@ -265,6 +265,8 @@ public class UgandaEMRReporting {
         r.next();
         int total = r.getInt("rowcount");
         r.close();
+
+        int d = 0;
 
         createNormalizedObsTable(connection);
         for (int i = 0; i < total / number + 1; i++) {
@@ -294,7 +296,7 @@ public class UgandaEMRReporting {
                     "  , obs_group\n" +
                     "  , accession_number\n" +
                     "  , value_group\n" +
-                    "  , value_code_id\n" +
+                    "  , value_coded_id\n" +
                     "  , value_coded\n" +
                     "  , value_coded_name1\n" +
                     "  , report_name\n" +
@@ -552,8 +554,9 @@ public class UgandaEMRReporting {
                     "    date_created\n" +
                     "  FROM obs o\n" +
                     String.format("  WHERE o.date_created > '%s' AND o.voided = 0 LIMIT %s,%s;", startDate, offset, number);
-            executeQuery(sql, connection);
+            d += d + executeQuery(sql, connection);
         }
+        return d;
     }
 
     public static String obsSummaryMonthQuery(String startDate) {
