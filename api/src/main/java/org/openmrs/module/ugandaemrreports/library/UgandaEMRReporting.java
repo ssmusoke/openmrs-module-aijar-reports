@@ -2,16 +2,14 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ugandaemrreports.common.*;
-import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsConceptsPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsEncounterPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.NormalizedObsPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.ReportTypePredicate;
+import org.openmrs.module.ugandaemrreports.definition.predicates.*;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -113,16 +111,13 @@ public class UgandaEMRReporting {
 
     }
 
-    public static Map<String, Map<String, List<SummarizedObs>>> getSummarizedObs(java.sql.Connection connection, String period, List<String> concepts, String encounterType) throws SQLException {
-        String where = joinQuery("period >= " + period, constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
-        where = joinQuery(where, "encounter_type = '" + encounterType + "'", Enums.UgandaEMRJoiner.AND);
+    public static List<SummarizedObs> getSummarizedObs(java.sql.Connection connection, List<String> concepts, List<String> patients) throws SQLException {
+        String patientsToFind = Joiner.on("|").join(patients);
+        // String where = joinQuery(String.format("CONCAT(',', patients, '','') REGEXP ',(%s),'", patientsToFind), constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
+        String where = constructSQLInQuery("concept", concepts);
         String sql = "select * from obs_summary where " + where;
-        Map<String, Map<String, List<SummarizedObs>>> data = getSummarizedObs(connection, sql).stream().collect(Collectors.groupingBy(SummarizedObs::getPeriod, Collectors.groupingBy(SummarizedObs::getConcept)));
 
-        if (data != null) {
-            return data;
-        }
-        return new HashMap<>();
+        return getSummarizedObs(connection, sql);
     }
 
     public static List<PersonDemographics> getPersonDemographics(java.sql.Connection connection, String sql) throws SQLException {
@@ -602,7 +597,7 @@ public class UgandaEMRReporting {
                 "    encounter_type_name,\n" +
                 "    concept,\n" +
                 "    concept_name,\n" +
-                "    NULL,\n" +
+                "    GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, DATE(value_datetime)) ORDER BY person_id),\n" +
                 "    NULL,\n" +
                 "    NULL,\n" +
                 "    value_datetime_month,\n" +
@@ -615,15 +610,13 @@ public class UgandaEMRReporting {
                 "  WHERE date_created > '1900-01-01' AND value_datetime IS NOT NULL\n" +
                 "  GROUP BY encounter_type, concept, value_datetime_month\n" +
                 "  UNION ALL\n" +
-                "  -- values_numeric and values_text\n" +
+                "  -- values_numeric\n" +
                 "  SELECT\n" +
                 "    encounter_type,\n" +
                 "    encounter_type_name,\n" +
                 "    concept,\n" +
                 "    concept_name,\n" +
-                "    GROUP_CONCAT(DISTINCT\n" +
-                "                 CONCAT_WS(':', person_id, COALESCE(value_numeric, COALESCE(value_text, '')))\n" +
-                "                 ORDER BY person_id),\n" +
+                "    GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, value_numeric) ORDER BY person_id),\n" +
                 "    NULL,\n" +
                 "    NULL,\n" +
                 "    obs_datetime_month,\n" +
@@ -633,7 +626,27 @@ public class UgandaEMRReporting {
                 "    NOW(),\n" +
                 "    'encounter_datetime'\n" +
                 "  FROM obs_normal\n" +
-                "  WHERE date_created > '1900-01-01' AND (value_text IS NOT NULL OR value_numeric IS NOT NULL)\n" +
+                "  WHERE date_created > '1900-01-01' AND value_numeric IS NOT NULL\n" +
+                "  GROUP BY encounter_type, concept, obs_datetime_month\n" +
+                "  UNION ALL\n" +
+                "\n" +
+                "  -- values_text\n" +
+                "  SELECT\n" +
+                "    encounter_type,\n" +
+                "    encounter_type_name,\n" +
+                "    concept,\n" +
+                "    concept_name,\n" +
+                "    GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, value_text) ORDER BY person_id),\n" +
+                "    NULL,\n" +
+                "    NULL,\n" +
+                "    obs_datetime_month,\n" +
+                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    COUNT(DISTINCT person_id),\n" +
+                "    'monthly',\n" +
+                "    NOW(),\n" +
+                "    'encounter_datetime'\n" +
+                "  FROM obs_normal\n" +
+                "  WHERE date_created > '1900-01-01' AND value_text IS NOT NULL\n" +
                 "  GROUP BY encounter_type, concept, obs_datetime_month\n" +
                 "  UNION ALL\n" +
                 "  SELECT\n" +
@@ -962,36 +975,35 @@ public class UgandaEMRReporting {
         concepts.put("current regimen", "dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
         concepts.put("return date", "dcac04cf-30ab-102d-86b0-7a5022ba4115");
         concepts.put("clinical stage", "dcdff274-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("functional status", "dce09a15-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("baseline weight", "900b8fd9-2039-4efc-897b-9b8ce37396f5");
+        concepts.put("baseline cs", "39243cef-b375-44b1-9e79-cbf21bd10878");
+        concepts.put("baseline cd4", "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f");
+        concepts.put("baseline regimen", "c3332e8d-2548-4ad6-931d-6855692694a3");
+        concepts.put("arv stop date", "cd36c403-d88c-4496-96e2-09af6da090c1");
+        concepts.put("arv restart date", "406e1978-8c2e-40c5-b04e-ae214fdfed0e");
+        concepts.put("to date", "fc1b1e96-4afb-423b-87e5-bb80d451c967");
+        concepts.put("ti date", "f363f153-f659-438b-802f-9cc1828b5fa9");
+        concepts.put("entry", "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
         concepts.put("deaths", "deaths");
+        concepts.put("weight", "dce09e2f-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("cd4", "dcbcba2c-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("vl", "dc8d83e3-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
+        concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("arvdays", "7593ede6-6574-4326-a8a6-3d742e843659");
 
         return concepts;
     }
 
     public static Map<String, String> artRegisterSummaryConcepts() {
         Map<String, String> concepts = new HashMap<>();
-        concepts.put("baseline weight", "900b8fd9-2039-4efc-897b-9b8ce37396f5");
-        concepts.put("baseline cs", "39243cef-b375-44b1-9e79-cbf21bd10878");
-        concepts.put("baseline cd4", "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f");
-        concepts.put("baseline regimen", "c3332e8d-2548-4ad6-931d-6855692694a3");
-        concepts.put("art start date", "ab505422-26d9-41f1-a079-c3d222000440");
-        concepts.put("arv stop date", "cd36c403-d88c-4496-96e2-09af6da090c1");
-        concepts.put("arv restart date", "406e1978-8c2e-40c5-b04e-ae214fdfed0e");
-        concepts.put("to date", "fc1b1e96-4afb-423b-87e5-bb80d451c967");
-        concepts.put("ti date", "f363f153-f659-438b-802f-9cc1828b5fa9");
-        concepts.put("entry", "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+
         return concepts;
     }
 
     public static Map<String, String> artRegisterEncounterConcepts() {
         Map<String, String> concepts = new HashMap<>();
-        concepts.put("weight", "dce09e2f-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("cd4", "dcbcba2c-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("vl", "dc8d83e3-30ab-102d-86b0-7a5022ba4115");
-        //concepts.put("vl date", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88");
-        concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("functional status", "dce09a15-30ab-102d-86b0-7a5022ba4115");
-        concepts.put("arvdays", "7593ede6-6574-4326-a8a6-3d742e843659");
+
         return concepts;
     }
 
@@ -1011,15 +1023,12 @@ public class UgandaEMRReporting {
         return stmt.executeUpdate();
     }
 
-    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient, String groupedBy, boolean sort) {
+    public static SummarizedObs patientInGroup(List<SummarizedObs> patients, String patient) {
 
         if (patients == null || patients.size() == 0) {
             return null;
         } else {
-            List<SummarizedObs> summarizedObs = new ArrayList<>(Collections2.filter(patients, new ReportTypePredicate(groupedBy, patient)));
-            if (sort) {
-                summarizedObs.sort(Comparator.comparing(SummarizedObs::getPeriod));
-            }
+            List<SummarizedObs> summarizedObs = new ArrayList<>(Collections2.filter(patients, new SummarizedObsPatientPredicate(patient)));
             if (summarizedObs.size() > 0) {
                 return summarizedObs.get(0);
             }
@@ -1032,7 +1041,7 @@ public class UgandaEMRReporting {
         if (patients == null || patients.size() == 0) {
             return null;
         } else {
-            Collection<SummarizedObs> summarizedObs = Collections2.filter(patients, new ReportTypePredicate(groupedBy));
+            Collection<SummarizedObs> summarizedObs = Collections2.filter(patients, new SummarizedObsPatientPredicate(groupedBy));
 
             if (summarizedObs != null && summarizedObs.size() > 0) {
                 for (SummarizedObs obs : summarizedObs) {
@@ -1216,5 +1225,30 @@ public class UgandaEMRReporting {
             patientString.append(",").append(smo.getPatients());
         }
         return patientString.toString();
+    }
+
+    public static SummarizedObs getSummarizedObs(List<SummarizedObs> obs, String period, String concept) {
+
+        List<SummarizedObs> filtered = new ArrayList<>(Collections2.filter(obs, new SummarizedObsPredicate(concept, period)));
+
+        if (filtered.size() > 0) {
+            return filtered.get(0);
+        }
+        return null;
+    }
+
+
+    public static String getSummarizedObsValue(SummarizedObs summarizedObs, String patient) {
+        if (summarizedObs != null) {
+            String values = summarizedObs.getValueCoded();
+            List<String> data = Splitter.on(",").splitToList(values);
+            for (String d : data) {
+                List<String> patientValues = Splitter.on(":").splitToList(d);
+                if (patientValues.get(0).equals(patient)) {
+                    return patientValues.get(1);
+                }
+            }
+        }
+        return "";
     }
 }

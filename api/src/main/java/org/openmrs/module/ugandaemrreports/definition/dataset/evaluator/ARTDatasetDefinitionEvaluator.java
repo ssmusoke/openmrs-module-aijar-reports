@@ -13,14 +13,12 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.*;
 
@@ -39,7 +37,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
 
-        try {
+       /* try {
             List<SummarizedObs> startedArtThisMonth = getSummarizedObs(sqlConnection(), month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440");
             String patients = summarizedObsPatientsToString(startedArtThisMonth);
 
@@ -292,7 +290,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         return dataSet;
     }
 }
