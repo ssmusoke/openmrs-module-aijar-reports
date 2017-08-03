@@ -185,11 +185,11 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             status = "1";
                         }
 
-                        if (arvStopDate != null) {
+                        if (StringUtils.isNotBlank(arvStopDate)) {
                             status = "2";
                         }
 
-                        if (arvRestartDate != null) {
+                        if (StringUtils.isNotBlank(arvRestartDate)) {
                             status = "6";
                         }
 

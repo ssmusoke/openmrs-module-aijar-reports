@@ -16,6 +16,7 @@ import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.page.PageModel;
 
+import java.sql.Connection;
 import java.util.Date;
 
 /**
@@ -31,7 +32,9 @@ public class SummarizeFragmentController {
         if (StringUtils.isBlank(lastDate)) {
             lastDate = "1900-01-01 00:00:00";
         }
-        UgandaEMRReporting.summarizeObs(lastDate, UgandaEMRReporting.sqlConnection());
+
+        Connection connection = UgandaEMRReporting.sqlConnection();
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery(lastDate), connection);
         Date now = new Date();
         String newDate = UgandaEMRReporting.DEFAULT_DATE_FORMAT.format(now);
         UgandaEMRReporting.setGlobalProperty("ugandaemrreports.lastSummarizationDate", newDate);
