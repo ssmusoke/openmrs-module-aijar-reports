@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -29,9 +32,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Nicholas Ingosi on 5/23/17.
@@ -211,4 +211,45 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("ancEncounter AND hasObs");
         return cd;
     }
+
+	/**
+	 * Number Tetanus Immunizations done
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition tetanusImmunizationsDone(int doseNumber) {
+		Concept doseNumberConcept = null;
+		switch (doseNumber) {
+			case 1:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIRST_DOSE);
+				break;
+			case 2:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.SECOND_DOSE);
+				break;
+			case 3:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.THIRD_DOSE);
+				break;
+			case 4:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FOURTH_DOSE);
+				break;
+			case 5:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIFTH_DOSE);
+				break;
+			
+			default:
+				break;
+		}
+		
+		if (doseNumberConcept != null) {
+			return hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+			    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN),
+			    doseNumberConcept);
+			
+		} else {
+			return hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+			    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN));
+			
+		}
+	}    
+
 }
