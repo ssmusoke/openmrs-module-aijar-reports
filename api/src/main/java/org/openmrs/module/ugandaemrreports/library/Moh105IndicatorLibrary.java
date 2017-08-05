@@ -21,6 +21,7 @@ public class Moh105IndicatorLibrary {
     String ANC_UUID = Metadata.EncounterType.ANC_ENCOUNTER;
     String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
     String EID_UUID = Metadata.EncounterType.EID_ENCOUNTER_PAGE;
+    String MATERNITY_UUID = Metadata.EncounterType.MATERNITY_ENCOUNTER;
     @Autowired
     private Moh105CohortLibrary cohortLibrary;
 
@@ -407,7 +408,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator womenTestedForHivInLabourFirstTimePregnancy() {
-        return cohortIndicator("Women tested for HIV in labour - 1st time this Pregnancy", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("81bd3e58-9389-41e7-be1a-c6723f899e56,1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Women tested for HIV in labour - 1st time this Pregnancy", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("81bd3e58-9389-41e7-be1a-c6723f899e56,1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -415,7 +416,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator womenTestedForHivInLabourRetestThisPregnancy() {
-        return cohortIndicator("Women tested for HIV in labour - Retest this Pregnancy", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7,86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a,25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465,60155e4d-1d49-4e97-9689-758315967e0f")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Women tested for HIV in labour - Retest this Pregnancy", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7,86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a,25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465,60155e4d-1d49-4e97-9689-758315967e0f")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -423,7 +424,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator womenTestingHivPositiveInLabourFirstTimePregnancy() {
-        return cohortIndicator("M6: Women testing HIV+ in labour - 1st time this Pregnancy", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("M6: Women testing HIV+ in labour - 1st time this Pregnancy", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -431,7 +432,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator womenTestingHivPositiveInLabourRetestThisPregnancy() {
-        return cohortIndicator("M6: Women testing HIV+ in labour - Retest this Pregnancy", map(cclibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465,60155e4d-1d49-4e97-9689-758315967e0f")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("M6: Women testing HIV+ in labour - Retest this Pregnancy", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConceptList("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465,60155e4d-1d49-4e97-9689-758315967e0f")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**

@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -31,9 +35,6 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Nicholas Ingosi on 5/23/17.
@@ -201,19 +202,24 @@ public class Moh105CohortLibrary {
     }
 
     /**
-     * combine the has obs cohort definiton with the encounter of anc
+     * combine the has obs cohort definiton with the encounter provided
      * @return CohortDefinition
      */
     public CohortDefinition hasObsAndEncounter(String encounterType, Concept q, Concept ... a){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+    	return hasObsAndEncounter(encounterType, q, Arrays.asList(a));
+    }
+
+	public CohortDefinition hasObsAndEncounter(String encounterType, Concept q, List<Concept> a) {
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.addSearch("hasEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(q, a), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("hasEncounter AND hasObs");
         return cd;
-    }
-
+	}    
+    
+    
     /**
      * Mothers admitted to Maternity Clinic
      *
@@ -266,10 +272,11 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("HIV+ Initiating Maternity");
+        cd.setName("HIV+ Initiating Maternity");        
+        cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("35ae2043-a3b0-48de-8e22-05f377ac39a2")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("hivPositive AND InitiatingARV");
+        cd.setCompositionString("hivPositive AND InitiatingARV AND maternityAdmissions");
         return cd;
     }
     
@@ -525,5 +532,6 @@ public class Moh105CohortLibrary {
 		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
 		    Dictionary.getConcept(Metadata.Concept.SECOND_EID_PCR_TEST_RESULT),
 		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
-	}    
+	}
+
 }
