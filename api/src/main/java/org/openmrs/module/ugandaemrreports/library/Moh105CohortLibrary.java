@@ -213,11 +213,11 @@ public class Moh105CohortLibrary {
     }
 
 	/**
-	 * Number Tetanus Immunizations done
+	 * Number of Tetanus Immunizations done
 	 * 
 	 * @return CohortIndicator
 	 */
-	public CohortDefinition tetanusImmunizationsDone(int doseNumber) {
+	public CohortDefinition tetanusImmunizationsDone(int doseNumber, Boolean pregnant ) {
 		Concept doseNumberConcept = null;
 		switch (doseNumber) {
 			case 1:
@@ -239,16 +239,33 @@ public class Moh105CohortLibrary {
 			default:
 				break;
 		}
-		
-		if (doseNumberConcept != null) {
-			return hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
-			    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN),
-			    doseNumberConcept);
+		if (pregnant) {
+			//Fetch a cohort of pregnant persons given the tetanus dose i.e those with ANC encounters
+			CohortDefinition cd = null;
+			if (doseNumberConcept != null) {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept);
+			} else {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN));
+				
+			}
+			return cd;
 			
 		} else {
-			return hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
-			    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN));
-			
+			//Fetch a cohort of non-pregnant persons given the tetanus dose i.e those without ANC encounters
+			CompositionCohortDefinition cd = new CompositionCohortDefinition();
+	        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+	        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        if (doseNumberConcept != null) {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        } else {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        }
+	        cd.setCompositionString("hasObs AND NOT ancEncounter");
+
+	        return cd;
 		}
 	}    
 

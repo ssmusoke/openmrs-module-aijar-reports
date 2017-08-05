@@ -342,9 +342,9 @@ public class Moh105IndicatorLibrary {
 	 * 
 	 * @return CohortIndicator
 	 */
-	public CohortIndicator tetanusImmunizationsDone(int doseNumber) {
+	public CohortIndicator tetanusImmunizationsDone(int doseNumber, Boolean pregnant) {
 		return cohortIndicator("Tetanus Immunization dose. Dose# " + doseNumber,
-		    map(cohortLibrary.tetanusImmunizationsDone(doseNumber), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+		    map(cohortLibrary.tetanusImmunizationsDone(doseNumber, pregnant), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
 
 }

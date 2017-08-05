@@ -116,11 +116,11 @@ public class SetupMoH105_28_To_212ReportBuilder extends UgandaEMRDataExportManag
         
         String params = "startDate=${startDate},endDate=${endDate}";
         
-        dsd.addColumn("T1PS","T1: T1-Dose 1", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(1),params), "");
-        dsd.addColumn("T2PS","T2-Dose 2", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(2),params), "");
-        dsd.addColumn("T3PS","T3-Dose 3", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(3), params), "");
-        dsd.addColumn("T4PS","T4-Dose 4", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(4), params), "");
-        dsd.addColumn("T5PS","T5-Dose 5", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5), params), "");
+        dsd.addColumn("T1PS","T1: T1-Dose 1", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(1, true),params), "");
+        dsd.addColumn("T2PS","T2-Dose 2", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(2, true),params), "");
+        dsd.addColumn("T3PS","T3-Dose 3", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(3, true), params), "");
+        dsd.addColumn("T4PS","T4-Dose 4", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(4, true), params), "");
+        dsd.addColumn("T5PS","T5-Dose 5", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5, true), params), "");
 
         return dsd;
     }    
