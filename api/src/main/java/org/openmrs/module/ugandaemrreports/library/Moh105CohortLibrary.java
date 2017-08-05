@@ -208,9 +208,9 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hasEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(q, a), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("ancEncounter AND hasObs");
+        cd.setCompositionString("hasEncounter AND hasObs");
         return cd;
     }
 
