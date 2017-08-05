@@ -352,7 +352,8 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator referralsToMaternityUnit() {
-        return cohortIndicator("Referrals to maternity unit", map(cclibrary.hasTextObs(Dictionary.getConcept(Metadata.Concept.REFERRAL_NUMBER), "REF"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Referrals to maternity unit", map(cohortLibrary.referralsToMaternityUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -360,7 +361,8 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator maternityReferralsOut() {
-        return cohortIndicator("Maternity referrals Out", map(cclibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"), Dictionary.getConcept("6e4f1db1-1534-43ca-b2a8-5c01bc62e7ef")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Maternity referrals Out", map(cohortLibrary.maternityReferralsOut(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
     
     /**
@@ -376,7 +378,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator freshStillBirthDeliveries() {
-        return cohortIndicator("Fresh still birth", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConcept("7a15616a-c12a-44fc-9a11-553639128b69")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Fresh still birth", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConcept("7a15616a-c12a-44fc-9a11-553639128b69")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -384,7 +386,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator maceratedStillBirthDeliveries() {
-        return cohortIndicator("Macerated still birth", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConcept("fda5ad21-6ba4-4526-a0f3-ea1269d43422")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Macerated still birth", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConcept("fda5ad21-6ba4-4526-a0f3-ea1269d43422")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -392,7 +394,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator liveBirthDeliveries() {
-        return cohortIndicator("Live births", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Live births", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -400,7 +402,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pretermBirthDeliveries() {
-        return cohortIndicator("Pre-Term births", map(cclibrary.hasObs(Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), Dictionary.getConcept("129218AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pre-Term births", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), Dictionary.getConcept("129218AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -464,7 +466,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator hivExposedBabiesGivenArvs() {
-        return cohortIndicator("HIV exposed babies given ARVs", map(cclibrary.hasObs(Dictionary.getConcept("9e825e42-be00-4d4d-8774-257ddb29581b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("HIV exposed babies given ARVs", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("9e825e42-be00-4d4d-8774-257ddb29581b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -496,7 +498,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator liveBabies() {
-        return cohortIndicator("Live babies", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Live babies", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -504,7 +506,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator babiesBornWithDefect() {
-        return cohortIndicator("Babies born with defect", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Babies born with defect", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -512,7 +514,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator newBornDeaths() {
-        return cohortIndicator("New born deaths", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("ab3a7679-f5ee-48d6-b690-f55a1dfe95ea")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("New born deaths", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("ab3a7679-f5ee-48d6-b690-f55a1dfe95ea")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -528,7 +530,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator birthAsphyxia() {
-        return cohortIndicator("Birth asphyxia", map(cclibrary.hasObs(Dictionary.getConcept("121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Birth asphyxia", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -536,7 +538,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator babiesReceivedPncAt6Hours() {
-        return cohortIndicator("Babies received PNC at 6 hours", map(cclibrary.hasObs(Dictionary.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Babies received PNC at 6 hours", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
 	/**
