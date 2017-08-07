@@ -2,14 +2,15 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reportingcompatibility.service.ReportService;
 import org.openmrs.module.ugandaemrreports.common.*;
-import org.openmrs.module.ugandaemrreports.definition.predicates.*;
+import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPeriodPredicate;
+import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
 
 import java.sql.*;
 import java.text.DateFormat;
@@ -17,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.sort;
 
 /**
  * Created by carapai on 10/07/2017.
@@ -26,7 +29,7 @@ public class UgandaEMRReporting {
     public static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
 
-    public static List<NormalizedObs> getNormalizedObs(java.sql.Connection connection, String sql) throws SQLException {
+    public static List<NormalizedObs> getNormalizedObs(Connection connection, String sql) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
         List<NormalizedObs> normalizedObs = new ArrayList<>();
@@ -77,7 +80,7 @@ public class UgandaEMRReporting {
         return normalizedObs;
     }
 
-    public static List<SummarizedObs> getSummarizedObs(java.sql.Connection connection, String sql) throws SQLException {
+    public static List<SummarizedObs> getSummarizedObs(Connection connection, String sql) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
         List<SummarizedObs> summarizedObs = new ArrayList<>();
@@ -105,22 +108,8 @@ public class UgandaEMRReporting {
 
     }
 
-    public static List<SummarizedObs> getSummarizedObs(java.sql.Connection connection, String period, String groupedBy, String concept) throws SQLException {
-        String sql = String.format("select * from obs_summary where period = '%s' and period_grouped_by = '%s' and concept = '%s'", period, groupedBy, concept);
-        return getSummarizedObs(connection, sql);
 
-    }
-
-    public static List<SummarizedObs> getSummarizedObs(java.sql.Connection connection, List<String> concepts, List<String> patients) throws SQLException {
-        String patientsToFind = Joiner.on("|").join(patients);
-        // String where = joinQuery(String.format("CONCAT(',', patients, '','') REGEXP ',(%s),'", patientsToFind), constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
-        String where = constructSQLInQuery("concept", concepts);
-        String sql = "select * from obs_summary where " + where;
-
-        return getSummarizedObs(connection, sql);
-    }
-
-    public static List<PersonDemographics> getPersonDemographics(java.sql.Connection connection, String sql) throws SQLException {
+    public static List<PersonDemographics> getPersonDemographics(Connection connection, String sql) throws SQLException {
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -171,7 +160,7 @@ public class UgandaEMRReporting {
         return query1 + " " + joiner.toString() + " " + query2;
     }
 
-    public static void createNormalizedObsTable(java.sql.Connection connection) throws SQLException {
+    public static void createNormalizedObsTable(Connection connection) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS obs_normal\n" +
                 "(\n" +
                 "  obs_id                 INT          NOT NULL,\n" +
@@ -219,7 +208,7 @@ public class UgandaEMRReporting {
         executeQuery(sql, connection);
     }
 
-    public static void createSummarizedObsTable(java.sql.Connection connection) throws SQLException {
+    public static void createSummarizedObsTable(Connection connection) throws SQLException {
         String sql = "CREATE TABLE IF NOT EXISTS obs_summary\n" +
                 "(\n" +
                 "  encounter_type      CHAR(38)     NULL,\n" +
@@ -241,7 +230,7 @@ public class UgandaEMRReporting {
         executeQuery(sql, connection);
     }
 
-    public static int normalizeObs(String startDate, java.sql.Connection connection, int number) throws SQLException {
+    public static int normalizeObs(String startDate, Connection connection, int number) throws SQLException {
         String all = String.format("SELECT count(*) AS rowcount FROM obs WHERE date_created > '%s' AND voided = 0", startDate);
 
         Statement s = connection.createStatement();
@@ -926,7 +915,7 @@ public class UgandaEMRReporting {
         return sql.replace("1900-01-01", startDate);
     }
 
-    public static int summarizeObs(String sql, java.sql.Connection connection) throws SQLException {
+    public static int summarizeObs(String sql, Connection connection) throws SQLException {
         createSummarizedObsTable(connection);
         executeQuery("SET SESSION group_concat_max_len = 1000000;", connection);
         return executeQuery(sql, connection);
@@ -982,7 +971,7 @@ public class UgandaEMRReporting {
         return concepts;
     }
 
-    public static java.sql.Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
+    public static Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
 
         String driverClassName = props.getProperty("driver.class");
         String driverURL = props.getProperty("driver.url");
@@ -992,7 +981,7 @@ public class UgandaEMRReporting {
         return DriverManager.getConnection(driverURL, username, password);
     }
 
-    public static Integer executeQuery(String query, java.sql.Connection dbConn) throws SQLException {
+    public static Integer executeQuery(String query, Connection dbConn) throws SQLException {
         PreparedStatement stmt = dbConn.prepareStatement(query);
         return stmt.executeUpdate();
     }
@@ -1004,7 +993,7 @@ public class UgandaEMRReporting {
             vlsGroupedByEncounterDate = vls.stream().collect(Collectors.groupingBy(SummarizedObs::getPeriod));
             List<String> keys = new ArrayList<>(vlsGroupedByEncounterDate.keySet());
 
-            Collections.sort(keys);
+            sort(keys);
 
             String k = "";
 
@@ -1035,7 +1024,7 @@ public class UgandaEMRReporting {
     }
 
 
-    public static Map<Integer, List<PersonDemographics>> getPatientDemographics(java.sql.Connection connection, String patients) throws SQLException {
+    public static Map<Integer, List<PersonDemographics>> getPatientDemographics(Connection connection, String patients) throws SQLException {
         String where = "p.voided = 0";
 
         if (patients != null && StringUtils.isNotBlank(patients)) {
@@ -1043,19 +1032,23 @@ public class UgandaEMRReporting {
         }
 
         String q = "SELECT\n" +
+                "\n" +
                 "  person_id,\n" +
                 "  gender,\n" +
                 "  birthdate,\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pit.uuid, ''), COALESCE(identifier, '')))\n" +
-                "   FROM patient_identifier pi inner join patient_identifier_type pit on(pi.identifier_type = pit.patient_identifier_type_id)\n" +
-                "   WHERE pi.patient_id = p.person_id)       AS 'identifiers',\n" +
+                "   FROM patient_identifier pi INNER JOIN patient_identifier_type pit\n" +
+                "       ON (pi.identifier_type = pit.patient_identifier_type_id)\n" +
+                "   WHERE pi.patient_id = p.person_id) AS 'identifiers',\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pat.uuid, ''), COALESCE(value, '')))\n" +
-                "   FROM person_attribute pa inner join person_attribute_type pat ON(pa.person_attribute_type_id = pat.person_attribute_type_id)\n" +
-                "   WHERE p.person_id = pa.person_id) AS 'attributes',\n" +
+                "   FROM person_attribute pa INNER JOIN person_attribute_type pat\n" +
+                "       ON (pa.person_attribute_type_id = pat.person_attribute_type_id)\n" +
+                "   WHERE p.person_id = pa.person_id)  AS 'attributes',\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(' ', COALESCE(given_name, ''), COALESCE(family_name, '')))\n" +
                 "   FROM person_name pn\n" +
-                "   WHERE p.person_id = pn.person_id) AS 'names',\n" +
-                "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(country, ''),COALESCE(state_province, ''),COALESCE(address1, ''), COALESCE(address2, '')))\n" +
+                "   WHERE p.person_id = pn.person_id)  AS 'names',\n" +
+                "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(country, ''),COALESCE(county_district, ''), COALESCE(state_province, ''), COALESCE(address3, ''),\n" +
+                "                                 COALESCE(address4, ''), COALESCE(address5, '')))\n" +
                 "   FROM person_address pas\n" +
                 "   WHERE p.person_id = pas.person_id) AS 'addresses'\n" +
                 "FROM person p where " + where;
@@ -1066,7 +1059,7 @@ public class UgandaEMRReporting {
     }
 
 
-    public static Map<Integer, Map<String, List<NormalizedObs>>> getNormalizedObs(java.sql.Connection connection, List<String> concepts, String patients, String encounterType) throws SQLException {
+    public static Map<Integer, Map<String, List<NormalizedObs>>> getNormalizedObs(Connection connection, List<String> concepts, String patients, String encounterType) throws SQLException {
         String where = UgandaEMRReporting.joinQuery(UgandaEMRReporting.constructSQLInQuery("concept", concepts), "encounter_type = '" + encounterType + "'", Enums.UgandaEMRJoiner.AND);
         where = UgandaEMRReporting.joinQuery(where, UgandaEMRReporting.constructSQLInQuery("person_id", patients), Enums.UgandaEMRJoiner.AND);
 
@@ -1092,7 +1085,15 @@ public class UgandaEMRReporting {
         return result;
     }
 
-   /* public static java.sql.Connection testSqlConnection() throws SQLException, ClassNotFoundException {
+    public static List<String> processString2(String value) {
+        Map<String, String> result = new HashMap<>();
+
+        List<String> splitData = Splitter.on(",").splitToList(value);
+
+        return Splitter.on(":").splitToList(splitData.get(0));
+    }
+
+    /*public static Connection testSqlConnection() throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
         props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
@@ -1101,7 +1102,7 @@ public class UgandaEMRReporting {
         return getDatabaseConnection(props);
     }*/
 
-    public static java.sql.Connection sqlConnection() throws SQLException, ClassNotFoundException {
+    public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
 
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
@@ -1124,13 +1125,35 @@ public class UgandaEMRReporting {
         return Context.getAdministrationService().getGlobalProperty(property);
     }
 
-    public static String summarizedObsPatientsToString(List<SummarizedObs> summarizedObs) {
-        StringBuilder patientString = new StringBuilder(summarizedObs.get(0).getPatients());
+    public static List<SummarizedObs> getSummarizedObs(Connection connection, String period, String groupedBy, String concept) throws SQLException {
+        String sql = String.format("select * from obs_summary where period = '%s' and period_grouped_by = '%s' and concept = '%s'", period, groupedBy, concept);
+        return getSummarizedObs(connection, sql);
 
-        for (SummarizedObs smo : summarizedObs.subList(1, summarizedObs.size())) {
-            patientString.append(",").append(smo.getPatients());
+    }
+
+    public static List<SummarizedObs> getSummarizedObs(Connection connection, List<String> concepts, List<String> patients) throws SQLException {
+        String patientsToFind = Joiner.on("|").join(patients);
+        // String where = joinQuery(String.format("CONCAT(',', patients, '','') REGEXP ',(%s),'", patientsToFind), constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
+        String where = constructSQLInQuery("concept", concepts);
+        String sql = "select * from obs_summary where " + where;
+
+        return getSummarizedObs(connection, sql);
+    }
+
+    public static String summarizedObsPatientsToString(List<SummarizedObs> summarizedObs) {
+        if (summarizedObs != null && summarizedObs.size() > 0) {
+            StringBuilder patientString = new StringBuilder(summarizedObs.get(0).getPatients());
+
+            for (SummarizedObs smo : summarizedObs.subList(1, summarizedObs.size())) {
+                patientString.append(",").append(smo.getPatients());
+            }
+            return patientString.toString();
         }
-        return patientString.toString();
+        return "";
+    }
+
+    public static List<SummarizedObs> getSummarizedObsList(List<SummarizedObs> obs, String concept, String period) {
+        return new ArrayList<>(Collections2.filter(obs, new SummarizedObsPredicate(concept, period)));
     }
 
     public static SummarizedObs getSummarizedObs(List<SummarizedObs> obs, String period, String concept) {
@@ -1142,7 +1165,6 @@ public class UgandaEMRReporting {
         }
         return null;
     }
-
 
     public static String getSummarizedObsValue(SummarizedObs summarizedObs, String patient) {
         if (summarizedObs != null) {
@@ -1156,5 +1178,66 @@ public class UgandaEMRReporting {
             }
         }
         return "";
+    }
+
+    public static List<String> getSummarizedObsValues(SummarizedObs summarizedObs, String patient) {
+        List<String> result = new ArrayList<>();
+        if (summarizedObs != null) {
+            String values = summarizedObs.getValueCoded();
+            List<String> data = Splitter.on(",").splitToList(values);
+            for (String d : data) {
+                List<String> patientValues = Splitter.on(":").splitToList(d);
+                if (patientValues.get(0).equals(patient)) {
+                    result.add(patientValues.get(1));
+                }
+            }
+        }
+        sort(result);
+        return result;
+    }
+
+    public static List<String> getSummarizedObsValues(List<SummarizedObs> summarizedObs, String patient) {
+        List<String> result = new ArrayList<>();
+        if (summarizedObs != null && summarizedObs.size() > 0) {
+            for (SummarizedObs summarizedObs1 : summarizedObs) {
+                String values = summarizedObs1.getValueCoded();
+                List<String> data = Splitter.on(",").splitToList(values);
+                for (String d : data) {
+                    List<String> patientValues = Splitter.on(":").splitToList(d);
+                    if (patientValues.get(0).equals(patient)) {
+                        result.add(patientValues.get(1));
+                    }
+                }
+            }
+        }
+        sort(result);
+        return result;
+    }
+
+    public static Map<String, String> getSummarizedObsValuesAsMap(List<SummarizedObs> summarizedObs, String patient) {
+        Map<String, String> result = new TreeMap<>();
+        if (summarizedObs != null && summarizedObs.size() > 0) {
+            for (SummarizedObs summarizedObs1 : summarizedObs) {
+                String values = summarizedObs1.getValueCoded();
+                List<String> data = Splitter.on(",").splitToList(values);
+                for (String d : data) {
+                    List<String> patientValues = Splitter.on(":").splitToList(d);
+                    if (patientValues.get(0).equals(patient)) {
+                        result.put(summarizedObs1.getPeriod(), patientValues.get(1));
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public static String getMostRecentValue(Map<String, String> dates, String period) {
+        List<String> keys = new ArrayList<>(Collections2.filter(dates.keySet(), new SummarizedObsPeriodPredicate(period, ReportService.Modifier.LESS_EQUAL)));
+        sort(keys);
+        if (keys.size() > 0) {
+            return dates.get(keys.get(keys.size() - 1));
+        }
+        return null;
     }
 }

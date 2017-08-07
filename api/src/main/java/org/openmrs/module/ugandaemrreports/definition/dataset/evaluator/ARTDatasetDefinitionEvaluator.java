@@ -68,6 +68,8 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
                 List<SummarizedObs> viralLoadResults = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dc8d83e3-30ab-102d-86b0-7a5022ba4115", null)));
+                List<SummarizedObs> appointments = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dcac04cf-30ab-102d-86b0-7a5022ba4115", null)));
+                Map<String, String> convertedAppointments = getSummarizedObsValuesAsMap(appointments, patient);
 
                 String firstViralLoad = getSummarizedObsValue(viralLoad(viralLoadResults, 0), patient);
 
@@ -84,7 +86,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
                 SummarizedObs entry = getSummarizedObs(personObs, null, "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
 
-                SummarizedObs functionalStatusDuringArtStart = getSummarizedObs(personObs, month, "39243cef-b375-44b1-9e79-cbf21bd10878");
+                SummarizedObs functionalStatusDuringArtStart = getSummarizedObs(personObs, month, "dce09a15-30ab-102d-86b0-7a5022ba4115");
 
                 String ti = "";
 
@@ -93,6 +95,8 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 if (!Strings.isNullOrEmpty(tiDate) || (entry != null && entry.getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
                     ti = "✔";
                 }
+                List<String> addresses = processString2(personDemos.getAddresses());
+                String address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
 
                 pdh.addCol(row, "Date ART Started", artStartDate);
                 pdh.addCol(row, "Unique ID no", patient);
@@ -101,12 +105,12 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
                 pdh.addCol(row, "Age", age.getYears());
-                pdh.addCol(row, "Address", personDemos.getAddresses());
+                pdh.addCol(row, "Address", address);
                 pdh.addCol(row, "Weight", baselineWeight);
 
 
                 if (functionalStatusDuringArtStart != null) {
-                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getReportName());
+                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getValueCodedName());
                 } else {
                     pdh.addCol(row, "FUS", "");
                 }
@@ -118,7 +122,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "CS", "");
                 }
 
-                pdh.addCol(row, "CD4VL", baselineCd4 + "\n" + firstViralLoad);
+                pdh.addCol(row, "CDVL", baselineCd4 + "\n" + firstViralLoad);
 
                 pdh.addCol(row, "CPT", "");
                 pdh.addCol(row, "INH", "");
@@ -153,7 +157,9 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         String cptDosage = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "38801143-01ac-4328-b0e1-a7b23c84c8a3"), patient);
 
                         SummarizedObs currentRegimen = getSummarizedObs(personObs, workingMonth, "dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
-                        SummarizedObs returnDate = getSummarizedObs(personObs, workingMonth, "dcac04cf-30ab-102d-86b0-7a5022ba4115");
+                        String returnDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dcac04cf-30ab-102d-86b0-7a5022ba4115"), patient);
+
+                        String latestAppointment = getMostRecentValue(convertedAppointments, workingMonth);
 
                         String arvStopDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "cd36c403-d88c-4496-96e2-09af6da090c1"), patient);
                         String arvRestartDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "406e1978-8c2e-40c5-b04e-ae214fdfed0e"), patient);
@@ -193,7 +199,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             status = "6";
                         }
 
-                        if (!Strings.isNullOrEmpty(toDate)) {
+                        if (StringUtils.isNotBlank(toDate)) {
                             status = "5";
                         }
 
@@ -201,10 +207,25 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             regimen = currentRegimen.getReportName();
                         } else if (StringUtils.isNotBlank(status)) {
                             regimen = status;
-                        } else if (returnDate != null) {
+                        } else if (StringUtils.isNotBlank(returnDate)) {
                             regimen = "3";
-                        } else {
-                            regimen = "";
+                        } else if (latestAppointment != null) {
+                            List<String> data = Splitter.on("-").splitToList(latestAppointment);
+                            Integer appointment = Integer.valueOf(data.get(0) + data.get(1));
+
+                            if (appointment >= period) {
+                                regimen = "→";
+                            } else {
+                                Integer diff = period - appointment;
+
+                                if (diff < 3) {
+                                    regimen = "3";
+                                } else {
+                                    regimen = "4";
+                                }
+                            }
+
+
                         }
 
                         if (StringUtils.isNotBlank(adherence) && StringUtils.isNotBlank(cotrim)) {

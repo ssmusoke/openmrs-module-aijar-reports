@@ -10,7 +10,7 @@ public class Enums {
         VALUE_DATE_TIME,
         VALUE_NUMERIC;
 
-        private ValueType() {
+        ValueType() {
         }
     }
 
@@ -18,7 +18,8 @@ public class Enums {
         BEFORE,
         AFTER,
         ON;
-        private PeriodInterval() {
+
+        PeriodInterval() {
         }
     }
 
@@ -27,7 +28,7 @@ public class Enums {
         OR,
         IN;
 
-        private UgandaEMRJoiner() {
+        UgandaEMRJoiner() {
         }
     }
 
@@ -40,12 +41,8 @@ public class Enums {
 
         private final String name;
 
-        private Period(String s) {
+        Period(String s) {
             name = s;
-        }
-
-        public boolean equalsName(String otherName) {
-            return otherName != null && name.equals(otherName);
         }
 
         public String toString() {
