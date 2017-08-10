@@ -96,12 +96,69 @@ public class MyTest {
         assertNotEquals(response, 0);
     }
 
+    */
     @Test
-    public void shouldSummarizeObs() throws SQLException, ClassNotFoundException {
+    public void shouldSummarizeObsYearly() throws SQLException, ClassNotFoundException {
         Connection connection = UgandaEMRReporting.testSqlConnection();
-        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery("1900-01-01"), connection);
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryYearQuery("1900-01-01"), connection, "obs_summary_year");
         assertNotEquals(response, 0);
-    }*/
+    }
+
+    @Test
+    public void shouldSummarizeObsMonthly() throws SQLException, ClassNotFoundException {
+        Connection connection = UgandaEMRReporting.testSqlConnection();
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery("1900-01-01"), connection, "obs_summary");
+        assertNotEquals(response, 0);
+    }
+
+    @Test
+    public void shouldSummarizeObsQuarterly() throws SQLException, ClassNotFoundException {
+        Connection connection = UgandaEMRReporting.testSqlConnection();
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryQuarterQuery("1900-01-01"), connection, "obs_summary_quarter");
+        assertNotEquals(response, 0);
+    }
+
+    @Test
+    public void shouldGeneratePreArtRegister() throws SQLException, ClassNotFoundException {
+
+        String month = UgandaEMRReporting.getObsPeriod(d, Enums.Period.YEARLY);
+        String currentYear = UgandaEMRReporting.getObsPeriod(new Date(), Enums.Period.YEARLY);
+        LocalDate localDate = StubDate.dateOf(d);
+
+        try {
+            Connection connection = UgandaEMRReporting.testSqlConnection();
+            List<SummarizedObs> startedThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "encounter_datetime", "encounters","8d5b27bc-c2cc-11de-8d13-0010c6dffd0f","obs_summary_year");
+            String allPatients = summarizedObsPatientsToString(startedThisMonth);
+
+            List<String> patients = Splitter.on(",").splitToList(allPatients);
+
+            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, allPatients);
+
+            PatientDataHelper pdh = new PatientDataHelper();
+
+            for (String patient : patients) {
+                List<PersonDemographics> personDemographics = demographics.get(Integer.valueOf(patient));
+
+                PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
+
+                // Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(artStartDate));
+
+
+                DataSetRow row = new DataSetRow();
+
+                pdh.addCol(row, "Unique ID no", patient);
+                pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
+                pdh.addCol(row, "Name", personDemos.getNames());
+                pdh.addCol(row, "Gender", personDemos.getGender());
+                // pdh.addCol(row, "Age", age.getYears());
+
+                // dataSet.addRow(row);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        // return dataSet;
+    }
 
     /*@Test
     public void shouldGenerateArtRegister() throws SQLException, ClassNotFoundException {

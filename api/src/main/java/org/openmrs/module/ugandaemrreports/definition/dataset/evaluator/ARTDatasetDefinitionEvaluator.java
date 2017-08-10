@@ -46,7 +46,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
         try {
             Connection connection = UgandaEMRReporting.sqlConnection();
-            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440");
+            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440","obs_summary");
             String allPatients = summarizedObsPatientsToString(startedArtThisMonth);
 
             List<String> patients = Splitter.on(",").splitToList(allPatients);

@@ -34,7 +34,9 @@ public class SummarizeFragmentController {
         }
 
         Connection connection = UgandaEMRReporting.sqlConnection();
-        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery(lastDate), connection);
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryYearQuery(lastDate), connection, "obs_summary_year");
+        int response1 = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery(lastDate), connection, "obs_summary");
+        int response2 = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryQuarterQuery(lastDate), connection, "obs_summary_quarter");
         Date now = new Date();
         String newDate = UgandaEMRReporting.DEFAULT_DATE_FORMAT.format(now);
         UgandaEMRReporting.setGlobalProperty("ugandaemrreports.lastSummarizationDate", newDate);
