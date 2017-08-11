@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by Nicholas Ingosi on 5/17/17.
+ * 
  */
 @Component
 public class SetupSMCRegister extends UgandaEMRDataExportManager {
@@ -94,7 +94,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "SMCRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:10,dataset:SMC");
+        props.put("repeatingSections", "sheet:1,row:10-12,dataset:SMC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -167,7 +167,9 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Age5<15yrs", getAgeFromEncounterDate(5, 15), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Age15<49yrs", getAgeFromEncounterDate(15, 49), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Age<49yrs", getAgeFromEncounterDate(49, 200), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Address", address(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("District", address("District"), "", new CalculationResultDataConverter());
+        dsd.addColumn("Sub-County", address("Sub-county"), "", new CalculationResultDataConverter());
+        dsd.addColumn("Village", address("Village"), "", new CalculationResultDataConverter());
         dsd.addColumn("Facility/Outreach", sdd.definition("Facility/Outreach", getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FaciltyAndOutReachDataConverter());
         dsd.addColumn("STI", sti(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("HTC", sdd.definition("HTCM", getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new HctDataConverter());
@@ -176,9 +178,9 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Procedure", sdd.definition("Procedure", getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SmcProcedureDataConverter());
         dsd.addColumn("Type anasthesia", anaesthesia(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Circumciser name", circumcisoName(), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("48hrs", followUps(2), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("7days", followUps(7), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn(">7days", followUps(8), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("48hrs", followUps(2), "", new CalculationResultDataConverter());
+        dsd.addColumn("7days", followUps(7), "", new CalculationResultDataConverter());
+        dsd.addColumn(">7days", followUps(8), "", new CalculationResultDataConverter());
         dsd.addColumn("During surgery", sdd.definition("During surgery", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDataConverter());
         dsd.addColumn("Date of AE", sdd.definition("Date of AE", getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DuringSurgeryDateDataConverter());
         dsd.addColumn("Type of AE", sdd.definition("Type of AE",  getConcept("654e7039-4629-46bb-9fc9-0f6dd101ce6a")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TypeOfAdverseEventDataConverter());
@@ -201,9 +203,10 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         cd.addCalculationParameter("upper", upper);
         return cd;
     }
-    private DataDefinition address() {
+    private DataDefinition address(String address) {
         CalculationDataDefinition cd = new CalculationDataDefinition("address", new SMCAddressCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        cd.addCalculationParameter("address", address);
         return cd;
 
     }
