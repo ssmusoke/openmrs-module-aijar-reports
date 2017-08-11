@@ -19,42 +19,37 @@ import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.SimpleResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.cohort.Filters;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Nicholas Ingosi  on 5/22/17.
  */
-public class SMCAdrressCalculation extends AbstractPatientCalculation {
+public class SMCAddressCalculation extends AbstractPatientCalculation {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
-        for(Integer ptId:cohort) {
+        String address = (map != null && map.containsKey("address")) ? (String) map.get("address") : null;
+        Set<Integer> male = Filters.male(cohort, context);
+        for(Integer ptId:male) {
             Person person = Context.getPersonService().getPerson(ptId);
-            String district = "";
-            String parish = "";
-            String subCounty = "";
-            String vilZoneCell = "";
-            String address = "";
-            if(person.getPersonAddress() != null && person.getPersonAddress().getCountyDistrict() != null) {
-                district = person.getPersonAddress().getCountyDistrict();
+            String addressValue = "";
+            if(address != null && person.getPersonAddress() != null) {
+	            if(address.equals("district") && person.getPersonAddress().getCountyDistrict() != null) {
+	            	addressValue = person.getPersonAddress().getCountyDistrict();
+	            }
+	            else if(address.equals("subcounty") && person.getPersonAddress().getAddress3() != null) {
+	            	addressValue = person.getPersonAddress().getAddress3();
+	            }
+	            else if(address.equals("village") && person.getPersonAddress().getAddress5() != null) {
+	            	addressValue = person.getPersonAddress().getAddress5();
+	            } 
             }
 
-            if(person.getPersonAddress() != null && person.getPersonAddress().getAddress4() != null) {
-                parish = person.getPersonAddress().getAddress4();
-            }
-
-            if(person.getPersonAddress() != null && person.getPersonAddress().getAddress4() != null) {
-                subCounty = person.getPersonAddress().getAddress3();
-            }
-
-            if(person.getPersonAddress() != null && person.getPersonAddress().getAddress4() != null) {
-                vilZoneCell = person.getPersonAddress().getAddress5();
-            }
-            address = district+"\n"+parish+"\n"+subCounty+"\n"+vilZoneCell;
-
-            ret.put(ptId, new SimpleResult(address, this));
+            ret.put(ptId, new SimpleResult(addressValue, this));
         }
         return ret;
     }
