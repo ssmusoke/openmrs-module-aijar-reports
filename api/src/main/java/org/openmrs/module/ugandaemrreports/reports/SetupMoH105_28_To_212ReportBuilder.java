@@ -116,12 +116,18 @@ public class SetupMoH105_28_To_212ReportBuilder extends UgandaEMRDataExportManag
         
         String params = "startDate=${startDate},endDate=${endDate}";
         
-        dsd.addColumn("T1PS","T1: T1-Dose 1", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(1, true),params), "");
-        dsd.addColumn("T2PS","T2-Dose 2", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(2, true),params), "");
-        dsd.addColumn("T3PS","T3-Dose 3", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(3, true), params), "");
-        dsd.addColumn("T4PS","T4-Dose 4", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(4, true), params), "");
-        dsd.addColumn("T5PS","T5-Dose 5", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5, true), params), "");
+        dsd.addColumn("T1PS","T1: T1-Dose 1 - pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(1, true),params), "");
+        dsd.addColumn("T2PS","T2-Dose 2 - pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(2, true),params), "");
+        dsd.addColumn("T3PS","T3-Dose 3 - pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(3, true), params), "");
+        dsd.addColumn("T4PS","T4-Dose 4 - pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(4, true), params), "");
+        dsd.addColumn("T5PS","T5-Dose 5 - pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5, true), params), "");
 
+        dsd.addColumn("T1NPS","T1: T1-Dose 1 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(1, false),params), "");
+        dsd.addColumn("T2NPS","T2-Dose 2 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(2, false),params), "");
+        dsd.addColumn("T3NPS","T3-Dose 3 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(3, false), params), "");
+        dsd.addColumn("T4NPS","T4-Dose 4 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(4, false), params), "");
+        dsd.addColumn("T5NPS","T5-Dose 5 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5, false), params), "");
+        
         return dsd;
     }    
 
