@@ -273,7 +273,7 @@ public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManage
         dsd.addColumn("E4B","E4:-Number of DNA PCR results returned from the lab - given to care giver", ReportUtils.map(indicatorLibrary.dnaPcrResultsReturnedFromTheLabGivenToCareGiver(), params), "");
         dsd.addColumn("E5A","E5:-Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months", ReportUtils.map(indicatorLibrary.hivExposedInfantsTestedBySerologyRapidhivTestAt18Months(), params), "");
         dsd.addColumn("E5B","E5:-Number of HIV Exposed infants tested by serology/rapidHIV test at 18 months - HIV+", ReportUtils.map(indicatorLibrary.hivExposedInfantsTestedBySerologyRapidhivTestAt18MonthsHivPositive(), params), "");
-        dsd.addColumn("E6A","E6:-Number of HIV+ infants from EID enrolled in care", ReportUtils.map(indicatorLibrary.hivPositiveInfantsFromEidEnrolledInCare(), params), "");
+        dsd.addColumn("E6","E6:-Number of HIV+ infants from EID enrolled in care", ReportUtils.map(indicatorLibrary.hivPositiveInfantsFromEidEnrolledInCare(), params), "");
         dsd.addColumn("E7A","E7:-HIV exposed infants started on CPT", ReportUtils.map(indicatorLibrary.hivExposedInfantsStartedOnCpt(), params), "");
 
         return dsd;

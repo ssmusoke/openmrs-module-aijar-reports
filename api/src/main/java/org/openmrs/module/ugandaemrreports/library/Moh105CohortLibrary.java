@@ -104,7 +104,7 @@ public class Moh105CohortLibrary {
      * @return
      */
     public CohortDefinition hivPostiveBeforeFirstANCVisit() {
-        return definitionLibrary.hasANCObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
+        return definitionLibrary.hasANCObs(Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.HIV_STATUS), Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.HIV_POSITIVE));
     }
 
     /**
@@ -238,7 +238,7 @@ public class Moh105CohortLibrary {
 	 * @return CohortDefinition 
 	 */
     public CohortDefinition hivPositivePersons() {
-    	return definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
+    	return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_STATUS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
     }    
     
     /**
@@ -261,7 +261,7 @@ public class Moh105CohortLibrary {
      * @return CohortDefinition
      */
     public CohortDefinition deliveriesInUnit() {
-        return definitionLibrary.hasObs(Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREGNANCY_OUTCOME));
     }    
     
     /**
@@ -313,7 +313,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("HIV+ Women Deliveries");
         cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("deliveries", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveries", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.PREGNANCY_OUTCOME)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("hivPositive AND deliveries AND liveBirths");
         return cd;
@@ -353,8 +353,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setQuestion(Dictionary.getConcept("dcce847a-30ab-102d-86b0-7a5022ba4115"));
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
-        cd.setOperator2(RangeComparator.LESS_THAN);
-        cd.setValue2(2.5);
+        cd.setOperator1(RangeComparator.LESS_THAN);
+        cd.setValue1(2.5);
         return cd;
 	}
         

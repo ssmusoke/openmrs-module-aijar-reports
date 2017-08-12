@@ -222,6 +222,11 @@ public class Metadata {
 		public static final String DATE_OF_FIRST_PCR_TEST = "51941f01-307f-44ca-9351-401bc008a208";
 		public static final String DATE_OF_SECOND_PCR_TEST = "1f627527-2f97-4f21-9b61-2b79d887950f";
 		public static final String DATE_OF_18_MONTH_RAPID_PCR_TEST = "7065b181-abb0-4ad6-8082-62e99398f735";
+		public static final String EMTCT_CODES = "d5b0394c-424f-41db-bc2f-37180dcdbe74";
+		public static final String PREGNANCY_OUTCOME = "161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		public static final String HIV_STATUS = "dce0e886-30ab-102d-86b0-7a5022ba4115";
+		public static final String ARV_FOR_BABY = "9e825e42-be00-4d4d-8774-257ddb29581b";
+		public static final String NVP_SYRUP = "04711d8f-c60d-4b1c-9451-0b32debbb8b0";
 
     }
     public static class Identifier{
