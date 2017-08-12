@@ -634,7 +634,7 @@ public class UgandaEMRReporting {
                 "    'encounters',\n" +
                 "    NULL,\n" +
                 "    encounter_month,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "  GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, DATE(encounter_datetime)) ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
                 "    'monthly',\n" +
                 "    NOW(),\n" +
@@ -795,7 +795,7 @@ public class UgandaEMRReporting {
                 "    'encounters',\n" +
                 "    NULL,\n" +
                 "    encounter_year,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, DATE(encounter_datetime)) ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
                 "    'monthly',\n" +
                 "    NOW(),\n" +
@@ -947,7 +947,7 @@ public class UgandaEMRReporting {
                 "    'encounters',\n" +
                 "    NULL,\n" +
                 "    encounter_quarter,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC),\n" +
+                "    GROUP_CONCAT(DISTINCT CONCAT_WS(':', person_id, DATE(encounter_datetime)) ORDER BY person_id ASC),\n" +
                 "    COUNT(DISTINCT person_id),\n" +
                 "    'monthly',\n" +
                 "    NOW(),\n" +
@@ -1050,6 +1050,27 @@ public class UgandaEMRReporting {
         concepts.put("vl qualitative", "dca12261-30ab-102d-86b0-7a5022ba4115");
         concepts.put("arvdays", "7593ede6-6574-4326-a8a6-3d742e843659");
 
+        return concepts;
+    }
+
+    public static Map<String, String> preArtRegisterConcepts() {
+        Map<String, String> concepts = new HashMap<>();
+        concepts.put("tb start date", "dce02eca-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("tb stop date", "dd2adde2-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("art start date", "ab505422-26d9-41f1-a079-c3d222000440");
+        concepts.put("tb status", "dce02aa1-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("cpt dosage", "38801143-01ac-4328-b0e1-a7b23c84c8a3");
+        concepts.put("clinical stage", "dcdff274-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("baseline weight", "900b8fd9-2039-4efc-897b-9b8ce37396f5");
+        concepts.put("baseline cs", "39243cef-b375-44b1-9e79-cbf21bd10878");
+        concepts.put("baseline cd4", "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f");
+        concepts.put("baseline regimen", "c3332e8d-2548-4ad6-931d-6855692694a3");
+        concepts.put("to date", "fc1b1e96-4afb-423b-87e5-bb80d451c967");
+        concepts.put("ti date", "f363f153-f659-438b-802f-9cc1828b5fa9");
+        concepts.put("entry", "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("deaths", "deaths");
+        concepts.put("weight", "dce09e2f-30ab-102d-86b0-7a5022ba4115");
+        concepts.put("cd4", "dcbcba2c-30ab-102d-86b0-7a5022ba4115");
         return concepts;
     }
 
@@ -1213,17 +1234,17 @@ public class UgandaEMRReporting {
 
     }
 
-    public static List<SummarizedObs> getSummarizedObs(Connection connection, String period, String groupedBy, String concept,String encounterType, String table) throws SQLException {
-        String sql = String.format("select * from %s where period = '%s' and period_grouped_by = '%s' and concept = '%s' and encounter_type = '%s'", table, period, groupedBy, concept,encounterType);
+    public static List<SummarizedObs> getSummarizedObs(Connection connection, String period, String groupedBy, String concept, String encounterType, String table) throws SQLException {
+        String sql = String.format("select * from %s where period = '%s' and period_grouped_by = '%s' and concept = '%s' and encounter_type = '%s'", table, period, groupedBy, concept, encounterType);
         return getSummarizedObs(connection, sql);
 
     }
 
-    public static List<SummarizedObs> getSummarizedObs(Connection connection, List<String> concepts, List<String> patients) throws SQLException {
+    public static List<SummarizedObs> getSummarizedObs(Connection connection, String table, List<String> concepts, List<String> patients) throws SQLException {
         String patientsToFind = Joiner.on("|").join(patients);
         // String where = joinQuery(String.format("CONCAT(',', patients, '','') REGEXP ',(%s),'", patientsToFind), constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
         String where = constructSQLInQuery("concept", concepts);
-        String sql = "select * from obs_summary where " + where;
+        String sql = String.format("select * from %s where " + where, table);
 
         return getSummarizedObs(connection, sql);
     }
@@ -1238,6 +1259,18 @@ public class UgandaEMRReporting {
             return patientString.toString();
         }
         return "";
+    }
+
+    public static Map<String, String> summarizedObsPatientsToString2(List<SummarizedObs> summarizedObs) {
+        Map<String, String> result = new HashMap<>();
+        for (SummarizedObs smo : summarizedObs) {
+            List<String> data = Splitter.on(",").splitToList(smo.getPatients());
+            for (String d : data) {
+                List<String> patientValues = Splitter.on(":").splitToList(d);
+                result.put(patientValues.get(0), patientValues.get(1));
+            }
+        }
+        return result;
     }
 
     public static List<SummarizedObs> getSummarizedObsList(List<SummarizedObs> obs, String concept, String period) {

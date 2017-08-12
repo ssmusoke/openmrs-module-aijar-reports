@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -127,30 +128,36 @@ public class MyTest {
 
         try {
             Connection connection = UgandaEMRReporting.testSqlConnection();
-            List<SummarizedObs> startedThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "encounter_datetime", "encounters","8d5b27bc-c2cc-11de-8d13-0010c6dffd0f","obs_summary_year");
-            String allPatients = summarizedObsPatientsToString(startedThisMonth);
+            List<SummarizedObs> startedThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "encounter_datetime", "encounters", "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f", "obs_summary_year");
 
-            List<String> patients = Splitter.on(",").splitToList(allPatients);
+            Map<String, String> patients = summarizedObsPatientsToString2(startedThisMonth);
 
-            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, allPatients);
+            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, Joiner.on(",").join(patients.keySet()));
+
+
+            List<SummarizedObs> summarizedObs = getSummarizedObs(connection, "obs_summary_quarter", new ArrayList<>(preArtRegisterConcepts().values()), new ArrayList<>(patients.keySet()));
+
 
             PatientDataHelper pdh = new PatientDataHelper();
 
-            for (String patient : patients) {
-                List<PersonDemographics> personDemographics = demographics.get(Integer.valueOf(patient));
+            for (Map.Entry<String, String> patient : patients.entrySet()) {
+                List<PersonDemographics> personDemographics = demographics.get(Integer.valueOf(patient.getKey()));
 
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
-                // Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(artStartDate));
-
+                Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(patient.getValue()));
 
                 DataSetRow row = new DataSetRow();
-
+                pdh.addCol(row, "Date Enrolled", patient.getValue());
                 pdh.addCol(row, "Unique ID no", patient);
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
-                // pdh.addCol(row, "Age", age.getYears());
+                pdh.addCol(row, "Age", age.getYears());
+
+                for (int i = 0; i < 16; i++) {
+                    String period = UgandaEMRReporting.getObsPeriod(Periods.addQuarters(localDate, i).get(0).toDate(), Enums.Period.QUARTERLY);
+                }
 
                 // dataSet.addRow(row);
             }

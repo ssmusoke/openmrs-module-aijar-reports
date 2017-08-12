@@ -46,7 +46,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
         try {
             Connection connection = UgandaEMRReporting.sqlConnection();
-            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440","obs_summary");
+            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440", "obs_summary");
             String allPatients = summarizedObsPatientsToString(startedArtThisMonth);
 
             List<String> patients = Splitter.on(",").splitToList(allPatients);
@@ -55,7 +55,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
             List<String> encounterSummaryConcepts = new ArrayList<>(artRegisterConcepts().values());
 
-            List<SummarizedObs> summarizedObs = getSummarizedObs(connection, encounterSummaryConcepts, patients);
+            List<SummarizedObs> summarizedObs = getSummarizedObs(connection, "obs_summary", encounterSummaryConcepts, patients);
 
 
             PatientDataHelper pdh = new PatientDataHelper();
