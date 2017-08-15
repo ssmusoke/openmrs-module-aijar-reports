@@ -15,43 +15,31 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas on 4/27/17.
+ * 
  */
-public class ObsDataConverter implements DataConverter {
+public class TypeOfAdverseEventDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
+
         if (obj == null) {
             return "";
         }
-
         Obs obs = ((Obs) obj);
-
-        if (obs.getValueCoded() != null) {
-            return obs.getValueCoded().getName().getName();
+        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("ff40414d-a295-42a1-b643-1d25396c0b7f"))){
+            return "3";
         }
-
-        else if (obs.getValueDate() != null) {
-            return formatDate(obs.getValueDate());
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("86a23810-2d39-4ab7-b3b3-303e0a7e6261"))){
+            return "4";
         }
-
-        else if (obs.getValueDatetime() != null) {
-            return formatDate(obs.getValueDatetime());
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115"))){
+            return "6";
         }
-
-        else if (obs.getValueNumeric() != null) {
-            return obs.getValueNumeric().toString();
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("d99b872e-8116-4697-941d-fc14e98d5612"))){
+            return "2";
         }
-
-        else if (obs.getValueText() != null) {
-            return obs.getValueText();
-        }
-
         return null;
     }
 
@@ -63,10 +51,5 @@ public class ObsDataConverter implements DataConverter {
     @Override
     public Class<?> getDataType() {
         return String.class;
-    }
-
-    private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-        return dateFormatter.format(date);
     }
 }

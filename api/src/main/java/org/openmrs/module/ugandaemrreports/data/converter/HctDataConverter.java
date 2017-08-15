@@ -15,41 +15,25 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas on 4/27/17.
+ * 
  */
-public class ObsDataConverter implements DataConverter {
+public class HctDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
+
         if (obj == null) {
             return "";
         }
 
         Obs obs = ((Obs) obj);
-
-        if (obs.getValueCoded() != null) {
-            return obs.getValueCoded().getName().getName();
+        if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115"))) {
+            return "+ve";
         }
-
-        else if (obs.getValueDate() != null) {
-            return formatDate(obs.getValueDate());
-        }
-
-        else if (obs.getValueDatetime() != null) {
-            return formatDate(obs.getValueDatetime());
-        }
-
-        else if (obs.getValueNumeric() != null) {
-            return obs.getValueNumeric().toString();
-        }
-
-        else if (obs.getValueText() != null) {
-            return obs.getValueText();
+        else if(obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115"))) {
+            return "-ve";
         }
 
         return null;
@@ -63,10 +47,5 @@ public class ObsDataConverter implements DataConverter {
     @Override
     public Class<?> getDataType() {
         return String.class;
-    }
-
-    private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-        return dateFormatter.format(date);
     }
 }
