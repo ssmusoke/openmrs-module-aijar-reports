@@ -32,6 +32,186 @@ public class EIDCohortDataSetEvaluator implements DataSetEvaluator {
     @Autowired
     private EvaluationService evaluationService;
 
+    private String[] indicators = {
+            "% mothers who received ARVs for EMTCT",
+            "% Infants who received ARVs for EMTCT at 0-6 weeks",
+            "% HEI received 1st DNA PCR at age 6-8 weeks",
+            "% HEI received 1st DNA PCR at age 6-8 weeks and results  given to the care giver",
+            "% HEI tested positive by 1st PCR at age 6-8 weeks and results given to the care giver",
+            "% HEI who received cotrimoxazole at age 6-8 weeks",
+            "% HEI who were Exclusively Breastfed at 6 months among HEI assessed",
+            "% HEI active in care",
+            "% HEI tested HIV positive between 0 and 12 months",
+            "% HEI tested HIV positive and started on ART",
+            "% HEI transferred out between 0 and 12 months",
+            "% HEI lost between 0 and 12 months",
+            "% HEI died between 0 and 12 months",
+            "% HEI who received 2nd DBS test",
+            "% HEI tested with AB test at ≥ 18 months and results are available",
+            "% HEI with AB test negative at 18 months",
+            "% HEI active at 18 months but no AB test done",
+            "% HEI transferred out between 0 and 18 months",
+            "% HEI lost to follow-up between 0 and 18 months",
+            "% HEI died between 0 and 18 months",
+            "% HEI tested HIV positive between 0 and 18 months",
+            "% HEI tested HIV positive and started on ART"
+    };
+
+    private String[] targets = {
+            "100%",
+            "90%",
+            "80%",
+            "80%",
+            "100%",
+            "80%",
+            "100%",
+            "80%",
+            "<5%",
+            "100%",
+            "NA",
+            "NA",
+            "NA",
+            "80%",
+            "80%",
+            "80%",
+            "0%",
+            "NA",
+            "NA",
+            "NA",
+            "<5%",
+            "100%"
+    };
+
+    private String[] targetNumbers = {
+            "100",
+            "90",
+            "80",
+            "80",
+            "100",
+            "80",
+            "100",
+            "80",
+            "5",
+            "100",
+            "NA",
+            "NA",
+            "NA",
+            "80",
+            "80",
+            "80",
+            "0",
+            "NA",
+            "NA",
+            "NA",
+            "5",
+            "100"
+    };
+
+
+    private String[] targetSigns = {
+            ">=",
+            ">=",
+            ">=",
+            ">=",
+            ">=",
+            ">=",
+            ">=",
+            ">=",
+            "<",
+            ">=",
+            "-",
+            "-",
+            "-",
+            ">=",
+            ">=",
+            ">=",
+            "=",
+            "-",
+            "-",
+            "-",
+            "<",
+            ">="
+    };
+
+
+    private String[] numerators = {
+            "Number of mothers who received ART (Col 13 code 1)",
+            "Number of infants who received ARVs for EMTCT (Col 14 code 1 plus 2)",
+            "Number of HEI received 1st DNA PCR at age 6-8 weeks (Col 16)",
+            "Number of HEI who received 1st DNA PCR at age 6-8 weeks and results given to the care giver (Col 20)",
+            "Number of HEI tested positive by 1st DNA PCR at age  6-8 weeks  and results given to the care giver (Col 20)",
+            "Number of HEI who received cotrimoxazole at age 6-8 weeks (Col 8)",
+            "Number of HEI who were Exclusively Breastfed (EBF) at 6 months (Look at longitudinal section and find visit infant was 6 month and look for code EBF)",
+            "Number of HEI attended a follow-up visit in the last 3 months prior to the assessment (Col 28)",
+            "Number of HEI who tested HIV positive by any test DNA/PCR or Rapid test between 0 and 12 months  (Col 29)",
+            "Number of HEI who tested HIV positive within a cohort and started ART (Col 29)",
+            "Number of HEI who transferred out between 0 and 12 months (Col 29)",
+            "Number of HEI lost between 0 and 12 months (Col 29)",
+            "Number of HEI who died between 0 and 12 months visit (Col 29)",
+            "Number of HEI who received 2nd DBS test (Col 24)",
+            "Number of HEI tested with AB at ≥ 18 months and results are available (Col 27)",
+            "Number of HEI with AB test negative at 18 months (Col 28)",
+            "Number of HEI attended 18 month visit and no AB test result documented (Col 28)",
+            "Number of HEI transferred out (Col 29)",
+            "Number of HEI lost to follow up (Col 29)",
+            "Number of HEI reported dead (Col 29))",
+            "Number of HEI identified as HIV positive within a cohort (Col 18, 24 and 27)",
+            "Number of HEI who tested HIV positive within a cohort and started ART (Col 29)"
+    };
+
+    private String[] denominators = {
+            "Number of HEI registered in cohort (EI Register Col 1)",
+            "Number of HEI registered in cohort  (Col 1)",
+            "Number of HEI registered in cohort  (Col 1)",
+            "Number of HEI registered in cohort  (Col 1)",
+            "Number of HEI who received 1st DNA PCR at age 6-8 weeks and tested positive 9 (column 18)",
+            "Number of HEI registered in cohort  (Col 1)",
+            "Number of HEI who had feeding status assessed at 6 months (Longitudinal section, 6 month visit with EBF, RF, CF, W and NLB)",
+            "Number of HEI registered in cohort (Col 1)",
+            "Number of HEI registered in cohort (Col 1)",
+            "Number of HEI identified as HIV positive within a cohort (Col 18 PLUS col 24)",
+            "Number of HEI registered in cohort (Col 1)",
+            "Number of HEI registered in cohort (Col 1)",
+            "Number of HEI registered in cohort (Col 1)",
+            "Number of HEI registered in cohort who had a negative 1st DNA PCR test result (Col 18, negative test result)",
+            "Number of HEI eligible for test(All tested negative at 1 and 2 nd PCR in the cohort)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI registered in birth cohort  (Col 1)",
+            "Number of HEI identified as HIV positive within a cohort (Col 18 PLUS col 24)"
+    };
+
+    private String[] sns = {
+            "1.0",
+            "2.0",
+            "3.0",
+            "4.0",
+            "5.0",
+            "6.0",
+            "7.0",
+            "8.0",
+            "9.0",
+            "10.0",
+            "11.0",
+            "12.0",
+            "13.0",
+            "14.0",
+            "15.0",
+            "16.0",
+            "17.0",
+            "18.0",
+            "19.0",
+            "20.0",
+            "21.0",
+            "22.0"
+    };
+
+    private PatientDataHelper pdh = new PatientDataHelper();
+
+
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
@@ -39,182 +219,6 @@ public class EIDCohortDataSetEvaluator implements DataSetEvaluator {
 
         String date = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
 
-        String[] indicators = {
-                "% mothers who received ARVs for EMTCT",
-                "% Infants who received ARVs for EMTCT at 0-6 weeks",
-                "% HEI received 1st DNA PCR at age 6-8 weeks",
-                "% HEI received 1st DNA PCR at age 6-8 weeks and results  given to the care giver",
-                "% HEI tested positive by 1st PCR at age 6-8 weeks and results given to the care giver",
-                "% HEI who received cotrimoxazole at age 6-8 weeks",
-                "% HEI who were Exclusively Breastfed at 6 months among HEI assessed",
-                "% HEI active in care",
-                "% HEI tested HIV positive between 0 and 12 months",
-                "% HEI tested HIV positive and started on ART",
-                "% HEI transferred out between 0 and 12 months",
-                "% HEI lost between 0 and 12 months",
-                "% HEI died between 0 and 12 months",
-                "% HEI who received 2nd DBS test",
-                "% HEI tested with AB test at ≥ 18 months and results are available",
-                "% HEI with AB test negative at 18 months",
-                "% HEI active at 18 months but no AB test done",
-                "% HEI transferred out between 0 and 18 months",
-                "% HEI lost to follow-up between 0 and 18 months",
-                "% HEI died between 0 and 18 months",
-                "% HEI tested HIV positive between 0 and 18 months",
-                "% HEI tested HIV positive and started on ART"
-        };
-
-        String[] targets = {
-                "100%",
-                "90%",
-                "80%",
-                "80%",
-                "100%",
-                "80%",
-                "100%",
-                "80%",
-                "<5%",
-                "100%",
-                "NA",
-                "NA",
-                "NA",
-                "80%",
-                "80%",
-                "80%",
-                "0%",
-                "NA",
-                "NA",
-                "NA",
-                "<5%",
-                "100%"
-        };
-
-        String[] targetNumbers = {
-                "100",
-                "90",
-                "80",
-                "80",
-                "100",
-                "80",
-                "100",
-                "80",
-                "5",
-                "100",
-                "NA",
-                "NA",
-                "NA",
-                "80",
-                "80",
-                "80",
-                "0",
-                "NA",
-                "NA",
-                "NA",
-                "5",
-                "100"
-        };
-
-
-        String[] targetSigns = {
-                ">=",
-                ">=",
-                ">=",
-                ">=",
-                ">=",
-                ">=",
-                ">=",
-                ">=",
-                "<",
-                ">=",
-                "-",
-                "-",
-                "-",
-                ">=",
-                ">=",
-                ">=",
-                "=",
-                "-",
-                "-",
-                "-",
-                "<",
-                ">="
-        };
-
-
-        String[] numerators = {
-                "Number of mothers who received ART (Col 13 code 1)",
-                "Number of infants who received ARVs for EMTCT (Col 14 code 1 plus 2)",
-                "Number of HEI received 1st DNA PCR at age 6-8 weeks (Col 16)",
-                "Number of HEI who received 1st DNA PCR at age 6-8 weeks and results given to the care giver (Col 20)",
-                "Number of HEI tested positive by 1st DNA PCR at age  6-8 weeks  and results given to the care giver (Col 20)",
-                "Number of HEI who received cotrimoxazole at age 6-8 weeks (Col 8)",
-                "Number of HEI who were Exclusively Breastfed (EBF) at 6 months (Look at longitudinal section and find visit infant was 6 month and look for code EBF)",
-                "Number of HEI attended a follow-up visit in the last 3 months prior to the assessment (Col 28)",
-                "Number of HEI who tested HIV positive by any test DNA/PCR or Rapid test between 0 and 12 months  (Col 29)",
-                "Number of HEI who tested HIV positive within a cohort and started ART (Col 29)",
-                "Number of HEI who transferred out between 0 and 12 months (Col 29)",
-                "Number of HEI lost between 0 and 12 months (Col 29)",
-                "Number of HEI who died between 0 and 12 months visit (Col 29)",
-                "Number of HEI who received 2nd DBS test (Col 24)",
-                "Number of HEI tested with AB at ≥ 18 months and results are available (Col 27)",
-                "Number of HEI with AB test negative at 18 months (Col 28)",
-                "Number of HEI attended 18 month visit and no AB test result documented (Col 28)",
-                "Number of HEI transferred out (Col 29)",
-                "Number of HEI lost to follow up (Col 29)",
-                "Number of HEI reported dead (Col 29))",
-                "Number of HEI identified as HIV positive within a cohort (Col 18, 24 and 27)",
-                "Number of HEI who tested HIV positive within a cohort and started ART (Col 29)"
-        };
-
-        String[] denominators = {
-                "Number of HEI registered in cohort (EI Register Col 1)",
-                "Number of HEI registered in cohort  (Col 1)",
-                "Number of HEI registered in cohort  (Col 1)",
-                "Number of HEI registered in cohort  (Col 1)",
-                "Number of HEI who received 1st DNA PCR at age 6-8 weeks and tested positive 9 (column 18)",
-                "Number of HEI registered in cohort  (Col 1)",
-                "Number of HEI who had feeding status assessed at 6 months (Longitudinal section, 6 month visit with EBF, RF, CF, W and NLB)",
-                "Number of HEI registered in cohort (Col 1)",
-                "Number of HEI registered in cohort (Col 1)",
-                "Number of HEI identified as HIV positive within a cohort (Col 18 PLUS col 24)",
-                "Number of HEI registered in cohort (Col 1)",
-                "Number of HEI registered in cohort (Col 1)",
-                "Number of HEI registered in cohort (Col 1)",
-                "Number of HEI registered in cohort who had a negative 1st DNA PCR test result (Col 18, negative test result)",
-                "Number of HEI eligible for test(All tested negative at 1 and 2 nd PCR in the cohort)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI registered in birth cohort  (Col 1)",
-                "Number of HEI identified as HIV positive within a cohort (Col 18 PLUS col 24)"
-        };
-
-        String[] sns = {
-                "1.0",
-                "2.0",
-                "3.0",
-                "4.0",
-                "5.0",
-                "6.0",
-                "7.0",
-                "8.0",
-                "9.0",
-                "10.0",
-                "11.0",
-                "12.0",
-                "13.0",
-                "14.0",
-                "15.0",
-                "16.0",
-                "17.0",
-                "18.0",
-                "19.0",
-                "20.0",
-                "21.0",
-                "22.0"
-        };
 
         String baseSql = "SELECT\n" +
                 "  p.person_id,\n" +
@@ -242,8 +246,7 @@ public class EIDCohortDataSetEvaluator implements DataSetEvaluator {
         }
 
 
-        PatientDataHelper pdh = new PatientDataHelper();
-
+        Collection<Integer> allClientsCohort = allClients.values();
 
         for (int i = 0; i < 22; i++) {
             DataSetRow row = new DataSetRow();
@@ -255,11 +258,15 @@ public class EIDCohortDataSetEvaluator implements DataSetEvaluator {
             pdh.addCol(row, "Numerator", numerators[i]);
             pdh.addCol(row, "Denominators", denominators[i]);
 
+            Collection<Integer> currentNumerator = numeratorsAndDenominators.get("N" + String.valueOf(i + 1));
+            Collection<Integer> currentDenominator = numeratorsAndDenominators.get("D" + String.valueOf(i + 1));
+
+            String numerator = "-";
+            String denominator = "-";
+
             for (int j = 1; j <= 12; j++) {
 
                 Collection<Integer> currentCohort = allClients.get(String.valueOf(j));
-                Collection<Integer> currentNumerator = numeratorsAndDenominators.get("N" + String.valueOf(i + 1));
-                Collection<Integer> currentDenominator = numeratorsAndDenominators.get("D" + String.valueOf(i + 1));
 
                 String uniqueNumeratorString = "-";
                 String uniqueDenominatorString = "-";
@@ -278,50 +285,70 @@ public class EIDCohortDataSetEvaluator implements DataSetEvaluator {
 
                 pdh.addCol(row, "N" + String.valueOf(j), uniqueNumeratorString);
                 pdh.addCol(row, "D" + String.valueOf(j), uniqueDenominatorString);
-
-                if (uniqueDenominatorString.equalsIgnoreCase("-") || uniqueNumeratorString.equalsIgnoreCase("-")) {
-                    pdh.addCol(row, "P" + String.valueOf(j), "-");
-                    pdh.addCol(row, "T" + String.valueOf(j), "-");
-                } else {
-                    Integer numerator = Integer.valueOf(uniqueNumeratorString);
-                    Integer denominator = Integer.valueOf(uniqueDenominatorString);
-
-                    if (denominator != 0) {
-                        Integer realPercentage = (numerator * 100) / denominator;
-
-                        pdh.addCol(row, "P" + String.valueOf(j), (realPercentage));
-
-                        if (targetNumbers[i].equalsIgnoreCase("NA")) {
-                            pdh.addCol(row, "T" + String.valueOf(j), "-");
-                        } else {
-
-                            Integer targetPercentage = Integer.valueOf(targetNumbers[i]);
-
-                            if (targetSigns[i].equalsIgnoreCase("=") && realPercentage.intValue() == targetPercentage.intValue()) {
-                                pdh.addCol(row, "T" + String.valueOf(j), "Y");
-                            } else if (targetSigns[i].equalsIgnoreCase("<") && realPercentage < targetPercentage) {
-                                pdh.addCol(row, "T" + String.valueOf(j), "Y");
-                            } else if (targetSigns[i].equalsIgnoreCase("<=") && realPercentage <= targetPercentage) {
-                                pdh.addCol(row, "T" + String.valueOf(j), "Y");
-                            } else if (targetSigns[i].equalsIgnoreCase(">") && realPercentage > targetPercentage) {
-                                pdh.addCol(row, "T" + String.valueOf(j), "Y");
-                            } else if (targetSigns[i].equalsIgnoreCase(">=") && realPercentage >= targetPercentage) {
-                                pdh.addCol(row, "T" + String.valueOf(j), "Y");
-                            } else {
-                                pdh.addCol(row, "T" + String.valueOf(j), "N");
-                            }
-                        }
-                    } else {
-                        pdh.addCol(row, "P" + String.valueOf(j), "-");
-                        pdh.addCol(row, "T" + String.valueOf(j), "-");
-                    }
-
-                }
+                addTarget(uniqueDenominatorString, uniqueNumeratorString, i, String.valueOf(j), row);
 
             }
+
+            if (currentNumerator != null) {
+                Collection uniqueNumerator = CollectionUtils.intersection(allClientsCohort, currentNumerator);
+                numerator = String.valueOf(uniqueNumerator.size());
+            }
+
+            if (currentDenominator != null) {
+                Collection uniqueDenominator = CollectionUtils.intersection(allClientsCohort, currentDenominator);
+                denominator = String.valueOf(uniqueDenominator.size());
+            } else {
+                denominator = String.valueOf(allClientsCohort.size());
+            }
+
+            pdh.addCol(row, "N", numerator);
+            pdh.addCol(row, "D", denominator);
+            addTarget(denominator, numerator, i, "", row);
+
             dataSet.addRow(row);
         }
         return dataSet;
+    }
+
+    private void addTarget(String uniqueDenominatorString, String uniqueNumeratorString, Integer i, String j, DataSetRow row) {
+        if (uniqueDenominatorString.equalsIgnoreCase("-") || uniqueNumeratorString.equalsIgnoreCase("-")) {
+            pdh.addCol(row, "P" + String.valueOf(j), "-");
+            pdh.addCol(row, "T" + String.valueOf(j), "-");
+        } else {
+            Integer numerator = Integer.valueOf(uniqueNumeratorString);
+            Integer denominator = Integer.valueOf(uniqueDenominatorString);
+
+            if (denominator != 0) {
+                Integer realPercentage = (numerator * 100) / denominator;
+
+                pdh.addCol(row, "P" + j, (realPercentage));
+
+                if (targetNumbers[i].equalsIgnoreCase("NA")) {
+                    pdh.addCol(row, "T" + j, "-");
+                } else {
+
+                    Integer targetPercentage = Integer.valueOf(targetNumbers[i]);
+
+                    if (targetSigns[i].equalsIgnoreCase("=") && realPercentage.intValue() == targetPercentage.intValue()) {
+                        pdh.addCol(row, "T" + j, "Y");
+                    } else if (targetSigns[i].equalsIgnoreCase("<") && realPercentage < targetPercentage) {
+                        pdh.addCol(row, "T" + j, "Y");
+                    } else if (targetSigns[i].equalsIgnoreCase("<=") && realPercentage <= targetPercentage) {
+                        pdh.addCol(row, "T" + j, "Y");
+                    } else if (targetSigns[i].equalsIgnoreCase(">") && realPercentage > targetPercentage) {
+                        pdh.addCol(row, "T" + j, "Y");
+                    } else if (targetSigns[i].equalsIgnoreCase(">=") && realPercentage >= targetPercentage) {
+                        pdh.addCol(row, "T" + j, "Y");
+                    } else {
+                        pdh.addCol(row, "T" + String.valueOf(j), "N");
+                    }
+                }
+            } else {
+                pdh.addCol(row, "P" + j, "-");
+                pdh.addCol(row, "T" + j, "-");
+            }
+
+        }
     }
 
     private Map<String, Collection<Integer>> getPatients(EvaluationContext context) {

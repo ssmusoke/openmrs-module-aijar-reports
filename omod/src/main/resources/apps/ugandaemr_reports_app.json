@@ -7,22 +7,30 @@
       {
         "id": "org.openmrs.module.ugandaemr.reports.overview",
         "description": "Links to available Facility level Reports",
-        "supportedExtensionTypes": [ "link" ]
+        "supportedExtensionTypes": [
+          "link"
+        ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.monthly",
         "description": "Links to available Monthly Reports",
-        "supportedExtensionTypes": [ "link" ]
+        "supportedExtensionTypes": [
+          "link"
+        ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.registers",
         "description": "Links to available Registers",
-        "supportedExtensionTypes": [ "link" ]
+        "supportedExtensionTypes": [
+          "link"
+        ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
-        "supportedExtensionTypes": [ "link" ]
+        "supportedExtensionTypes": [
+          "link"
+        ]
       }
     ],
     "extensions": [
@@ -56,8 +64,16 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
         "label": "CBS Adult Quarterly Report",
-        "url": "reportingui/runReport.page?reportDefinition=1479f8ae-5d93-4b2f-9cd6-8b7eb976dc6b",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e908-c3cd-4dc1-b145-13f1d02f1c54",
         "order": 15
+      },
+      {
+        "id": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=6633f9c9-dffb-4e6b-bfcc-e2ddb08805ca",
+        "order": 25
       },
       {
         "id": "Appointments List",
@@ -74,7 +90,8 @@
         "label": "ART Patient Export",
         "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
         "order": 25
-      },{
+      },
+      {
         "id": "Facility Death List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -89,7 +106,8 @@
         "label": "Pre-ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
         "order": 5
-      },{
+      },
+      {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",

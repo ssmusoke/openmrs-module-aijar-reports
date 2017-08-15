@@ -120,6 +120,6 @@ public class SetupCBSEIDCohortReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.48";
+        return "0.50";
     }
 }
