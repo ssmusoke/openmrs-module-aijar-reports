@@ -5,7 +5,9 @@ import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
@@ -13,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by Nicholas Ingosi on 6/7/17.
+ *
  */
 @Component
 public class Moh105IndicatorLibrary {
@@ -346,5 +348,91 @@ public class Moh105IndicatorLibrary {
 		return cohortIndicator("Tetanus Immunization dose. Dose# " + doseNumber,
 		    map(cohortLibrary.tetanusImmunizationsDone(doseNumber, pregnant), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
+	
+	//indicators for the SMC section follow here
+
+    /**
+     * Facility surgical smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator facilityAndSurgicalSmc(){
+        return cohortIndicator("facility and surgical", map(cohortLibrary.siteTypeFacilitySurgicalCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Facility device smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator facilityAndDeviceSmc(){
+        return cohortIndicator("facility and device", map(cohortLibrary.siteTypeFacilityDeviceCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Outreach surgical smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator outreachAndSurgicalSmc(){
+        return cohortIndicator("Outreach and surgical", map(cohortLibrary.siteTypeOutReachSurgicalCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Outreach device smc
+     * @return CohortIndicator
+     */
+    public CohortIndicator outreachAndDeviceSmc(){
+        return cohortIndicator("Outreach and device", map(cohortLibrary.siteTypeOutReachDeviceCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * counselled and tested for HIV with results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTestedWithResuls(Concept ans) {
+        return cohortIndicator("Counseled and tested with results", map(cohortLibrary.counseledTestedForHivResults(ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * counselled and tested for HIV regardless of the results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTested() {
+        return cohortIndicator("Counseled and tested", map(cohortLibrary.counseledTestedForHiv(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * expected number of SMC performed(monthly targets)
+     * @return cohort indicator
+     */
+    public CohortIndicator expectedNumberOfSmcPerfomed() {
+        EncounterType smc = MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee");
+        return cohortIndicator("expected number of SMC performed", map(cclibrary.hasEncounter(smc), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Clients circumcised who experinced one or more adverse events
+     * @return CohortIndicator
+     */
+    public CohortIndicator circumcisedAndExperiencedAdverseEvents(Concept ... ans){
+        Concept adQuestion = Dictionary.getConcept("e34976b9-1aff-489d-b959-4da1f7272499");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(adQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    /**
+     * Clients circumcised by used Technique
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsCircumcisedWithTechnique(Concept ... ans) {
+        Concept techQuestion = Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(techQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * follow up visits in SMC
+     * @return CohortIndicator
+     */
+    public CohortIndicator smcFollowUps(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 }

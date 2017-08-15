@@ -58,6 +58,7 @@ public class Metadata {
         public final static String EID_ENCOUNTER_PAGE = "4345dacb-909d-429c-99aa-045f2db77e2b";
         public final static String ANC_ENCOUNTER = "044daI6d-f80e-48fe-aba9-037f241905Pe";
         public final static String PNC_ENCOUNTER = "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074";
+        public final static String SMC_ENCOUNTER = "244da86d-f80e-48fe-aba9-067f241905ee";
 
 
     }
