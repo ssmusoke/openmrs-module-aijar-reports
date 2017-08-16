@@ -227,6 +227,14 @@
         "label": "HMIS 105 - 3&4",
         "url": "reportingui/runReport.page?reportDefinition=fe02c34a-5c67-453b-93e9-4946e7bd8c59",
         "order": 17
+      },
+      {
+        "id": "HMIS 105 Section 2.8 to 2.12",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.8 to 2.12",
+        "url": "reportingui/runReport.page?reportDefinition=9401662d-e715-4370-bfc7-048825dd8107",
+        "order": 24
       }
       
     ]
