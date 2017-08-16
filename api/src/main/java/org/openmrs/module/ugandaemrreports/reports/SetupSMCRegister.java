@@ -123,6 +123,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.addParameters(getParameters());
+        rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(healthFacilityName()));
         rd.addDataSetDefinition("SMC", Mapped.mapStraightThrough(dataSetDefinition()));
         return rd;
     }
@@ -238,6 +239,12 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
         CalculationDataDefinition cd = new CalculationDataDefinition("Circumciser name", new CircumciserNameCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
+    }
+    
+    private DataSetDefinition healthFacilityName() {
+    	NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+    	dsd.facilityName("aijar.healthCenterName");
+    	return dsd;
     }
 
 
