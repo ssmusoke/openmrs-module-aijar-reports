@@ -366,35 +366,6 @@ public class Moh105CohortLibrary {
         return definitionLibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"),Dictionary.getConcept("17fcfd67-a1a2-4361-9915-ad4e81a7a61d"));
     }
         
-    /** Maternal deaths - Age 20-24
-     * @return CohortDefinition
-     */
-    public CohortDefinition maternalDeathsAge20To24() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Maternal deaths 20-24");
-        cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "endDate=${onOrBefore}"));
-        cd.setCompositionString("maternalDeaths AND Age20To24");
-        return cd;
-    }
-
-    /**
-     * Maternal deaths - Age 25 and above
-     * @return CohortDefinition
-     */
-    public CohortDefinition maternalDeathsAge25AndAbove() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Maternal deaths 25 and above");
-        cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("Age25AndAbove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "endDate=${onOrBefore}"));
-        cd.setCompositionString("maternalDeaths AND Age25AndAbove");
-        return cd;
-    }    
-
 	/**
 	 * Number of HIV+ infants from EID Enrolled in care
 	 * 
@@ -555,5 +526,62 @@ public class Moh105CohortLibrary {
         return cd;
 
 	}
+
+  /**
+	 * Number of Tetanus Immunizations done
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition tetanusImmunizationsDone(int doseNumber, Boolean pregnant ) {
+		Concept doseNumberConcept = null;
+		switch (doseNumber) {
+			case 1:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIRST_DOSE);
+				break;
+			case 2:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.SECOND_DOSE);
+				break;
+			case 3:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.THIRD_DOSE);
+				break;
+			case 4:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FOURTH_DOSE);
+				break;
+			case 5:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIFTH_DOSE);
+				break;
+			
+			default:
+				break;
+		}
+		if (pregnant) {
+			//Fetch a cohort of pregnant persons given the tetanus dose i.e those with ANC encounters
+			CohortDefinition cd = null;
+			if (doseNumberConcept != null) {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept);
+			} else {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN));
+				
+			}
+			return cd;
+			
+		} else {
+			//Fetch a cohort of non-pregnant persons given the tetanus dose i.e those without ANC encounters
+			CompositionCohortDefinition cd = new CompositionCohortDefinition();
+	        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+	        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        if (doseNumberConcept != null) {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        } else {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        }
+	        cd.setCompositionString("hasObs AND NOT ancEncounter");
+
+	        return cd;
+		}
+	}    
 
 }

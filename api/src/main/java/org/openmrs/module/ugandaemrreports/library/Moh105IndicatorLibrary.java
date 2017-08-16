@@ -1,6 +1,9 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 
+import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
+import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
+
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
@@ -8,9 +11,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
-import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
 /**
  * Created by Nicholas Ingosi on 6/7/17.
@@ -687,4 +687,14 @@ public class Moh105IndicatorLibrary {
 		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
 	
+	/**
+	 * Tetanus Immunization dose
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortIndicator tetanusImmunizationsDone(int doseNumber, boolean pregnant) {
+		return cohortIndicator("Tetanus Immunization dose. Dose# " + doseNumber,
+		    map(cohortLibrary.tetanusImmunizationsDone(doseNumber, pregnant), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+	}
+
 }
