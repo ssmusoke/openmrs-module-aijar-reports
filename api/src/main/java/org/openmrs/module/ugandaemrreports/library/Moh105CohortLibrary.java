@@ -1146,8 +1146,6 @@ public class Moh105CohortLibrary {
 		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
 	}
 
-}
-
 	/**
 	 * Number of Tetanus Immunizations done
 	 * 
