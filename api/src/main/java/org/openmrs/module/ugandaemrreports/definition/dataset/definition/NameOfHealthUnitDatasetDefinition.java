@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package src.main.java.org.openmrs.module.ugandaemrreports.definition.dataset.definition;
+package org.openmrs.module.ugandaemrreports.definition.dataset.definition;
 
 import org.openmrs.module.reporting.dataset.definition.BaseDataSetDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;

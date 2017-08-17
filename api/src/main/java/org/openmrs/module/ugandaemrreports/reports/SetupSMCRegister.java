@@ -53,6 +53,7 @@ import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDa
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -243,7 +244,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     
     private DataSetDefinition healthFacilityName() {
     	NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
-    	dsd.facilityName("aijar.healthCenterName");
+    	dsd.setFacilityName("aijar.healthCenterName");
     	return dsd;
     }
 
