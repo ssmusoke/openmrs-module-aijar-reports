@@ -73,7 +73,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
 
                 for(Encounter enc: listResult) {
                     if(visit > 7  && enc.getEncounterDatetime() != null && enc.getEncounterDatetime().after(getDate(circumDate, 7))){
-                        value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                        value = "Y" + "\r\n" + formatDate(enc.getEncounterDatetime());
                         break;
                     }
                     else if(visit > 7  && enc.getEncounterDatetime() != null && today().after(getDate(enc.getEncounterDatetime(), 8))){
@@ -82,7 +82,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
                     else if(visit == 2 && enc.getEncounterDatetime() != null) {
 
                         if (enc.getEncounterDatetime().after(circumDate) && enc.getEncounterDatetime().before(getDate(circumDate, 3))) {
-                            value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            value = "Y" + "\r\n" + formatDate(enc.getEncounterDatetime());
                             break;
                         } else if (today().after(circumDate) && today().before(getDate(enc.getEncounterDatetime(), 3))) {
                             value = "N";
@@ -92,7 +92,7 @@ public class CircumcisionFollowUpCalculation extends AbstractPatientCalculation 
                     }
                     else if(visit == 7 && enc.getEncounterDatetime() != null){
                         if ((enc.getEncounterDatetime().after(getDate(circumDate, 2))) && (enc.getEncounterDatetime().before(getDate(circumDate, 8)))) {
-                            value = "Y" + "\n" + formatDate(enc.getEncounterDatetime());
+                            value = "Y" + "\r\n" + formatDate(enc.getEncounterDatetime());
                             break;
 
                         } else if (today().after(getDate(enc.getEncounterDatetime(), 2)) && today().before(getDate(enc.getEncounterDatetime(), 8))) {
