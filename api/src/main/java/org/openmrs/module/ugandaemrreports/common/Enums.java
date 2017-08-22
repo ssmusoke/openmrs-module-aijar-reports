@@ -17,6 +17,7 @@ public class Enums {
     public static enum PeriodInterval {
         BEFORE,
         AFTER;
+
         private PeriodInterval() {
         }
     }
@@ -39,6 +40,16 @@ public class Enums {
 
         public String toString() {
             return this.name;
+        }
+
+    }
+
+    public static enum DataFor {
+        DEAD,
+        ENCOUNTER,
+        APPOINTMENT;
+
+        private DataFor() {
         }
     }
 }

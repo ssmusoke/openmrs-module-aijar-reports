@@ -86,6 +86,13 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
+    public AgeCohortDefinition agedAtMost(int maxAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMaxAge(maxAge);
+        return cd;
+    }
+
     /**
      * Patients who are at least minAge years old on ${effectiveDate}
      *
@@ -100,6 +107,14 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
+
+    public AgeCohortDefinition agedAtLeast(int minAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMinAge(Integer.valueOf(minAge));
+        return cd;
+    }
+
     /**
      * Patients who are at least minAge years old and are not more than maxAge on ${effectiveDate}
      *
@@ -111,6 +126,13 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.setMinAge(minAge);
         cd.setMaxAge(maxAge);
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
+    }
+    public AgeCohortDefinition agedBetween(int minAge, int maxAge, Date effectiveDate) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setEffectiveDate(effectiveDate);
+        cd.setMinAge(Integer.valueOf(minAge));
+        cd.setMaxAge(Integer.valueOf(maxAge));
+        return cd;
     }
 
     public CohortDefinition below6months() {
