@@ -138,6 +138,22 @@
         "label": "Early Warning Indicator Report",
         "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
         "order": 15
+      },
+      {
+        "id": "HCA Yearly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HCA Yearly Report",
+        "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
+        "order": 16
+      },
+      {
+        "id": "HCA 12 and 24 Months Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HCA 12 and 24 Months Report",
+        "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
+        "order": 17
       }
     ]
   }
