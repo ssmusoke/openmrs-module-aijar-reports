@@ -151,55 +151,52 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 for (int i = 0; i < 16; i++) {
                     String period = UgandaEMRReporting.getObsPeriod(Periods.addQuarters(localDate, i).get(0).toDate(), Enums.Period.QUARTERLY);
                     if (period.compareTo(currentQuarter) < 0) {
-                        if (artStartDate != null) {
-                            String periodStartedArt = UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY);
-                            if (period.compareTo(periodStartedArt) == 0) {
-                                pdh.addCol(row, "FUS" + String.valueOf(i), "ART");
-                            } else if (period.compareTo(periodStartedArt) > 0) {
-                                pdh.addCol(row, "FUS" + String.valueOf(i), "");
-                            } else {
-                                List<String> tbStatus = getData(patientData, period, "90216");
-                                List<String> cpt = getData(patientData, period, "99037");
-                                List<String> inh = getData(patientData, period, "99604");
-                                List<String> nutrition = getData(patientData, period, "68");
-                                List<String> appointments = getData(patientData, period, "5096");
+                        if (artStartDate != null && period.compareTo(UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "ART");
+                        } else if (artStartDate != null && period.compareTo(UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) > 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                        } else {
+                            List<String> tbStatus = getData(patientData, period, "90216");
+                            List<String> cpt = getData(patientData, period, "99037");
+                            List<String> inh = getData(patientData, period, "99604");
+                            List<String> nutrition = getData(patientData, period, "68");
+                            List<String> appointments = getData(patientData, period, "5096");
 
-                                String cptInh = "";
-                                String mul = "";
-                                String tb = "";
+                            String cptInh = "";
+                            String mul = "";
+                            String tb = "";
 
-                                if (cpt.size() > 0 || inh.size() > 0) {
-                                    cptInh = "Y";
-                                }
-                                if (nutrition.size() > 0) {
-                                    mul = nutrition.get(nutrition.size() - 1);
-                                }
-                                if (tbStatus.size() > 0) {
-                                    tb = convert(tbStatus.get(tbStatus.size() - 1));
-                                }
+                            if (cpt.size() > 0 || inh.size() > 0) {
+                                cptInh = "Y";
+                            }
+                            if (nutrition.size() > 0) {
+                                mul = nutrition.get(nutrition.size() - 1);
+                            }
+                            if (tbStatus.size() > 0) {
+                                tb = convert(tbStatus.get(tbStatus.size() - 1));
+                            }
 
-                                if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptInh) || StringUtils.isNotBlank(mul)) {
-                                    pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptInh + "|" + mul);
-                                } else if (appointments.size() == 0 && period.compareTo(enrollmentQuarter) >= 0) {
-                                    String lastPeriod = UgandaEMRReporting.getObsPeriod(Periods.addQuarters(localDate, i - 1).get(0).toDate(), Enums.Period.QUARTERLY);
-                                    List<String> lastAppointments = getData(patientData, lastPeriod, "5096");
-                                    if (lastAppointments.size() != 0) {
-                                        String maxAppointment = lastAppointments.get(lastAppointments.size() - 1);
-                                        String maxQuarter = UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(maxAppointment), Enums.Period.QUARTERLY);
-                                        if (maxQuarter.compareTo(period) > 0) {
-                                            pdh.addCol(row, "FUS" + String.valueOf(i), "→");
-                                        } else {
-                                            pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
-                                        }
+                            if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptInh) || StringUtils.isNotBlank(mul)) {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptInh + "|" + mul);
+                            } else if (appointments.size() == 0 && period.compareTo(enrollmentQuarter) >= 0) {
+                                String lastPeriod = UgandaEMRReporting.getObsPeriod(Periods.addQuarters(localDate, i - 1).get(0).toDate(), Enums.Period.QUARTERLY);
+                                List<String> lastAppointments = getData(patientData, lastPeriod, "5096");
+                                if (lastAppointments.size() != 0) {
+                                    String maxAppointment = lastAppointments.get(lastAppointments.size() - 1);
+                                    String maxQuarter = UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(maxAppointment), Enums.Period.QUARTERLY);
+                                    if (maxQuarter.compareTo(period) > 0) {
+                                        pdh.addCol(row, "FUS" + String.valueOf(i), "→");
                                     } else {
                                         pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
                                     }
-
-                                } else if (period.compareTo(enrollmentQuarter) < 0) {
-                                    pdh.addCol(row, "FUS" + String.valueOf(i), "");
                                 } else {
-                                    pdh.addCol(row, "FUS" + String.valueOf(i), "Processing problem");
+                                    pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
                                 }
+
+                            } else if (period.compareTo(enrollmentQuarter) < 0) {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                            } else {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "Processing problem");
                             }
                         }
                     } else {
