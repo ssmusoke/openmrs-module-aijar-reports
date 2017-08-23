@@ -2,11 +2,12 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
+import com.google.common.collect.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.GlobalProperty;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reportingcompatibility.service.ReportService;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPeriodPredicate;
@@ -1053,6 +1054,31 @@ public class UgandaEMRReporting {
         return concepts;
     }
 
+    public static Map<String, String> preArtConcepts() {
+        return new ImmutableMap.Builder<String, String>()
+                .put("99161", "Art Start Date")
+                .put("99037", "CPT Dosage")
+                .put("99604", "INH Dosage")
+                .put("99083", "Eligible for Art Clinical Stage")
+                .put("99602", "Eligible for Art Pregnant")
+                .put("99082", "Eligible for Art CD4")
+                .put("99601", "Breast Feeding")
+                .put("99600", "Tb for ART")
+                .put("68", "Malnutrition")
+                .put("5096", "Return visit date")
+                .put("90200", "Entry point")
+                .put("99115", "Other Entry point")
+                .put("90203", "Who clinical stage")
+                .put("90216", "TB Status")
+                .put("90217", "TB Start Date")
+                .put("90310", "TB stop date")
+                .put("90297", "eligible date to start art")
+                .put("90299", "eligible and ready date to start art")
+                .put("99110", "TI")
+                .put("99165", "To Date")
+                .build();
+    }
+
     public static Map<String, String> preArtRegisterConcepts() {
         Map<String, String> concepts = new HashMap<>();
         concepts.put("tb start date", "dce02eca-30ab-102d-86b0-7a5022ba4115");
@@ -1175,31 +1201,32 @@ public class UgandaEMRReporting {
 
     public static Map<String, String> processString(String value) {
         Map<String, String> result = new HashMap<>();
+        if (StringUtils.isNotBlank(value)) {
+            List<String> splitData = Splitter.on(",").splitToList(value);
 
-        List<String> splitData = Splitter.on(",").splitToList(value);
+            for (String split : splitData) {
+                List<String> keyValue = Splitter.on(":").splitToList(split);
 
-        for (String split : splitData) {
-            List<String> keyValue = Splitter.on(":").splitToList(split);
-
-            if (keyValue.size() == 2) {
-                result.put(keyValue.get(0), keyValue.get(1));
+                if (keyValue.size() == 2) {
+                    result.put(keyValue.get(0), keyValue.get(1));
+                }
             }
         }
         return result;
     }
 
     public static List<String> processString2(String value) {
-        Map<String, String> result = new HashMap<>();
-
-        List<String> splitData = Splitter.on(",").splitToList(value);
-
-        return Splitter.on(":").splitToList(splitData.get(0));
+        if (StringUtils.isNotBlank(value)) {
+            List<String> splitData = Splitter.on(",").splitToList(value);
+            return Splitter.on(":").splitToList(splitData.get(0));
+        }
+        return Arrays.asList("", "", "", "", "", "");
     }
 
     public static Connection testSqlConnection() throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
-        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
+        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/ams");
         props.setProperty("user", "openmrs");
         props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
@@ -1360,5 +1387,147 @@ public class UgandaEMRReporting {
             return dates.get(keys.get(keys.size() - 1));
         }
         return null;
+    }
+
+    public static Table<String, Integer, String> getDataTable(Connection connection, String sql) throws SQLException {
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        Table<String, Integer, String> table = TreeBasedTable.create();
+        while (rs.next()) {
+            Integer patientId = rs.getInt(1);
+            Integer conceptId = rs.getInt(2);
+            Date encounterDate = rs.getDate(3);
+            String val = rs.getString(4);
+            String encounterMonth = DateUtil.formatDate(encounterDate, "yyyyMM") + String.valueOf(conceptId);
+            table.put(encounterMonth, patientId, val);
+        }
+        rs.close();
+        stmt.close();
+
+        return table;
+    }
+
+    public static List<String> getData(Map<String, String> data, String yearQuarter, String concept) {
+        String quarter = yearQuarter.substring(Math.max(yearQuarter.length() - 2, 0));
+        String year = yearQuarter.substring(0, Math.min(yearQuarter.length(), 4));
+
+        List<String> result = new ArrayList<>();
+
+        ImmutableMap<String, List<String>> quarters =
+                new ImmutableMap.Builder<String, List<String>>()
+                        .put("Q1", Arrays.asList("01", "02", "03"))
+                        .put("Q2", Arrays.asList("04", "05", "06"))
+                        .put("Q3", Arrays.asList("07", "08", "09"))
+                        .put("Q4", Arrays.asList("10", "11", "12"))
+                        .build();
+
+        List<String> periods = quarters.get(quarter);
+        String r1 = data.get(year + periods.get(0) + concept);
+        String r2 = data.get(year + periods.get(1) + concept);
+        String r3 = data.get(year + periods.get(2) + concept);
+
+        if (r1 != null) {
+            result.add(r1);
+        }
+        if (r2 != null) {
+            result.add(r2);
+        }
+        if (r3 != null) {
+            result.add(r3);
+        }
+        return result;
+    }
+
+    public static String getData(Map<String, String> data, String concept) {
+
+        Set<String> keys = data.keySet();
+
+        String criteria = keys.stream()
+                .filter(e -> e.endsWith(concept))
+                .findAny().orElse(null);
+        if (criteria != null) {
+            return data.get(criteria);
+        }
+
+        return null;
+    }
+
+    public static Map<String, Date> getClinicalStages(Map<String, String> data, String concept) {
+        Map<String, Date> result = new HashMap<>();
+
+        ImmutableMap<String, String> quarters =
+                new ImmutableMap.Builder<String, String>()
+                        .put("90033", "1")
+                        .put("90034", "2")
+                        .put("90035", "3")
+                        .put("90036", "4")
+                        .put("90293", "T1")
+                        .put("90294", "T2")
+                        .put("90295", "T3")
+                        .put("90296", "T4")
+                        .build();
+
+        for (Map.Entry<String, String> dic : data.entrySet()) {
+            String value = quarters.get(dic.getValue());
+            String key = dic.getKey();
+            if (key.endsWith(concept) && !result.containsValue(value)) {
+                result.put(value, DateUtil.parseDate(key.substring(0, Math.min(key.length(), 6)), "yyyyMM"));
+            }
+        }
+        return result;
+    }
+
+    public static String getMinimum(Map<String, String> data, String concept) {
+        List<String> result = new ArrayList<>();
+
+        for (Map.Entry<String, String> dic : data.entrySet()) {
+            String key = dic.getKey();
+            if (key.endsWith(concept)) {
+                result.add(key.substring(0, Math.min(key.length(), 6)));
+            }
+        }
+        sort(result);
+
+        if (result.size() > 0) {
+
+            String month = result.get(0).substring(Math.max(result.get(0).length() - 2, 0));
+            String year = result.get(0).substring(0, Math.min(result.get(0).length(), 4));
+            return month + "/" + year;
+        }
+        return "";
+    }
+
+    public static Multimap<Integer, Date> getData(Connection connection, String sql, String columnLabel1, String columnLabel2) throws SQLException {
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        Multimap<Integer, Date> result = TreeMultimap.create();
+        while (rs.next()) {
+            result.put(rs.getInt(columnLabel1), rs.getDate(columnLabel2));
+        }
+        rs.close();
+        stmt.close();
+
+        return result;
+    }
+
+    public static String convert(String concept) {
+        Map<String, String> result = new HashMap<>();
+
+        result.put("90012", "eMTCT");
+        result.put("90016", "TB");
+        result.put("99593", "YCC");
+        result.put("90019", "Outreach");
+        result.put("90013", "Out Patient");
+        result.put("90015", "STI");
+        result.put("90018", "Inpatient");
+        result.put("90002", "Other");
+        result.put("90079", "1");
+        result.put("90073", "2");
+        result.put("90078", "3");
+        result.put("90071", "4");
+
+        return result.get(concept);
     }
 }
