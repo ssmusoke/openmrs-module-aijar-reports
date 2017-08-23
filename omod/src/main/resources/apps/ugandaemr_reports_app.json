@@ -203,6 +203,14 @@
         "label": "HMIS 105 Section 2.8 to 2.12",
         "url": "reportingui/runReport.page?reportDefinition=9401662d-e715-4370-bfc7-048825dd8107",
         "order": 24
+      },
+      {
+        "id": "SMC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "SMC Register",
+        "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
+        "order": 30
       }
     ]
   }
