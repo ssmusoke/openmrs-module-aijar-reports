@@ -38,6 +38,14 @@ public class Metadata {
         public static final String TB_TREATMENT_START_DATE = "dce02eca-30ab-102d-86b0-7a5022ba4115";
         public static final String ON_TB_TREATMENT = "dcdaa6b4-30ab-102d-86b0-7a5022ba4115";
         public static final String ASSESSED_FOR_MALNUTRITION = "dc655734-30ab-102d-86b0-7a5022ba4115";
+
+        public static final String TETANUS_DOSE_GIVEN = "39217e3d-6a39-4679-bf56-f0954a7ffdb8";
+		public static final String FIRST_DOSE = "0192ca59-b647-4f88-b07e-8fda991ba6d6";
+		public static final String SECOND_DOSE = "f1d5afce-8dfe-4d2d-b24b-051815d61848";
+		public static final String THIRD_DOSE = "a5497b5a-7da1-42d2-9985-b5ec695b4199";
+		public static final String FOURTH_DOSE = "da40fa2a-074f-4d90-a875-5bb8316bc753";
+		public static final String FIFTH_DOSE = "18f11bf4-c986-4cdd-b31c-fb189ea39333";
+		
     }
     public static class Identifier{
 
@@ -50,6 +58,7 @@ public class Metadata {
         public final static String EID_ENCOUNTER_PAGE = "4345dacb-909d-429c-99aa-045f2db77e2b";
         public final static String ANC_ENCOUNTER = "044daI6d-f80e-48fe-aba9-037f241905Pe";
         public final static String PNC_ENCOUNTER = "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074";
+        public final static String SMC_ENCOUNTER = "244da86d-f80e-48fe-aba9-067f241905ee";
 
 
     }
