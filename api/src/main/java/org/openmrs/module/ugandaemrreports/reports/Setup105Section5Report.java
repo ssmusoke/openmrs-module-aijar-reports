@@ -161,7 +161,7 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         dsd.addColumn("S5M", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("ba7ae66b-8108-45b6-a34d-e842cf31c623")), params), "");
         dsd.addColumn("S5S", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("44f95fcb-1054-466f-906d-45a41ef07297")), params), "");
         dsd.addColumn("S5T", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(), params), "");
-        dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(dorsal, sleeve), params),"");
+        dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.surgicalTechnique(), params),"");
         dsd.addColumn("S6DC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(forceps), params),"");
         dsd.addColumn("S6OT", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(other), params),"");
         

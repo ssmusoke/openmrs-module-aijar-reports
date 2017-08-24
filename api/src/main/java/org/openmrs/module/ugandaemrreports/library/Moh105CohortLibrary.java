@@ -24,6 +24,7 @@ import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -272,19 +273,45 @@ public class Moh105CohortLibrary {
 	} 
 	
 //cohorts for SMC 105 section
+	Concept siteType = Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802");
+	Concept facility = Dictionary.getConcept("f2aa1852-fcfe-484b-a6ef-1613bd3a1a7f");
+	Concept outreach = Dictionary.getConcept("03596df2-09bc-4d1f-94fd-484411ac9012");
+	Concept camp = Dictionary.getConcept("63e5387f-74f6-4a92-a71f-7b5dd3ed8432");
+	Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
+    Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
+    Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
+	
+	/*
+	 * empty  procedures should be considered surgical
+	 */
+	public CohortDefinition surgical() {
+		CompositionCohortDefinition comp = new CompositionCohortDefinition();
+		comp.setName("surgical procedure");
+		comp.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		comp.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		
+		SqlCohortDefinition cd = new SqlCohortDefinition();
+		cd.setName("empty");
+        cd.setQuery("SELECT person_id FROM obs WHERE concept_id not in(99674)");
+        
+        comp.addSearch("surgical", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), dorsal, sleeve), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        comp.addSearch("empty", ReportUtils.map(cd));
+        comp.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        comp.setCompositionString("(surgical OR empty) AND smcEncounter");
+		return cd;
+	}
     /**
      *
      * @return CohortDefinition
      */
     public CohortDefinition siteTypeFacilitySurgicalCircumcision(){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
-        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
+        
         cd.setName("Facility and surgical");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("f2aa1852-fcfe-484b-a6ef-1613bd3a1a7f")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("surgical", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), dorsal, sleeve), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(siteType, facility), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("surgical", ReportUtils.map(surgical(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("facility AND surgical AND smcEncounter");
 
@@ -302,7 +329,7 @@ public class Moh105CohortLibrary {
         cd.setName("Facility and Device");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("f2aa1852-fcfe-484b-a6ef-1613bd3a1a7f")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(siteType, facility), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("device", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), forceps), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("facility AND device AND smcEncounter");
@@ -317,13 +344,11 @@ public class Moh105CohortLibrary {
      */
     public CohortDefinition siteTypeOutReachSurgicalCircumcision(){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
-        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
         cd.setName("Outreach and surgical");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("03596df2-09bc-4d1f-94fd-484411ac9012")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("surgical", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), dorsal, sleeve), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(siteType, outreach, camp), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("surgical", ReportUtils.map(surgical(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("outreach AND surgical AND smcEncounter");
 
@@ -337,11 +362,10 @@ public class Moh105CohortLibrary {
 
     public CohortDefinition siteTypeOutReachDeviceCircumcision(){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
         cd.setName("Outreach and device");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("03596df2-09bc-4d1f-94fd-484411ac9012")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(siteType, outreach, camp), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("device", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), forceps), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("outreach AND device AND smcEncounter");
