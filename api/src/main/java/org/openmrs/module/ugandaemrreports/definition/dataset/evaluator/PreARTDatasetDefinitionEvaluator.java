@@ -57,6 +57,14 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
             String patients = Joiner.on(",").join(summaryData.keySet());
             String concepts = Joiner.on(",").join(preArtConcepts().keySet());
 
+            String withoutArtStartDateQuery = String.format("SELECT DISTINCT GROUP_CONCAT(DISTINCT patient_id)\n" +
+                    "FROM encounter\n" +
+                    "WHERE patient_id NOT IN (SELECT person_id\n" +
+                    "                         FROM obs\n" +
+                    "                         WHERE concept_id = 99161) and patient_id IN(%s);", patients);
+
+            String patientsWithoutArtDate = getData(sqlConnection(), withoutArtStartDateQuery);
+
             String encountersBeforeArtQuery = "SELECT e.encounter_id as e_id,DATE(e.encounter_datetime) as e_date\n" +
                     "FROM encounter e INNER JOIN obs art ON (e.patient_id = art.person_id)\n" +
                     "WHERE art.concept_id = 99161 AND art.voided = 0 AND e.voided = 0 AND e.encounter_datetime <= art.value_datetime AND\n" +
@@ -69,18 +77,25 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
             String encounters = Joiner.on(",").join(encounterData.asMap().keySet());
 
-            String obsQuery = "SELECT\n" +
+
+            String obsQuery = String.format("SELECT\n" +
                     "  person_id,\n" +
                     "  concept_id,\n" +
                     "  (SELECT encounter_datetime\n" +
                     "   FROM encounter e\n" +
-                    "   WHERE e.encounter_id = o.encounter_id) as enc_date,\n" +
+                    "   WHERE e.encounter_id = o.encounter_id)                                                    AS enc_date,\n" +
                     "  COALESCE(value_coded, COALESCE(DATE(value_datetime), COALESCE(value_numeric, value_text))) AS val\n" +
                     "FROM obs o\n" +
-                    "WHERE o.voided = 0\n" +
-                    String.format("      AND o.encounter_id IN (%s)\n", encounters) +
-                    "      AND o.concept_id IN\n" +
-                    String.format("          (%s)", concepts);
+                    "WHERE o.voided = 0 AND (o.encounter_id IN (%s) OR person_id IN (%s)) AND o.concept_id IN (%s)\n" +
+                    "UNION ALL\n" +
+                    "SELECT\n" +
+                    "  p.person_id,\n" +
+                    "  'death',\n" +
+                    "  death_date,\n" +
+                    "  DATE(death_date)\n" +
+                    "FROM person p INNER JOIN obs art ON (p.person_id = art.person_id)\n" +
+                    "WHERE art.concept_id = 99161 AND p.person_id IN (%s) AND art.voided = 0 AND p.voided = 0 AND\n" +
+                    "      p.death_date <= art.value_datetime;", encounters, patientsWithoutArtDate, concepts, patients);
 
 
             Table<String, Integer, String> table = getDataTable(sqlConnection(), obsQuery);
@@ -88,8 +103,9 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
             PatientDataHelper pdh = new PatientDataHelper();
             for (Map.Entry<Integer, Date> patient : entries) {
-                List<PersonDemographics> personDemographics = demographics.get(patient.getKey());
-                Map<String, String> patientData = table.column(patient.getKey());
+                Integer key = patient.getKey();
+                List<PersonDemographics> personDemographics = demographics.get(key);
+                Map<String, String> patientData = table.column(key);
 
                 String artStartDate = getData(patientData, "99161");
                 String entryPoint = getData(patientData, "90200");
@@ -98,6 +114,15 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 String ti = getData(patientData, "99110") == null ? "" : "5";
                 String eligible = getData(patientData, "90297");
                 String eligibleAndReady = getData(patientData, "90299");
+                String death = getData(patientData, "death");
+                String to = getData(patientData, "99165");
+
+                String died = death != null ? UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(death), Enums.Period.QUARTERLY) : "";
+                String transferred = to != null ? UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(to), Enums.Period.QUARTERLY) : "";
+
+                boolean hasDied = false;
+                boolean hasTransferred = false;
+
 
                 String eligibleCS = getData(patientData, "99083") == null ? "" : "1";
                 String eligiblePregnant = getData(patientData, "99602") == null ? "" : "3";
@@ -113,14 +138,17 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
                 List<String> addresses = processString2(personDemos.getAddresses());
-                String address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
+                String address = "";
+                if (addresses.size() == 6) {
+                    address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
+                }
 
-                Date firstSummaryDate = patient.getValue();
+                Date firstSummaryDate = dates.get(key);
 
                 String enrollmentQuarter = UgandaEMRReporting.getObsPeriod(firstSummaryDate, Enums.Period.QUARTERLY);
                 DataSetRow row = new DataSetRow();
-                pdh.addCol(row, "Date Enrolled", patient.getValue());
-                pdh.addCol(row, "Unique ID no", patient.getKey());
+                pdh.addCol(row, "Date Enrolled", firstSummaryDate);
+                pdh.addCol(row, "Unique ID no", key);
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
@@ -153,8 +181,14 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     if (period.compareTo(currentQuarter) < 0) {
                         if (artStartDate != null && period.compareTo(UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) == 0) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "ART");
-                        } else if (artStartDate != null && period.compareTo(UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) > 0) {
+                        } else if ((artStartDate != null && period.compareTo(UgandaEMRReporting.getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) > 0) || hasDied || hasTransferred) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                        } else if (StringUtils.isNotBlank(died) && period.compareTo(died) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "DIED");
+                            hasDied = true;
+                        } else if (StringUtils.isNotBlank(transferred) && period.compareTo(transferred) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "TO");
+                            hasTransferred = true;
                         } else {
                             List<String> tbStatus = getData(patientData, period, "90216");
                             List<String> cpt = getData(patientData, period, "99037");
@@ -196,7 +230,7 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             } else if (period.compareTo(enrollmentQuarter) < 0) {
                                 pdh.addCol(row, "FUS" + String.valueOf(i), "");
                             } else {
-                                pdh.addCol(row, "FUS" + String.valueOf(i), "Processing problem");
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
                             }
                         }
                     } else {

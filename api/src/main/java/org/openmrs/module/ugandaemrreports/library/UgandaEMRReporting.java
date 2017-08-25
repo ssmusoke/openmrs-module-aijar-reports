@@ -1226,7 +1226,7 @@ public class UgandaEMRReporting {
     public static Connection testSqlConnection() throws SQLException, ClassNotFoundException {
         Properties props = new Properties();
         props.setProperty("driver.class", "com.mysql.jdbc.Driver");
-        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/ams");
+        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
         props.setProperty("user", "openmrs");
         props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
@@ -1396,10 +1396,10 @@ public class UgandaEMRReporting {
         Table<String, Integer, String> table = TreeBasedTable.create();
         while (rs.next()) {
             Integer patientId = rs.getInt(1);
-            Integer conceptId = rs.getInt(2);
+            String conceptId = rs.getString(2);
             Date encounterDate = rs.getDate(3);
             String val = rs.getString(4);
-            String encounterMonth = DateUtil.formatDate(encounterDate, "yyyyMM") + String.valueOf(conceptId);
+            String encounterMonth = DateUtil.formatDate(encounterDate, "yyyyMM") + conceptId;
             table.put(encounterMonth, patientId, val);
         }
         rs.close();
@@ -1509,6 +1509,17 @@ public class UgandaEMRReporting {
         rs.close();
         stmt.close();
 
+        return result;
+    }
+
+    public static String getData(Connection connection, String sql) throws SQLException {
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        String result = rs.getString(1);
+        rs.close();
+        stmt.close();
         return result;
     }
 
