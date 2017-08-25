@@ -223,7 +223,7 @@
         "extensionPointId": "systemAdministration.apps",
         "type": "link",
         "label": "Summarize Observations",
-        "url": "ugandaemrroprts/summarize.page",
+        "url": "ugandaemrreports/summarize.page",
         "icon": "icon-bar-chart"
       }
     ]
