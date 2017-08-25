@@ -10,6 +10,7 @@
 package org.openmrs.module.ugandaemrreports.fragment.controller;
 
 import org.apache.commons.lang.StringUtils;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -28,16 +29,29 @@ public class SummarizeFragmentController {
     }
 
     public void get(@SpringBean PageModel pageModel) throws Exception {
-        String lastDate = UgandaEMRReporting.getGlobalProperty("ugandaemrreports.lastSummarizationDate");
-        if (StringUtils.isBlank(lastDate)) {
-            lastDate = "1900-01-01 00:00:00";
+        Context.openSession();
+        Connection connection = UgandaEMRReporting.sqlConnection();
+        String lastDenormalizationDate = UgandaEMRReporting.getGlobalProperty("ugandaemrreports.lastDenormalizationDate");
+        String lastSummarizationDate = UgandaEMRReporting.getGlobalProperty("ugandaemrreports.lastSummarizationDate");
+
+        if (StringUtils.isBlank(lastDenormalizationDate)) {
+            lastDenormalizationDate = "1900-01-01 00:00:00";
         }
 
-        Connection connection = UgandaEMRReporting.sqlConnection();
-        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery(lastDate), connection);
+        if (StringUtils.isBlank(lastSummarizationDate)) {
+            lastSummarizationDate = "1900-01-01 00:00:00";
+        }
+
+        UgandaEMRReporting.normalizeObs(lastDenormalizationDate, connection, 100000);
+        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery(lastSummarizationDate), connection);
+
         Date now = new Date();
         String newDate = UgandaEMRReporting.DEFAULT_DATE_FORMAT.format(now);
+
+        UgandaEMRReporting.setGlobalProperty("ugandaemrreports.lastDenormalizationDate", newDate);
         UgandaEMRReporting.setGlobalProperty("ugandaemrreports.lastSummarizationDate", newDate);
+
+        Context.closeSession();
     }
 
 }
