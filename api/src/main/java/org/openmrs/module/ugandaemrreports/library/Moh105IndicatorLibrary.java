@@ -426,6 +426,14 @@ public class Moh105IndicatorLibrary {
         Concept techQuestion = Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71");
         return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(techQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    
+    /**
+     * Clients circumcised by used surgical Technique
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsCircumcisedWithSurgicalTechnique() {
+        return cohortIndicator("circumcised and AE", map(cohortLibrary.surgicalProcedureMethod(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
     /**
      * follow up visits in SMC
