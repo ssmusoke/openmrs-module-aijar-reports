@@ -24,6 +24,7 @@ import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -272,7 +273,6 @@ public class Moh105CohortLibrary {
 	        return cd;
 		}
 	} 
-	
 //coding for empty site type to facility
 	public CohortDefinition emptySiteTypeToMappedToFaciity() {
 		CalculationCohortDefinition cd = new CalculationCohortDefinition("emptySiteType", new EmptySiteType());

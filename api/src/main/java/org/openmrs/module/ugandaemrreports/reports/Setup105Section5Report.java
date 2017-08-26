@@ -141,8 +141,6 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         List<ColumnParameters> allColumns = Arrays.asList(mUnder2, m2Under5, m5Under15, m15To49, m49Plus, mTotals);
         String params = "startDate=${startDate},endDate=${endDate}";
 
-        Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
-        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
         Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
         Concept other = Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115");
        
