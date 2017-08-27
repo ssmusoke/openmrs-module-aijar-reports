@@ -352,38 +352,6 @@ public class Moh105IndicatorLibrary {
 	//indicators for the SMC section follow here
 
     /**
-     * Facility surgical smc
-     * @return CohortIndicator
-     */
-    public CohortIndicator facilityAndSurgicalSmc(){
-        return cohortIndicator("facility and surgical", map(cohortLibrary.siteTypeFacilitySurgicalCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     * Facility device smc
-     * @return CohortIndicator
-     */
-    public CohortIndicator facilityAndDeviceSmc(){
-        return cohortIndicator("facility and device", map(cohortLibrary.siteTypeFacilityDeviceCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     * Outreach surgical smc
-     * @return CohortIndicator
-     */
-    public CohortIndicator outreachAndSurgicalSmc(){
-        return cohortIndicator("Outreach and surgical", map(cohortLibrary.siteTypeOutReachSurgicalCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     * Outreach device smc
-     * @return CohortIndicator
-     */
-    public CohortIndicator outreachAndDeviceSmc(){
-        return cohortIndicator("Outreach and device", map(cohortLibrary.siteTypeOutReachDeviceCircumcision(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
      * counselled and tested for HIV with results
      * @return CohortIndicator
      */
