@@ -86,11 +86,12 @@ public class CommonCohortLibrary {
      * @return CohortDefinition
      */
     public CohortDefinition agedAtLeastAgedAtMost(int minAge, int maxAge) {
-        AgeCohortDefinition cd = new AgeCohortDefinition();
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("aged between " + minAge + " and " + maxAge + " years");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-        cd.setMinAge(minAge);
-        cd.setMaxAge(maxAge);
+        cd.addSearch("min", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("max", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
+        cd.setCompositionString("min AND max");
         return cd;
     }
 
