@@ -13,6 +13,9 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -29,9 +32,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Nicholas Ingosi on 5/23/17.
@@ -211,4 +211,62 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("ancEncounter AND hasObs");
         return cd;
     }
+
+	/**
+	 * Number of Tetanus Immunizations done
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition tetanusImmunizationsDone(int doseNumber, Boolean pregnant ) {
+		Concept doseNumberConcept = null;
+		switch (doseNumber) {
+			case 1:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIRST_DOSE);
+				break;
+			case 2:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.SECOND_DOSE);
+				break;
+			case 3:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.THIRD_DOSE);
+				break;
+			case 4:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FOURTH_DOSE);
+				break;
+			case 5:
+				doseNumberConcept = Dictionary.getConcept(Metadata.Concept.FIFTH_DOSE);
+				break;
+			
+			default:
+				break;
+		}
+		if (pregnant) {
+			//Fetch a cohort of pregnant persons given the tetanus dose i.e those with ANC encounters
+			CohortDefinition cd = null;
+			if (doseNumberConcept != null) {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept);
+			} else {
+				cd = hasObsAndEncounter(Metadata.EncounterType.ANC_ENCOUNTER,
+				    Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN));
+				
+			}
+			return cd;
+			
+		} else {
+			//Fetch a cohort of non-pregnant persons given the tetanus dose i.e those without ANC encounters
+			CompositionCohortDefinition cd = new CompositionCohortDefinition();
+	        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+	        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        if (doseNumberConcept != null) {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN), doseNumberConcept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        } else {
+	        	cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TETANUS_DOSE_GIVEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        }
+	        cd.setCompositionString("hasObs AND NOT ancEncounter");
+
+	        return cd;
+		}
+	}    
+
 }
