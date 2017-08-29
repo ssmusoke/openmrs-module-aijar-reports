@@ -57,4 +57,14 @@ public class Filters {
 	public static Set<Integer> inProgram(Program program, Collection<Integer> cohort, PatientCalculationContext context) {
 		return CalculationUtils.patientsThatPass(Calculations.activeEnrollment(program, cohort, context));
 	}
+	
+	/**
+	 * Patients who are male
+	 * @param cohort the patient ids
+	 * @param context the calculation context
+	 * @return the filtered cohort
+	 */
+	public static Set<Integer> male(Collection<Integer> cohort, PatientCalculationContext context) {
+		return CalculationUtils.patientsThatPass(Calculations.genders(cohort, context), "M");
+	}
 }

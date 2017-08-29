@@ -45,14 +45,25 @@ public class AgeFromEncounterDateCalculation extends AbstractPatientCalculation 
                 dateAtRegistration = EmrCalculationUtils.datetimeResultForPatient(encounterDate, ptId);
                 if(dateAtRegistration != null && birthDate != null){
                     ageAtRegistration = ageInYears(birthDate, dateAtRegistration);
-                    if(ageAtRegistration != null && ageAtRegistration < 1) {
+                    if(ageAtRegistration != null && ageAtRegistration < 1 && lower != null && lower == 0) {
                         age = ageInMonths(birthDate, dateAtRegistration);
                     }
-                    else if(ageAtRegistration != null && lower != null && lower >= 49 && ageAtRegistration >= 49){
+                    else if(lower != null && upper != null & ageAtRegistration != null) {
+                    	if(ageAtRegistration > 0 &&  lower == 0 && ageAtRegistration < 2 && upper == 2) {
                         age = ageAtRegistration;
-                    }
-                    else if(lower != null && upper != null & ageAtRegistration != null && ageAtRegistration >= lower && ageAtRegistration <= upper) {
-                        age = ageAtRegistration;
+                    	}
+                    	else if(ageAtRegistration > 1 &&  lower == 2 && ageAtRegistration < 5 && upper == 5) {
+                            age = ageAtRegistration;
+                        	}
+                    	else if(ageAtRegistration > 4 &&  lower == 5 && ageAtRegistration < 15 && upper == 15) {
+                            age = ageAtRegistration;
+                        	}
+                    	else if(ageAtRegistration > 14 &&  lower == 15 && ageAtRegistration < 49 && upper == 49) {
+                            age = ageAtRegistration;
+                        	}
+                    	else if(ageAtRegistration > 49 && lower == 49 && ageAtRegistration >= 49 && upper > 49){
+                            age = ageAtRegistration;
+                        }
                     }
                 }
             }
