@@ -106,6 +106,7 @@ public class CommonReportDimensionLibrary {
         return dim;
 	}
 
+	/**
      * Dimension for age using 5 age group for smc
      * @return a dimension
      */

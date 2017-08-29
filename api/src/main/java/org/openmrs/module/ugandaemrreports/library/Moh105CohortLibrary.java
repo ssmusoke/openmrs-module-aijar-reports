@@ -108,7 +108,7 @@ public class Moh105CohortLibrary {
      * @return
      */
     public CohortDefinition hivPostiveBeforeFirstANCVisit() {
-        return definitionLibrary.hasANCObs(Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.HIV_STATUS), Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.HIV_POSITIVE));
+        return definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.HIV_STATUS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
     }
 
     /**
@@ -279,7 +279,7 @@ public class Moh105CohortLibrary {
         cd.setName("HIV+ Initiating Maternity");        
         cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("35ae2043-a3b0-48de-8e22-05f377ac39a2")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.ARV_REGIMEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("hivPositive AND InitiatingARV AND maternityAdmissions");
         return cd;
     }
@@ -317,7 +317,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("HIV+ Women Deliveries");
         cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("deliveries", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata.Concept.PREGNANCY_OUTCOME)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveries", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREGNANCY_OUTCOME)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("hivPositive AND deliveries AND liveBirths");
         return cd;
