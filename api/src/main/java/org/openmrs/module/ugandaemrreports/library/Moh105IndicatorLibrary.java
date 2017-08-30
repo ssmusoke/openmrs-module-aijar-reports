@@ -18,7 +18,9 @@ import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
@@ -26,7 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by Nicholas Ingosi on 6/7/17.
+ *
  */
 @Component
 public class Moh105IndicatorLibrary {
@@ -34,6 +36,7 @@ public class Moh105IndicatorLibrary {
     String ANC_UUID = Metadata.EncounterType.ANC_ENCOUNTER;
     String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
     String EID_UUID = Metadata.EncounterType.EID_ENCOUNTER_PAGE;
+    String MATERNITY_UUID = Metadata.EncounterType.MATERNITY_ENCOUNTER;
     @Autowired
     private Moh105CohortLibrary cohortLibrary;
 
@@ -137,7 +140,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR() {
-        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7"), Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -150,7 +153,7 @@ public class Moh105IndicatorLibrary {
 
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyAndTestedHIVPositive() {
         return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasANCObs(
-		        Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"),  Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+		        Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),  Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -174,7 +177,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pregnantTrkTrrk() {
-        return cohortIndicator("Pregnant women who knew status before 1st ANC total (TRK+TRRK)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant women who knew status before 1st ANC total (TRK+TRRK)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -182,7 +185,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pregnantTrrk() {
-        return cohortIndicator("Pregnant women who knew status before 1st ANC total TRRK", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant women who knew status before 1st ANC total TRRK", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -198,7 +201,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator retestedTrTrrPlus(){
-        return cohortIndicator("Pregnant Women re-tested later in pregnancy (TR+&TRR+))", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"), Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant Women re-tested later in pregnancy (TR+&TRR+))", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -206,7 +209,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator retestedTrrPlus() {
-        return cohortIndicator("Pregnant Women testing HIV+ on a retest (TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant Women testing HIV+ on a retest (TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -222,7 +225,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator malePatinersRecievedHivResultTotal() {
-        return cohortIndicator("Male partners received HIV test results in eMTCT - Totals", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465"), Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Male partners received HIV test results in eMTCT - Totals", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -230,7 +233,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator malePatinersRecievedHivResultHivPositive() {
-        return cohortIndicator("Male partners received HIV test results in eMTCT - HIV+", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Male partners received HIV test results in eMTCT - HIV+", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -288,12 +291,12 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator breastFeedingMothersTestedForHIVFirstTestDuringPostnatal() {
-        Concept t = Dictionary.getConcept("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7");
-        Concept tr = Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a");
-        Concept trr = Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465");
-        Concept trrTick = Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3");
-        Concept trTick = Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56");
-        Concept question = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
+        Concept t = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T);
+        Concept tr = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR);
+        Concept trr = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR);
+        Concept trrTick = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK);
+        Concept trTick = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK);
+        Concept question = Dictionary.getConcept(Metadata.Concept.EMTCT_CODES);
         return cohortIndicator("Breastfeeding mothers tested for HIV 1st test during postnatal", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, question, t, tr, trTick, trrTick, trr), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
@@ -302,9 +305,9 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator breastFeedingMothersTestedForHIVReTestDuringPostnatal() {
-        Concept question = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
-        Concept trPlus = Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f");
-        Concept trrPlus = Dictionary.getConcept("a08d9331-b437-485c-8eff-1923f3d43630");
+        Concept question = Dictionary.getConcept(Metadata.Concept.EMTCT_CODES);
+        Concept trPlus = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP);
+        Concept trrPlus = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP);
 
         return cohortIndicator("Breastfeeding mothers tested for HIV re test during postnatal", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, question, trPlus, trrPlus), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -314,9 +317,9 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator breastFeedingMothersTestedForHIVPositiveTestDuringPostnatal() {
-        Concept question = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
-        Concept trPlus = Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465");
-        Concept trrPlus = Dictionary.getConcept("1f177240-85f6-4f10-964a-cfc7722408b3");
+        Concept question = Dictionary.getConcept(Metadata.Concept.EMTCT_CODES);
+        Concept trPlus = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR);
+        Concept trrPlus = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK);
 
         return cohortIndicator("Breastfeeding mothers tested for HIV+  test during postnatal", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, question, trPlus, trrPlus), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -326,8 +329,8 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator breastFeedingMothersTestedForHIVPositiveReTestDuringPostnatal() {
-        Concept question = Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74");
-        Concept trPlus = Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f");
+        Concept question = Dictionary.getConcept(Metadata.Concept.EMTCT_CODES);
+        Concept trPlus = Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP);
 
 
         return cohortIndicator("Breastfeeding mothers tested for HIV+  test during postnatal", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, question, trPlus), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -380,30 +383,6 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator deliveriesInUnit() {
         return cohortIndicator("Deliveries in unit", map(cohortLibrary.deliveriesInUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     *Deliveries in unit - 10 -19
-     * @return CohortIndicator
-     */
-    public CohortIndicator deliveriesInUnit10To19() {
-        return cohortIndicator("Deliveries in unit 10-19", map(cohortLibrary.deliveriesInUnit10To19(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     *Deliveries in unit - 20 - 24
-     * @return CohortIndicator
-     */
-    public CohortIndicator deliveriesInUnit20To24() {
-        return cohortIndicator("Deliveries in unit 20-24", map(cohortLibrary.deliveriesInUnit20To24(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
-
-    /**
-     *Deliveries in unit - 25 and above
-     * @return CohortIndicator
-     */
-    public CohortIndicator deliveriesInUnit25AndAbove() {
-        return cohortIndicator("Deliveries in unit 25 and above", map(cohortLibrary.deliveriesInUnit25AndAbove(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -551,6 +530,7 @@ public class Moh105IndicatorLibrary {
     }
 
     /**
+<<<<<<< HEAD
      *M16: Maternal deaths
      * @return CohortIndicator
      */
@@ -2443,7 +2423,7 @@ public class Moh105IndicatorLibrary {
 		return cohortIndicator("Obese ( BMI>30)",
 		    map(cohortLibrary.bmiCount(30.1, 100.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
-
+    
 	/**
 	 * HIV Exposed Infants - EID
 	 */
@@ -2599,5 +2579,67 @@ public class Moh105IndicatorLibrary {
 		return cohortIndicator("Tetanus Immunization dose. Dose# " + doseNumber,
 		    map(cohortLibrary.tetanusImmunizationsDone(doseNumber, pregnant), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
+	
+	//indicators for the SMC section follow here
+
+    /**
+     * counselled and tested for HIV with results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTestedWithResuls(Concept ans) {
+        return cohortIndicator("Counseled and tested with results", map(cohortLibrary.counseledTestedForHivResults(ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * counselled and tested for HIV regardless of the results
+     * @return CohortIndicator
+     */
+    public CohortIndicator counseledAndTested() {
+        return cohortIndicator("Counseled and tested", map(cohortLibrary.counseledTestedForHiv(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * expected number of SMC performed(monthly targets)
+     * @return cohort indicator
+     */
+    public CohortIndicator expectedNumberOfSmcPerfomed() {
+        EncounterType smc = MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee");
+        return cohortIndicator("expected number of SMC performed", map(cclibrary.hasEncounter(smc), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Clients circumcised who experinced one or more adverse events
+     * @return CohortIndicator
+     */
+    public CohortIndicator circumcisedAndExperiencedAdverseEvents(Concept ... ans){
+        Concept adQuestion = Dictionary.getConcept("e34976b9-1aff-489d-b959-4da1f7272499");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(adQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    /**
+     * Clients circumcised by used Technique
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsCircumcisedWithTechnique(Concept ... ans) {
+        Concept techQuestion = Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71");
+        return cohortIndicator("circumcised and AE", map(cclibrary.hasObs(techQuestion, ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * Clients circumcised by used surgical Technique
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsCircumcisedWithSurgicalTechnique() {
+        return cohortIndicator("circumcised and AE", map(cohortLibrary.surgicalProcedureMethod(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * follow up visits in SMC
+     * @return CohortIndicator
+     */
+    public CohortIndicator smcFollowUps(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 }

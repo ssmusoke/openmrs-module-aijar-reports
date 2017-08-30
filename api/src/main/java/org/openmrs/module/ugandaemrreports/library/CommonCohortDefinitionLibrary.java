@@ -1,5 +1,10 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
@@ -13,20 +18,14 @@ import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition
 import org.openmrs.module.reporting.cohort.definition.TextObsCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -301,5 +300,5 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
         return hasNumericObs(question, operator1, value1, null, null);
     }
-
+    
 }

@@ -20,6 +20,7 @@ import java.util.Date;
 
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
+import org.openmrs.module.ugandaemrreports.library.Moh105CohortLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,9 @@ public class CommonReportDimensionLibrary {
 
     @Autowired
     private CommonCohortLibrary commonCohortLibrary;
+    
+    @Autowired
+    private Moh105CohortLibrary moh105CohortLibrary;
 
     /**
      * Gender dimension
@@ -87,10 +91,15 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${onDate}"));
         return dim;
     }
+    
+    /**
+     * Dimension of age using the 3 standard age groups for Maternity
+     * @return the dimension
+     */
 	public CohortDefinitionDimension standardAgeGroupsForMaternity() {
         CohortDefinitionDimension dim = new CohortDefinitionDimension();
         dim.setName("age groups (10-19, 20-24, >=25)");
-        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addParameter(new Parameter("onDate", "On Date", Date.class));
         dim.addCohortDefinition("10-19", map(commonCohortLibrary.agedAtLeastAgedAtMost(10,19), "effectiveDate=${endDate}"));
         dim.addCohortDefinition("20-24", map(commonCohortLibrary.agedAtLeastAgedAtMost(20,24), "effectiveDate=${endDate}"));
         dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
@@ -131,4 +140,46 @@ public class CommonReportDimensionLibrary {
         return dim;
 	}
 	
+	/**
+     * Dimension for age using 5 age group for smc
+     * @return a dimension
+     */
+    public CohortDefinitionDimension standardAgeGroupsForSmc() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (<2, 2<5, 5<15, 15-49, >49)");
+        dim.addParameter(new Parameter("onDate", "On Date", Date.class));
+        dim.addCohortDefinition("<2", map(commonCohortLibrary.agedAtMost(2), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("2<5", map(commonCohortLibrary.agedAtLeastAgedAtMost(3, 4), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("5<15", map(commonCohortLibrary.agedAtLeastAgedAtMost(6, 14), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("15-49", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 49), "effectiveDate=${onDate}"));
+        dim.addCohortDefinition("49+", map(commonCohortLibrary.agedAtLeast(49), "effectiveDate=${onDate}"));
+        return dim;
+    }
+    /**
+     * Dimension for site type
+     * @return {@link CohortDefinitionDimension}
+     */
+    public CohortDefinitionDimension siteType() {
+    	CohortDefinitionDimension dim = new CohortDefinitionDimension();
+    	dim.setName("Site Type");
+    	dim.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        dim.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        dim.addCohortDefinition("F", map(moh105CohortLibrary.facilitySiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        dim.addCohortDefinition("O", map(moh105CohortLibrary.outreachSiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+    	return dim;
+    }
+    
+    /**
+     * Dimension for procedure methods used
+     * @return {@link CohortDefinitionDimension}
+     */
+    public CohortDefinitionDimension procedureMethod() {
+    	CohortDefinitionDimension dim = new CohortDefinitionDimension();
+    	dim.setName("Procedure Method");
+    	dim.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        dim.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        dim.addCohortDefinition("S", map(moh105CohortLibrary.surgicalProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        dim.addCohortDefinition("D", map(moh105CohortLibrary.deviceProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+    	return dim;
+    }
 }

@@ -1,22 +1,28 @@
 package org.openmrs.module.ugandaemrreports.reporting.library.cohort;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Program;
-import org.openmrs.module.reporting.cohort.definition.*;
+import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Library of common cohort definitions
@@ -81,13 +87,12 @@ public class CommonCohortLibrary {
      * @return CohortDefinition
      */
     public CohortDefinition agedAtLeastAgedAtMost(int minAge, int maxAge) {
-        AgeCohortDefinition cd = new AgeCohortDefinition();
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("aged between " + minAge + " and " + maxAge + " years");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
-        cd.setMinAge(minAge);
-        cd.setMinAgeUnit(DurationUnit.YEARS);
-        cd.setMaxAge(maxAge);
-        cd.setMaxAgeUnit(DurationUnit.YEARS);
+        cd.addSearch("min", ReportUtils.map(agedAtLeast(minAge), "effectiveDate=${effectiveDate}"));
+        cd.addSearch("max", ReportUtils.map(agedAtMost(maxAge), "effectiveDate=${effectiveDate}"));
+        cd.setCompositionString("min AND max");
         return cd;
     }
 
