@@ -751,21 +751,6 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("PretestCounselingDone AND counseledAsIndividuals");
         return cd;
     }
-
-    /**
-     * pregnantWomenNewlyTestedForHivThisPregnancyTRR at any visit
-     * @return CohortDefinition
-     */
-    public CohortDefinition pregnantWomenNewlyTestedForHivThisPregnancyTRRAnyVisit(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("trr", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"), Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.addSearch("anyVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("trr AND anyVisit AND ancEncounter");
-		return cd;
-    }
         
      /** With HIV Test Results
      * @return CohortDefinition
@@ -786,20 +771,6 @@ public class Moh105CohortLibrary {
         cd.addSearch("withHivTestResults", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("withHivTestResults AND counseledAsIndividuals");
-        return cd;
-    }
-
-    /**
-     * combine the has obs cohort definiton with the provided encounter
-     * @return CohortDefinition
-     */
-    public CohortDefinition hasObsAndEncounter(String encounterType, Concept q, Concept ... a){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(q, a), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("ancEncounter AND hasObs");
         return cd;
     }
 
