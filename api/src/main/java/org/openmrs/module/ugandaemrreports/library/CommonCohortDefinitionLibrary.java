@@ -15,6 +15,7 @@ import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.TextObsCohortDefinition;
 import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
@@ -25,7 +26,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Library of common Cohort definitions
@@ -217,7 +217,6 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
 	}    
-
     
     /**
      * Has observations in an ANC encounter
@@ -249,6 +248,26 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
+    /**
+     * Patients who have a text obs between ${onOrAfter} and ${onOrBefore}
+     * @param question the question concept
+     * @param answers the answers to include
+     * @return the cohort definition
+     */    
+    public CohortDefinition hasTextObs(Concept question, String... answers) {
+        TextObsCohortDefinition cd = new TextObsCohortDefinition();
+        cd.setName("has obs between dates");
+        cd.setQuestion(question);
+        cd.setOperator(SetComparator.IN);
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        if (answers.length > 0) {
+            cd.setValueList(Arrays.asList(answers));
+        }
+        return cd;
+    }
+    
     /**
      * Patients who have a numeric obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept

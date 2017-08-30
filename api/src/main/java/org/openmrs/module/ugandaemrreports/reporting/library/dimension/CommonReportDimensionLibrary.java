@@ -106,6 +106,20 @@ public class CommonReportDimensionLibrary {
 	}
     
     /**
+     * Dimension of age using the 3 standard age groups for Maternity
+     * @return the dimension
+     */
+	public CohortDefinitionDimension standardAgeGroupsForMaternity() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (10-19, 20-24, >=25)");
+        dim.addParameter(new Parameter("onDate", "On Date", Date.class));
+        dim.addCohortDefinition("10-19", map(commonCohortLibrary.agedAtLeastAgedAtMost(10,19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("20-24", map(commonCohortLibrary.agedAtLeastAgedAtMost(20,24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("25+", map(commonCohortLibrary.agedAtLeast(25), "effectiveDate=${endDate}"));
+        return dim;
+	}
+
+	/**
      * Dimension for age using 5 age group for smc
      * @return a dimension
      */
