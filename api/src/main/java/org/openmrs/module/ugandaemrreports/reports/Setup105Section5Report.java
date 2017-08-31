@@ -120,7 +120,7 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
         cst.setName("S");
         cst.setGp("ugandaemr.dhis2.organizationuuid");
-        return cst;
+        return cst; 
     }
 
     protected DataSetDefinition smc(){
@@ -129,29 +129,67 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         dsd.setParameters(getParameters());
         dsd.setName("M");
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForSmc(), "onDate=${endDate}"));
-        dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
+        dsd.addDimension("site", ReportUtils.map(dimensionLibrary.siteType(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        dsd.addDimension("method", ReportUtils.map(dimensionLibrary.procedureMethod(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
-        ColumnParameters mUnder2 = new ColumnParameters("m<2", "<2", "gender=M|age=<2");
-        ColumnParameters m2Under5 = new ColumnParameters("m2<5", "2<5", "gender=M|age=2<5");
-        ColumnParameters m5Under15 = new ColumnParameters("m5<15", "5<15", "gender=M|age=5<15");
-        ColumnParameters m15To49 = new ColumnParameters("m15-49", "15-49", "gender=M|age=15-49");
-        ColumnParameters m49Plus = new ColumnParameters("m49+", "49+", "gender=M|age=49+");
-        ColumnParameters mTotals = new ColumnParameters("mTotals", "Total", "");
+        ColumnParameters fsUnder2 = new ColumnParameters("FS<2", "FS<2", "site=F|age=<2|method=S");
+        ColumnParameters fs2Under5 = new ColumnParameters("FS2<5", "FS2<5", "site=F|age=2<5|method=S");
+        ColumnParameters fs5Under15 = new ColumnParameters("FS5<15", "FS5<15", "site=F|age=5<15|method=S");
+        ColumnParameters fs15To49 = new ColumnParameters("FS15-49", "FS15-49", "site=F|age=15-49|method=S");
+        ColumnParameters fs49Plus = new ColumnParameters("FS49+", "FS49+", "site=F|age=49+|method=S");
+        
+        ColumnParameters fdUnder2 = new ColumnParameters("FD<2", "FD<2", "site=F|age=<2|method=D");
+        ColumnParameters fd2Under5 = new ColumnParameters("FD2<5", "FD2<5", "site=F|age=2<5|method=D");
+        ColumnParameters fd5Under15 = new ColumnParameters("FD5<15", "FD5<15", "site=F|age=5<15|method=D");
+        ColumnParameters fd15To49 = new ColumnParameters("FD15-49", "FD15-49", "site=F|age=15-49|method=D");
+        ColumnParameters fd49Plus = new ColumnParameters("FD49+", "FD49+", "site=F|age=49+|method=D");
+        
+        ColumnParameters osUnder2 = new ColumnParameters("OS<2", "OS<2", "site=O|age=<2|method=S");
+        ColumnParameters os2Under5 = new ColumnParameters("OS2<5", "OS2<5", "site=O|age=2<5|method=S");
+        ColumnParameters os5Under15 = new ColumnParameters("OS5<15", "OS5<15", "site=O|age=5<15|method=S");
+        ColumnParameters os15To49 = new ColumnParameters("OS15-49", "OS15-49", "site=O|age=15-49|method=S");
+        ColumnParameters os49Plus = new ColumnParameters("OS49+", "OS49+", "site=O|age=49+|method=S");
+        
+        ColumnParameters odUnder2 = new ColumnParameters("OD<2", "OD<2", "site=O|age=<2|method=D");
+        ColumnParameters od2Under5 = new ColumnParameters("OD2<5", "OD2<5", "site=O|age=2<5|method=D");
+        ColumnParameters od5Under15 = new ColumnParameters("OD5<15", "OD5<15", "site=O|age=5<15|method=D");
+        ColumnParameters od15To49 = new ColumnParameters("OD15-49", "OD15-49", "site=O|age=15-49|method=D");
+        ColumnParameters od49Plus = new ColumnParameters("OD49+", "OD49+", "site=O|age=49+|method=D");
+        
+        
+        ColumnParameters foTotals = new ColumnParameters("mTotals", "Total", "");
 
-        List<ColumnParameters> allColumns = Arrays.asList(mUnder2, m2Under5, m5Under15, m15To49, m49Plus, mTotals);
+        List<ColumnParameters> allColumns = new ArrayList<ColumnParameters>();
+        allColumns.add(fsUnder2);
+        allColumns.add(fs2Under5);
+        allColumns.add(fs5Under15); 
+        allColumns.add(fs15To49); 
+        allColumns.add(fs49Plus);
+        allColumns.add(fdUnder2);
+        allColumns.add(fd2Under5);
+        allColumns.add(fd5Under15);
+        allColumns.add(fd15To49);
+        allColumns.add(fd49Plus);
+        allColumns.add(osUnder2);
+        allColumns.add(os2Under5);
+        allColumns.add(os5Under15);
+        allColumns.add(os15To49);
+        allColumns.add(os49Plus);
+        allColumns.add(odUnder2); 
+        allColumns.add(od2Under5); 
+        allColumns.add(od5Under15); 
+        allColumns.add(od15To49); 
+        allColumns.add(od49Plus);
+        allColumns.add(foTotals);
+        
         String params = "startDate=${startDate},endDate=${endDate}";
 
-        Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
-        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
         Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
         Concept other = Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115");
        
 
         dsd.addColumn("S1", "Expected Number of SMC's Performed(Monthly Targets)", ReportUtils.map(indicatorLibrary.expectedNumberOfSmcPerfomed(), params), "");
-        EmrReportingUtils.addRow(dsd, "S2FS", "Number of male circumcised - Facility/Surgical", ReportUtils.map(indicatorLibrary.facilityAndSurgicalSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
-        EmrReportingUtils.addRow(dsd, "S2FD", "Number of male circumcised - Facility/Device", ReportUtils.map(indicatorLibrary.facilityAndDeviceSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
-        EmrReportingUtils.addRow(dsd, "S2OS", "Number of male circumcised - Outreach/Surgical", ReportUtils.map(indicatorLibrary.outreachAndSurgicalSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
-        EmrReportingUtils.addRow(dsd, "S2OD", "Number of male circumcised - Outreach/Device", ReportUtils.map(indicatorLibrary.outreachAndDeviceSmc(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06"));
+        EmrReportingUtils.addRow(dsd, "S2", "Number of male circumcised", ReportUtils.map(indicatorLibrary.expectedNumberOfSmcPerfomed(), params), allColumns, Arrays.asList("01", "02", "03", "04", "05", "06","07","08","09","10","11","12","13","14","15","16","17","18","19","20","21"));
         dsd.addColumn("S3HP", "SMC Clients Counseled, Tested/HIV+", ReportUtils.map(indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")), params), "");
         dsd.addColumn("S3HN", "SMC Clients Counseled, Tested/HIV-", ReportUtils.map(indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")), params), "");
         dsd.addColumn("S3HT", "Total SSMC Clients Counseled, Tested", ReportUtils.map(indicatorLibrary.counseledAndTested(), params), "");
@@ -161,7 +199,7 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
         dsd.addColumn("S5M", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("ba7ae66b-8108-45b6-a34d-e842cf31c623")), params), "");
         dsd.addColumn("S5S", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(Dictionary.getConcept("44f95fcb-1054-466f-906d-45a41ef07297")), params), "");
         dsd.addColumn("S5T", "Moderate", ReportUtils.map(indicatorLibrary.circumcisedAndExperiencedAdverseEvents(), params), "");
-        dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.surgicalTechnique(), params),"");
+        dsd.addColumn("S6SC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithSurgicalTechnique(), params),"");
         dsd.addColumn("S6DC", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(forceps), params),"");
         dsd.addColumn("S6OT", "Surgical SMC", ReportUtils.map(indicatorLibrary.clientsCircumcisedWithTechnique(other), params),"");
         

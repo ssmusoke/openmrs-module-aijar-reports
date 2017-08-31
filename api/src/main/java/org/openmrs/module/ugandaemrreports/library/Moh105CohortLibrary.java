@@ -15,6 +15,7 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
@@ -23,15 +24,18 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptyProcedureMethods;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptySiteType;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SmcReturnFollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -104,7 +108,7 @@ public class Moh105CohortLibrary {
      * @return
      */
     public CohortDefinition hivPostiveBeforeFirstANCVisit() {
-        return definitionLibrary.hasANCObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
+        return definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.HIV_STATUS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
     }
 
     /**
@@ -202,20 +206,332 @@ public class Moh105CohortLibrary {
     }
 
     /**
-     * combine the has obs cohort definiton with the encounter of anc
+     * combine the has obs cohort definiton with the encounter provided
      * @return CohortDefinition
      */
     public CohortDefinition hasObsAndEncounter(String encounterType, Concept q, Concept ... a){
+    	return hasObsAndEncounter(encounterType, q, Arrays.asList(a));
+    }
+
+	public CohortDefinition hasObsAndEncounter(String encounterType, Concept q, List<Concept> a) {
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("hasEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(q, a), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hasEncounter AND hasObs");
+        return cd;
+	}    
+    
+    
+    /**
+     * Mothers admitted to Maternity Clinic
+     *
+     * @return the cohort definition
+     */
+    public CohortDefinition maternityAdmissions() {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.MATERNITY_ENCOUNTER)));
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        return cd;
+    }    
+
+	/**
+	 * HIV Positive Persons
+	 * @return CohortDefinition 
+	 */
+    public CohortDefinition hivPositivePersons() {
+    	return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_STATUS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
+    }    
+    
+    /**
+     * HIV+ women
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveWomen() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, encounterType)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(q, a), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("ancEncounter AND hasObs");
+        cd.setName("HIV+ Women");
+        cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("female AND hivPositive");
         return cd;
     }
 
+    /**
+     * Deliveries in unit
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesInUnit() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREGNANCY_OUTCOME));
+    }    
+    
+    /**
+     * HIV+ women initiating ARV in maternity
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveWomenInitiatingArvInMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Initiating Maternity");        
+        cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.ARV_REGIMEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND InitiatingARV AND maternityAdmissions");
+        return cd;
+    }
+    
+    /**
+     * Deliveries to HIV+ women
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesToHIVPositiveWomen() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Women Deliveries");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveries", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND deliveries");
+        return cd;
+    }
+
+    /**
+     * Live Births 
+     * @return Cohort Definition
+     */
+	public CohortDefinition liveBirths() {
+		return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01"));
+	}    
+    
+    /**
+     * Live Birth Deliveries to HIV+ women
+     * @return CohortDefinition
+     */
+    public CohortDefinition liveBirthDeliveriesToHIVPositiveWomen() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Women Deliveries");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveries", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREGNANCY_OUTCOME)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND deliveries AND liveBirths");
+        return cd;
+    }
+
+    /**
+     * No. of mothers who initiated breastfeeding within the 1st hour after delivery - Total
+     * @return CohortDefinition
+     */
+    public CohortDefinition initiatedBreastfeedingWithinFirstHourAfterDelivery() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("a4063d62-a936-4a26-9c1c-a0fb279a71b1"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+
+    /**
+     * No. of mothers who initiated breastfeeding within the 1st hour after delivery - HIV+
+     * @return CohortDefinition
+     */
+    public CohortDefinition initiatedBreastfeedingWithinFirstHourAfterDeliveryAndHIVPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Initiated breastfeeding within 1 hour after delivery and HIV+");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("initiatedBreastFeedingWithin1HourDelivery", ReportUtils.map(initiatedBreastfeedingWithinFirstHourAfterDelivery(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("hivPositive AND initiatedBreastFeedingWithin1HourDelivery");
+        return cd;
+    }
+
+    /**
+     * Babies born with low birth weight
+     * @return CohortDefinition
+     */
+	public CohortDefinition babiesBornWithLowBirthWeight() {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Babies born with low birth weight");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setQuestion(Dictionary.getConcept("dcce847a-30ab-102d-86b0-7a5022ba4115"));
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.setOperator1(RangeComparator.LESS_THAN);
+        cd.setValue1(2.5);
+        return cd;
+	}
+        
+    /**
+     * Maternal Deaths
+     * @return CohortDefinition
+     */
+    public CohortDefinition maternalDeaths() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"),Dictionary.getConcept("17fcfd67-a1a2-4361-9915-ad4e81a7a61d"));
+    }
+        
 	/**
+	 * Number of HIV+ infants from EID Enrolled in care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition hivPositiveInfantsFromEidEnrolledInCare() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of HIV+ infants from EID enrolled in care");
+		cd.addSearch("hivPositiveInfantsFromEid",
+		    ReportUtils.map(hivPositiveInfantsFromEid(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("infantsFromEidEnrolledInCare",
+		    ReportUtils.map(infantsFromEidEnrolledInCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString("hivPositiveInfantsFromEid AND infantsFromEidEnrolledInCare");
+		return cd;
+	}
+	
+	/**
+	 * Number of infants from EID Enrolled in care
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition infantsFromEidEnrolledInCare() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.ENROLLED_IN_HIV_CARE_PROGRAM),
+		    Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+	}
+	
+	/**
+	 * Number of HIV+ infants from EID
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition hivPositiveInfantsFromEid() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FINAL_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+	
+	/**
+	 * Number of DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition dnaPcrResultsReturnedFromTheLab() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of DNA PCR results returned from the lab");
+		cd.addSearch("firstDnaPCRResultsReturnedFromTheLab",
+		    ReportUtils.map(firstDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("secondDnaPCRResultsReturnedFromTheLab",
+		    ReportUtils.map(secondDnaPCRResultsReturnedFromTheLab(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString("firstDnaPCRResultsReturnedFromTheLab AND secondDnaPCRResultsReturnedFromTheLab");
+		return cd;
+	}
+	
+	/**
+	 * Number of DNA PCR results returned from the lab - given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition dnaPcrResultsReturnedFromTheLabGivenToCareGiver() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+		cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+		cd.setName("Number of DNA PCR results returned from the lab - given to care giver");
+		cd.addSearch("firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver", ReportUtils.map(
+		    firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.addSearch("secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver", ReportUtils.map(
+		    secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+		cd.setCompositionString(
+		    "firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver AND secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver");
+		return cd;
+	}
+	
+	/**
+	 * Number of 1st DNA PCR results returned from the lab given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLabGivenToCareGiver() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.DATE_FIRST_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER));
+	}
+	
+	/**
+	 * Number of 2nd DNA PCR results returned from the lab given to care giver
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLabGivenToCareGiver() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.DATE_SECOND_EID_PCR_TEST_RESULT_GIVEN_TO_CARE_PROVIDER));
+	}
+	
+	/**
+	 * Number of 1st DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLab() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FIRST_EID_PCR_TEST_RESULT));
+	}
+	
+	/**
+	 * Number of 2nd DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLab() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.SECOND_EID_PCR_TEST_RESULT));
+	}
+	
+	/**
+	 * Number of HIV+ 1st DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition firstDnaPCRResultsReturnedFromTheLabHivPositive() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.FIRST_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+	
+	/**
+	 * Number of HIV+ 2nd DNA PCR results returned from the lab
+	 * 
+	 * @return CohortIndicator
+	 */
+	public CohortDefinition secondDnaPCRResultsReturnedFromTheLabHivPositive() {
+		return hasObsAndEncounter(Metadata.EncounterType.EID_ENCOUNTER_PAGE,
+		    Dictionary.getConcept(Metadata.Concept.SECOND_EID_PCR_TEST_RESULT),
+		    Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}
+
+	public CohortDefinition referralsToMaternityUnit() {
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasTextObs(Dictionary.getConcept(Metadata.Concept.REFERRAL_NUMBER), "REF"), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("maternityAdmissions AND hasObs");
+        return cd;
+
+	}
+
+	public CohortDefinition maternityReferralsOut() {
+    	CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hasObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"), Dictionary.getConcept("6e4f1db1-1534-43ca-b2a8-5c01bc62e7ef")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("maternityAdmissions AND hasObs");
+        return cd;
+
+	}
+
+  /**
 	 * Number of Tetanus Immunizations done
 	 * 
 	 * @return CohortIndicator
@@ -271,109 +587,72 @@ public class Moh105CohortLibrary {
 	        return cd;
 		}
 	} 
-	
-//cohorts for SMC 105 section
-	Concept siteType = Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802");
-	Concept facility = Dictionary.getConcept("f2aa1852-fcfe-484b-a6ef-1613bd3a1a7f");
-	Concept outreach = Dictionary.getConcept("03596df2-09bc-4d1f-94fd-484411ac9012");
-	Concept camp = Dictionary.getConcept("63e5387f-74f6-4a92-a71f-7b5dd3ed8432");
-	Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
-    Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
-    Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
-	
-	/*
-	 * empty  procedures should be considered surgical
-	 */
-	public CohortDefinition surgical() {
-		CompositionCohortDefinition comp = new CompositionCohortDefinition();
-		comp.setName("surgical procedure");
-		comp.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-		comp.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-		
-		SqlCohortDefinition cd = new SqlCohortDefinition();
-		cd.setName("empty");
-        cd.setQuery("SELECT person_id FROM obs WHERE concept_id not in(99674)");
-        
-        comp.addSearch("surgical", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), dorsal, sleeve), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        comp.addSearch("empty", ReportUtils.map(cd));
-        comp.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        comp.setCompositionString("(surgical OR empty) AND smcEncounter");
+//coding for empty site type to facility
+	public CohortDefinition emptySiteTypeToMappedToFaciity() {
+		CalculationCohortDefinition cd = new CalculationCohortDefinition("emptySiteType", new EmptySiteType());
+		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 		return cd;
 	}
-    /**
-     *
-     * @return CohortDefinition
-     */
-    public CohortDefinition siteTypeFacilitySurgicalCircumcision(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        
-        cd.setName("Facility and surgical");
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	
+	public CohortDefinition emptyProcedureMethodMappedToSurgical() {
+		CalculationCohortDefinition cd = new CalculationCohortDefinition("emptyProcedureMethods", new EmptyProcedureMethods());
+		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+		return cd;
+	}
+	
+	//combining all that constitute to facility site type
+	public CohortDefinition facilitySiteType() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		cd.setName("Facility site type");
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(siteType, facility), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("surgical", ReportUtils.map(surgical(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("facilityObs", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("f2aa1852-fcfe-484b-a6ef-1613bd3a1a7f")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("emptyObs", ReportUtils.map(emptySiteTypeToMappedToFaciity(), "onDate=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("facility AND surgical AND smcEncounter");
-
+        cd.setCompositionString("(facilityObs OR emptyObs) AND smcEncounter");
         return cd;
-
-    }
-
-    /**
-     *
-     * @return CohortDefinition
-     */
-    public CohortDefinition siteTypeFacilityDeviceCircumcision(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
-        cd.setName("Facility and Device");
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	}
+	
+	//combine all that constitutes the outreach site type
+		public CohortDefinition outreachSiteType() {
+			CompositionCohortDefinition cd = new CompositionCohortDefinition();
+			cd.setName("Outreach site type");
+			cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+	        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("ac44b5f2-cf57-43ca-bea0-8b392fe21802"), Dictionary.getConcept("03596df2-09bc-4d1f-94fd-484411ac9012"), Dictionary.getConcept("63e5387f-74f6-4a92-a71f-7b5dd3ed8432")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        cd.setCompositionString("outreach AND smcEncounter");
+	        return cd;
+		}
+	//combining all that constitutes the surgical procedure methods
+	public CohortDefinition surgicalProcedureMethod() {
+		CompositionCohortDefinition cd = new CompositionCohortDefinition();
+		Concept dorsal = Dictionary.getConcept("e63ac8e3-5027-43c3-9421-ce995ea039cf");
+        Concept sleeve = Dictionary.getConcept("0ee1b2ae-2961-41d6-9fe0-7d9f876232ae");
+		cd.setName("procedure method - surgical");
+		cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("facility", ReportUtils.map(definitionLibrary.hasObs(siteType, facility), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("device", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), forceps), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("procedureMethod", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), dorsal, sleeve), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("emptyProcedureObs", ReportUtils.map(emptyProcedureMethodMappedToSurgical(), "onDate=${onOrBefore}"));
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("facility AND device AND smcEncounter");
-
+        cd.setCompositionString("(procedureMethod OR emptyProcedureObs) AND smcEncounter");
         return cd;
-
-    }
-
-    /**
-     *
-     * @return CohortDefinition
-     */
-    public CohortDefinition siteTypeOutReachSurgicalCircumcision(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.setName("Outreach and surgical");
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(siteType, outreach, camp), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("surgical", ReportUtils.map(surgical(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("outreach AND surgical AND smcEncounter");
-
-        return cd;
-
-    }
-    /**
-     *
-     * @return CohortDefinition
-     */
-
-    public CohortDefinition siteTypeOutReachDeviceCircumcision(){
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.setName("Outreach and device");
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("outreach", ReportUtils.map(definitionLibrary.hasObs(siteType, outreach, camp), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("device", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), forceps), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("outreach AND device AND smcEncounter");
-
-        return cd;
-
-    }
-    /**
+	}
+	
+	//combining all that constitutes the surgical procedure methods
+		public CohortDefinition deviceProcedureMethod() {
+			CompositionCohortDefinition cd = new CompositionCohortDefinition();
+			Concept forceps = Dictionary.getConcept("0308bd0a-0e28-4c62-acbd-5ea969c296db");
+			cd.setName("procedure method - device");
+			cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+	        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+	        cd.addSearch("device", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("bd66b11f-04d9-46ed-a367-2c27c15d5c71"), forceps), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+	        cd.setCompositionString("device AND smcEncounter");
+	        return cd;
+		}
+		
+     /**
      *@param answer
      * @return CohortDefinition
      */
