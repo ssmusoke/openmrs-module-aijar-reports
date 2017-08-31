@@ -248,7 +248,6 @@ public class CommonCohortLibrary {
         cd.setMaxAge(maxAge);
         cd.setMaxAgeUnit(DurationUnit.YEARS);
         return cd;
-	}
-    
+	}    
 }
 

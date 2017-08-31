@@ -19,20 +19,19 @@ import java.util.Date;
 import java.util.List;
 
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-/**
- * Created by @Moshonk on 06/04/17.
- */
 @Component
 public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
 
@@ -91,8 +90,15 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
+        
+        //connect the report definition to the dsd
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
+        rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
 
-
+        return rd;
+    }
+    
+    protected DataSetDefinition eid() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.htcAgeGroups(), "effectiveDate=${endDate}"));
@@ -116,13 +122,10 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.H12","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
         addRowWithColumns(dsd, "4.H13","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
         addRowWithColumns(dsd, "4.H14","H14-Number of individuals tested as MARPS", indicatorLibrary.individualsCounselledAndTestedMarps());
-        addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500μ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
+        addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500µ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
         addRowWithColumns(dsd, "4.H16","H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare());
         
-        //connect the report definition to the dsd
-        rd.addDataSetDefinition("Section3-4", Mapped.mapStraightThrough(dsd));
-
-        return rd;
+        return dsd;
     }
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
@@ -159,4 +162,12 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
         l.add(new Parameter("endDate", "End Date", Date.class));
         return l;
     }
+    
+    protected DataSetDefinition settings() {
+        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
+        cst.setName("S");
+        cst.setGp("ugandaemr.dhis2.organizationuuid");
+        return cst;
+    }
+
 }

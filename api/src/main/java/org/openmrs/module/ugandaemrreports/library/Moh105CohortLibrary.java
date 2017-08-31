@@ -1356,5 +1356,4 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("visit AND smcEncounter");
     return cd;
     }
-
 }

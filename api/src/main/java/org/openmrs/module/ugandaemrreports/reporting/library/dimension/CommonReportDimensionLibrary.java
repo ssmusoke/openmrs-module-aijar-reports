@@ -92,6 +92,19 @@ public class CommonReportDimensionLibrary {
         return dim;
     }
     
+	public CohortDefinitionDimension htcAgeGroups() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (18Months-4Years, 5-9Yrs, 10-14Yrs, 15-18Yrs, 19-49Yrs, >49Yrs)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Between18MonthsAnd4Years", map(commonCohortLibrary.agedAtLeastMonthsAgedAtMostYears(18,4), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between5And9Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(5,9), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between10And14Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(10, 14), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between15And18Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 18), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between19And49Yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(19, 49), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterThan49Yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
+        return dim;
+	}
+    
     /**
      * Dimension of age using the 3 standard age groups for Maternity
      * @return the dimension
