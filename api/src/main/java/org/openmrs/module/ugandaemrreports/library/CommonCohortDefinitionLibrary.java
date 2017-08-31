@@ -1,5 +1,10 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
@@ -21,12 +26,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
 
 /**
  * Library of common Cohort definitions
@@ -217,7 +216,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
             cd.setValueList(answers);
         }
         return cd;
-	}
+	}    
     
     /**
      * Has observations in an ANC encounter
@@ -305,6 +304,6 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      */
     public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
         return hasNumericObs(question, operator1, value1, null, null);
-    }
+    }    
     
 }

@@ -761,4 +761,135 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("follow up visits", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    //Begin HIV/AIDS counseling and testing (HCT)
+    
+    /**
+     * H1-Number of Individuals counseled
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselled() {
+        return cohortIndicator("Number of Individuals counseled", map(cohortLibrary.counseledAsIndividuals(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H2-Number of Individuals tested
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTested() {
+        return cohortIndicator("Number of Individuals tested", map(cohortLibrary.individualsTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H3-Number of Individuals who received HIV test results
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoReceivedHIVTestResults() {
+        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.individualsWhoReceivedHIVTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H4- Number of individuals who received HIV results in the last 12months
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoReceivedHIVTestResultsInLast12Months() {
+        return cohortIndicator("Number of Individuals who received HIV test results in last 12 Months", map(cohortLibrary.individualsWhoReceivedHIVTestResultsInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H5 – Number of individuals tested for the first time
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedForTheFirstTime() {
+        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestedFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H6-Number of Individuals who tested HIV positive
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoTestedHivPositive() {
+        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.individualsWhoTestedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H7-HIV positive individuals with presumptive TB
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsWhoTestedHivPositiveAndWithPresumptiveTb() {
+        return cohortIndicator("HIV positive individuals with presumptive TB", map(cohortLibrary.individualsWhoTestedHivPositiveAndWithPresumptiveTB(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H8-Number of Individuals tested more than twice in the last 12 months
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedMoreThanTwiceInLast12Months() {
+        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.individualsTestedMoreThanTwiceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H9-Number of individuals who were Counseled and Tested together as a Couple
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounseledAndTestedAsCouple() {
+        return cohortIndicator("Number of individuals who were Counseled and Tested together as a Couple", map(cohortLibrary.individualsCounseledAndTestedAsACouple(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H10-Number of individuals who were Tested and Received results together as a Couple
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsTestedAndReceivedResultsAsACouple() {
+        return cohortIndicator("Number of individuals who were Tested and Received results together as a Couple", map(cohortLibrary.individualsTestedAndReceivedResultsAsACouple(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H11-Number of couples with Concordant positive results
+     * @return CohortIndicator
+     */
+    public CohortIndicator couplesWithConcordantPositiveResults() {
+        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPostiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }    
+
+    /**
+     * H12- Number of couples with Discordant results
+     * @return CohortIndicator
+     */
+    public CohortIndicator couplesWithDiscordantResults() {
+        return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.couplesWithDiscordantResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }    
+    
+    /**
+     * H13-Individuals counseled and tested for PEP
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselledAndTestedForPep() {
+        return cohortIndicator("Individuals counseled and tested for PEP", map(cohortLibrary.individualsCounseledAndTestedForPep(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H14-Number of individuals tested as MARPS
+     * @return CohortIndicator
+     */
+    public CohortIndicator individualsCounselledAndTestedMarps() {
+        return cohortIndicator("Individuals counseled and tested as MARPS", map(cohortLibrary.individualsCounseledAndTestedAsMarps(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * H15-Number of positive individuals who tested at an early stage (CD4>500µ)
+     * @return CohortIndicator
+     */
+    public CohortIndicator hivPositiveIndividualsTestedAtAnEarlyStage() {
+        return cohortIndicator("Number of positive individuals who tested at an early stage (CD4>500µ)", map(cohortLibrary.hivPositiveIndividualsTestedAtAnEarlyStage(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    
+    /**
+     * H16-Number of clients who have been linked to care
+     * @return CohortIndicator
+     */
+    public CohortIndicator clientsLinkedToCare() {
+        return cohortIndicator("Number of clients who have been linked to care", map(cohortLibrary.clientsLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    //End HIV/AIDS counseling and testing (HCT)        
+	
 }
