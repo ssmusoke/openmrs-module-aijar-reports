@@ -19,11 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -92,7 +94,14 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
+        //connect the report definition to the dsd
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
+        rd.addDataSetDefinition("D", Mapped.mapStraightThrough(opdDiagnosis()));
+        
+        return rd;
+    }
 
+    protected DataSetDefinition opdDiagnosis() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForOutPatient(), "effectiveDate=${endDate}"));
@@ -248,12 +257,9 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "1.1R", "1.1 OUTPATIENT ATTENDANCE - Re-attendance", indicatorLibrary.repeatOutPatientAttendance());
         addRowWithColumns(dsd, "1.1T", "1.1 OUTPATIENT ATTENDANCE - Total attendance", indicatorLibrary.totalOutPatientAttendance());
 
-        //connect the report definition to the dsd
-        rd.addDataSetDefinition("1.3-OutPatientDiagnosis", Mapped.mapStraightThrough(dsd));
-
-        return rd;
+        return dsd;
     }
-
+    
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
    	
     	addIndicator(dsd, key + "aM", label + " (Between 0 and 28 Days) Male", cohortIndicator, "gender=M|age=Between0And28Days");
@@ -296,4 +302,11 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         l.add(new Parameter("endDate", "End Date", Date.class));
         return l;
     }
+    
+    protected DataSetDefinition settings() {
+        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
+        cst.setName("S");
+        cst.setGp("ugandaemr.dhis2.organizationuuid");
+        return cst;
+    }    
 }
