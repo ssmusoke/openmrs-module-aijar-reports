@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by carapai on 05/07/2016.
  */
 @Handler(supports = FUStatusPatientDataDefinition.class, order = 50)
 public class FUStatusPatientDataDefinitionEvaluator implements PatientDataEvaluator {

@@ -6,7 +6,6 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import java.util.Date;
 
 /**
- * Created by carapai on 06/04/2016.
  */
 public class ARTDatasetDefinition extends BaseDataSetDefinition {
 

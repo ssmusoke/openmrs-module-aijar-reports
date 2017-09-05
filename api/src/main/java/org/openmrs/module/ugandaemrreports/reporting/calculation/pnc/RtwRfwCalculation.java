@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Created by Nicholas Ingosi on 5/16/17.
  */
 public class RtwRfwCalculation extends AbstractPatientCalculation {
     @Override

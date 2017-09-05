@@ -23,7 +23,6 @@ import java.util.List;
 import static org.openmrs.module.ugandaemrreports.common.Helper.getDates;
 
 /**
- * Created by carapai on 05/07/2016.
  */
 @Handler(supports = CD4PatientDataDefinition.class)
 public class CD4PatientDataEvaluator implements PatientDataEvaluator {

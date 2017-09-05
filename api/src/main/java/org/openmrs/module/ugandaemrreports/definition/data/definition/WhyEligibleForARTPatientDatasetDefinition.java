@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by carapai on 16/05/2016.
  */
 public class WhyEligibleForARTPatientDatasetDefinition extends BaseDataDefinition implements PatientDataDefinition {
 

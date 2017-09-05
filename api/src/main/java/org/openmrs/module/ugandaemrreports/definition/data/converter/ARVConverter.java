@@ -6,7 +6,6 @@ import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
- * Created by carapai on 06/07/2016.
  */
 public class ARVConverter implements DataConverter {
 

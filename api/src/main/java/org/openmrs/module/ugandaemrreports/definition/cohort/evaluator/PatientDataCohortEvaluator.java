@@ -12,7 +12,6 @@ import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientD
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 @Handler(supports = {PatientDataCohortDefinition.class})
 public class PatientDataCohortEvaluator implements CohortDefinitionEvaluator {

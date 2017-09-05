@@ -18,7 +18,6 @@ import org.openmrs.module.reporting.dataset.definition.BaseDataSetDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 /**
- * Created by Nicholas Ingosi on 7/19/17.
  * Custom dataset that will be used to supply additional information in the evaluation contex
  * such that they can be used on a reporting template just like any other columns
  */

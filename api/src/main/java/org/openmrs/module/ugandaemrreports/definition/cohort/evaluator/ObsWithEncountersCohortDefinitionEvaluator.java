@@ -21,7 +21,6 @@ import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 @Handler(supports = { ObsWithEncountersCohortDefinition.class })
 public class ObsWithEncountersCohortDefinitionEvaluator implements CohortDefinitionEvaluator {

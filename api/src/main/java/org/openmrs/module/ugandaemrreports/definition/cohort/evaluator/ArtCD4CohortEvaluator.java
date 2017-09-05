@@ -21,7 +21,6 @@ import java.util.List;
 import static org.openmrs.module.ugandaemrreports.common.Helper.getDates;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 @Handler(supports = {ArtCD4CohortDefinition.class})
 public class ArtCD4CohortEvaluator implements CohortDefinitionEvaluator {

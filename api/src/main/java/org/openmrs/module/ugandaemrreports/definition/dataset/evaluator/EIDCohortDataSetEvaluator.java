@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by carapai on 11/05/2016.
  */
 @Handler(supports = {EIDCohortDataSetDefinition.class})
 public class EIDCohortDataSetEvaluator implements DataSetEvaluator {

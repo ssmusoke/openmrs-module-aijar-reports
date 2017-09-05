@@ -7,7 +7,6 @@ import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinitio
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 /**
- * Created by carapai on 13/09/2016.
  */
 public class FirstLineSubstitutionPatientDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
     @Override
