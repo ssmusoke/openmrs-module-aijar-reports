@@ -219,7 +219,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 	}    
     
     /**
-     * Has observations in an ANC encounter
+     * Patients who have a text obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param answers the answers to include
      * @return the cohort definition
@@ -247,13 +247,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         }
         return cd;
     }
-
-    /**
-     * Patients who have a text obs between ${onOrAfter} and ${onOrBefore}
-     * @param question the question concept
-     * @param answers the answers to include
-     * @return the cohort definition
-     */    
+    
     public CohortDefinition hasTextObs(Concept question, String... answers) {
         TextObsCohortDefinition cd = new TextObsCohortDefinition();
         cd.setName("has obs between dates");

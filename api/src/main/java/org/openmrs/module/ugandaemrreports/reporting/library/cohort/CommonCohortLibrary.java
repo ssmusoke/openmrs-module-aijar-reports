@@ -77,6 +77,7 @@ public class CommonCohortLibrary {
         cd.setName("aged at least " + minAge);
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
         return cd;
     }
 
