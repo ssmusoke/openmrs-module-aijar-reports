@@ -137,6 +137,126 @@ public class Moh105CohortLibrary {
         cd.addSearch("assessedBy", ReportUtils.map(assessedByNumericValues(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("assessedBy AND ancEncounter");
+        cd.setCompositionString("femaleAndHasAncVisit AND (takingIron OR takingFolic)");
+        return cd;
+    }
+        
+    /**
+     * Mothers admitted to Maternity Clinic
+     *
+     * @return the cohort definition
+     */
+    public CohortDefinition maternityAdmissions() {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.MATERNITY_ENCOUNTER)));
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        return cd;
+    }    
+
+	/**
+	 * HIV Positive Persons
+	 * @return CohortDefinition 
+	 */
+    public CohortDefinition hivPositivePersons() {
+    	return definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
+    }    
+    
+    /**
+     * HIV+ women
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveWomen() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Women");
+        cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("female AND hivPositive");
+        return cd;
+    }
+
+    /**
+     * Deliveries in unit
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesInUnit() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }    
+    
+    /**
+     * Deliveries in unit 10-19
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesInUnit10To19() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Deliveries in unit 10-19");
+        cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("Age10To19", ReportUtils.map(definitionLibrary.agedBetween(10,19), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age10To19");
+        return cd;
+    }    
+
+    /**
+     * Deliveries in unit 20-24
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesInUnit20To24() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Deliveries in unit 20-24");
+        cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age20To24");
+        return cd;
+    }    
+
+    /**
+     * Deliveries in unit 25 and above
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesInUnit25AndAbove() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Deliveries in unit 25 and above");
+        cd.addSearch("deliveriesInUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("Age25AndABove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "endDate=${onOrBefore}"));
+        cd.setCompositionString("deliveriesInUnit AND Age25AndABove");
+        return cd;
+    }    
+    
+    /**
+     * HIV+ women initiating ARV in maternity
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveWomenInitiatingArvInMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Initiating Maternity");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("35ae2043-a3b0-48de-8e22-05f377ac39a2")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND InitiatingARV");
+        return cd;
+    }
+    
+    /**
+     * Deliveries to HIV+ women
+     * @return CohortDefinition
+     */
+    public CohortDefinition deliveriesToHIVPositiveWomen() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Women Deliveries");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveries", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive AND deliveries");
         return cd;
     }
 
@@ -187,6 +307,121 @@ public class Moh105CohortLibrary {
         cd.addSearch("hasVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
     
         cd.setCompositionString("hasAppointment NOT hasVisit");
+		return cd;
+    }
+        
+    /** Maternal deaths - Age 20-24
+     * @return CohortDefinition
+     */
+    public CohortDefinition maternalDeathsAge20To24() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Maternal deaths 20-24");
+        cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("Age20To24", ReportUtils.map(definitionLibrary.agedBetween(20,24), "endDate=${onOrBefore}"));
+        cd.setCompositionString("maternalDeaths AND Age20To24");
+        return cd;
+    }
+
+    /**
+     * Maternal deaths - Age 25 and above
+     * @return CohortDefinition
+     */
+    public CohortDefinition maternalDeathsAge25AndAbove() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Maternal deaths 25 and above");
+        cd.addSearch("maternalDeaths", ReportUtils.map(maternalDeaths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("Age25AndAbove", ReportUtils.map(definitionLibrary.agedAtLeast(25), "endDate=${onOrBefore}"));
+        cd.setCompositionString("maternalDeaths AND Age25AndAbove");
+        return cd;
+    }
+
+    /**
+     * All Family Planning Users
+     * @return CohortDefinition
+     */    
+	public CohortDefinition allFamilyPlanningUsers() {
+		return definitionLibrary.hasObs(
+			Dictionary.getConcept(Metadata.Concept.FAMILY_PLANNING_METHOD),
+			Dictionary.getConceptList("38aa1dc0-1aaa-4bdd-b26f-28f960dfb16c,"
+				+ "4b0899f2-395e-4e0f-8b58-d304b214615e,"
+				+ "82624AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+				+ "670b7048-d71e-483a-b2ec-f10d2326dd84,"
+				+ "dc882c84-30ab-102d-86b0-7a5022ba4115,"
+				+ "aeee4ccf-cbf8-473c-9d9f-846643afbf11,"
+				+ "dcb2f595-30ab-102d-86b0-7a5022ba4115,"
+				+ "fed07c37-7bb6-4baa-adf9-596ce4c4e93c,"
+				+ "dd4c3016-13cf-458a-8e93-fe54460be667,"
+				+ "dcb30ba3-30ab-102d-86b0-7a5022ba4115,"
+				+ "dcb30381-30ab-102d-86b0-7a5022ba4115,"
+				+ "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,"
+				+ "dcb2fba9-30ab-102d-86b0-7a5022ba4115,"
+				+ "dcdd8d8d-30ab-102d-86b0-7a5022ba4115,"
+				+ "bb83fd9d-24c5-4d49-89c0-97e13c792aaf,"
+				+ "dcdd91a7-30ab-102d-86b0-7a5022ba4115,"
+				+ "efbe5bf3-3411-4949-855b-636ada05f5e7,"
+				+ "336650b2-65f7-4202-80eb-3c6437878262,"
+				+ "3e18cafc-8edc-4648-94b3-835de371a2f2,"
+				+ "aa14bbbb-cbbe-445d-8958-9f521220b0fd,"
+				+ "dc692ad3-30ab-102d-86b0-7a5022ba4115"));
+	}
+	
+    /**
+     * HIV+ Family Planning Users 
+     * @return CohortDefinition
+     */
+    public CohortDefinition hivPositiveFamilyPlanningUsers() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ And Family Planning Users");
+        cd.addSearch("fpUsers", ReportUtils.map(allFamilyPlanningUsers(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("fpUsers AND hivPositive");
+        return cd;
+    }
+    
+    //Begin HCT Section
+    
+    /**
+     * Pre-test Counseling done
+     * @return CohortDefinition
+     */
+    public CohortDefinition pretestCounselingDone() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PRETEST_COUNSELING_DONE),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"));
+    }
+
+    /**
+     * Counseled as individuals
+     * @return CohortDefinition
+     */
+    public CohortDefinition counseledAsIndividuals() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELING_SESSION_TYPE),Dictionary.getConcept("c61ea879-2a23-484d-bec1-ab177a926265"));
+    }
+
+    /**
+     * Counseled as couples
+     * @return CohortDefinition
+     */
+    public CohortDefinition counseledAsACouple() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELING_SESSION_TYPE),Dictionary.getConcept("6ef3d796-7940-44fe-b0d9-06ab1b824e5b"));
+    }
+
+    /**
+     * Individuals Counseled 
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsCounseled() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Counseled");
+        cd.addSearch("PretestCounselingDone", ReportUtils.map(pretestCounselingDone(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PretestCounselingDone AND counseledAsIndividuals");
         return cd;
     }
 
@@ -202,6 +437,28 @@ public class Moh105CohortLibrary {
         cd.addSearch("anyVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 10.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("trr AND anyVisit AND ancEncounter");
+		return cd;
+    }
+        
+     /** With HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition haveHivTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS));
+    }    
+    
+    /**
+     * Individuals Tested 
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsTested() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Tested");
+        cd.addSearch("withHivTestResults", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("withHivTestResults AND counseledAsIndividuals");
         return cd;
     }
 
@@ -223,82 +480,471 @@ public class Moh105CohortLibrary {
         return cd;
 	}    
     
+    /** Received HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition receivedHivTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.RECEIVED_HIV_TEST_RESULTS),Dictionary.getConceptList(Metadata.Concept.YES_CIEL));
+    }
+
+    /**
+     * Tested HIV Positive
+     * @return CohortDefinition
+     */    
+    public CohortDefinition testedHivPositive() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
+	}    
+
+    /**
+     * Tested HIV Positive
+     * @return CohortDefinition
+     */    
+    public CohortDefinition testedHivNegative() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE));
+	}    
+	
+    /**
+     * Ever Tested for HIV Before
+     * @return CohortDefinition
+     */
+    public CohortDefinition everTestedForHivBefore() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+    }    
     
     /**
-     * Mothers admitted to Maternity Clinic
-     *
-     * @return the cohort definition
+     * Tested in last 12 Months
+     * @return CohortDefinition
      */
-    public CohortDefinition maternityAdmissions() {
-        EncounterCohortDefinition cd = new EncounterCohortDefinition();
-        cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.MATERNITY_ENCOUNTER)));
+    public CohortDefinition testedInLast12Months() {
+    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 0);    	
+    }
+
+    /**
+     * Tested more than twice in the last 12 Months
+     * @return CohortDefinition
+     */    
+	public CohortDefinition testedMoreThanTwiceInLast12Months() {
+    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 2);
+    }    
+    
+    /**
+     * Individuals who received HIV Test Results
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsWhoReceivedHIVTestResults() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results");
+        cd.addSearch("receivedHivTestResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("receivedHivTestResults AND counseledAsIndividuals");
         return cd;
-    }    
+	}    
+
+    /**
+     * Number of individuals who received HIV results in the last 12months
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsWhoReceivedHIVTestResultsInLast12Months() {
+	    /**
+	     * Individuals Who Received HIV Test Results
+	     * @return CohortDefinition
+	     */
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results in Last 12 Months");
+        cd.addSearch("receivedHivTestResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("TestedInLast12Months", ReportUtils.map(testedInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("receivedHivTestResults AND counseledAsIndividuals AND TestedInLast12Months");
+        return cd;
+	}    
+    
+    /**
+     * Individuals Tested for the first time
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsTestedFirstTime() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Tested First Time");
+        cd.addSearch("testedFirstTime", ReportUtils.map(everTestedForHivBefore(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedFirstTime AND counseledAsIndividuals");
+        return cd;
+    }
+
+    /**
+     * Individuals who Tested HIV Positive
+     * @return CohortDefinition
+     */
+    public CohortDefinition individualsWhoTestedHivPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who Tested HIV Positive");
+        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedHivPositive AND counseledAsIndividuals");
+        return cd;
+	}
+
+    /**
+     * HIV positive individuals with presumptive TB
+     * @return CohortDefinition
+     */
+	public CohortDefinition individualsWhoTestedHivPositiveAndWithPresumptiveTB() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who Tested HIV Positive And With Presumptive TB");
+        cd.addSearch("tbSuspect", ReportUtils.map(tbSuspect(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedHivPositive AND counseledAsIndividuals AND tbSuspect");
+        return cd;
+	}
+
+    /**
+     * TB Suspect
+     * @return CohortDefinition
+     */
+	public CohortDefinition tbSuspect() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TB_SUSPECT), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+	}
 
 	/**
-	 * HIV Positive Persons
-	 * @return CohortDefinition 
+	 * Individuals tested more than twice in the last 12 months
+	 * @return CohortDefinition
+	 */			
+	public CohortDefinition individualsTestedMoreThanTwiceInLast12Months() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals tested more than twice in the last 12 months");
+        cd.addSearch("testedMoreThanTwiceInlast12Months", ReportUtils.map(testedMoreThanTwiceInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedMoreThanTwiceInlast12Months AND counseledAsIndividuals");
+        return cd;		
+	}
+
+	/**
+	 * Individuals who were Counseled and Tested together as a Couple
+	 * @return CohortDefinition
+	 */			
+	public CohortDefinition individualsCounseledAndTestedAsACouple() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Counseled and Tested together as a Couple");
+        cd.addSearch("tested", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("tested AND CounseledAsACouple");
+        return cd;
+	}
+
+	/**
+	 * Number of individuals who were Tested and Received results together as a Couple
+	 * @return CohortDefinition
+	 */			
+	public CohortDefinition individualsTestedAndReceivedResultsAsACouple() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who were Tested and Received results together as a Couple");
+        cd.addSearch("testedAsACouple", ReportUtils.map(individualsCounseledAndTestedAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("ReceivedResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedAsACouple AND ReceivedResults");
+        return cd;
+	}
+
+	/**
+	 * Individuals counseled and tested for PEP
+	 * @return
 	 */
-    public CohortDefinition hivPositivePersons() {
-    	return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_STATUS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
-    }    
-    
-    /**
-     * HIV+ women
-     * @return CohortDefinition
-     */
-    public CohortDefinition hivPositiveWomen() {
+	public CohortDefinition individualsCounseledAndTestedForPep() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("HIV+ Women");
-        cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
-        cd.addSearch("hivPositive", ReportUtils.map(hivPositivePersons(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("female AND hivPositive");
+        cd.setName("Individuals tested more than twice in the last 12 months");
+        cd.addSearch("testedForPep", ReportUtils.map(testedForPep(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedForPep AND counseledAsIndividuals");
         return cd;
-    }
+	}
+	
+	/**
+	 * Tested for PEP
+	 * @return CohortDefiniton
+	 */
+	public CohortDefinition testedForPep() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
+	}
 
-    /**
-     * Deliveries in unit
-     * @return CohortDefinition
-     */
-    public CohortDefinition deliveriesInUnit() {
-        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREGNANCY_OUTCOME));
-    }    
-    
-    /**
-     * HIV+ women initiating ARV in maternity
-     * @return CohortDefinition
-     */
-    public CohortDefinition hivPositiveWomenInitiatingArvInMaternity() {
+	/**
+	 * Number of individuals tested as MARPS
+	 * @return CohortDefiniton
+	 */
+	public CohortDefinition individualsCounseledAndTestedAsMarps() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("HIV+ Initiating Maternity");        
-        cd.addSearch("maternityAdmissions", ReportUtils.map(maternityAdmissions(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("InitiatingARV", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.ARV_REGIMEN)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("hivPositive AND InitiatingARV AND maternityAdmissions");
+        cd.setName("Number of individuals tested as MARPS");
+        cd.addSearch("testedAsMarps", ReportUtils.map(testedAsMarps(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedAsMarps AND counseledAsIndividuals");
         return cd;
-    }
-    
-    /**
-     * Deliveries to HIV+ women
-     * @return CohortDefinition
-     */
-    public CohortDefinition deliveriesToHIVPositiveWomen() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("HIV+ Women Deliveries");
-        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("deliveries", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("hivPositive AND deliveries");
-        return cd;
-    }
+	}
 
+	/**
+	 * Tested as MARPS
+	 * @return
+	 */
+	private CohortDefinition testedAsMarps() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.MARPS));
+	}
+
+	/**
+	 * Linked to care
+	 * @return
+	 */
+	public CohortDefinition clientsLinkedToCare() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.LINKED_TO_CARE), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+	}
+
+	/**
+	 * Positive Individuals tested at an early stage
+	 * @return CohortDefinition
+	 */
+	public CohortDefinition hivPositiveIndividualsTestedAtAnEarlyStage() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV Positive Individuals tested at an early stage");
+        cd.addSearch("testedAtAnEarlyStage", ReportUtils.map(testedAtEarlyStage(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedHIVPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedHIVPositive AND counseledAsIndividuals AND testedAtAnEarlyStage");
+        return cd;
+	}
+
+	/**
+	 * Tested at an early stage (CD4>500μ)
+	 * @return CohortDefinition
+	 */
+	private CohortDefinition testedAtEarlyStage() {
+    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.CD4_COUNT),RangeComparator.GREATER_THAN,(double) 500);
+	}
+	
+	/**
+	 * Couples with concordant Positive results
+	 * @return CohortDefinition
+	 */
+	public CohortDefinition couplesWithConcordantPostiveResults() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Couples with concordant Positive results");
+        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CounseledAsACouple AND testedHivPositive AND partnerTestedHivPositive");
+        return cd;
+	}
+
+	/**
+	 * Partner Tested HIV Positive
+	 * @return
+	 */
+	private CohortDefinition partnerTestedHivPositive() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PARTNER_HIV_TEST_RESULT), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
+	}
+
+	/**
+	 * Partner Tested HIV Negative
+	 * @return
+	 */
+	private CohortDefinition partnerTestedHiVNegative() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PARTNER_HIV_TEST_RESULT), Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE));
+	}
+	
+	/**
+	 * Couples with discordant results
+	 * @return
+	 */
+	public CohortDefinition couplesWithDiscordantResults() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Couples with concordant Positive results");
+        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("partnerTestedHivNegative", ReportUtils.map(partnerTestedHiVNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("testedHivNegative", ReportUtils.map(testedHivNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CounseledAsACouple AND ((testedHivPositive AND NOT partnerTestedHivPositive) OR (testedHivNegative AND NOT partnerTestedHivNegative))");
+        return cd;
+	}
+	//End HCT Section    
+
+	/**
+	 * Total outpatient attendance
+	 * @return
+	 */	
+	public CohortDefinition totalOutPatientAttendance() {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.OPD_ENCOUNTER)));
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        return cd;
+	}
+
+	/**
+	 * New outpatient attendance
+	 * @return
+	 */	
+	public CohortDefinition newOutPatientAttendance() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("OutPatient Attendance");
+        cd.addSearch("outPatientEncounters", ReportUtils.map(totalOutPatientAttendance(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("newEncounters", ReportUtils.map(newEncounters(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outPatientEncounters AND newEncounters");
+        return cd;
+	}
+
+	/**
+	 * Repeat outpatient attendance
+	 * @return
+	 */	
+	public CohortDefinition repeatOutPatientAttendance() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("OutPatient Attendance");
+        cd.addSearch("outPatientEncounters", ReportUtils.map(totalOutPatientAttendance(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("repeatEncounters", ReportUtils.map(repeatEncounters(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outPatientEncounters AND repeatEncounters");
+        return cd;
+	}
+
+	/**
+	 * Repeat Encounters
+	 * @return
+	 */	
+	public CohortDefinition repeatEncounters() {
+		return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TYPE_OF_PATIENT), Dictionary.getConcept(Metadata.Concept.REPEAT_ENCOUNTER));
+	}
+
+	/**
+	 * New Encounters
+	 * @return
+	 */	
+	public CohortDefinition newEncounters() {
+		return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TYPE_OF_PATIENT), Dictionary.getConcept(Metadata.Concept.NEW_ENCOUNTER));
+	}
+
+	/**
+	 * Referrals To Unit
+	 * @return
+	 */	
+	public CohortDefinition referralsToUnit() {
+		return definitionLibrary.hasTextObs(Dictionary.getConcept(Metadata.Concept.TRANSFER_IN_NUMBER));
+	}
+
+	/**
+	 * Referrals From Unit
+	 * @return
+	 */	
+	public CohortDefinition referralsFromUnit() {
+		return definitionLibrary.hasTextObs(Dictionary.getConcept(Metadata.Concept.REFERRAL_NUMBER));
+	}
+	
+	/**
+	 * Referrals To OPD Unit
+	 * @return
+	 */	
+	public CohortDefinition referralsToOPDUnit() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Referrals To OPD Unit");
+        cd.addSearch("outPatientEncounters", ReportUtils.map(totalOutPatientAttendance(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("referralsToUnit", ReportUtils.map(referralsToUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outPatientEncounters AND referralsToUnit");
+        return cd;
+	}
+
+	/**
+	 * Referrals From OPD Unit
+	 * @return
+	 */	
+	public CohortDefinition referralsFromOPDUnit() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Referrals From OPD Unit");
+        cd.addSearch("outPatientEncounters", ReportUtils.map(totalOutPatientAttendance(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("referralsFromUnit", ReportUtils.map(referralsFromUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outPatientEncounters AND referralsFromUnit");
+        return cd;
+	}
+
+	/**
+	 * Total OPD Malaria Diagnosis
+	 * 
+	 * @return
+	 */
+	public CohortDefinition totalOpdMalariaDiagnoses() {
+		return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.OPD_DIAGNOSIS),
+		    Dictionary.getConceptList(Metadata.Concept.CLINICAL_MALARIA + "," + Metadata.Concept.CONFIRMED_MALARIA + ","
+		            + Metadata.Concept.CIEL_MALARIA + "," + Metadata.Concept.MALARIA_IN_PREGNANCY));
+	}
+	
+	/**
+	 * Total Microscopic & RDT Malaria Tests Done
+	 * @return
+	 */		
+	public CohortDefinition microscopicAndRdtTestsDone() {
+		return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.TYPE_OF_MALARIA_TEST),Dictionary.getConceptList(Metadata.Concept.MALARIAL_SMEAR + ","  + Metadata.Concept.RAPID_TEST_FOR_MALARIA));
+	}
+
+	/**
+	 * Total Positive Malaria Tests Done
+	 * @return
+	 */		
+	public CohortDefinition positiveMalariaTestResults() {
+		return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.MALARIA_TEST_RESULT),Dictionary.getConcept(Metadata.Concept.POSITIVE));
+	}		
+	
+	/**
+	 * Total Confirmed OPD Malaria Diagnosis
+	 * @return
+	 */		
+	public CohortDefinition totalConfirmedOpdMalariaDiagnoses() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Total Confirmed OPD Malaria Diagnosis");
+        cd.addSearch("outPatientEncounters", ReportUtils.map(totalOutPatientAttendance(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
+        cd.addSearch("microscopicAndRdtTestsDone", ReportUtils.map(microscopicAndRdtTestsDone(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveMalariaTestResults", ReportUtils.map(positiveMalariaTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outPatientEncounters AND microscopicAndRdtTestsDone AND positiveMalariaTestResults");
+        return cd;
+	}		
+
+	 /** Patients With BMI count Between @minValue and @maxValue 
+	  * 
+	  * @return CohortDefinition
+	  */
+	 public CohortDefinition bmiCount(Double minValue, Double maxValue) {
+			return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.BMI), RangeComparator.GREATER_EQUAL, minValue, RangeComparator.LESS_EQUAL, maxValue);
+	 }
+	 	
     /**
      * Live Births 
      * @return Cohort Definition
@@ -710,5 +1356,4 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("visit AND smcEncounter");
     return cd;
     }
-
 }

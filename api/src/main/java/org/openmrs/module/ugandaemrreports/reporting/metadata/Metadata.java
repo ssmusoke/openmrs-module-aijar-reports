@@ -198,7 +198,7 @@ public class Metadata {
 		public static final String MALARIA_IN_PREGNANCY = "135361AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		public static final String HIGH_BLOOD_PRESSURE_IN_PREGNANCY = "dc55064a-30ab-102d-86b0-7a5022ba4115";
 		public static final String OBSTRUCTED_LABOUR = "115036AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		public static final String PUERPERAL_SEPSIS = "dc66a5b3-30ab-102d-86b0-7a5022ba4115";
+		public static final String PUERPERAL_SEPSIS = "130AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		public static final String ANTEPARTUM_HAEMORRHAGE = "dc69f6f5-30ab-102d-86b0-7a5022ba4115";
 		public static final String POSTPARTUM_HAEMORRHAGE = "dc650021-30ab-102d-86b0-7a5022ba4115";
 		public static final String OTHER_DIAGNOSES = "280fc8c8-5145-4337-a854-690b9c09bebd";
@@ -246,9 +246,11 @@ public class Metadata {
 		public static final String ASPHYXIA = "121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 		
     }
+    
     public static class Identifier{
 
     }
+    
     public static class EncounterType{
         public final static String ART_SUMMARY_PAGE = "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f";
         public final static String ART_ENCOUNTER_PAGE = "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f";
@@ -257,12 +259,12 @@ public class Metadata {
         public final static String EID_ENCOUNTER_PAGE = "4345dacb-909d-429c-99aa-045f2db77e2b";
         public final static String ANC_ENCOUNTER = "044daI6d-f80e-48fe-aba9-037f241905Pe";
         public final static String PNC_ENCOUNTER = "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074";
-	    public static final String MATERNITY_ENCOUNTER = "a9f11592-22e7-45fc-904d-dfe24cb1fc67";
-	    public static final String OPD_ENCOUNTER = "ee4780f5-b5eb-423b-932f-00b5879df5ab";
+		    public static final String MATERNITY_ENCOUNTER = "a9f11592-22e7-45fc-904d-dfe24cb1fc67";
+		    public static final String OPD_ENCOUNTER = "ee4780f5-b5eb-423b-932f-00b5879df5ab";
         public final static String SMC_ENCOUNTER = "244da86d-f80e-48fe-aba9-067f241905ee";
 
-
     }
+    
     public static class Program{
 
     }
