@@ -63,3 +63,4 @@ buildNumber.properties
 .project
 api/.project
 omod/.project
+api/lucene

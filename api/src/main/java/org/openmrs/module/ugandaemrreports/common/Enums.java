@@ -10,14 +10,25 @@ public class Enums {
         VALUE_DATE_TIME,
         VALUE_NUMERIC;
 
-        private ValueType() {
+        ValueType() {
         }
     }
 
     public static enum PeriodInterval {
         BEFORE,
-        AFTER;
-        private PeriodInterval() {
+        AFTER,
+        ON;
+
+        PeriodInterval() {
+        }
+    }
+
+    public static enum UgandaEMRJoiner {
+        AND,
+        OR,
+        IN;
+
+        UgandaEMRJoiner() {
         }
     }
 
@@ -25,16 +36,13 @@ public class Enums {
 
         MONTHLY("MONTH"),
         QUARTERLY("QUARTER"),
-        YEARLY("YEAR");
+        YEARLY("YEAR"),
+        WEEKLY("WEEK");
 
         private final String name;
 
-        private Period(String s) {
+        Period(String s) {
             name = s;
-        }
-
-        public boolean equalsName(String otherName) {
-            return (otherName == null) ? false : name.equals(otherName);
         }
 
         public String toString() {
