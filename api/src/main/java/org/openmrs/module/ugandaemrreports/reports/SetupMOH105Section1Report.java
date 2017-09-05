@@ -67,7 +67,7 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS 105-1.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS_105-1.xls");
     }
 
     @Override
