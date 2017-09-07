@@ -21,37 +21,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Nicholas on 4/27/17.
+ * 
  */
-public class ObsDataConverter implements DataConverter {
+public class DuringSurgeryDateDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
+
         if (obj == null) {
             return "";
         }
-
         Obs obs = ((Obs) obj);
-
-        if (obs.getValueCoded() != null) {
-            return obs.getValueCoded().getName().getName();
+        if(obs.getValueCoded() != null) {
+            return formatDate(obs.getObsDatetime());
         }
-
-        else if (obs.getValueDate() != null) {
-            return formatDate(obs.getValueDate());
-        }
-
-        else if (obs.getValueDatetime() != null) {
-            return formatDate(obs.getValueDatetime());
-        }
-
-        else if (obs.getValueNumeric() != null) {
-            return obs.getValueNumeric().toString();
-        }
-
-        else if (obs.getValueText() != null) {
-            return obs.getValueText();
-        }
-
         return null;
     }
 
@@ -66,7 +48,7 @@ public class ObsDataConverter implements DataConverter {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
         return dateFormatter.format(date);
     }
 }
