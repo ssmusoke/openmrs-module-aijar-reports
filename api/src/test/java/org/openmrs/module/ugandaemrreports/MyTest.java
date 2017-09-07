@@ -1,9 +1,13 @@
 package org.openmrs.module.ugandaemrreports;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -15,12 +19,13 @@ import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPa
 import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
 import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.*;
 
@@ -28,178 +33,246 @@ public class MyTest {
     Date d = DateUtil.parseDate("2015-07-01", "yyyy-MM-dd");
 
     @Test
-    public void shouldJoinStringUsingOR() throws IOException, ParseException {
-        assertEquals(UgandaEMRReporting.joinQuery("1", "2", Enums.UgandaEMRJoiner.OR), "1 OR 2");
+    public void shouldCreateIndexesOfSummarizedObs() throws IOException, SQLException, ClassNotFoundException {
+        Connection connection = testSqlConnection();
+        String indexDirectory = System.getProperty("user.dir") + File.separator + "lucene" + File.separator + "ugandaemr";
+
+        IndexWriter indexWriter = createWriter(indexDirectory);
+
+        indexWriter.deleteAll();
+
+        lucenizeSummarizedObs(indexWriter, "1900-01-01", connection);
+
+        indexWriter.commit();
+        indexWriter.close();
+
+        assertNotEquals(1, 0);
     }
 
     @Test
-    public void shouldJoinStringUsingAND() throws IOException, ParseException {
-        assertEquals(UgandaEMRReporting.joinQuery("1", "2", Enums.UgandaEMRJoiner.AND), "1 AND 2");
+    public void testMap() {
+        Map<String, String> period = new HashMap<>();
+
+        period.put("y", "2016");
+        period.put("q", "1");
+        String string = Joiner.on(" AND ").withKeyValueSeparator(" = ").join(period);
+        System.out.printf(string);
     }
 
     @Test
-    public void shouldComplexJoin() throws IOException, ParseException {
-        assertEquals(UgandaEMRReporting.joinQuery(UgandaEMRReporting.constructSQLInQuery("name", Arrays.asList(1, 2, 4, 53, 3)), "2", Enums.UgandaEMRJoiner.AND), "name IN(1,2,4,53,3) AND 2");
+    public void testInSearch() throws IOException, ParseException {
+        String indexDirectory = System.getProperty("user.dir") + File.separator + "lucene" + File.separator + "ugandaemr";
+        String inQuery = constructLuceneInQuery("period", Arrays.asList("2015", "2016"));
+        List<SummarizedObs> data = getSummarizedObsData(indexDirectory, "period", inQuery);
+        assertNotEquals(0, data.size());
     }
 
     @Test
-    public void shouldConstructMonthlyPeriod() throws IOException, ParseException {
+    public void testInAndOrSearch() throws IOException, ParseException {
+        String indexDirectory = System.getProperty("user.dir") + File.separator + "lucene" + File.separator + "years";
+        String inQuery = constructLuceneInQuery("period", Arrays.asList("2017", "2016"));
 
-        assertEquals(UgandaEMRReporting.getObsPeriod(d, Enums.Period.MONTHLY), "201507");
+        String query = joinQuery(inQuery, constructLuceneQuery("concept", "90315"), Enums.UgandaEMRJoiner.AND);
+
+        List<SummarizedObs> data = getSummarizedObsData(indexDirectory, "period", query);
+        System.out.println(data.size());
+        assertNotEquals(0, data.size());
     }
 
     @Test
-    public void shouldConstructQuarterlyPeriod() throws IOException, ParseException {
+    public void createSummaryTable() throws SQLException, ClassNotFoundException {
+        Connection connection = testSqlConnection();
+        createSummarizedObsTable(connection);
 
-        assertEquals(UgandaEMRReporting.getObsPeriod(d, Enums.Period.QUARTERLY), "2015Q3");
+        summarizeObs("1900-01-01", connection);
     }
 
     @Test
-    public void shouldConstructYearlyPeriod() throws IOException, ParseException {
-
-        assertEquals(UgandaEMRReporting.getObsPeriod(d, Enums.Period.YEARLY), "2015");
+    public void testDatabaseSearch() throws IOException, ParseException, SQLException, ClassNotFoundException {
+        Connection connection = testSqlConnection();
+        String where = joinQuery(constructSQLQuery("concept", "=", "90315"), constructSQLInQuery("y", Arrays.asList("2017", "2016")), Enums.UgandaEMRJoiner.AND);
+        String query = "select * from obs_summary where " + where;
+        List<SummarizedObs> data = getSummarizedObs(connection, query);
+        System.out.println(data.size());
+        assertNotEquals(0, data.size());
     }
 
     @Test
-    public void shouldConstructWeeklyPeriod() throws IOException, ParseException {
-
-        assertEquals(UgandaEMRReporting.getObsPeriod(d, Enums.Period.WEEKLY), "2015W27");
-    }
-
-    /*@Test
-    public void shouldLoopArtYearsProperly() {
+    public void shouldGenerateArtRegister() {
         LocalDate localDate = StubDate.dateOf(d);
-        for (int i = 0; i <= 72; i++) {
-            String period = UgandaEMRReporting.getObsPeriod(Periods.addMonths(localDate, i).get(0).toDate(), Enums.Period.MONTHLY);
-            System.out.println(period);
-        }
-    }
 
-    @Test
-    public void shouldLoopPreArtQuartersProperly() {
-        LocalDate localDate = StubDate.dateOf(d);
-        for (int i = 0; i < 16; i++) {
-            String period = UgandaEMRReporting.getObsPeriod(Periods.addQuarters(localDate, i).get(0).toDate(), Enums.Period.QUARTERLY);
-            System.out.println(period);
-        }
-    }*/
+        String month = getObsPeriod(d, Enums.Period.MONTHLY);
+        Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
 
-    /*@Test
-    public void shouldReturnSqlConnection() throws SQLException, ClassNotFoundException {
-        assertNotNull(UgandaEMRReporting.testSqlConnection());
-    }*/
+        Map<String, String> where = new HashMap<>();
 
-    /*@Test
-    public void shouldDenormalizeObs() throws SQLException, ClassNotFoundException {
-        Connection connection = UgandaEMRReporting.testSqlConnection();
-        int response = UgandaEMRReporting.normalizeObs("1900-01-01", connection, 100000);
-        assertNotEquals(response, 0);
-    }
-
-    @Test
-    public void shouldSummarizeObs() throws SQLException, ClassNotFoundException {
-        Connection connection = UgandaEMRReporting.testSqlConnection();
-        int response = UgandaEMRReporting.summarizeObs(UgandaEMRReporting.obsSummaryMonthQuery("1900-01-01"), connection);
-        assertNotEquals(response, 0);
-    }*/
-
-    /*@Test
-    public void shouldGenerateArtRegister() throws SQLException, ClassNotFoundException {
-
-        String month = UgandaEMRReporting.getObsPeriod(d, Enums.Period.MONTHLY);
-        String currentMonth = UgandaEMRReporting.getObsPeriod(new Date(), Enums.Period.MONTHLY);
-        LocalDate localDate = StubDate.dateOf(d);
+        where.put("y", String.valueOf(localDate.getYear()));
+        where.put("m", String.valueOf(localDate.getMonthOfYear()));
+        where.put("concept", "99161");
 
         try {
-            Connection connection = UgandaEMRReporting.testSqlConnection();
-            List<SummarizedObs> startedArtThisMonth = UgandaEMRReporting.getSummarizedObs(connection, month, "value_datetime", "ab505422-26d9-41f1-a079-c3d222000440");
+            Connection connection = testSqlConnection();
+            List<SummarizedObs> startedArtThisMonth = getSummarizedObs(connection, where);
+
             String allPatients = summarizedObsPatientsToString(startedArtThisMonth);
 
-            List<String> patients = Splitter.on(",").splitToList(allPatients);
+            Map<Integer, Date> dates = new HashMap<>();
+
+            for (Map.Entry<Integer, Collection<Date>> d : getData(startedArtThisMonth.get(0).getVals()).asMap().entrySet()) {
+                dates.put(d.getKey(), new ArrayList<>(d.getValue()).get(0));
+            }
+
+            List<Map.Entry<Integer, Date>> entries = new ArrayList<>(dates.entrySet());
+            entries.sort(Comparator.comparing(Map.Entry::getValue));
 
             Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, allPatients);
 
-            List<String> encounterSummaryConcepts = new ArrayList<>(artRegisterConcepts().values());
+            String concepts = Joiner.on(",").join(artRegisterConcepts().values());
 
-            List<SummarizedObs> summarizedObs = getSummarizedObs(connection, encounterSummaryConcepts, patients);
 
+            String encountersBeforeArtQuery = "SELECT\n" +
+                    "  e.encounter_id             AS e_id,\n" +
+                    "  DATE(e.encounter_datetime) AS e_date\n" +
+                    "FROM encounter e INNER JOIN obs art ON (e.patient_id = art.person_id)\n" +
+                    "WHERE art.concept_id = 99161 AND art.voided = 0 AND e.voided = 0 AND e.encounter_datetime >= art.value_datetime AND\n" +
+                    "      e.patient_id IN (%s)\n" +
+                    "      AND encounter_type = (SELECT encounter_type_id\n" +
+                    "                            FROM encounter_type\n" +
+                    "                            WHERE uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f')\n" +
+                    "UNION ALL\n" +
+                    "SELECT\n" +
+                    "  e.encounter_id             AS e_id,\n" +
+                    "  DATE(e.encounter_datetime) AS e_date\n" +
+                    "FROM encounter e\n" +
+                    "WHERE e.patient_id IN (%s) AND e.voided = 0 AND e.encounter_type = (SELECT encounter_type_id\n" +
+                    "                                                 FROM encounter_type\n" +
+                    "                                                 WHERE uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f');";
+
+            encountersBeforeArtQuery = encountersBeforeArtQuery.replaceAll("%s", allPatients);
+            Multimap<Integer, Date> encounterData = getData(connection, encountersBeforeArtQuery, "e_id", "e_date");
+
+            String encounters = Joiner.on(",").join(encounterData.asMap().keySet());
+
+            String obsQuery = String.format("SELECT\n" +
+                    "  person_id,\n" +
+                    "  concept_id,\n" +
+                    "  encounter_id,\n" +
+                    "  (SELECT encounter_datetime\n" +
+                    "   FROM encounter e\n" +
+                    "   WHERE e.encounter_id = o.encounter_id)                                                    AS enc_date,\n" +
+                    "  COALESCE(value_coded, COALESCE(DATE(value_datetime), COALESCE(value_numeric, value_text))) AS val\n" +
+                    "FROM obs o\n" +
+                    "WHERE o.voided = 0 AND o.encounter_id IN (%s) AND o.concept_id IN (%s)\n" +
+                    "UNION ALL\n" +
+                    "SELECT\n" +
+                    "  p.person_id,\n" +
+                    "  0,\n" +
+                    "  0,\n" +
+                    "  death_date,\n" +
+                    "  DATE(death_date)\n" +
+                    "FROM person p INNER JOIN obs art ON (p.person_id = art.person_id)\n" +
+                    "WHERE art.concept_id = 99161 AND p.person_id IN (%s) AND art.voided = 0 AND p.voided = 0 AND\n" +
+                    "      p.death_date >= art.value_datetime;", encounters, concepts, allPatients);
+
+            List<ObsData> table = getData(connection, obsQuery);
 
             PatientDataHelper pdh = new PatientDataHelper();
 
-            for (String patient : patients) {
+            for (Map.Entry<Integer, Date> patient : entries) {
                 DataSetRow row = new DataSetRow();
-                List<PersonDemographics> personDemographics = demographics.get(Integer.valueOf(patient));
-                List<SummarizedObs> personObs = new ArrayList<>(Collections2.filter(summarizedObs, new SummarizedObsPatientPredicate(patient)));
+
+                Integer key = patient.getKey();
+
+                List<PersonDemographics> personDemographics = demographics.get(key);
+
+                List<ObsData> patientData = table.stream()
+                        .filter(line -> line.getPatientId().compareTo(key) == 0)
+                        .collect(Collectors.toList());
+
+                ObsData artStartDate = getData(patientData, "99161");
+                ObsData tbStartDate = getData(patientData, "90217");
+                ObsData tbStopDate = getData(patientData, "90310");
+                ObsData ti = getData(patientData, "99160");
+                ObsData death = getData(patientData, "death");
+                ObsData to = getData(patientData, "99165");
+                ObsData baselineWeight = getData(patientData, "99069");
+                ObsData baselineCs = getData(patientData, "99070");
+                ObsData baselineCd4 = getData(patientData, "99071");
+                ObsData baselineRegimen = getData(patientData, "99061");
+
+
+                String died = death != null ? getObsPeriod(DateUtil.parseYmd(death.getVal()), Enums.Period.MONTHLY) : "";
+                String transferred = to != null ? getObsPeriod(DateUtil.parseYmd(to.getVal()), Enums.Period.MONTHLY) : "";
+
+                boolean hasDied = false;
+                boolean hasTransferred = false;
+
+                String startedTB = tbStartDate != null ? DateUtil.formatDate(DateUtil.parseYmd(tbStartDate.getVal()), "MM/yyyy") : "";
+                String stoppedTB = tbStopDate != null ? DateUtil.formatDate(DateUtil.parseYmd(tbStopDate.getVal()), "MM/yyyy") : "";
+
 
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
-                List<SummarizedObs> viralLoadResults = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dc8d83e3-30ab-102d-86b0-7a5022ba4115", null)));
-                List<SummarizedObs> appointments = new ArrayList<>(Collections2.filter(personObs, new SummarizedObsPredicate("dcac04cf-30ab-102d-86b0-7a5022ba4115", null)));
-                Map<String, String> convertedAppointments = getSummarizedObsValuesAsMap(appointments, patient);
-
-                String firstViralLoad = getSummarizedObsValue(viralLoad(viralLoadResults, 0), patient);
-
-                String baselineWeight = getSummarizedObsValue(getSummarizedObs(personObs, null, "900b8fd9-2039-4efc-897b-9b8ce37396f5"), patient);
-                SummarizedObs baselineCs = getSummarizedObs(personObs, null, "39243cef-b375-44b1-9e79-cbf21bd10878");
-                String baselineCd4 = getSummarizedObsValue(getSummarizedObs(personObs, null, "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f"), patient);
-                SummarizedObs baselineRegimen = getSummarizedObs(personObs, null, "c3332e8d-2548-4ad6-931d-6855692694a3");
-                String artStartDate = getSummarizedObsValue(getSummarizedObs(personObs, month, "ab505422-26d9-41f1-a079-c3d222000440"), patient);
-
-                String tbStartDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "dce02eca-30ab-102d-86b0-7a5022ba4115"), patient);
-                String tbStopDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "dd2adde2-30ab-102d-86b0-7a5022ba4115"), patient);
-
-                String tiDate = getSummarizedObsValue(getSummarizedObs(personObs, null, "f363f153-f659-438b-802f-9cc1828b5fa9"), patient);
-
-                SummarizedObs entry = getSummarizedObs(personObs, null, "dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
-
-                SummarizedObs functionalStatusDuringArtStart = getSummarizedObs(personObs, month, "dce09a15-30ab-102d-86b0-7a5022ba4115");
-
-                String ti = "";
-
-                Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(artStartDate));
-
-                if (!Strings.isNullOrEmpty(tiDate) || (entry != null && entry.getValueCoded().equals("dcd7e8e5-30ab-102d-86b0-7a5022ba4115"))) {
-                    ti = "✔";
-                }
                 List<String> addresses = processString2(personDemos.getAddresses());
-                String address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
+                String address = "";
+                if (addresses.size() == 6) {
+                    address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
+                }
 
-                pdh.addCol(row, "Date ART Started", artStartDate);
-                pdh.addCol(row, "Unique ID no", patient);
-                pdh.addCol(row, "TI", ti);
+                pdh.addCol(row, "Date ART Started", patient.getValue());
+                pdh.addCol(row, "Unique ID no", patient.getKey());
+                pdh.addCol(row, "TI", ti.getVal());
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
-                pdh.addCol(row, "Age", age.getYears());
+                if (personDemos.getBirthDate() != null && artStartDate != null) {
+                    Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(patient.getValue()));
+                    pdh.addCol(row, "Age", age.getYears());
+                } else {
+                    pdh.addCol(row, "Age", "");
+                }
                 pdh.addCol(row, "Address", address);
-                pdh.addCol(row, "Weight", baselineWeight);
+                pdh.addCol(row, "Weight", baselineWeight.getVal());
 
+                ObsData functionalStatusDuringArtStart = getFirstData(patientData, "90235");
+
+                ObsData firstCPT = getFirstData(patientData, "99037");
+                ObsData firstINH = getFirstData(patientData, "99604");
+                List<ObsData> viralLoads = getDataAsList(patientData, "856");
+
+                ObsData firstViralLoad = viralLoad(viralLoads, 6);
+
+                String fvl = "";
+
+                if (firstViralLoad != null) {
+                    fvl = firstViralLoad.getVal();
+                }
 
                 if (functionalStatusDuringArtStart != null) {
-                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getValueCodedName());
+                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getVal());
                 } else {
                     pdh.addCol(row, "FUS", "");
                 }
 
 
                 if (baselineCs != null) {
-                    pdh.addCol(row, "CS", baselineCs.getReportName());
+                    pdh.addCol(row, "CS", baselineCs.getVal());
                 } else {
                     pdh.addCol(row, "CS", "");
                 }
 
-                pdh.addCol(row, "CDVL", baselineCd4 + "\n" + firstViralLoad);
+                pdh.addCol(row, "CDVL", baselineCd4 == null ? "" : baselineCd4.getVal() + "\n" + fvl);
 
-                pdh.addCol(row, "CPT", "");
-                pdh.addCol(row, "INH", "");
-                pdh.addCol(row, "TB", tbStartDate + "\n" + tbStopDate);
+                pdh.addCol(row, "CPT", firstCPT == null ? "" : DateUtil.formatDate(firstCPT.getEncounterDate(), "MM/yyyy"));
+                pdh.addCol(row, "INH", firstINH == null ? "" : DateUtil.formatDate(firstINH.getEncounterDate(), "MM/yyyy"));
+                pdh.addCol(row, "TB", startedTB + "\n" + stoppedTB);
                 pdh.addCol(row, "P1", "");
                 pdh.addCol(row, "P2", "");
                 pdh.addCol(row, "P3", "");
                 pdh.addCol(row, "P4", "");
 
                 if (baselineRegimen != null) {
-                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen.getReportName());
+                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen);
                 } else {
                     pdh.addCol(row, "BASE REGIMEN", "");
                 }
@@ -214,105 +287,82 @@ public class MyTest {
                     String workingMonth = getObsPeriod(Periods.addMonths(localDate, i).get(0).toDate(), Enums.Period.MONTHLY);
                     Integer period = Integer.valueOf(workingMonth);
 
-                    if (period <= Integer.valueOf(currentMonth)) {
+                    if (period <= currentMonth && (!hasDied || !hasTransferred)) {
 
-                        SummarizedObs tbStatus = getSummarizedObs(personObs, workingMonth, "dce02aa1-30ab-102d-86b0-7a5022ba4115");
-                        SummarizedObs arvAdh = getSummarizedObs(personObs, workingMonth, "dce03b2f-30ab-102d-86b0-7a5022ba4115");
+                        ObsData tbStatus = getData(patientData, workingMonth, "90216");
+                        ObsData arvAdh = getData(patientData, workingMonth, "90221");
 
-                        String inhDosage = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "be211d29-1507-4e2e-9906-4bfeae4ddc1f"), patient);
-                        String cptDosage = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "38801143-01ac-4328-b0e1-a7b23c84c8a3"), patient);
+                        ObsData inhDosage = getData(patientData, workingMonth, "99604");
+                        ObsData cptDosage = getData(patientData, workingMonth, "99037");
 
-                        SummarizedObs currentRegimen = getSummarizedObs(personObs, workingMonth, "dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
-                        String returnDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dcac04cf-30ab-102d-86b0-7a5022ba4115"), patient);
+                        ObsData currentRegimen = getData(patientData, workingMonth, "90315");
+                        ObsData returnDate = getData(patientData, workingMonth, "5096");
 
-                        String latestAppointment = getMostRecentValue(convertedAppointments, workingMonth);
+                        ObsData arvStopDate = getData(patientData, workingMonth, "99084");
+                        ObsData arvRestartDate = getData(patientData, workingMonth, "99085");
 
-                        String arvStopDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "cd36c403-d88c-4496-96e2-09af6da090c1"), patient);
-                        String arvRestartDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "406e1978-8c2e-40c5-b04e-ae214fdfed0e"), patient);
-                        String toDate = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "fc1b1e96-4afb-423b-87e5-bb80d451c967"), patient);
+                        ObsData toDate = getData(patientData, workingMonth, "99165");
+                        ObsData currentlyDead = getData(patientData, workingMonth, "deaths");
 
-                        SummarizedObs currentlyDead = getSummarizedObs(personObs, workingMonth, "deaths");
-
-                        String arvDays = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "7593ede6-6574-4326-a8a6-3d742e843659"), patient);
-
-                        String tb = "";
-                        String adherence = "";
                         String cotrim = "";
-                        String regimen = "";
                         String status = "";
                         String adherenceAndCPT = "";
 
-                        if (tbStatus != null) {
-                            tb = tbStatus.getReportName();
-                        }
-
-                        if (arvAdh != null) {
-                            adherence = arvAdh.getReportName();
-                        }
-                        if (!Strings.isNullOrEmpty(inhDosage) || !Strings.isNullOrEmpty(cptDosage)) {
+                        if (inhDosage != null || cptDosage != null) {
                             cotrim = "Y";
                         }
-
-                        if (currentlyDead != null) {
-                            status = "1";
-                        }
-
-                        if (StringUtils.isNotBlank(arvStopDate)) {
-                            status = "2";
-                        }
-
-                        if (StringUtils.isNotBlank(arvRestartDate)) {
-                            status = "6";
-                        }
-
-                        if (StringUtils.isNotBlank(toDate)) {
-                            status = "5";
-                        }
-
                         if (currentRegimen != null) {
-                            regimen = currentRegimen.getReportName();
-                        } else if (StringUtils.isNotBlank(status)) {
-                            regimen = status;
-                        } else if (StringUtils.isNotBlank(returnDate)) {
-                            regimen = "3";
-                        } else if (latestAppointment != null) {
-                            List<String> data = Splitter.on("-").splitToList(latestAppointment);
-                            Integer appointment = Integer.valueOf(data.get(0) + data.get(1));
-
-                            if (appointment >= period) {
-                                regimen = "→";
+                            status = currentRegimen.getVal();
+                        } else if (returnDate != null) {
+                            status = "3";
+                        } else {
+                            if (arvStopDate != null) {
+                                status = "2";
+                            } else if (arvRestartDate != null) {
+                                status = "6";
+                            } else if (currentlyDead != null) {
+                                status = "1";
+                                hasDied = true;
+                            } else if (toDate != null) {
+                                status = "5";
+                                hasTransferred = true;
                             } else {
-                                Integer diff = period - appointment;
+                                ObsData lastAppointment = getLastAppointments(patientData, workingMonth);
 
-                                if (diff < 3) {
-                                    regimen = "3";
-                                } else {
-                                    regimen = "4";
+                                if (lastAppointment != null) {
+                                    Integer appointmentPeriod = Integer.parseInt(getObsPeriod(DateUtil.parseYmd(lastAppointment.getVal()), Enums.Period.MONTHLY));
+                                    Integer diff = period - appointmentPeriod;
+                                    if (diff < 0) {
+                                        status = "→";
+                                    } else if (diff < 3) {
+                                        status = "3";
+                                    } else {
+                                        status = "4";
+                                    }
                                 }
                             }
 
-
                         }
 
-                        if (StringUtils.isNotBlank(adherence) && StringUtils.isNotBlank(cotrim)) {
-                            adherenceAndCPT = adherence + "|" + cotrim;
-                        } else if (StringUtils.isNotBlank(adherence)) {
-                            adherenceAndCPT = adherence;
-                        } else if (StringUtils.isNotBlank(cotrim)) {
+                        if (arvAdh != null && cotrim != null) {
+                            adherenceAndCPT = arvAdh.getVal() + "|" + cotrim;
+                        } else if (arvAdh != null) {
+                            adherenceAndCPT = arvAdh.getVal();
+                        } else if (cotrim != null) {
                             adherenceAndCPT = cotrim;
                         }
-                        pdh.addCol(row, "FUS" + String.valueOf(i), regimen + "\n" + tb + "\n" + adherenceAndCPT);
+                        pdh.addCol(row, "FUS" + String.valueOf(i), status + "\n" + tbStatus.getVal() + "\n" + adherenceAndCPT);
 
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
-                            String weight = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dce09e2f-30ab-102d-86b0-7a5022ba4115"), patient);
-                            String cd4 = getSummarizedObsValue(getSummarizedObs(personObs, workingMonth, "dcbcba2c-30ab-102d-86b0-7a5022ba4115"), patient);
-                            SummarizedObs clinicalStage = getSummarizedObs(personObs, workingMonth, "dcdff274-30ab-102d-86b0-7a5022ba4115");
+                            ObsData weight = getData(patientData, workingMonth, "90236");
+                            ObsData cd4 = getData(patientData, workingMonth, "5497");
+                            ObsData clinicalStage = getData(patientData, workingMonth, "90203");
+                            ObsData viralLoad = viralLoad(viralLoads, i);
 
-                            String vl = getSummarizedObsValue(viralLoad(viralLoadResults, i), patient);
-
+                            String vl = viralLoad == null ? "" : viralLoad.getVal();
 
                             if (clinicalStage != null) {
-                                pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage.getReportName());
+                                pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage);
                             } else {
                                 pdh.addCol(row, "CI" + String.valueOf(i), "");
                             }
@@ -331,11 +381,10 @@ public class MyTest {
                     }
 
                 }
-                // dataSet.addRow(row);
+//                 dataSet.addRow(row);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        // return dataSet;
-    }*/
+    }
 }

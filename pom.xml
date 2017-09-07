@@ -41,6 +41,7 @@
         <appframeworkVersion>2.4</appframeworkVersion>
         <appuiVersion>1.6</appuiVersion>
         <calculationVersion>1.1</calculationVersion>
+        <luceneVersion>6.6.0</luceneVersion>
         <metadatadeployVersion>1.6</metadatadeployVersion>
         <metadatamappingVersion>1.0.2</metadatamappingVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
@@ -177,6 +178,44 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-math3</artifactId>
                 <version>3.2</version>
+            </dependency>
+
+            <!-- lucene dependencies -->
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-core</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-analyzers-common</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queries</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-queryparser</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-facet</artifactId>
+                <version>${luceneVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-grouping</artifactId>
+                <version>${luceneVersion}</version>
             </dependency>
 
         </dependencies>

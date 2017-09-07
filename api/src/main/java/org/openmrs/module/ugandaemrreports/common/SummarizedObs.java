@@ -8,36 +8,28 @@ import java.util.Date;
 public class SummarizedObs {
 
     private String encounterType;
-    private String encounterTypeName;
+    private Integer y;
+    private Integer q;
+    private Integer m;
     private String concept;
-    private String conceptName;
-    private String valueCoded;
-    private String valueCodedName;
-    private String reportName;
-    private String period;
+    private String vals;
     private String patients;
+    private String ageGender;
     private Integer total;
-    private String periodType;
-    private Date dateGenerated;
-    private String periodGroupedBy;
 
     public SummarizedObs() {
     }
 
-    public SummarizedObs(String encounterType, String encounterTypeName, String concept, String conceptName, String valueCoded, String valueCodedName, String reportName, String period, String patients, Integer total, String periodType, Date dateGenerated, String periodGroupedBy) {
+    public SummarizedObs(String encounterType, Integer y, Integer q, Integer m, String concept, String vals, String patients, String ageGender, Integer total) {
         this.encounterType = encounterType;
-        this.encounterTypeName = encounterTypeName;
+        this.y = y;
+        this.q = q;
+        this.m = m;
         this.concept = concept;
-        this.conceptName = conceptName;
-        this.valueCoded = valueCoded;
-        this.valueCodedName = valueCodedName;
-        this.reportName = reportName;
-        this.period = period;
+        this.vals = vals;
         this.patients = patients;
+        this.ageGender = ageGender;
         this.total = total;
-        this.periodType = periodType;
-        this.dateGenerated = dateGenerated;
-        this.periodGroupedBy = periodGroupedBy;
     }
 
     public String getEncounterType() {
@@ -48,12 +40,28 @@ public class SummarizedObs {
         this.encounterType = encounterType;
     }
 
-    public String getEncounterTypeName() {
-        return encounterTypeName;
+    public Integer getY() {
+        return y;
     }
 
-    public void setEncounterTypeName(String encounterTypeName) {
-        this.encounterTypeName = encounterTypeName;
+    public void setY(Integer y) {
+        this.y = y;
+    }
+
+    public Integer getQ() {
+        return q;
+    }
+
+    public void setQ(Integer q) {
+        this.q = q;
+    }
+
+    public Integer getM() {
+        return m;
+    }
+
+    public void setM(Integer m) {
+        this.m = m;
     }
 
     public String getConcept() {
@@ -64,44 +72,12 @@ public class SummarizedObs {
         this.concept = concept;
     }
 
-    public String getConceptName() {
-        return conceptName;
+    public String getVals() {
+        return vals;
     }
 
-    public void setConceptName(String conceptName) {
-        this.conceptName = conceptName;
-    }
-
-    public String getValueCoded() {
-        return valueCoded;
-    }
-
-    public void setValueCoded(String valueCoded) {
-        this.valueCoded = valueCoded;
-    }
-
-    public String getValueCodedName() {
-        return valueCodedName;
-    }
-
-    public void setValueCodedName(String valueCodedName) {
-        this.valueCodedName = valueCodedName;
-    }
-
-    public String getReportName() {
-        return reportName;
-    }
-
-    public void setReportName(String reportName) {
-        this.reportName = reportName;
-    }
-
-    public String getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(String period) {
-        this.period = period;
+    public void setVals(String vals) {
+        this.vals = vals;
     }
 
     public String getPatients() {
@@ -112,35 +88,19 @@ public class SummarizedObs {
         this.patients = patients;
     }
 
+    public String getAgeGender() {
+        return ageGender;
+    }
+
+    public void setAgeGender(String ageGender) {
+        this.ageGender = ageGender;
+    }
+
     public Integer getTotal() {
         return total;
     }
 
     public void setTotal(Integer total) {
         this.total = total;
-    }
-
-    public String getPeriodType() {
-        return periodType;
-    }
-
-    public void setPeriodType(String periodType) {
-        this.periodType = periodType;
-    }
-
-    public Date getDateGenerated() {
-        return dateGenerated;
-    }
-
-    public void setDateGenerated(Date dateGenerated) {
-        this.dateGenerated = dateGenerated;
-    }
-
-    public String getPeriodGroupedBy() {
-        return periodGroupedBy;
-    }
-
-    public void setPeriodGroupedBy(String periodGroupedBy) {
-        this.periodGroupedBy = periodGroupedBy;
     }
 }

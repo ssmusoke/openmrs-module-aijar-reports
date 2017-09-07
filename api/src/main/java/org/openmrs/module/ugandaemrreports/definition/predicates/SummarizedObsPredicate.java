@@ -22,7 +22,7 @@ public class SummarizedObsPredicate implements Predicate<SummarizedObs> {
             bool = summarizedObs.getConcept().equals(concept);
         }
         if(period != null){
-            bool = bool && summarizedObs.getPeriod().equals(period);
+            bool = bool && summarizedObs.getM().equals(period);
         }
         return bool;
     }
