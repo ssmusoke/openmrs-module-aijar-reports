@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import static java.sql.ResultSet.CONCUR_READ_ONLY;
 import static java.sql.ResultSet.TYPE_FORWARD_ONLY;
 import static java.util.Collections.sort;
+import static java.util.Comparator.comparing;
 
 
 /**
@@ -249,7 +250,8 @@ public class UgandaEMRReporting {
             Integer encounterId = rs.getInt(3);
             Date encounterDate = rs.getDate(4);
             String val = rs.getString(5);
-            result.add(new ObsData(patientId, conceptId, encounterId, encounterDate, val));
+            String reportName = rs.getString(6);
+            result.add(new ObsData(patientId, conceptId, encounterId, encounterDate, val, reportName));
         }
         rs.close();
         stmt.close();
@@ -259,7 +261,7 @@ public class UgandaEMRReporting {
 
     public static ObsData getFirstData(List<ObsData> data, String concept) {
         List<ObsData> filteredData = getDataAsList(data, concept);
-        filteredData.sort(Comparator.comparing(ObsData::getEncounterId));
+        filteredData.sort(comparing(ObsData::getEncounterId));
         if (filteredData.size() > 0) {
             return filteredData.get(0);
         }
@@ -279,15 +281,13 @@ public class UgandaEMRReporting {
     }
 
     public static ObsData getLastAppointments(List<ObsData> data, String yearMonth) {
-        List<ObsData> filteredData = getDataAsList(data, "5069").stream()
+
+        List<ObsData> filteredData = getDataAsList(data, "5096").stream()
                 .filter(line -> getObsPeriod(DateUtil.parseYmd(line.getVal()),
                         Enums.Period.MONTHLY).compareTo(yearMonth) < 0).collect(Collectors.toList());
 
-        if (filteredData.size() > 0) {
-            filteredData.sort(Comparator.comparing(ObsData::getVal));
-            return filteredData.get(filteredData.size() - 1);
-        }
-        return null;
+        return filteredData.stream().max(comparing(ObsData::getVal)).get();
+
     }
 
     public static void lucenizeSummarizedObs(IndexWriter writer, String startDate, Connection connection) throws SQLException, IOException {
@@ -678,7 +678,7 @@ public class UgandaEMRReporting {
     }
 
 
-    public  static String summarizeObs(){
+    public static String summarizeObs() {
         try {
             Connection connection = UgandaEMRReporting.sqlConnection();
             String lastSummarizationDate = UgandaEMRReporting.getGlobalProperty("ugandaemrreports.lastSummarizationDate");

@@ -11,13 +11,15 @@ public class ObsData {
     private Integer encounterId;
     private Date encounterDate;
     private String val;
+    private String reportName;
 
-    public ObsData(Integer patientId, String conceptId, Integer encounterId, Date encounterDate, String val) {
+    public ObsData(Integer patientId, String conceptId, Integer encounterId, Date encounterDate, String val, String reportName) {
         this.patientId = patientId;
         this.conceptId = conceptId;
         this.encounterId = encounterId;
         this.encounterDate = encounterDate;
         this.val = val;
+        this.reportName = reportName;
     }
 
     public Integer getPatientId() {
@@ -58,5 +60,13 @@ public class ObsData {
 
     public void setEncounterId(Integer encounterId) {
         this.encounterId = encounterId;
+    }
+
+    public String getReportName() {
+        return reportName;
+    }
+
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
     }
 }

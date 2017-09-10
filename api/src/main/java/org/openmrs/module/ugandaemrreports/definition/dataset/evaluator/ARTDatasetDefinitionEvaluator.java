@@ -44,7 +44,6 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         String month = getObsPeriod(definition.getStartDate(), Enums.Period.MONTHLY);
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
-
         Map<String, String> where = new HashMap<>();
 
         where.put("y", String.valueOf(localDate.getYear()));
@@ -101,7 +100,142 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     "  (SELECT encounter_datetime\n" +
                     "   FROM encounter e\n" +
                     "   WHERE e.encounter_id = o.encounter_id)                                                    AS enc_date,\n" +
-                    "  COALESCE(value_coded, COALESCE(DATE(value_datetime), COALESCE(value_numeric, value_text))) AS val\n" +
+                    "  COALESCE(value_coded, COALESCE(DATE(value_datetime), COALESCE(value_numeric, value_text))) AS val,\n" +
+                    "  CASE\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99015\n" +
+                    "    THEN '1a'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99015\n" +
+                    "    THEN '4a'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99016\n" +
+                    "    THEN '1b'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99016\n" +
+                    "    THEN '4b'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99005\n" +
+                    "    THEN '1c'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99005\n" +
+                    "    THEN '4c'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99006\n" +
+                    "    THEN '1d'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99006\n" +
+                    "    THEN '4d'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99039\n" +
+                    "    THEN '1e'\n" +
+                    "\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99039\n" +
+                    "    THEN '4j'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99040\n" +
+                    "    THEN '1f'\n" +
+                    "\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99040\n" +
+                    "    THEN '4i'\n" +
+                    "  WHEN value_coded = 99041\n" +
+                    "    THEN '1g'\n" +
+                    "  WHEN value_coded = 99042\n" +
+                    "    THEN '1h'\n" +
+                    "  WHEN value_coded = 99007\n" +
+                    "    THEN '2a2'\n" +
+                    "  WHEN value_coded = 99008\n" +
+                    "    THEN '2a4'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99044\n" +
+                    "    THEN '2b'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99044\n" +
+                    "    THEN '5d'\n" +
+                    "  WHEN value_coded = 99043\n" +
+                    "    THEN '2c'\n" +
+                    "  WHEN value_coded = 99282\n" +
+                    "    THEN '2d2'\n" +
+                    "  WHEN value_coded = 99283\n" +
+                    "    THEN '2d4'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99046\n" +
+                    "    THEN '2e'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99046\n" +
+                    "    THEN '5l'\n" +
+                    "  WHEN value_coded = 99017\n" +
+                    "    THEN '5a'\n" +
+                    "  WHEN value_coded = 99018\n" +
+                    "    THEN '5b'\n" +
+                    "  WHEN value_coded = 99045\n" +
+                    "    THEN '5f'\n" +
+                    "  WHEN value_coded = 99284\n" +
+                    "    THEN '5g'\n" +
+                    "  WHEN value_coded = 99285\n" +
+                    "    THEN '5h'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) > 10 AND value_coded = 99286\n" +
+                    "    THEN '2c'\n" +
+                    "  WHEN (SELECT YEAR(obs_datetime) - YEAR(p.birthdate) - (RIGHT(obs_datetime, 5) < RIGHT(p.birthdate, 5))\n" +
+                    "        FROM person AS p\n" +
+                    "        WHERE p.person_id = o.person_id) <= 10 AND value_coded = 99286\n" +
+                    "    THEN '5l'\n" +
+                    "  WHEN value_coded = 99884\n" +
+                    "    THEN '4e'\n" +
+                    "  WHEN value_coded = 99885\n" +
+                    "    THEN '4f'\n" +
+                    "  WHEN value_coded = 99888\n" +
+                    "    THEN '2h'\n" +
+                    "  WHEN value_coded = 163017\n" +
+                    "    THEN '2g'\n" +
+                    "  WHEN value_coded = 90002\n" +
+                    "    THEN 'othr'\n" +
+                    "  WHEN value_coded IN (90033, 90079, 1204)\n" +
+                    "    THEN '1'\n" +
+                    "  WHEN value_coded IN (90034, 90073, 1205)\n" +
+                    "    THEN '2'\n" +
+                    "  WHEN value_coded IN (90035, 90078, 1206)\n" +
+                    "    THEN '3'\n" +
+                    "  WHEN value_coded IN (90036, 90071, 1207)\n" +
+                    "    THEN '4'\n" +
+                    "  WHEN value_coded = 90293\n" +
+                    "    THEN 'T1'\n" +
+                    "  WHEN value_coded = 90294\n" +
+                    "    THEN 'T2'\n" +
+                    "  WHEN value_coded = 90295\n" +
+                    "    THEN 'T3'\n" +
+                    "  WHEN value_coded = 90295\n" +
+                    "    THEN 'T4'\n" +
+                    "  WHEN value_coded = 90156\n" +
+                    "    THEN 'G'\n" +
+                    "  WHEN value_coded = 90157\n" +
+                    "    THEN 'F'\n" +
+                    "  WHEN value_coded = 90158\n" +
+                    "    THEN 'P'\n" +
+                    "  WHEN value_coded = 90003\n" +
+                    "    THEN 'Y'\n" +
+                    "  ELSE ''\n" +
+                    "  END                                                                                        AS report_name\n" +
                     "FROM obs o\n" +
                     "WHERE o.voided = 0 AND o.encounter_id IN (%s) AND o.concept_id IN (%s)\n" +
                     "UNION ALL\n" +
@@ -110,10 +244,10 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     "  0,\n" +
                     "  0,\n" +
                     "  death_date,\n" +
-                    "  DATE(death_date)\n" +
+                    "  DATE(death_date),\n" +
+                    "  ''\n" +
                     "FROM person p INNER JOIN obs art ON (p.person_id = art.person_id)\n" +
-                    "WHERE art.concept_id = 99161 AND p.person_id IN (%s) AND art.voided = 0 AND p.voided = 0 AND\n" +
-                    "      p.death_date >= art.value_datetime;", encounters, concepts, allPatients);
+                    "WHERE art.concept_id = 99161 AND p.person_id IN (%s) AND art.voided = 0 AND p.voided = 0 AND p.death_date >= art.value_datetime;", encounters, concepts, allPatients);
 
             List<ObsData> table = getData(connection, obsQuery);
 
@@ -160,9 +294,9 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
                 }
 
-                pdh.addCol(row, "Date ART Started", artStartDate);
-                pdh.addCol(row, "Unique ID no", patient);
-                pdh.addCol(row, "TI", ti);
+                pdh.addCol(row, "Date ART Started", patient.getValue());
+                pdh.addCol(row, "Unique ID no", patient.getKey());
+                pdh.addCol(row, "TI", ti == null ? "" : "TI");
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
@@ -173,7 +307,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "Age", "");
                 }
                 pdh.addCol(row, "Address", address);
-                pdh.addCol(row, "Weight", baselineWeight);
+                pdh.addCol(row, "Weight", baselineWeight == null ? "" : baselineWeight.getVal());
 
                 ObsData functionalStatusDuringArtStart = getFirstData(patientData, "90235");
 
@@ -213,7 +347,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "P4", "");
 
                 if (baselineRegimen != null) {
-                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen);
+                    pdh.addCol(row, "BASE REGIMEN", baselineRegimen.getReportName());
                 } else {
                     pdh.addCol(row, "BASE REGIMEN", "");
                 }
@@ -248,12 +382,13 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         String cotrim = "";
                         String status = "";
                         String adherenceAndCPT = "";
+                        String tb = "";
 
                         if (inhDosage != null || cptDosage != null) {
                             cotrim = "Y";
                         }
                         if (currentRegimen != null) {
-                            status = currentRegimen.getVal();
+                            status = currentRegimen.getReportName();
                         } else if (returnDate != null) {
                             status = "3";
                         } else {
@@ -286,13 +421,17 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         }
 
                         if (arvAdh != null && cotrim != null) {
-                            adherenceAndCPT = arvAdh.getVal() + "|" + cotrim;
+                            adherenceAndCPT = arvAdh.getReportName() + "|" + cotrim;
                         } else if (arvAdh != null) {
-                            adherenceAndCPT = arvAdh.getVal();
+                            adherenceAndCPT = arvAdh.getReportName();
                         } else if (cotrim != null) {
                             adherenceAndCPT = cotrim;
                         }
-                        pdh.addCol(row, "FUS" + String.valueOf(i), status + "\n" + tbStatus + "\n" + adherenceAndCPT);
+
+                        if (tbStatus != null) {
+                            tb = tbStatus.getReportName();
+                        }
+                        pdh.addCol(row, "FUS" + String.valueOf(i), status + "\n" + tb + "\n" + adherenceAndCPT);
 
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                             ObsData weight = getData(patientData, workingMonth, "90236");
@@ -300,17 +439,11 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             ObsData clinicalStage = getData(patientData, workingMonth, "90203");
                             ObsData viralLoad = viralLoad(viralLoads, i);
 
-                            String vl = viralLoad == null ? "" : viralLoad.getVal();
+                            pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage == null ? "" : clinicalStage.getReportName());
 
-                            if (clinicalStage != null) {
-                                pdh.addCol(row, "CI" + String.valueOf(i), clinicalStage);
-                            } else {
-                                pdh.addCol(row, "CI" + String.valueOf(i), "");
-                            }
+                            pdh.addCol(row, "W" + String.valueOf(i), weight == null ? "" : weight.getVal());
 
-                            pdh.addCol(row, "W" + String.valueOf(i), weight);
-
-                            pdh.addCol(row, "CDVL" + String.valueOf(i), cd4 + "\n" + vl);
+                            pdh.addCol(row, "CDVL" + String.valueOf(i), (cd4 == null ? "" : cd4.getVal()) + "\n" + (viralLoad == null ? "" : viralLoad.getVal()));
                         }
                     } else {
                         pdh.addCol(row, "FUS" + String.valueOf(i), "");
