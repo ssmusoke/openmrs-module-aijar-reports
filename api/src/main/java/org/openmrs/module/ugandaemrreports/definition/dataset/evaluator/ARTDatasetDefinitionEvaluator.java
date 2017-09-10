@@ -44,6 +44,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         String month = getObsPeriod(definition.getStartDate(), Enums.Period.MONTHLY);
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
+
         Map<String, String> where = new HashMap<>();
 
         where.put("y", String.valueOf(localDate.getYear()));
@@ -357,10 +358,14 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "L3S", "");
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
 
+                ObsData visit = null;
+                ObsData lastDaysOfDrugs = null;
 
                 for (int i = 0; i <= 72; i++) {
                     String workingMonth = getObsPeriod(Periods.addMonths(localDate, i).get(0).toDate(), Enums.Period.MONTHLY);
                     Integer period = Integer.valueOf(workingMonth);
+
+                    ObsData currentEncounter = getData(patientData, period);
 
                     if (period <= currentMonth && (!hasDied || !hasTransferred)) {
 
@@ -372,12 +377,20 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
                         ObsData currentRegimen = getData(patientData, workingMonth, "90315");
                         ObsData returnDate = getData(patientData, workingMonth, "5096");
+                        ObsData daysOfDrugs = getData(patientData, workingMonth, "99036");
 
                         ObsData arvStopDate = getData(patientData, workingMonth, "99084");
                         ObsData arvRestartDate = getData(patientData, workingMonth, "99085");
 
                         ObsData toDate = getData(patientData, workingMonth, "99165");
                         ObsData currentlyDead = getData(patientData, workingMonth, "deaths");
+
+                        if (returnDate != null) {
+                            visit = returnDate;
+                        }
+                        if (daysOfDrugs != null) {
+                            lastDaysOfDrugs = daysOfDrugs;
+                        }
 
                         String cotrim = "";
                         String status = "";
@@ -391,6 +404,8 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             status = currentRegimen.getReportName();
                         } else if (returnDate != null) {
                             status = "3";
+                        } else if (currentEncounter != null) {
+                            status = "✓";
                         } else {
                             if (arvStopDate != null) {
                                 status = "2";
@@ -403,12 +418,10 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                 status = "5";
                                 hasTransferred = true;
                             } else {
-                                ObsData lastAppointment = getLastAppointments(patientData, workingMonth);
-
-                                if (lastAppointment != null) {
-                                    Integer appointmentPeriod = Integer.parseInt(getObsPeriod(DateUtil.parseYmd(lastAppointment.getVal()), Enums.Period.MONTHLY));
+                                if (visit != null) {
+                                    Integer appointmentPeriod = Integer.parseInt(getObsPeriod(DateUtil.parseYmd(visit.getVal()), Enums.Period.MONTHLY));
                                     Integer diff = period - appointmentPeriod;
-                                    if (diff < 0) {
+                                    if (diff <= 0) {
                                         status = "→";
                                     } else if (diff < 3) {
                                         status = "3";
@@ -417,7 +430,6 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                     }
                                 }
                             }
-
                         }
 
                         if (arvAdh != null && cotrim != null) {

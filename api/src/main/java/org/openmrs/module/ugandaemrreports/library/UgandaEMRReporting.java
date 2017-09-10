@@ -50,38 +50,6 @@ public class UgandaEMRReporting {
 
     public static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
-    public static IndexWriter createWriter(String indexDirectory) throws IOException {
-        FSDirectory dir = FSDirectory.open(Paths.get(indexDirectory));
-        IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
-        return new IndexWriter(dir, config);
-    }
-
-    private static IndexSearcher createSearcher(String indexDirectory) throws IOException {
-        Directory dir = FSDirectory.open(Paths.get(indexDirectory));
-        IndexReader reader = DirectoryReader.open(dir);
-        return new IndexSearcher(reader);
-    }
-
-    public static List<SummarizedObs> getSummarizedObsData(String indexDirectory, String column, String search)
-            throws IOException, ParseException {
-        List<SummarizedObs> result = new ArrayList<>();
-
-        try {
-            IndexSearcher searcher = createSearcher(indexDirectory);
-            QueryParser qp = new QueryParser(column, new StandardAnalyzer());
-            int total = searcher.count(qp.parse(search));
-            if (total > 0) {
-                for (ScoreDoc sDoc : searcher.search(qp.parse(search), total).scoreDocs) {
-                    result.add(convert(searcher.doc(sDoc.doc)));
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public static List<SummarizedObs> getSummarizedObs(Connection connection, String sql) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -240,6 +208,13 @@ public class UgandaEMRReporting {
                         Enums.Period.MONTHLY).compareTo(yearMonth) == 0).findAny().orElse(null);
     }
 
+    public static ObsData getData(List<ObsData> data, Integer yearMonth) {
+
+        return data.stream()
+                .filter(line -> getObsPeriod(line.getEncounterDate(),
+                        Enums.Period.MONTHLY).compareTo(String.valueOf(yearMonth)) == 0).findAny().orElse(null);
+    }
+
     public static List<ObsData> getData(Connection connection, String sql) throws SQLException {
         PreparedStatement stmt = connection.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery();
@@ -280,225 +255,7 @@ public class UgandaEMRReporting {
                 .collect(Collectors.toList());
     }
 
-    public static ObsData getLastAppointments(List<ObsData> data, String yearMonth) {
 
-        List<ObsData> filteredData = getDataAsList(data, "5096").stream()
-                .filter(line -> getObsPeriod(DateUtil.parseYmd(line.getVal()),
-                        Enums.Period.MONTHLY).compareTo(yearMonth) < 0).collect(Collectors.toList());
-
-        return filteredData.stream().max(comparing(ObsData::getVal)).get();
-
-    }
-
-    public static void lucenizeSummarizedObs(IndexWriter writer, String startDate, Connection connection) throws SQLException, IOException {
-
-        String query = "SELECT\n" +
-                "  IFNULL((SELECT et.uuid\n" +
-                "          FROM encounter_type AS et\n" +
-                "          WHERE et.encounter_type_id =\n" +
-                "                (SELECT e.encounter_type\n" +
-                "                 FROM encounter AS e\n" +
-                "                 WHERE e.encounter_id = o.encounter_id)), 'ANY') AS encounter_type,\n" +
-                "  YEAR(obs_datetime)                                             AS y,\n" +
-                "  QUARTER(obs_datetime)                                          AS q,\n" +
-                "  MONTH(obs_datetime)                                            AS m,\n" +
-                "  concept_id                                                     AS concept,\n" +
-                "  value_coded                                                    AS vals,\n" +
-                "  group_concat(DISTINCT person_id ORDER BY person_id\n" +
-                "               ASC)                                              AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                          FROM person p\n" +
-                "                                          WHERE p.person_id = o.person_id),\n" +
-                "                         (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                 - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                    RIGHT(birthdate, 5))\n" +
-                "                          FROM person p\n" +
-                "                          WHERE p.person_id = o.person_id)) ORDER\n" +
-                "               BY person_id SEPARATOR\n" +
-                "               ',')                                              AS age_gender,\n" +
-                "  COUNT(DISTINCT\n" +
-                "        person_id)                                               AS total\n" +
-                "FROM obs o\n" +
-                "WHERE value_coded IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "GROUP BY encounter_type, concept, value_coded, y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  IFNULL((SELECT et.uuid\n" +
-                "          FROM encounter_type AS et\n" +
-                "          WHERE et.encounter_type_id =\n" +
-                "                (SELECT e.encounter_type\n" +
-                "                 FROM encounter AS e\n" +
-                "                 WHERE e.encounter_id = o.encounter_id)), 'ANY')                          AS encounter_type,\n" +
-                "  YEAR(obs_datetime)                                                                      AS y,\n" +
-                "  QUARTER(obs_datetime)                                                                   AS q,\n" +
-                "  MONTH(obs_datetime)                                                                     AS m,\n" +
-                "  concept_id                                                                              AS concept,\n" +
-                "  group_concat(concat_ws(':', person_id, value_numeric) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "  group_concat(DISTINCT person_id ORDER BY person_id ASC)                                 AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                          FROM person p\n" +
-                "                                          WHERE p.person_id = o.person_id),\n" +
-                "                         (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                 - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                    RIGHT(birthdate, 5))\n" +
-                "                          FROM person p\n" +
-                "                          WHERE p.person_id = o.person_id)) ORDER\n" +
-                "               BY person_id SEPARATOR\n" +
-                "               ',')                                                                       AS age_gender,\n" +
-                "  COUNT(DISTINCT\n" +
-                "        person_id)                                                                        AS total\n" +
-                "FROM obs o\n" +
-                "WHERE value_numeric IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "GROUP BY encounter_type, concept, y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  IFNULL((SELECT et.uuid\n" +
-                "          FROM encounter_type AS et\n" +
-                "          WHERE et.encounter_type_id =\n" +
-                "                (SELECT e.encounter_type\n" +
-                "                 FROM encounter AS e\n" +
-                "                 WHERE e.encounter_id = o.encounter_id)), 'ANY')                         AS encounter_type,\n" +
-                "  YEAR(obs_datetime)                                                                     AS y,\n" +
-                "  QUARTER(obs_datetime)                                                                  AS q,\n" +
-                "  MONTH(obs_datetime)                                                                    AS m,\n" +
-                "  concept_id                                                                             AS concept,\n" +
-                "  group_concat(concat_ws('::', person_id, value_text) ORDER BY person_id SEPARATOR ',,') AS vals,\n" +
-                "  group_concat(DISTINCT person_id ORDER BY person_id ASC)                                AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                          FROM person p\n" +
-                "                                          WHERE p.person_id = o.person_id),\n" +
-                "                         (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                 - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                    RIGHT(birthdate, 5))\n" +
-                "                          FROM person p\n" +
-                "                          WHERE p.person_id = o.person_id)) ORDER\n" +
-                "               BY person_id SEPARATOR\n" +
-                "               ',')                                                                      AS age_gender,\n" +
-                "  COUNT(DISTINCT person_id)                                                              AS total\n" +
-                "FROM obs o\n" +
-                "WHERE value_text IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "GROUP BY encounter_type, concept, y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  IFNULL((SELECT et.uuid\n" +
-                "          FROM encounter_type AS et\n" +
-                "          WHERE et.encounter_type_id =\n" +
-                "                (SELECT e.encounter_type\n" +
-                "                 FROM encounter AS e\n" +
-                "                 WHERE e.encounter_id = o.encounter_id)), 'ANY')                                 AS encounter_type,\n" +
-                "  YEAR(value_datetime)                                                                           AS y,\n" +
-                "  QUARTER(value_datetime)                                                                        AS q,\n" +
-                "  MONTH(value_datetime)                                                                          AS m,\n" +
-                "  concept_id                                                                                     AS concept,\n" +
-                "  group_concat(concat_ws(':', person_id, DATE(value_datetime)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "  group_concat(DISTINCT person_id ORDER BY person_id ASC)                                        AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                          FROM person p\n" +
-                "                                          WHERE p.person_id = o.person_id),\n" +
-                "                         (SELECT YEAR(o.value_datetime) - YEAR(birthdate)\n" +
-                "                                 - (RIGHT(o.value_datetime, 5) <\n" +
-                "                                    RIGHT(birthdate, 5))\n" +
-                "                          FROM person p\n" +
-                "                          WHERE p.person_id = o.person_id)) ORDER\n" +
-                "               BY person_id SEPARATOR\n" +
-                "               ',')                                                                              AS age_gender,\n" +
-                "  COUNT(DISTINCT person_id)                                                                      AS total\n" +
-                "FROM obs o\n" +
-                "WHERE value_datetime IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "GROUP BY encounter_type, concept, y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  IFNULL((SELECT et.uuid\n" +
-                "          FROM encounter_type AS et\n" +
-                "          WHERE et.encounter_type_id = e.encounter_type), 'ANY') AS encounter_type,\n" +
-                "  YEAR(e.encounter_datetime)                                     AS y,\n" +
-                "  QUARTER(e.encounter_datetime)                                  AS q,\n" +
-                "  MONTH(e.encounter_datetime)                                    AS m,\n" +
-                "  'encounter'                                                    AS concept,\n" +
-                "  'encounter'                                                    AS vals,\n" +
-                "  group_concat(DISTINCT patient_id ORDER BY patient_id ASC)      AS patients,\n" +
-                "  group_concat(concat_ws(':', patient_id, (SELECT p.gender\n" +
-                "                                           FROM person p\n" +
-                "                                           WHERE p.person_id = e.patient_id),\n" +
-                "                         (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate)\n" +
-                "                                 - (RIGHT(e.encounter_datetime, 5) <\n" +
-                "                                    RIGHT(birthdate, 5))\n" +
-                "                          FROM person p\n" +
-                "                          WHERE p.person_id = e.patient_id)) ORDER\n" +
-                "               BY patient_id SEPARATOR\n" +
-                "               ',')                                              AS age_gender,\n" +
-                "  COUNT(DISTINCT patient_id)                                     AS total\n" +
-                "FROM encounter e\n" +
-                "WHERE voided = 0 AND date_created > '1900-01-01'\n" +
-                "GROUP BY encounter_type, y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  'births'                                                                                  AS encounter_type,\n" +
-                "  YEAR(birthdate)                                                                           AS y,\n" +
-                "  QUARTER(birthdate)                                                                        AS q,\n" +
-                "  MONTH(birthdate)                                                                          AS m,\n" +
-                "  'births'                                                                                  AS concept,\n" +
-                "  group_concat(concat_ws(':', person_id, DATE(birthdate)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC)                                   AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, gender) ORDER BY person_id SEPARATOR ',')          AS age_gender,\n" +
-                "  COUNT(DISTINCT person_id)                                                                 AS total\n" +
-                "FROM person\n" +
-                "WHERE date_created > '1900-01-01' AND birthdate IS NOT NULL\n" +
-                "GROUP BY y, q, m\n" +
-                "UNION ALL\n" +
-                "SELECT\n" +
-                "  'deaths'                                                                                   AS encounter_type,\n" +
-                "  YEAR(death_date)                                                                           AS y,\n" +
-                "  QUARTER(death_date)                                                                        AS q,\n" +
-                "  MONTH(death_date)                                                                          AS m,\n" +
-                "  'deaths'                                                                                   AS concept,\n" +
-                "  group_concat(concat_ws(':', person_id, DATE(death_date)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "  GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC)                                    AS patients,\n" +
-                "  group_concat(concat_ws(':', person_id, gender,\n" +
-                "                         YEAR(death_date) - YEAR(birthdate) - (RIGHT(death_date, 5) < RIGHT(birthdate, 5))) ORDER BY\n" +
-                "               person_id SEPARATOR ',')                                                      AS age_gender,\n" +
-                "  COUNT(DISTINCT person_id)                                                                  AS total\n" +
-                "FROM person\n" +
-                "WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
-                "GROUP BY y, q, m;";
-
-        query = query.replaceAll("1900-01-01", startDate);
-
-        executeQuery("SET @@group_concat_max_len = 1000000;", connection);
-
-
-        List<String> columns = Arrays.asList("encounterType",
-                "period",
-                "concept",
-                "vals",
-                "patients",
-                "total");
-        Statement stmt = connection.createStatement(TYPE_FORWARD_ONLY, CONCUR_READ_ONLY);
-        stmt.setFetchSize(Integer.MIN_VALUE);
-
-        ResultSet rs = stmt.executeQuery(query);
-
-        ResultSetMetaData metaData = rs.getMetaData();
-        int columnCount = metaData.getColumnCount();
-
-        FieldType titleType = new FieldType();
-        titleType.setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-        titleType.setStored(true);
-        titleType.setTokenized(true);
-
-        while (rs.next()) {
-            Document document = new Document();
-            for (int i = 1; i <= columnCount; i++) {
-                String column = columns.get(i - 1);
-                String value = rs.getString(i);
-                Field titleField1 = new Field(column, value, titleType);
-                document.add(titleField1);
-            }
-            writer.addDocument(document);
-        }
-        rs.close();
-        stmt.close();
-    }
 
     public static void summarizeObs(String startDate, Connection connection) throws SQLException {
         createSummarizedObsTable(connection);
