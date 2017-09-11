@@ -7,30 +7,22 @@
       {
         "id": "org.openmrs.module.ugandaemr.reports.overview",
         "description": "Links to available Facility level Reports",
-        "supportedExtensionTypes": [
-          "link"
-        ]
+        "supportedExtensionTypes": [ "link" ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.monthly",
         "description": "Links to available Monthly Reports",
-        "supportedExtensionTypes": [
-          "link"
-        ]
+        "supportedExtensionTypes": [ "link" ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.registers",
         "description": "Links to available Registers",
-        "supportedExtensionTypes": [
-          "link"
-        ]
+        "supportedExtensionTypes": [ "link" ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
-        "supportedExtensionTypes": [
-          "link"
-        ]
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -82,48 +74,42 @@
         "label": "ART Patient Export",
         "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
         "order": 25
-      },
-      {
+      },{
         "id": "Facility Death List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Facility Death List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
         "order": 30
-      },
-      {
+      },{
         "id": "Exposed Infants Due for 1st PCR",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for 1st PCR",
         "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
         "order": 35
-      },
-      {
+      },{
         "id": "Exposed Infants Due for 2nd PCR",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for 2nd PCR",
         "url": "reportingui/runReport.page?reportDefinition=cd8b4a66-f4e6-43b6-a4fd-061e57823cc4",
         "order": 40
-      },
-      {
+      },{
         "id": "Exposed Infants Due for Rapid Test",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for Rapid Test",
         "url": "reportingui/runReport.page?reportDefinition=1ff3e32c-5526-11e7-b407-15be7a295d59",
         "order": 45
-      },
-      {
+      },{
         "id": "Exposed Infants Due for Appointment",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for Appointment",
         "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
         "order": 50
-      },
-      {
+      },{
         "id": "OptionB+ Weekly SMS Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -139,15 +125,14 @@
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
         "order": 5
       },
-      {
+	  {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
         "order": 10
-      },
-      {
+      },{
         "id": "Maternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -155,7 +140,7 @@
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
       },
-      {
+	  {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -267,22 +252,7 @@
         "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
         "order": 30
       }
-      
-    ]
-  },
-  {
-    "id": "ugandaemrreports.summary",
-    "description": "Observations goes to the dashboard",
-    "order": 2,
-    "extensions": [
-      {
-        "id": "coreapps.activeVisitsHomepageLink",
-        "extensionPointId": "systemAdministration.apps",
-        "type": "link",
-        "label": "Summarize Observations",
-        "url": "ugandaemrreports/summarize.page",
-        "icon": "icon-bar-chart"
-      }
+
     ]
   }
 ]
