@@ -269,5 +269,20 @@
       }
       
     ]
+  },
+  {
+    "id": "ugandaemrreports.summary",
+    "description": "Observations goes to the dashboard",
+    "order": 2,
+    "extensions": [
+      {
+        "id": "coreapps.activeVisitsHomepageLink",
+        "extensionPointId": "systemAdministration.apps",
+        "type": "link",
+        "label": "Summarize Observations",
+        "url": "ugandaemrreports/summarize.page",
+        "icon": "icon-bar-chart"
+      }
+    ]
   }
 ]
