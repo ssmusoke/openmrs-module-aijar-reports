@@ -1,14 +1,15 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Multimap;
-import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -19,9 +20,8 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPatientPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
-import org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -35,6 +35,8 @@ import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.*;
  */
 @Handler(supports = {ARTDatasetDefinition.class})
 public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
+    @Autowired
+    private HIVMetadata hivMetadata;
 
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
@@ -45,25 +47,19 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
 
-        Map<String, String> where = new HashMap<>();
 
-        where.put("y", String.valueOf(localDate.getYear()));
-        where.put("m", String.valueOf(localDate.getMonthOfYear()));
-        where.put("concept", "99161");
+        String startArtThisMonth = ("select person_id,DATE(value_datetime) as obs_date from obs where " +
+                "DATE_FORMAT(value_datetime, '%Y%m') = '%s' and concept_id = 99161 and voided = 0")
+                .replaceAll("%s", month);
 
         try {
-            Connection connection = testSqlConnection();
-            List<SummarizedObs> startedArtThisMonth = getSummarizedObs(connection, where);
+            Connection connection = sqlConnection();
 
-            String allPatients = summarizedObsPatientsToString(startedArtThisMonth);
+            Multimap<Integer, Date> dates = getData(connection, startArtThisMonth, "person_id", "obs_date");
 
-            Map<Integer, Date> dates = new HashMap<>();
+            String allPatients = Joiner.on(",").join(dates.keySet());
 
-            for (Map.Entry<Integer, Collection<Date>> d : getData(startedArtThisMonth.get(0).getVals()).asMap().entrySet()) {
-                dates.put(d.getKey(), new ArrayList<>(d.getValue()).get(0));
-            }
-
-            List<Map.Entry<Integer, Date>> entries = new ArrayList<>(dates.entrySet());
+            List<Map.Entry<Integer, Date>> entries = new ArrayList<>(convert(dates).entrySet());
             entries.sort(Comparator.comparing(Map.Entry::getValue));
 
             Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(connection, allPatients);

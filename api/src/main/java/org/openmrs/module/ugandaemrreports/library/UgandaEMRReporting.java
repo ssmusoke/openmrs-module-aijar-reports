@@ -2,43 +2,21 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.*;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.TreeMultimap;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.*;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.joda.time.LocalDate;
-import org.openmrs.GlobalProperty;
-import org.openmrs.Obs;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reportingcompatibility.service.ReportService;
-import org.openmrs.module.ugandaemrreports.common.*;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPeriodPredicate;
-import org.openmrs.module.ugandaemrreports.definition.predicates.SummarizedObsPredicate;
+import org.openmrs.module.ugandaemrreports.common.Enums;
+import org.openmrs.module.ugandaemrreports.common.ObsData;
+import org.openmrs.module.ugandaemrreports.common.PersonDemographics;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
 
-import java.io.IOException;
-import java.nio.file.Paths;
 import java.sql.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static java.sql.ResultSet.CONCUR_READ_ONLY;
-import static java.sql.ResultSet.TYPE_FORWARD_ONLY;
 import static java.util.Collections.sort;
 import static java.util.Comparator.comparing;
 
@@ -47,31 +25,6 @@ import static java.util.Comparator.comparing;
  * Created by carapai on 10/07/2017.
  */
 public class UgandaEMRReporting {
-
-    public static DateFormat DEFAULT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
-
-    public static List<SummarizedObs> getSummarizedObs(Connection connection, String sql) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery();
-        List<SummarizedObs> summarizedObs = new ArrayList<>();
-        while (rs.next()) {
-            SummarizedObs obs = new SummarizedObs();
-            obs.setConcept(rs.getString("concept"));
-            obs.setEncounterType(rs.getString("encounter_type"));
-            obs.setPatients(rs.getString("patients"));
-            obs.setAgeGender(rs.getString("age_gender"));
-            obs.setY(rs.getInt("y"));
-            obs.setQ(rs.getInt("q"));
-            obs.setM(rs.getInt("m"));
-            obs.setVals(rs.getString("vals"));
-            obs.setTotal(rs.getInt("total"));
-            summarizedObs.add(obs);
-        }
-        rs.close();
-        stmt.close();
-        return summarizedObs;
-    }
-
 
     public static List<PersonDemographics> getPersonDemographics(Connection connection, String sql)
             throws SQLException {
@@ -98,29 +51,6 @@ public class UgandaEMRReporting {
 
         return personDemographics;
     }
-
-    public static SummarizedObs convert(Map<String, String> object) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.convertValue(object, SummarizedObs.class);
-    }
-
-    private static SummarizedObs convert(Document document) throws IOException {
-        Map<String, String> data = new HashMap<>();
-        for (String c : getSummarizedObsColumnMappings().values()) {
-            data.put(c, document.get(c).equals("null") ? null : document.get(c));
-        }
-        return convert(data);
-    }
-
-    public static Map<String, String> convert(Document document, Collection<String> columns) {
-        Map<String, String> data = new HashMap<>();
-        for (String c : columns) {
-            data.put(c, document.get(c).equals("null") ? null : document.get(c));
-        }
-
-        return data;
-    }
-
 
     public static String constructSQLQuery(String column, String rangeComparator, String value) {
         return column + " " + rangeComparator + " '" + value + "'";
@@ -150,22 +80,6 @@ public class UgandaEMRReporting {
         return query1 + " " + joiner.toString() + " " + query2;
     }
 
-    public static void createSummarizedObsTable(Connection connection) throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS obs_summary (\n" +
-                "  encounter_type CHAR(38) NULL,\n" +
-                "  y              INT(4)   NULL,\n" +
-                "  q              INT(1)   NULL,\n" +
-                "  m              INT(2)   NULL,\n" +
-                "  concept        CHAR(38) NULL,\n" +
-                "  vals           LONGTEXT NULL,\n" +
-                "  patients       LONGTEXT NULL,\n" +
-                "  age_gender     LONGTEXT NULL,\n" +
-                "  total          INT(7)   NULL\n" +
-                ");";
-
-        executeQuery(sql, connection);
-    }
-
 
     public static Multimap<Integer, Date> getData(Connection connection, String sql, String columnLabel1, String columnLabel2) throws SQLException {
 
@@ -181,18 +95,16 @@ public class UgandaEMRReporting {
         return result;
     }
 
-    public static Multimap<Integer, Date> getData(String data) throws SQLException {
-
-
-        Multimap<Integer, Date> result = TreeMultimap.create();
-
-        List<String> patientData = Splitter.on(",").splitToList(data);
-        for (String d : patientData) {
-            List<String> gotData = Splitter.on(":").splitToList(d);
-
-            result.put(Integer.valueOf(gotData.get(0)), DateUtil.parseYmd(gotData.get(1)));
+    public static Map<Integer, Date> convert(Multimap<Integer, Date> m) {
+        Map<Integer, Date> map = new HashMap<Integer, Date>();
+        if (m == null) {
+            return map;
         }
-        return result;
+
+        for (Map.Entry<Integer, Collection<Date>> entry : m.asMap().entrySet()) {
+            map.put(entry.getKey(), new ArrayList<>(entry.getValue()).get(0));
+        }
+        return map;
     }
 
     public static ObsData getData(List<ObsData> data, String concept) {
@@ -249,214 +161,6 @@ public class UgandaEMRReporting {
                 .collect(Collectors.toList());
     }
 
-    public static List<ObsData> getDataAsList(List<ObsData> data, List<String> concept) {
-        return data.stream()
-                .filter(line -> concept.contains(line.getConceptId()))
-                .collect(Collectors.toList());
-    }
-
-
-
-    public static void summarizeObs(String startDate, Connection connection) throws SQLException {
-        createSummarizedObsTable(connection);
-        String query = "INSERT INTO obs_summary (encounter_type, y, q, m, concept, vals, patients, age_gender, total)\n" +
-                "  SELECT\n" +
-                "    IFNULL((SELECT et.uuid\n" +
-                "            FROM encounter_type AS et\n" +
-                "            WHERE et.encounter_type_id =\n" +
-                "                  (SELECT e.encounter_type\n" +
-                "                   FROM encounter AS e\n" +
-                "                   WHERE e.encounter_id = o.encounter_id)), 'ANY') AS encounter_type,\n" +
-                "    YEAR(obs_datetime)                                             AS y,\n" +
-                "    QUARTER(obs_datetime)                                          AS q,\n" +
-                "    MONTH(obs_datetime)                                            AS m,\n" +
-                "    concept_id                                                     AS concept,\n" +
-                "    value_coded                                                    AS vals,\n" +
-                "    group_concat(DISTINCT person_id ORDER BY person_id\n" +
-                "                 ASC)                                              AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                            FROM person p\n" +
-                "                                            WHERE p.person_id = o.person_id),\n" +
-                "                           (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                   - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                      RIGHT(birthdate, 5))\n" +
-                "                            FROM person p\n" +
-                "                            WHERE p.person_id = o.person_id)) ORDER\n" +
-                "                 BY person_id SEPARATOR\n" +
-                "                 ',')                                              AS age_gender,\n" +
-                "    COUNT(DISTINCT\n" +
-                "          person_id)                                               AS total\n" +
-                "  FROM obs o\n" +
-                "  WHERE value_coded IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, value_coded, y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    IFNULL((SELECT et.uuid\n" +
-                "            FROM encounter_type AS et\n" +
-                "            WHERE et.encounter_type_id =\n" +
-                "                  (SELECT e.encounter_type\n" +
-                "                   FROM encounter AS e\n" +
-                "                   WHERE e.encounter_id = o.encounter_id)), 'ANY')                          AS encounter_type,\n" +
-                "    YEAR(obs_datetime)                                                                      AS y,\n" +
-                "    QUARTER(obs_datetime)                                                                   AS q,\n" +
-                "    MONTH(obs_datetime)                                                                     AS m,\n" +
-                "    concept_id                                                                              AS concept,\n" +
-                "    group_concat(concat_ws(':', person_id, value_numeric) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "    group_concat(DISTINCT person_id ORDER BY person_id ASC)                                 AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                            FROM person p\n" +
-                "                                            WHERE p.person_id = o.person_id),\n" +
-                "                           (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                   - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                      RIGHT(birthdate, 5))\n" +
-                "                            FROM person p\n" +
-                "                            WHERE p.person_id = o.person_id)) ORDER\n" +
-                "                 BY person_id SEPARATOR\n" +
-                "                 ',')                                                                       AS age_gender,\n" +
-                "    COUNT(DISTINCT\n" +
-                "          person_id)                                                                        AS total\n" +
-                "  FROM obs o\n" +
-                "  WHERE value_numeric IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    IFNULL((SELECT et.uuid\n" +
-                "            FROM encounter_type AS et\n" +
-                "            WHERE et.encounter_type_id =\n" +
-                "                  (SELECT e.encounter_type\n" +
-                "                   FROM encounter AS e\n" +
-                "                   WHERE e.encounter_id = o.encounter_id)), 'ANY')                         AS encounter_type,\n" +
-                "    YEAR(obs_datetime)                                                                     AS y,\n" +
-                "    QUARTER(obs_datetime)                                                                  AS q,\n" +
-                "    MONTH(obs_datetime)                                                                    AS m,\n" +
-                "    concept_id                                                                             AS concept,\n" +
-                "    group_concat(concat_ws('::', person_id, value_text) ORDER BY person_id SEPARATOR ',,') AS vals,\n" +
-                "    group_concat(DISTINCT person_id ORDER BY person_id ASC)                                AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                            FROM person p\n" +
-                "                                            WHERE p.person_id = o.person_id),\n" +
-                "                           (SELECT YEAR(o.obs_datetime) - YEAR(birthdate)\n" +
-                "                                   - (RIGHT(o.obs_datetime, 5) <\n" +
-                "                                      RIGHT(birthdate, 5))\n" +
-                "                            FROM person p\n" +
-                "                            WHERE p.person_id = o.person_id)) ORDER\n" +
-                "                 BY person_id SEPARATOR\n" +
-                "                 ',')                                                                      AS age_gender,\n" +
-                "    COUNT(DISTINCT person_id)                                                              AS total\n" +
-                "  FROM obs o\n" +
-                "  WHERE value_text IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    IFNULL((SELECT et.uuid\n" +
-                "            FROM encounter_type AS et\n" +
-                "            WHERE et.encounter_type_id =\n" +
-                "                  (SELECT e.encounter_type\n" +
-                "                   FROM encounter AS e\n" +
-                "                   WHERE e.encounter_id = o.encounter_id)), 'ANY')                                 AS encounter_type,\n" +
-                "    YEAR(value_datetime)                                                                           AS y,\n" +
-                "    QUARTER(value_datetime)                                                                        AS q,\n" +
-                "    MONTH(value_datetime)                                                                          AS m,\n" +
-                "    concept_id                                                                                     AS concept,\n" +
-                "    group_concat(concat_ws(':', person_id, DATE(value_datetime)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "    group_concat(DISTINCT person_id ORDER BY person_id ASC)                                        AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, (SELECT p.gender\n" +
-                "                                            FROM person p\n" +
-                "                                            WHERE p.person_id = o.person_id),\n" +
-                "                           (SELECT YEAR(o.value_datetime) - YEAR(birthdate)\n" +
-                "                                   - (RIGHT(o.value_datetime, 5) <\n" +
-                "                                      RIGHT(birthdate, 5))\n" +
-                "                            FROM person p\n" +
-                "                            WHERE p.person_id = o.person_id)) ORDER\n" +
-                "                 BY person_id SEPARATOR\n" +
-                "                 ',')                                                                              AS age_gender,\n" +
-                "    COUNT(DISTINCT person_id)                                                                      AS total\n" +
-                "  FROM obs o\n" +
-                "  WHERE value_datetime IS NOT NULL AND voided = 0 AND date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, concept, y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    IFNULL((SELECT et.uuid\n" +
-                "            FROM encounter_type AS et\n" +
-                "            WHERE et.encounter_type_id = e.encounter_type), 'ANY') AS encounter_type,\n" +
-                "    YEAR(e.encounter_datetime)                                     AS y,\n" +
-                "    QUARTER(e.encounter_datetime)                                  AS q,\n" +
-                "    MONTH(e.encounter_datetime)                                    AS m,\n" +
-                "    'encounter'                                                    AS concept,\n" +
-                "    'encounter'                                                    AS vals,\n" +
-                "    group_concat(DISTINCT patient_id ORDER BY patient_id ASC)      AS patients,\n" +
-                "    group_concat(concat_ws(':', patient_id, (SELECT p.gender\n" +
-                "                                             FROM person p\n" +
-                "                                             WHERE p.person_id = e.patient_id),\n" +
-                "                           (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate)\n" +
-                "                                   - (RIGHT(e.encounter_datetime, 5) <\n" +
-                "                                      RIGHT(birthdate, 5))\n" +
-                "                            FROM person p\n" +
-                "                            WHERE p.person_id = e.patient_id)) ORDER\n" +
-                "                 BY patient_id SEPARATOR\n" +
-                "                 ',')                                              AS age_gender,\n" +
-                "    COUNT(DISTINCT patient_id)                                     AS total\n" +
-                "  FROM encounter e\n" +
-                "  WHERE voided = 0 AND date_created > '1900-01-01'\n" +
-                "  GROUP BY encounter_type, y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    'births'                                                                                  AS encounter_type,\n" +
-                "    YEAR(birthdate)                                                                           AS y,\n" +
-                "    QUARTER(birthdate)                                                                        AS q,\n" +
-                "    MONTH(birthdate)                                                                          AS m,\n" +
-                "    'births'                                                                                  AS concept,\n" +
-                "    group_concat(concat_ws(':', person_id, DATE(birthdate)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC)                                   AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, gender) ORDER BY person_id SEPARATOR ',')          AS age_gender,\n" +
-                "    COUNT(DISTINCT person_id)                                                                 AS total\n" +
-                "  FROM person\n" +
-                "  WHERE date_created > '1900-01-01' AND birthdate IS NOT NULL\n" +
-                "  GROUP BY y, q, m\n" +
-                "  UNION ALL\n" +
-                "  SELECT\n" +
-                "    'deaths'                                                                                   AS encounter_type,\n" +
-                "    YEAR(death_date)                                                                           AS y,\n" +
-                "    QUARTER(death_date)                                                                        AS q,\n" +
-                "    MONTH(death_date)                                                                          AS m,\n" +
-                "    'deaths'                                                                                   AS concept,\n" +
-                "    group_concat(concat_ws(':', person_id, DATE(death_date)) ORDER BY person_id SEPARATOR ',') AS vals,\n" +
-                "    GROUP_CONCAT(DISTINCT person_id ORDER BY person_id ASC)                                    AS patients,\n" +
-                "    group_concat(concat_ws(':', person_id, gender,\n" +
-                "                           YEAR(death_date) - YEAR(birthdate) - (RIGHT(death_date, 5) < RIGHT(birthdate, 5))) ORDER BY\n" +
-                "                 person_id SEPARATOR ',')                                                      AS age_gender,\n" +
-                "    COUNT(DISTINCT person_id)                                                                  AS total\n" +
-                "  FROM person\n" +
-                "  WHERE date_created > '1900-01-01' AND death_date IS NOT NULL\n" +
-                "  GROUP BY y, q, m;";
-        query = query.replaceAll("1900-01-01", startDate);
-        executeQuery("SET @@group_concat_max_len = 1000000;", connection);
-        executeQuery(query, connection);
-    }
-
-
-    public static String summarizeObs() {
-        try {
-            Connection connection = UgandaEMRReporting.sqlConnection();
-            String lastSummarizationDate = UgandaEMRReporting.getGlobalProperty("ugandaemrreports.lastSummarizationDate");
-
-            if (org.apache.commons.lang.StringUtils.isBlank(lastSummarizationDate)) {
-                lastSummarizationDate = "1900-01-01 00:00:00";
-            }
-            summarizeObs(lastSummarizationDate, connection);
-
-            Date now = new Date();
-            String newDate = UgandaEMRReporting.DEFAULT_DATE_FORMAT.format(now);
-
-            UgandaEMRReporting.setGlobalProperty("ugandaemrreports.lastSummarizationDate", newDate);
-            return "Obs have been successfully summarized";
-        } catch (Exception e) {
-            return "Error occurred";
-        }
-
-    }
-
-
     public static String getObsPeriod(Date period, Enums.Period periodType) {
         LocalDate localDate = StubDate.dateOf(period);
 
@@ -506,18 +210,6 @@ public class UgandaEMRReporting {
         return concepts;
     }
 
-    public static Map<String, String> getSummarizedObsColumnMappings() {
-        Map<String, String> colMaps = new HashMap<String, String>();
-        colMaps.put("encounter_type", "encounterType");
-        colMaps.put("period", "period");
-        colMaps.put("concept", "concept");
-        colMaps.put("vals", "vals");
-        colMaps.put("patients", "patients");
-        colMaps.put("total", "total");
-        return colMaps;
-
-    }
-
     public static Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
 
         String driverClassName = props.getProperty("driver.class");
@@ -526,11 +218,6 @@ public class UgandaEMRReporting {
         String password = props.getProperty("password");
         Class.forName(driverClassName);
         return DriverManager.getConnection(driverURL, username, password);
-    }
-
-    public static Integer executeQuery(String query, Connection dbConn) throws SQLException {
-        PreparedStatement stmt = dbConn.prepareStatement(query);
-        return stmt.executeUpdate();
     }
 
     public static ObsData viralLoad(List<ObsData> vls, Integer no) {
@@ -621,20 +308,9 @@ public class UgandaEMRReporting {
     }
 
     public static List<String> processString2(String value) {
-        Map<String, String> result = new HashMap<>();
-
         List<String> splitData = Splitter.on(",").splitToList(value);
 
         return Splitter.on(":").splitToList(splitData.get(0));
-    }
-
-    public static Connection testSqlConnection() throws SQLException, ClassNotFoundException {
-        Properties props = new Properties();
-        props.setProperty("driver.class", "com.mysql.jdbc.Driver");
-        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
-        props.setProperty("user", "openmrs");
-        props.setProperty("password", "openmrs");
-        return getDatabaseConnection(props);
     }
 
     public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
@@ -645,162 +321,5 @@ public class UgandaEMRReporting {
         props.setProperty("user", Context.getRuntimeProperties().getProperty("connection.username"));
         props.setProperty("password", Context.getRuntimeProperties().getProperty("connection.password"));
         return getDatabaseConnection(props);
-    }
-
-    public static void setGlobalProperty(String property, String propertyValue) {
-        GlobalProperty globalProperty = new GlobalProperty();
-
-        globalProperty.setProperty(property);
-        globalProperty.setPropertyValue(propertyValue);
-
-        Context.getAdministrationService().saveGlobalProperty(globalProperty);
-    }
-
-    public static String getGlobalProperty(String property) {
-        return Context.getAdministrationService().getGlobalProperty(property);
-    }
-
-    public static List<SummarizedObs> getSummarizedObs(Connection connection, Map<String, String> where) throws SQLException {
-        String whereString = Joiner.on(" AND ").withKeyValueSeparator(" = ").join(where);
-
-        String sql = "select * from obs_summary where " + whereString;
-        return getSummarizedObs(connection, sql);
-
-    }
-
-    public static List<SummarizedObs> getSummarizedObs(Connection connection, List<String> concepts, List<String> patients) throws SQLException {
-        String patientsToFind = Joiner.on("|").join(patients);
-        // String where = joinQuery(String.format("CONCAT(',', patients, '','') REGEXP ',(%s),'", patientsToFind), constructSQLInQuery("concept", concepts), Enums.UgandaEMRJoiner.AND);
-        String where = constructSQLInQuery("concept", concepts);
-        String sql = "select * from obs_summary where " + where;
-
-        return getSummarizedObs(connection, sql);
-    }
-
-    public static String summarizedObsPatientsToString(List<SummarizedObs> summarizedObs) {
-        if (summarizedObs != null && summarizedObs.size() > 0) {
-            StringBuilder patientString = new StringBuilder(summarizedObs.get(0).getPatients());
-
-            for (SummarizedObs smo : summarizedObs.subList(1, summarizedObs.size())) {
-                patientString.append(",").append(smo.getPatients());
-            }
-            return patientString.toString();
-        }
-        return "";
-    }
-
-    public static List<SummarizedObs> getSummarizedObsList(List<SummarizedObs> obs, String concept, String period) {
-        return new ArrayList<>(Collections2.filter(obs, new SummarizedObsPredicate(concept, period)));
-    }
-
-    public static SummarizedObs getSummarizedObs(List<SummarizedObs> obs, String period, String concept) {
-
-        List<SummarizedObs> filtered = new ArrayList<>(Collections2.filter(obs, new SummarizedObsPredicate(concept, period)));
-
-        if (filtered.size() > 0) {
-            return filtered.get(0);
-        }
-        return null;
-    }
-
-    public static String getSummarizedObsValue(SummarizedObs summarizedObs, String patient) {
-        if (summarizedObs != null) {
-            String values = summarizedObs.getVals();
-            List<String> data = Splitter.on(",,").splitToList(values);
-            for (String d : data) {
-                List<String> patientValues = Splitter.on("::").splitToList(d);
-                if (patientValues.get(0).equals(patient)) {
-                    return patientValues.get(1);
-                }
-            }
-        }
-        return "";
-    }
-
-    public static List<String> getSummarizedObsValues(SummarizedObs summarizedObs, String patient) {
-        List<String> result = new ArrayList<>();
-        if (summarizedObs != null) {
-            String values = summarizedObs.getVals();
-            List<String> data = Splitter.on(",").splitToList(values);
-            for (String d : data) {
-                List<String> patientValues = Splitter.on(":").splitToList(d);
-                if (patientValues.get(0).equals(patient)) {
-                    result.add(patientValues.get(1));
-                }
-            }
-        }
-        sort(result);
-        return result;
-    }
-
-    public static List<String> getSummarizedObsValues(List<SummarizedObs> summarizedObs, String patient) {
-        List<String> result = new ArrayList<>();
-        if (summarizedObs != null && summarizedObs.size() > 0) {
-            for (SummarizedObs summarizedObs1 : summarizedObs) {
-                String values = summarizedObs1.getVals();
-                List<String> data = Splitter.on(",").splitToList(values);
-                for (String d : data) {
-                    List<String> patientValues = Splitter.on(":").splitToList(d);
-                    if (patientValues.get(0).equals(patient)) {
-                        result.add(patientValues.get(1));
-                    }
-                }
-            }
-        }
-        sort(result);
-        return result;
-    }
-
-    public static Map<String, String> getSummarizedObsValuesAsMap(List<SummarizedObs> summarizedObs, String patient) {
-        Map<String, String> result = new TreeMap<>();
-        if (summarizedObs != null && summarizedObs.size() > 0) {
-            for (SummarizedObs summarizedObs1 : summarizedObs) {
-                String values = summarizedObs1.getVals();
-                List<String> data = Splitter.on(",,").splitToList(values);
-                for (String d : data) {
-                    List<String> patientValues = Splitter.on("::").splitToList(d);
-                    if (patientValues.get(0).equals(patient)) {
-                        result.put(summarizedObs1.getPatients(), patientValues.get(1));
-                        break;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public static String getMostRecentValue(Map<String, String> dates, String period) {
-        List<String> keys = new ArrayList<>(Collections2.filter(dates.keySet(), new SummarizedObsPeriodPredicate(period, ReportService.Modifier.LESS_EQUAL)));
-        sort(keys);
-        if (keys.size() > 0) {
-            return dates.get(keys.get(keys.size() - 1));
-        }
-        return null;
-    }
-
-    public static String constructLuceneBetweenQuery(String column, String value1, String value2) {
-        return column + ":[\"" + value1 + "\" TO \"" + value2 + "\"]";
-    }
-
-    public static String constructLuceneGreaterThanQuery(String column, String value) {
-        return column + ":[*" + " TO \"" + value + "\"]";
-    }
-
-    public static String constructLuceneLessThanQuery(String column, String value) {
-        return column + ":[\"" + value + "\" TO *]";
-    }
-
-    public static String constructLuceneQuery(String column, String value) {
-        return column + ":\"" + value + "\"";
-    }
-
-    public static String constructLuceneInQuery(String column, List<String> values) {
-        column += ":(\"" + values.get(0) + "\" ";
-        StringBuilder columnBuilder = new StringBuilder(column);
-        for (String value : values.subList(1, values.size())) {
-            columnBuilder.append("\"").append(value).append("\"");
-        }
-        column = columnBuilder.toString();
-        return column + ")";
     }
 }
