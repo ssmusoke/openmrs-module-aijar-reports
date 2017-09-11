@@ -321,14 +321,14 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 }
 
                 if (functionalStatusDuringArtStart != null) {
-                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getVal());
+                    pdh.addCol(row, "FUS", functionalStatusDuringArtStart.getReportName());
                 } else {
                     pdh.addCol(row, "FUS", "");
                 }
 
 
                 if (baselineCs != null) {
-                    pdh.addCol(row, "CS", baselineCs.getVal());
+                    pdh.addCol(row, "CS", baselineCs.getReportName());
                 } else {
                     pdh.addCol(row, "CS", "");
                 }
