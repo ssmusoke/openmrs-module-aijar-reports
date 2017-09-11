@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.openmrs.module.ugandaemrreports.library.UgandaEMRReporting.*;
+import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
 
 /**
  * Created by carapai on 11/05/2016.
