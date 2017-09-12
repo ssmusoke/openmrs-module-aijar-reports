@@ -981,7 +981,7 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
-    
+
     public CohortDefinition getActiveInPeriodWithoutVisit() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMaximumDays(30);
@@ -1076,8 +1076,40 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
 
+    public CohortDefinition getBaselineCD4() {
+        BaselineCD4CohortDefinition cd = new BaselineCD4CohortDefinition();
+        return cd;
+    }
 
+    public CohortDefinition getBaselineCD4(Double valueNumericFrom) {
+        BaselineCD4CohortDefinition cd = new BaselineCD4CohortDefinition();
+        cd.setValueNumericFrom(valueNumericFrom);
+        return cd;
+    }
 
+    public CohortDefinition getBaselineCD4GreaterThan(Double valueNumericFrom) {
+        BaselineCD4CohortDefinition cd = new BaselineCD4CohortDefinition();
+        cd.setValueNumericTo(valueNumericFrom);
+        return cd;
+    }
+
+    public CohortDefinition getBaselineCD4(Double valueNumericFrom, Double valueNumericTo) {
+        BaselineCD4CohortDefinition cd = new BaselineCD4CohortDefinition();
+        cd.setValueNumericFrom(valueNumericFrom);
+        cd.setValueNumericTo(valueNumericTo);
+        return cd;
+    }
+
+    public CohortDefinition getBaselineClinicalStage() {
+        org.openmrs.module.ugandaemrreports.definition.cohort.definition.BaselineClinicalStageCohortDefinition cd = new org.openmrs.module.ugandaemrreports.definition.cohort.definition.BaselineClinicalStageCohortDefinition();
+        return cd;
+    }
+
+    public CohortDefinition getBaselineClinicalStage(List<Concept> values) {
+        org.openmrs.module.ugandaemrreports.definition.cohort.definition.BaselineClinicalStageCohortDefinition cd = new org.openmrs.module.ugandaemrreports.definition.cohort.definition.BaselineClinicalStageCohortDefinition();
+        cd.setValues(values);
+        return cd;
+    }
 
    /* public CohortDefinition getAtLeastOneMissedAfterArt() {
         return convert(Cohorts.getPatientsWithAtLeastOneMissedAppointmentAfterArtStartDate(), null);
