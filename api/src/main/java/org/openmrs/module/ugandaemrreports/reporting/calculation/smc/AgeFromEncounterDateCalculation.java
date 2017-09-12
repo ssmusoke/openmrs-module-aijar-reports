@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by Nicholas Ingosi on 5/19/17.
  */
 public class AgeFromEncounterDateCalculation extends AbstractPatientCalculation {
     @Override

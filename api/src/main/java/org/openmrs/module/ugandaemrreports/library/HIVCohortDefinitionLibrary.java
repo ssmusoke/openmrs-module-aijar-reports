@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by carapai on 12/05/2016.
  */
 @Component
 public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {

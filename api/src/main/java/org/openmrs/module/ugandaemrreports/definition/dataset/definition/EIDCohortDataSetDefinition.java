@@ -6,12 +6,13 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import java.util.Date;
 
 /**
- * Created by carapai on 12/01/2017.
  */
 public class EIDCohortDataSetDefinition extends BaseDataSetDefinition {
     private static final long serialVersionUID = 6405583324151111487L;
     @ConfigurationProperty
     private Date startDate;
+    @ConfigurationProperty
+    private Boolean yearly = Boolean.TRUE;
 
     public EIDCohortDataSetDefinition() {
         super();
@@ -27,5 +28,13 @@ public class EIDCohortDataSetDefinition extends BaseDataSetDefinition {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Boolean getYearly() {
+        return yearly;
+    }
+
+    public void setYearly(Boolean yearly) {
+        this.yearly = yearly;
     }
 }

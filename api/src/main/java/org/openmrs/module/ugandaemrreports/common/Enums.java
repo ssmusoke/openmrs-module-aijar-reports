@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.common;
 
 /**
- * Created by carapai on 09/01/2017.
  */
 public class Enums {
 
@@ -17,6 +16,7 @@ public class Enums {
     public static enum PeriodInterval {
         BEFORE,
         AFTER;
+
         private PeriodInterval() {
         }
     }
@@ -39,6 +39,16 @@ public class Enums {
 
         public String toString() {
             return this.name;
+        }
+
+    }
+
+    public static enum DataFor {
+        DEAD,
+        ENCOUNTER,
+        APPOINTMENT;
+
+        private DataFor() {
         }
     }
 }

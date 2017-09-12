@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by carapai on 28/06/2016.
  */
 @Handler(supports = {LostPatientsCohortDefinition.class})
 public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEvaluator {

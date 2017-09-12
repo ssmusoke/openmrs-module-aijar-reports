@@ -7,7 +7,6 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import org.openmrs.module.ugandaemrreports.common.Enums;
 
 /**
- * Created by carapai on 09/01/2017.
  */
 public class PatientDataCohortDefinition extends BaseCohortDefinition {
     @ConfigurationProperty

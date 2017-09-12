@@ -6,7 +6,6 @@ import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefini
 import java.util.Date;
 
 /**
- * Created by carapai on 12/07/2016.
  */
 public class PatientDatasets {
 

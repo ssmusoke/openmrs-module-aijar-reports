@@ -17,7 +17,6 @@ import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
- * Created by Nicholas Ingosi on 4/28/17.
  */
 public class PersonAttributeDataConverter implements DataConverter {
     @Override

@@ -8,7 +8,6 @@ import org.openmrs.module.ugandaemrreports.common.ArtPatientData;
 import java.util.Date;
 
 /**
- * Created by carapai on 19/01/2017.
  */
 public class ArtPatientDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
 

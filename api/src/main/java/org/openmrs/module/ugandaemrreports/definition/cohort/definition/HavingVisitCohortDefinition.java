@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 
 /**
- * Created by carapai on 16/06/2016.
  */
 public class HavingVisitCohortDefinition extends BaseCohortDefinition {
 

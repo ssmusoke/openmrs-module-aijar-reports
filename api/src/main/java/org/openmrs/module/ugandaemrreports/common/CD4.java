@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.common;
 
 /**
- * Created by carapai on 10/01/2017.
  */
 public class CD4 {
     private Double cd4;

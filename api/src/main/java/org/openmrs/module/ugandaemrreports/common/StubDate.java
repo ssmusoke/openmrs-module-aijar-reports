@@ -8,7 +8,6 @@ import org.openmrs.module.reporting.common.DateUtil;
 import java.util.Date;
 
 /**
- * Created by carapai on 04/07/2016.
  */
 public class StubDate {
 

@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 13/05/2016.
  */
 @Caching(
         strategy = ConfigurationPropertyCachingStrategy.class

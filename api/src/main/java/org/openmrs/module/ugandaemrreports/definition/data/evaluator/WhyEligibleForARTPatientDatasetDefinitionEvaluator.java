@@ -17,7 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Created by carapai on 16/05/2016.
  */
 @Handler(supports = WhyEligibleForARTPatientDatasetDefinition.class, order = 50)
 

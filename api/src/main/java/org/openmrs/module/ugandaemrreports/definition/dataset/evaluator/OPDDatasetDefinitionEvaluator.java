@@ -21,7 +21,6 @@ import org.openmrs.module.ugandaemrreports.definition.dataset.definition.OPDData
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * Created by carapai on 11/05/2016.
  */
 @Handler(supports = {OPDDatasetDefinition.class})
 public class OPDDatasetDefinitionEvaluator implements DataSetEvaluator {
