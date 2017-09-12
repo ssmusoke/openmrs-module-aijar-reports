@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by carapai on 28/06/2016.
  */
 @Handler(supports = {ViralLoadCohortDefinition.class})
 public class ViralLoadEvaluator implements CohortDefinitionEvaluator {

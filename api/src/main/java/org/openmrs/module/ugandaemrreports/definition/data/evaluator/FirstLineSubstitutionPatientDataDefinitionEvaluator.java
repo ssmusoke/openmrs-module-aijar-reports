@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by carapai on 13/09/2016.
  */
 @Handler(supports = FirstLineSubstitutionPatientDataDefinition.class, order = 50)
 

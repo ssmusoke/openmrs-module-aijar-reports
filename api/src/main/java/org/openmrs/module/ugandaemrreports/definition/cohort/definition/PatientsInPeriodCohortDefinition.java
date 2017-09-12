@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 public class PatientsInPeriodCohortDefinition extends BaseCohortDefinition {
     private static final long serialVersionUID = 1L;

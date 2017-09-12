@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by Nicholas Ingosi on 4/30/17.
  */
 public class WhoCd4VLCalculation extends AbstractPatientCalculation {
     @Override

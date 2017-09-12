@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 11/09/2016.
  */
 public class PatientColumns {
 

@@ -7,7 +7,6 @@ import org.openmrs.module.ugandaemrreports.common.Enums;
 import java.util.Date;
 
 /**
- * Created by carapai on 09/01/2017.
  */
 public class ArtStartCohortDefinition extends BaseCohortDefinition {
 

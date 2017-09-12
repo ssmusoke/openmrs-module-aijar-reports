@@ -16,7 +16,6 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
- * Created by Nicholas Ingosi on 5/22/17.
  */
 public class STIDataConverter implements DataConverter {
     @Override

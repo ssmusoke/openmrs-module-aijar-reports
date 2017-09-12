@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.*;
 
 /**
- * Created by carapai on 13/05/2016.
  */
 @Handler(supports = ObsForPersonInPeriodDataDefinition.class, order = 50)
 public class ObsForPersonInPeriodDataDefinitionEvaluator implements PatientDataEvaluator {

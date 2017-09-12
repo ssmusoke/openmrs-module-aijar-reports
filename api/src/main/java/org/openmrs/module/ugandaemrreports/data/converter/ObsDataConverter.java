@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by Nicholas on 4/27/17.
  */
 public class ObsDataConverter implements DataConverter {
     @Override

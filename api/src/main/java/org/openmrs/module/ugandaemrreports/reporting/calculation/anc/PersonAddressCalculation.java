@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Map;
 
 /**
- * Created by Nicholas Ingosi on 4/28/17.
  */
 public class PersonAddressCalculation extends AbstractPatientCalculation {
 

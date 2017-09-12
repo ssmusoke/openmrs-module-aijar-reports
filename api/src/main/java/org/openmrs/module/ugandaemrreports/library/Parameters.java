@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by carapai on 12/09/2016.
  */
 public class Parameters {
 

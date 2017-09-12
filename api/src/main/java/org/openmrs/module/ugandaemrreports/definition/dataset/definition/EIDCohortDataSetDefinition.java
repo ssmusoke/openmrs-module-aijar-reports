@@ -6,7 +6,6 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import java.util.Date;
 
 /**
- * Created by carapai on 12/01/2017.
  */
 public class EIDCohortDataSetDefinition extends BaseDataSetDefinition {
     private static final long serialVersionUID = 6405583324151111487L;

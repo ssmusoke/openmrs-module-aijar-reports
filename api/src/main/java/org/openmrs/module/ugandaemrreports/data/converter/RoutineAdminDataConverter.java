@@ -18,7 +18,6 @@ import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
- * Created by Nicholas Ingosi on 5/16/17.
  */
 public class RoutineAdminDataConverter implements DataConverter{
     @Override

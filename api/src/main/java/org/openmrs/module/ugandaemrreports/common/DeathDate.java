@@ -5,7 +5,6 @@ import org.openmrs.module.reporting.common.DateUtil;
 import java.util.Date;
 
 /**
- * Created by carapai on 15/09/2016.
  */
 public class DeathDate {
     private Date deathDate;

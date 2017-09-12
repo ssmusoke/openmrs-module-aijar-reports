@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- * Created by codehub on 7/19/17.
  */
 @Handler(supports = GlobalPropertyParametersDatasetDefinition.class)
 public class CustomParametersDatasetEvaluator implements DataSetEvaluator {

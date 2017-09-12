@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 
 /**
- * Created by Nicholas Ingosi on 5/10/17.
  */
 @Component
 public class SharedDataDefintion {
