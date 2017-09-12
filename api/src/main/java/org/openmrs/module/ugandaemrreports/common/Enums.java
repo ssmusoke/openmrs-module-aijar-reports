@@ -27,9 +27,6 @@ public class Enums {
         AND,
         OR,
         IN;
-
-        UgandaEMRJoiner() {
-        }
     }
 
     public static enum Period {
@@ -47,6 +44,16 @@ public class Enums {
 
         public String toString() {
             return this.name;
+        }
+
+    }
+
+    public static enum DataFor {
+        DEAD,
+        ENCOUNTER,
+        APPOINTMENT;
+
+        private DataFor() {
         }
     }
 }

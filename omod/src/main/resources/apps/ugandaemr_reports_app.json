@@ -56,8 +56,16 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
         "label": "CBS Adult Quarterly Report",
-        "url": "reportingui/runReport.page?reportDefinition=1479f8ae-5d93-4b2f-9cd6-8b7eb976dc6b",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e908-c3cd-4dc1-b145-13f1d02f1c54",
         "order": 15
+      },
+      {
+        "id": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=6633f9c9-dffb-4e6b-bfcc-e2ddb08805ca",
+        "order": 25
       },
       {
         "id": "Appointments List",
@@ -251,6 +259,20 @@
         "label": "SMC Register",
         "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
         "order": 30
+      },{
+        "id": "HCA Annual Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HCA Annual Report",
+        "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
+        "order": 25
+      },{
+        "id": "HCA 12 and 24 Months Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HCA 12 and 24 Months Report",
+        "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
+        "order": 26
       }
 
     ]

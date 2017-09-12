@@ -5,37 +5,33 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 
 import java.util.Date;
 
-/**
- * Created by carapai on 12/01/2017.
- */
-public class EIDCohortDataSetDefinition extends BaseDataSetDefinition {
-    private static final long serialVersionUID = 6405583324151111487L;
+public class CBSAdultFollowupDatasetDefinition
+        extends BaseDataSetDefinition {
     @ConfigurationProperty
     private Date startDate;
     @ConfigurationProperty
-    private Boolean yearly = Boolean.TRUE;
+    private Date endDate;
 
-    public EIDCohortDataSetDefinition() {
-        super();
+    public CBSAdultFollowupDatasetDefinition() {
     }
 
-    public EIDCohortDataSetDefinition(String name, String description) {
+    public CBSAdultFollowupDatasetDefinition(String name, String description) {
         super(name, description);
     }
 
     public Date getStartDate() {
-        return startDate;
+        return this.startDate;
     }
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public Boolean getYearly() {
-        return yearly;
+    public Date getEndDate() {
+        return this.endDate;
     }
 
-    public void setYearly(Boolean yearly) {
-        this.yearly = yearly;
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }
