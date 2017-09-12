@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
@@ -265,16 +266,11 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 ObsData tbStartDate = getData(patientData, "90217");
                 ObsData tbStopDate = getData(patientData, "90310");
                 ObsData ti = getData(patientData, "99160");
-                ObsData death = getData(patientData, "death");
-                ObsData to = getData(patientData, "99165");
                 ObsData baselineWeight = getData(patientData, "99069");
                 ObsData baselineCs = getData(patientData, "99070");
                 ObsData baselineCd4 = getData(patientData, "99071");
                 ObsData baselineRegimen = getData(patientData, "99061");
 
-
-                String died = death != null ? getObsPeriod(DateUtil.parseYmd(death.getVal()), Enums.Period.MONTHLY) : "";
-                String transferred = to != null ? getObsPeriod(DateUtil.parseYmd(to.getVal()), Enums.Period.MONTHLY) : "";
 
                 boolean hasDied = false;
                 boolean hasTransferred = false;
@@ -286,16 +282,16 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
                 List<String> addresses = processString2(personDemos.getAddresses());
-                String address = "";
-                if (addresses.size() == 6) {
-                    address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
-                }
 
                 pdh.addCol(row, "Date ART Started", patient.getValue());
-                pdh.addCol(row, "Unique ID no", patient.getKey());
+                pdh.addCol(row, "Unique ID no", "");
                 pdh.addCol(row, "TI", ti == null ? "" : "TI");
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
-                pdh.addCol(row, "Name", personDemos.getNames());
+
+                List<String> names = Splitter.on(" ").splitToList(personDemos.getNames());
+
+                pdh.addCol(row, "Surname", names.size() > 0 ? names.get(0) : "");
+                pdh.addCol(row, "GivenName", names.size() > 1 ? names.get(1) : "");
                 pdh.addCol(row, "Gender", personDemos.getGender());
                 if (personDemos.getBirthDate() != null && artStartDate != null) {
                     Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(patient.getValue()));
@@ -303,7 +299,17 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 } else {
                     pdh.addCol(row, "Age", "");
                 }
-                pdh.addCol(row, "Address", address);
+
+                if (addresses.size() == 6) {
+                    pdh.addCol(row, "District", addresses.get(1));
+                    pdh.addCol(row, "Subcounty/Parish", addresses.get(3) + " " + addresses.get(4));
+                    pdh.addCol(row, "Village/Cell", addresses.get(5));
+
+                } else {
+                    pdh.addCol(row, "District", "");
+                    pdh.addCol(row, "Subcounty/Parish", "");
+                    pdh.addCol(row, "Village/Cell", "");
+                }
                 pdh.addCol(row, "Weight", baselineWeight == null ? "" : baselineWeight.getVal());
 
                 ObsData functionalStatusDuringArtStart = getFirstData(patientData, "90235");
@@ -333,15 +339,28 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "CS", "");
                 }
 
-                pdh.addCol(row, "CDVL", baselineCd4 == null ? "" : baselineCd4.getVal() + "\n" + fvl);
+                pdh.addCol(row, "CD4", baselineCd4 == null ? "" : baselineCd4.getVal());
+                pdh.addCol(row, "VL", fvl);
 
-                pdh.addCol(row, "CPT", firstCPT == null ? "" : DateUtil.formatDate(firstCPT.getEncounterDate(), "MM/yyyy"));
-                pdh.addCol(row, "INH", firstINH == null ? "" : DateUtil.formatDate(firstINH.getEncounterDate(), "MM/yyyy"));
-                pdh.addCol(row, "TB", startedTB + "\n" + stoppedTB);
-                pdh.addCol(row, "P1", "");
-                pdh.addCol(row, "P2", "");
-                pdh.addCol(row, "P3", "");
-                pdh.addCol(row, "P4", "");
+                pdh.addCol(row, "CPT Start Date", firstCPT == null ? "" : DateUtil.formatDate(firstCPT.getEncounterDate(), "MM/yyyy"));
+                pdh.addCol(row, "CPT Stop Date", "");
+                pdh.addCol(row, "INH Start Date", firstINH == null ? "" : DateUtil.formatDate(firstINH.getEncounterDate(), "MM/yyyy"));
+                pdh.addCol(row, "INH Stop Date", "");
+                pdh.addCol(row, "TB Reg No", "");
+                pdh.addCol(row, "TB Start Date", startedTB);
+                pdh.addCol(row, "TB Stop Date", stoppedTB);
+
+                pdh.addCol(row, "EDD1", "");
+                pdh.addCol(row, "ANC1", "");
+                pdh.addCol(row, "INFANT1", "");
+
+                pdh.addCol(row, "EDD2", "");
+                pdh.addCol(row, "ANC2", "");
+                pdh.addCol(row, "INFANT2", "");
+
+                pdh.addCol(row, "EDD3", "");
+                pdh.addCol(row, "ANC3", "");
+                pdh.addCol(row, "INFANT3", "");
 
                 if (baselineRegimen != null) {
                     pdh.addCol(row, "BASE REGIMEN", baselineRegimen.getReportName());
@@ -349,13 +368,15 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "BASE REGIMEN", "");
                 }
 
-                pdh.addCol(row, "L1S", "");
-                pdh.addCol(row, "L2S", "");
-                pdh.addCol(row, "L3S", "");
+                pdh.addCol(row, "L1S1", "");
+                pdh.addCol(row, "L1S2", "");
+                pdh.addCol(row, "L2S1", "");
+                pdh.addCol(row, "L2S2", "");
+                pdh.addCol(row, "L3S1", "");
+                pdh.addCol(row, "L3S2", "");
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
 
                 ObsData visit = null;
-                ObsData lastDaysOfDrugs = null;
 
                 for (int i = 0; i <= 72; i++) {
                     String workingMonth = getObsPeriod(Periods.addMonths(localDate, i).get(0).toDate(), Enums.Period.MONTHLY);
@@ -373,7 +394,6 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
                         ObsData currentRegimen = getData(patientData, workingMonth, "90315");
                         ObsData returnDate = getData(patientData, workingMonth, "5096");
-                        ObsData daysOfDrugs = getData(patientData, workingMonth, "99036");
 
                         ObsData arvStopDate = getData(patientData, workingMonth, "99084");
                         ObsData arvRestartDate = getData(patientData, workingMonth, "99085");
@@ -384,13 +404,10 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         if (returnDate != null) {
                             visit = returnDate;
                         }
-                        if (daysOfDrugs != null) {
-                            lastDaysOfDrugs = daysOfDrugs;
-                        }
 
                         String cotrim = "";
                         String status = "";
-                        String adherenceAndCPT = "";
+                        String adherence = "";
                         String tb = "";
 
                         if (inhDosage != null || cptDosage != null) {
@@ -428,18 +445,16 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             }
                         }
 
-                        if (arvAdh != null && cotrim != null) {
-                            adherenceAndCPT = arvAdh.getReportName() + "|" + cotrim;
-                        } else if (arvAdh != null) {
-                            adherenceAndCPT = arvAdh.getReportName();
-                        } else if (cotrim != null) {
-                            adherenceAndCPT = cotrim;
-                        }
-
                         if (tbStatus != null) {
                             tb = tbStatus.getReportName();
                         }
-                        pdh.addCol(row, "FUS" + String.valueOf(i), status + "\n" + tb + "\n" + adherenceAndCPT);
+                        if (arvAdh != null) {
+                            adherence = arvAdh.getReportName();
+                        }
+                        pdh.addCol(row, "FUS" + String.valueOf(i), status);
+                        pdh.addCol(row, "TB" + String.valueOf(i), tb);
+                        pdh.addCol(row, "A" + String.valueOf(i), adherence);
+                        pdh.addCol(row, "C" + String.valueOf(i), cotrim);
 
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                             ObsData weight = getData(patientData, workingMonth, "90236");
@@ -451,14 +466,16 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
 
                             pdh.addCol(row, "W" + String.valueOf(i), weight == null ? "" : weight.getVal());
 
-                            pdh.addCol(row, "CDVL" + String.valueOf(i), (cd4 == null ? "" : cd4.getVal()) + "\n" + (viralLoad == null ? "" : viralLoad.getVal()));
+                            pdh.addCol(row, "CD4" + String.valueOf(i), (cd4 == null ? "" : cd4.getVal()));
+                            pdh.addCol(row, "VL" + String.valueOf(i), (viralLoad == null ? "" : viralLoad.getVal()));
                         }
                     } else {
                         pdh.addCol(row, "FUS" + String.valueOf(i), "");
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                             pdh.addCol(row, "CI" + String.valueOf(i), "");
                             pdh.addCol(row, "W" + String.valueOf(i), "");
-                            pdh.addCol(row, "CDVL" + String.valueOf(i), "");
+                            pdh.addCol(row, "CD4" + String.valueOf(i), "");
+                            pdh.addCol(row, "VL" + String.valueOf(i), "");
                         }
                     }
 
