@@ -125,6 +125,6 @@ public class SetupAdherenceReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 }
