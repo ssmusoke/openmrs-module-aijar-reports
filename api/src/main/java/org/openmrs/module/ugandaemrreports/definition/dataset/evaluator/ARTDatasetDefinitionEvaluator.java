@@ -471,6 +471,9 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         }
                     } else {
                         pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                        pdh.addCol(row, "TB" + String.valueOf(i), "");
+                        pdh.addCol(row, "A" + String.valueOf(i), "");
+                        pdh.addCol(row, "C" + String.valueOf(i), "");
                         if (i == 6 || i == 12 || i == 24 || i == 36 || i == 48 || i == 60 || i == 72) {
                             pdh.addCol(row, "CI" + String.valueOf(i), "");
                             pdh.addCol(row, "W" + String.valueOf(i), "");
