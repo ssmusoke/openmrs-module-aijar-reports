@@ -35,10 +35,10 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
         EvaluatedCohort ret = new EvaluatedCohort(cohortDefinition, context);
         LostPatientsCohortDefinition cd = (LostPatientsCohortDefinition) cohortDefinition;
 
+        // Maximum appointment date during the period
         HqlQueryBuilder obsQuery = new HqlQueryBuilder();
         obsQuery.select("o.person.personId", "max(o.valueDatetime)");
         obsQuery.from(Obs.class, "o");
-        //obsQuery.wherePersonIn("o.person.personId", context);
         obsQuery.whereEqual("o.concept", hivMetadata.getReturnVisitDate());
 
         if (cd.getStartDate() != null && cd.getEndDate() != null) {
@@ -49,13 +49,12 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
             obsQuery.whereLessOrEqualTo("o.valueDatetime", cd.getEndDate());
         }
         obsQuery.whereEqual("o.person.personVoided", false);
-
         obsQuery.groupBy("o.person.personId");
 
+        // Minimum visit date after appointment date
         HqlQueryBuilder encounterQuery = new HqlQueryBuilder();
         encounterQuery.select("e.patient.patientId", "min(e.encounterDatetime)");
         encounterQuery.from(Encounter.class, "e");
-        //encounterQuery.wherePersonIn("e.patient.patientId", context);
 
         if (cd.getStartDate() != null) {
             encounterQuery.whereGreaterOrEqualTo("e.encounterDatetime", cd.getStartDate());
@@ -69,20 +68,20 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
         Map<Integer, Date> encounterResults = evaluationService.evaluateToMap(encounterQuery, Integer.class, Date.class, context);
 
         for (Map.Entry<Integer, Date> entry : obsResults.entrySet()) {
-
-            Date encounterDate = encounterResults.get(entry.getKey());
-
+            Integer patientId = entry.getKey();
+            Date encounterDate = encounterResults.get(patientId);
             if (encounterDate != null) {
-
-                Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(),encounterDate);
-
+                Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(), encounterDate);
                 if (cd.getMaximumDays() != null && cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays() && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
-                    ret.addMember(entry.getKey());
-                } else if (cd.getMinimumDays() != null && cd.getMaximumDays() == null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays()) {
-                    ret.addMember(entry.getKey());
-                } else if (cd.getMaximumDays() != null && cd.getMinimumDays() == null && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
-                    ret.addMember(entry.getKey());
+                    ret.addMember(patientId);
+                } else if (cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays()) {
+                    ret.addMember(patientId);
+                } else if (cd.getMaximumDays() != null && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
+                    ret.addMember(patientId);
                 }
+            } else {
+                // All members who didn't have any encounter after visit date will be considered lost,missed appointment or lost to followup
+                ret.addMember(patientId);
             }
         }
         return ret;
