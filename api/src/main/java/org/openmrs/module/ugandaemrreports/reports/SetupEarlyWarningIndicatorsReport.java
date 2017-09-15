@@ -31,12 +31,12 @@ public class SetupEarlyWarningIndicatorsReport extends UgandaEMRDataExportManage
 
     @Override
     public String getName() {
-        return "Early warning indicator's report";
+        return "Early warning indicators report";
     }
 
     @Override
     public String getDescription() {
-        return "Early warning indicator's report";
+        return "Early warning indicators report";
     }
 
     @Override
