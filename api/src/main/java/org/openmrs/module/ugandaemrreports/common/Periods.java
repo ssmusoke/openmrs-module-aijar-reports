@@ -107,23 +107,6 @@ public class Periods {
         return intervalTreeMap;
     }
 
-    public static TreeMap<String, Interval> getMonths(LocalDate workingDate, int numbers) {
-
-        TreeMap<String, Interval> intervalTreeMap = new TreeMap<String, Interval>();
-
-        for (int i = 0; i < numbers; i++) {
-            List<LocalDate> localDates = getDatesDuringPeriods(workingDate, i, Enums.Period.MONTHLY);
-            Collections.sort(localDates);
-            DateTime start = new DateTime(localDates.get(0).getYear(), localDates.get(0).getMonthOfYear(), localDates.get(0).getDayOfMonth(), 0, 0, 0, 0);
-            DateTime end = new DateTime(localDates.get(1).getYear(), localDates.get(1).getMonthOfYear(), localDates.get(1).getDayOfMonth(), 0, 0, 0, 0);
-            Interval interval = new Interval(start, end);
-
-            intervalTreeMap.put(String.valueOf(i), interval);
-        }
-
-        return intervalTreeMap;
-    }
-
     public static boolean isDateInTheInterval(String date, Interval interval) {
         DateTime d = DateTime.parse(date, DateTimeFormat.forPattern("yyyy-MM-dd"));
         return interval.contains(d);
