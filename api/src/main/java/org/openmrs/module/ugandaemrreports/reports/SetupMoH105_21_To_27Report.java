@@ -38,7 +38,7 @@ import java.util.List;
 /**
  */
 @Component
-public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManager {
+public class SetupMoH105_21_To_27Report extends UgandaEMRDataExportManager {
 
     @Autowired
     private CommonReportDimensionLibrary dimensionLibrary;

@@ -34,7 +34,7 @@ import org.springframework.stereotype.Component;
 /**
  */
 @Component
-public class SetupMoH105_28_To_212ReportBuilder extends UgandaEMRDataExportManager {
+public class SetupMoH105_28_To_212Report extends UgandaEMRDataExportManager {
 
     @Autowired
     private Moh105IndicatorLibrary indicatorLibrary;
