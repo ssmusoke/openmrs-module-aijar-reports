@@ -2,11 +2,11 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.TreeMultimap;
+import com.google.common.collect.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.ObsData;
 import org.openmrs.module.ugandaemrreports.common.PersonDemographics;
@@ -48,29 +48,10 @@ public class Helper {
         return personDemographics;
     }
 
-    public static String constructSQLQuery(String column, String rangeComparator, String value) {
-        return column + " " + rangeComparator + " '" + value + "'";
-    }
-
-    public static String constructSQLInQuery(String column, Collection<?> values) {
-        return column + " IN(" + Joiner.on(",").join(values) + ")";
-    }
 
     private static String constructSQLInQuery(String column, String values) {
         return column + " IN(" + values + ")";
     }
-
-    public static String constructSQLInQuery(String column, List<String> values) {
-        String artRegisterObs = "'" + values.get(0) + "'";
-        StringBuilder columnBuilder = new StringBuilder(artRegisterObs);
-
-        for (String concept : values.subList(1, values.size())) {
-            columnBuilder.append(",'").append(concept).append("'");
-        }
-
-        return constructSQLInQuery(column, columnBuilder.toString());
-    }
-
 
     private static String joinQuery(String query1, String query2, Enums.UgandaEMRJoiner joiner) {
         return query1 + " " + joiner.toString() + " " + query2;
@@ -101,6 +82,36 @@ public class Helper {
             map.put(entry.getKey(), new ArrayList<>(entry.getValue()).get(0));
         }
         return map;
+    }
+
+    public static String convert(String concept) {
+        Map<String, String> result = new HashMap<>();
+
+        result.put("90012", "eMTCT");
+        result.put("90016", "TB");
+        result.put("99593", "YCC");
+        result.put("90019", "Outreach");
+        result.put("90013", "Out Patient");
+        result.put("90015", "STI");
+        result.put("90018", "Inpatient");
+        result.put("90002", "Other");
+        result.put("90079", "1");
+        result.put("90073", "2");
+        result.put("90078", "3");
+        result.put("90071", "4");
+
+        return result.get(concept);
+    }
+
+    public static String getOneData(Connection connection, String sql) throws SQLException {
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        String result = rs.getString(1);
+        rs.close();
+        stmt.close();
+        return result;
     }
 
     public static ObsData getData(List<ObsData> data, String concept) {
@@ -140,6 +151,116 @@ public class Helper {
         stmt.close();
 
         return result;
+    }
+
+    public static List<String> getData(Map<String, String> data, String yearQuarter, String concept) {
+        String quarter = yearQuarter.substring(Math.max(yearQuarter.length() - 2, 0));
+        String year = yearQuarter.substring(0, Math.min(yearQuarter.length(), 4));
+
+        List<String> result = new ArrayList<>();
+
+        ImmutableMap<String, List<String>> quarters =
+                new ImmutableMap.Builder<String, List<String>>()
+                        .put("Q1", Arrays.asList("01", "02", "03"))
+                        .put("Q2", Arrays.asList("04", "05", "06"))
+                        .put("Q3", Arrays.asList("07", "08", "09"))
+                        .put("Q4", Arrays.asList("10", "11", "12"))
+                        .build();
+
+        List<String> periods = quarters.get(quarter);
+        String r1 = data.get(year + periods.get(0) + concept);
+        String r2 = data.get(year + periods.get(1) + concept);
+        String r3 = data.get(year + periods.get(2) + concept);
+
+        if (r1 != null) {
+            result.add(r1);
+        }
+        if (r2 != null) {
+            result.add(r2);
+        }
+        if (r3 != null) {
+            result.add(r3);
+        }
+        return result;
+    }
+
+    public static String getData(Map<String, String> data, String concept) {
+
+        Set<String> keys = data.keySet();
+
+        String criteria = keys.stream()
+                .filter(e -> e.endsWith(concept))
+                .findAny().orElse(null);
+        if (criteria != null) {
+            return data.get(criteria);
+        }
+
+        return null;
+    }
+
+
+    public static Table<String, Integer, String> getDataTable(Connection connection, String sql) throws SQLException {
+
+        PreparedStatement stmt = connection.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
+        Table<String, Integer, String> table = TreeBasedTable.create();
+        while (rs.next()) {
+            Integer patientId = rs.getInt(1);
+            String conceptId = rs.getString(2);
+            Date encounterDate = rs.getDate(3);
+            String val = rs.getString(4);
+            String encounterMonth = DateUtil.formatDate(encounterDate, "yyyyMM") + conceptId;
+            table.put(encounterMonth, patientId, val);
+        }
+        rs.close();
+        stmt.close();
+
+        return table;
+    }
+
+    public static Map<String, Date> getClinicalStages(Map<String, String> data, String concept) {
+        Map<String, Date> result = new HashMap<>();
+
+        ImmutableMap<String, String> quarters =
+                new ImmutableMap.Builder<String, String>()
+                        .put("90033", "1")
+                        .put("90034", "2")
+                        .put("90035", "3")
+                        .put("90036", "4")
+                        .put("90293", "T1")
+                        .put("90294", "T2")
+                        .put("90295", "T3")
+                        .put("90296", "T4")
+                        .build();
+
+        for (Map.Entry<String, String> dic : data.entrySet()) {
+            String value = quarters.get(dic.getValue());
+            String key = dic.getKey();
+            if (key.endsWith(concept) && !result.containsValue(value)) {
+                result.put(value, DateUtil.parseDate(key.substring(0, Math.min(key.length(), 6)), "yyyyMM"));
+            }
+        }
+        return result;
+    }
+
+    public static String getMinimum(Map<String, String> data, String concept) {
+        List<String> result = new ArrayList<>();
+
+        for (Map.Entry<String, String> dic : data.entrySet()) {
+            String key = dic.getKey();
+            if (key.endsWith(concept)) {
+                result.add(key.substring(0, Math.min(key.length(), 6)));
+            }
+        }
+        sort(result);
+
+        if (result.size() > 0) {
+
+            String month = result.get(0).substring(Math.max(result.get(0).length() - 2, 0));
+            String year = result.get(0).substring(0, Math.min(result.get(0).length(), 4));
+            return month + "/" + year;
+        }
+        return "";
     }
 
     public static ObsData getFirstData(List<ObsData> data, String concept) {
@@ -204,6 +325,31 @@ public class Helper {
         concepts.put("arvdays", "99036");
 
         return concepts;
+    }
+
+    public static Map<String, String> preArtConcepts() {
+        return new ImmutableMap.Builder<String, String>()
+                .put("99161", "Art Start Date")
+                .put("99037", "CPT Dosage")
+                .put("99604", "INH Dosage")
+                .put("99083", "Eligible for Art Clinical Stage")
+                .put("99602", "Eligible for Art Pregnant")
+                .put("99082", "Eligible for Art CD4")
+                .put("99601", "Breast Feeding")
+                .put("99600", "Tb for ART")
+                .put("68", "Malnutrition")
+                .put("5096", "Return visit date")
+                .put("90200", "Entry point")
+                .put("99115", "Other Entry point")
+                .put("90203", "Who clinical stage")
+                .put("90216", "TB Status")
+                .put("90217", "TB Start Date")
+                .put("90310", "TB stop date")
+                .put("90297", "eligible date to start art")
+                .put("90299", "eligible and ready date to start art")
+                .put("99110", "TI")
+                .put("99165", "To Date")
+                .build();
     }
 
     private static Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
@@ -304,9 +450,13 @@ public class Helper {
     }
 
     public static List<String> processString2(String value) {
-        List<String> splitData = Splitter.on(",").splitToList(value);
-
-        return Splitter.on(":").splitToList(splitData.get(0));
+        if (value != null) {
+            List<String> splitData = Splitter.on(",").splitToList(value);
+            if (splitData.size() > 0) {
+                return Splitter.on(":").splitToList(splitData.get(0));
+            }
+        }
+        return new ArrayList<>();
     }
 
     public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
