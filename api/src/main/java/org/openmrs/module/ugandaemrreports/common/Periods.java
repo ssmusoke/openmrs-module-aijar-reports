@@ -11,7 +11,6 @@ import org.openmrs.module.reporting.common.DateUtil;
 import java.util.*;
 
 /**
- * Created by carapai on 04/07/2016.
  */
 public class Periods {
 

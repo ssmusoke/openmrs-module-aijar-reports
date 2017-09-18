@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 @Handler(supports = {PatientsInPeriodCohortDefinition.class})
 public class PatientsInPeriodCohortDefinitionEvaluator implements CohortDefinitionEvaluator {

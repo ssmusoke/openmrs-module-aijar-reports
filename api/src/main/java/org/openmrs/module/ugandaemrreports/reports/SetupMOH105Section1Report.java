@@ -33,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by @Moshonk on 06/04/17.
  */
 @Component
 public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
@@ -67,7 +66,7 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS 105-1.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS_105-1.xls");
     }
 
     @Override

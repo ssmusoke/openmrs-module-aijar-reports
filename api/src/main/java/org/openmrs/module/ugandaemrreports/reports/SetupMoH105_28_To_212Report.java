@@ -32,10 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created by @Moshonk on 4/8/17.
  */
 @Component
-public class SetupMoH105_28_To_212ReportBuilder extends UgandaEMRDataExportManager {
+public class SetupMoH105_28_To_212Report extends UgandaEMRDataExportManager {
 
     @Autowired
     private Moh105IndicatorLibrary indicatorLibrary;

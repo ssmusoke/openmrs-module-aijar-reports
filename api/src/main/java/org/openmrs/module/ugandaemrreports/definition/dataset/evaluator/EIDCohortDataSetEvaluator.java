@@ -23,7 +23,6 @@ import java.util.*;
 import static org.openmrs.module.ugandaemrreports.common.Periods.monthStartFor;
 
 /**
- * Created by carapai on 11/05/2016.
  */
 @Handler(supports = {EIDCohortDataSetDefinition.class})
 public class EIDCohortDataSetEvaluator implements DataSetEvaluator {

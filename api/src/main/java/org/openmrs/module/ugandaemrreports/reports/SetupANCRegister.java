@@ -55,7 +55,6 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by ningosi on 4/20/17.
  */
 @Component
 public class SetupANCRegister extends UgandaEMRDataExportManager {

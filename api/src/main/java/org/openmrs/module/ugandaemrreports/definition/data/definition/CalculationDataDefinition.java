@@ -14,7 +14,6 @@
 package org.openmrs.module.ugandaemrreports.definition.data.definition;
 
 /**
- * Created by Nicholas Ingosi on 4/26/17.
  */
 import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.calculation.result.CalculationResult;

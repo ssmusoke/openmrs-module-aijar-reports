@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
 
 /**
- * Created by carapai on 11/05/2016.
  */
 @Handler(supports = {ARTDatasetDefinition.class})
 public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {

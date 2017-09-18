@@ -3,7 +3,6 @@ package org.openmrs.module.ugandaemrreports.common;
 import java.util.HashMap;
 
 /**
- * Created by carapai on 13/09/2016.
  */
 public class SubstituteOrSwitch {
     private int obsGroupId;

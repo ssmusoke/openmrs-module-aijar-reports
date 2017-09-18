@@ -6,18 +6,20 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 import java.util.Date;
 
 /**
+ * Created by carapai on 17/10/2016.
  */
-public class OPDDatasetDefinition extends BaseDataSetDefinition {
-
-    private static final long serialVersionUID = 6405583324151111487L;
+public class AdherenceDataSetDefinition extends BaseDataSetDefinition {
     @ConfigurationProperty
     private Date startDate;
 
-    public OPDDatasetDefinition() {
+    @ConfigurationProperty
+    private Date endDate;
+
+    public AdherenceDataSetDefinition() {
         super();
     }
 
-    public OPDDatasetDefinition(String name, String description) {
+    public AdherenceDataSetDefinition(String name, String description) {
         super(name, description);
     }
 
@@ -27,5 +29,13 @@ public class OPDDatasetDefinition extends BaseDataSetDefinition {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

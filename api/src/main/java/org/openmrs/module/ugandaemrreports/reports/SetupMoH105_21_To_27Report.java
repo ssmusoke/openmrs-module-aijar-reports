@@ -36,10 +36,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by Nicholas Ingosi on 6/7/17.
  */
 @Component
-public class SetupMoH105_21_To_27ReportBuilder extends UgandaEMRDataExportManager {
+public class SetupMoH105_21_To_27Report extends UgandaEMRDataExportManager {
 
     @Autowired
     private CommonReportDimensionLibrary dimensionLibrary;

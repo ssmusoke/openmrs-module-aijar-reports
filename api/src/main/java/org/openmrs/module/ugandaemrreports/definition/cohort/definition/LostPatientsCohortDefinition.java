@@ -8,7 +8,6 @@ import org.openmrs.module.reporting.evaluation.caching.Caching;
 import java.util.Date;
 
 /**
- * Created by carapai on 28/06/2016.
  */
 @Caching(strategy = ConfigurationPropertyCachingStrategy.class)
 public class LostPatientsCohortDefinition extends BaseCohortDefinition {

@@ -5,7 +5,6 @@ import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.ugandaemrreports.common.DeathDate;
 
 /**
- * Created by carapai on 15/09/2016.
  */
 public class DeathDateDataDefinition extends BaseDataDefinition implements PersonDataDefinition {
 

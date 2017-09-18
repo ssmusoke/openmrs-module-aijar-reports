@@ -19,7 +19,6 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
- * Created by Nicholas Ingosi on 5/30/17.
  */
 public class IFODataConverter implements DataConverter {
     @Override

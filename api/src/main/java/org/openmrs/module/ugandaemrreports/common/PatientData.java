@@ -3,7 +3,6 @@ package org.openmrs.module.ugandaemrreports.common;
 import java.util.Date;
 
 /**
- * Created by carapai on 12/07/2016.
  */
 public class PatientData {
     private Integer patientId;

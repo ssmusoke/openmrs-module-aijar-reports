@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by carapai on 05/07/2016.
  */
 public class FUStatusPatientDataDefinition extends BaseDataDefinition implements PatientDataDefinition {
     public FUStatusPatientDataDefinition() {

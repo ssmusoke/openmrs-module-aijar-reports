@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * Created by carapai on 11/05/2016.
  */
 public class PatientDataHelper {
 
