@@ -1,12 +1,13 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-import org.apache.commons.collections.MapUtils;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Table;
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -14,278 +15,239 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
-import org.openmrs.module.reporting.evaluation.service.EvaluationService;
-import org.openmrs.module.ugandaemrreports.common.Helper;
-import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
-import org.openmrs.module.ugandaemrreports.common.Periods;
-import org.openmrs.module.ugandaemrreports.common.StubDate;
+import org.openmrs.module.ugandaemrreports.common.*;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.TreeMap;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
 
 /**
  */
 @Handler(supports = {PreARTDatasetDefinition.class})
 public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
-    @Autowired
-    private CommonReportMetadata commonReportMetadata;
-
-    @Autowired
-    private EvaluationService evaluationService;
 
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
         PreARTDatasetDefinition definition = (PreARTDatasetDefinition) dataSetDefinition;
 
-        context = ObjectUtil.nvl(context, new EvaluationContext());
+        LocalDate localDate = StubDate.dateOf(definition.getStartDate());
+        Integer year = localDate.getYear();
+        String enrolledQuery = String.format("SELECT patient_id, DATE(encounter_datetime) as enrollment FROM encounter WHERE voided = 0 AND YEAR(encounter_datetime) = %s AND encounter_type = (SELECT encounter_type_id FROM encounter_type WHERE uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f');", year);
 
-        String sql = "SELECT\n" +
-                "  A.person_id,DATE(A.encounter_datetime) as enrollement_date, B.art_start_date,C.identifier,D.family_name,D.given_name,E.gender,TIMESTAMPDIFF(YEAR, E.birthdate,'" + DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd") + "') as age,F.county_district,G.entry_point,H.ti,I.cpt,J.inh,TN.tb_reg,TST.tb_start_date,TSP.tb_stop_date, K.tb_status,L.baseline_ci,M.other_ci,N.eligible,O.eligible_ci,P.eligible_cd4,Q.eligible_tb,R.eligible_bf,S.eligible_preg,T.eligible_and_ready,U.encounters\n" +
-                "FROM\n" +
-                "  (select e.encounter_datetime,e.patient_id  as person_id from encounter e inner join encounter_type et on(e.encounter_type = et.encounter_type_id and et.uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' and YEAR('" + DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd") + "') = YEAR(e.encounter_datetime) and e.voided = 0)) A\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,value_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) as art_start_date FROM obs WHERE concept_id = 99161 group by person_id) B\n" +
-                "    ON (A.person_id = B.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT patient_id as person_id,identifier FROM patient_identifier WHERE identifier_type = 4 group by person_id) C\n" +
-                "    ON (A.person_id = C.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,family_name,given_name FROM person_name group by person_id) D\n" +
-                "    ON (A.person_id = D.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,gender,birthdate FROM person group by person_id) E\n" +
-                "    ON (A.person_id = E.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,county_district FROM person_address group by person_id) F\n" +
-                "    ON (A.person_id = F.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) as entry_point FROM obs where concept_id = 90200 group by person_id) G\n" +
-                "    ON (A.person_id = G.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) as ti FROM obs where concept_id = 99110 group by person_id) H\n" +
-                "    ON (A.person_id = H.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) AS cpt FROM obs WHERE concept_id = 99037 group by person_id) I\n" +
-                "    ON(A.person_id = I.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS inh FROM obs WHERE concept_id = 99604 group by person_id) J\n" +
-                "    ON(A.person_id = J.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_text,'|',DATE(obs_datetime))) AS tb_reg FROM obs WHERE concept_id = 99031 group by person_id) TN\n" +
-                "    ON(A.person_id = TN.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS tb_start_date FROM obs WHERE concept_id = 90217 group by person_id) TST\n" +
-                "    ON(A.person_id = TST.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) AS tb_stop_date FROM obs WHERE concept_id = 90310 group by person_id) TSP\n" +
-                "    ON(A.person_id = TSP.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) AS tb_status FROM obs WHERE concept_id = 90216 group by person_id) K\n" +
-                "    ON(A.person_id = K.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) as baseline_ci FROM obs WHERE concept_id = 99083 group by person_id) L\n" +
-                "    ON (A.person_id = L.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) as other_ci FROM obs WHERE concept_id = 90203 group by person_id) M\n" +
-                "    ON (A.person_id = M.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) as eligible FROM obs WHERE concept_id = 90297 group by person_id) N\n" +
-                "    ON (A.person_id = N.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_coded,'|',DATE(obs_datetime))) as eligible_ci FROM obs WHERE concept_id = 99083 group by person_id) O\n" +
-                "    ON (A.person_id = O.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) as eligible_cd4 FROM obs WHERE concept_id = 99082 group by person_id) P\n" +
-                "    ON (A.person_id = P.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) as eligible_tb FROM obs WHERE concept_id = 99600 group by person_id) Q\n" +
-                "    ON (A.person_id = Q.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) as eligible_bf FROM obs WHERE concept_id = 99601 group by person_id) R\n" +
-                "    ON (A.person_id = R.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',value_numeric,'|',DATE(obs_datetime))) as eligible_preg FROM obs WHERE concept_id = 99602 group by person_id) S\n" +
-                "    ON (A.person_id = S.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT person_id,obs_datetime,group_concat(concat(encounter_id,'|',DATE(value_datetime),'|',DATE(obs_datetime))) as eligible_and_ready FROM obs WHERE concept_id = 90299 group by person_id) T\n" +
-                "    ON (A.person_id = T.person_id)\n" +
-                "  LEFT JOIN\n" +
-                "  (SELECT patient_id as person_id,group_concat(concat(encounter_id,'|',encounter_type,'|',DATE(encounter_datetime))) as encounters FROM encounter group by person_id) U\n" +
-                "    ON (A.person_id = U.person_id)";
+        try {
+            Multimap<Integer, Date> summaryData = getData(sqlConnection(), enrolledQuery, "patient_id", "enrollment");
 
-        SqlQueryBuilder q = new SqlQueryBuilder(sql);
+            Map<Integer, Date> dates = new HashMap<>();
 
-        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd"));
-
-        TreeMap<String, Interval> periods = Periods.getQuarters(workingDate, 16);
-
-        List<Object[]> results = evaluationService.evaluateToList(q, context);
-
-        PatientDataHelper pdh = new PatientDataHelper();
-
-        for (Object[] r : results) {
-
-            DataSetRow row = new DataSetRow();
-            String entryPoint = "";
-            String cptStartDate = "";
-            String inhStartDate = "";
-            String tbStartDate = "";
-            String tbStopDate = "";
-            String dateEligible = "";
-            String dateEligibleAndReady = "";
-            String artStartDate = "";
-            String tbRxNo = "";
-
-            TreeMap<String, String> encounters = Helper.splitQuery((String) r[26], 1, 3);
-            TreeMap<String, String> cpts = Periods.changeKeys(Helper.splitQuery((String) r[11], 1, 2), encounters);
-            TreeMap<String, String> inhs = Periods.changeKeys(Helper.splitQuery((String) r[12], 1, 2), encounters);
-            TreeMap<String, String> tbStarts = Helper.splitQuery((String) r[14], 2, 1);
-            TreeMap<String, String> datesEligible = Helper.splitQuery((String) r[19], 2, 1);
-            TreeMap<String, String> tbStops = Helper.splitQuery((String) r[15], 2, 1);
-            TreeMap<String, String> datesEligibleAndReady = Helper.splitQuery((String) r[25], 2, 1);
-            TreeMap<String, String> artStartDates = Helper.splitQuery((String) r[2], 2, 1);
-            TreeMap<String, String> tbs = Periods.changeKeys(Helper.splitQuery((String) r[16], 1, 2), encounters);
-
-            TreeMap<String, TreeMap<String, String>> tbMap = Periods.listOfDatesInPeriods(periods, tbs);
-            TreeMap<String, TreeMap<String, String>> cptMap = Periods.listOfDatesInPeriods(periods, cpts);
-            TreeMap<String, TreeMap<String, String>> inhMap = Periods.listOfDatesInPeriods(periods, inhs);
-            //TreeMap<String, TreeMap<String, String>> nutritionalMap = Periods.listOfDatesInPeriods(periods, Helper.splitQuery((String) r[27], 3, 2));
-            TreeMap<String, String> entryPointMap = Helper.splitQuery((String) r[9], 1, 2);
-
-            if (StringUtils.isNotBlank((String) r[13])) {
-                tbRxNo = (String) r[13];
+            for (Map.Entry<Integer, Collection<Date>> d : summaryData.asMap().entrySet()) {
+                dates.put(d.getKey(), new ArrayList<>(d.getValue()).get(0));
             }
 
-            if (MapUtils.isNotEmpty(entryPointMap)) {
-                entryPoint = entryPointMap.entrySet().iterator().next().getValue();
-            }
+            List<Map.Entry<Integer, Date>> entries = new ArrayList<>(dates.entrySet());
+            entries.sort(Comparator.comparing(Map.Entry::getValue));
 
-            if (MapUtils.isNotEmpty(cpts)) {
-                cptStartDate = cpts.entrySet().iterator().next().getKey();
-            }
+            String currentQuarter = getObsPeriod(new Date(), Enums.Period.QUARTERLY);
 
-            if (MapUtils.isNotEmpty(inhs)) {
-                inhStartDate = inhs.entrySet().iterator().next().getKey();
-            }
+            String patients = Joiner.on(",").join(summaryData.keySet());
+            String concepts = Joiner.on(",").join(preArtConcepts().keySet());
 
-            if (MapUtils.isNotEmpty(tbStarts)) {
-                tbStartDate = tbStarts.entrySet().iterator().next().getKey();
-            }
+            String withoutArtStartDateQuery = String.format("SELECT DISTINCT GROUP_CONCAT(DISTINCT patient_id)\n" +
+                    "FROM encounter\n" +
+                    "WHERE patient_id NOT IN (SELECT person_id\n" +
+                    "                         FROM obs\n" +
+                    "                         WHERE concept_id = 99161) and patient_id IN(%s);", patients);
 
-            if (MapUtils.isNotEmpty(tbStops)) {
-                tbStopDate = tbStops.entrySet().iterator().next().getKey();
-            }
+            String patientsWithoutArtDate = getOneData(sqlConnection(), withoutArtStartDateQuery);
 
-            if (MapUtils.isNotEmpty(datesEligible)) {
-                dateEligible = datesEligible.entrySet().iterator().next().getKey();
-            }
+            String encountersBeforeArtQuery = "SELECT e.encounter_id as e_id,DATE(e.encounter_datetime) as e_date\n" +
+                    "FROM encounter e INNER JOIN obs art ON (e.patient_id = art.person_id)\n" +
+                    "WHERE art.concept_id = 99161 AND art.voided = 0 AND e.voided = 0 AND e.encounter_datetime <= art.value_datetime AND\n" +
+                    String.format("      e.patient_id IN (%s)\n", patients) +
+                    "      AND encounter_type IN (SELECT encounter_type_id\n" +
+                    "                             FROM encounter_type\n" +
+                    "                             WHERE uuid IN\n" +
+                    "                                   ('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f', '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f'));";
+            Multimap<Integer, Date> encounterData = getData(sqlConnection(), encountersBeforeArtQuery, "e_id", "e_date");
 
-            if (MapUtils.isNotEmpty(datesEligibleAndReady)) {
-                dateEligibleAndReady = datesEligibleAndReady.entrySet().iterator().next().getKey();
-            }
-
-            if (MapUtils.isNotEmpty(artStartDates)) {
-                artStartDate = artStartDates.entrySet().iterator().next().getKey();
-            }
-
-            Integer biggestPeriod = 0;
-            if (StringUtils.isNotBlank(artStartDate)) {
-                biggestPeriod = Periods.isDateInTheInterval(artStartDate, periods);
-            }
-            if(biggestPeriod == null){
-                biggestPeriod = 0;
-            }
-
-            String name = new StringBuilder()
-                    .append(r[4] + "\n")
-                    .append(r[5])
-                    .toString();
-            String tb1 = new StringBuilder()
-                    .append(tbRxNo + "\n")
-                    .append(tbStartDate + "\n")
-                    .append(tbStopDate)
-                    .toString();
-            String inh1 = new StringBuilder()
-                    .append(inhStartDate + "\n")
-                    .append("")
-                    .toString();
-
-            String cpt1 = new StringBuilder()
-                    .append(cptStartDate + "\n")
-                    .append("")
-                    .toString();
-
-            pdh.addCol(row, "Date Enrolled", r[1]);
-            pdh.addCol(row, "Unique ID no", null);
-            pdh.addCol(row, "Patient Clinic ID", r[3]);
-            pdh.addCol(row, "Name", name);
-            pdh.addCol(row, "Gender", r[6]);
-            pdh.addCol(row, "Age", r[7]);
-            pdh.addCol(row, "Address", r[8]);
-            pdh.addCol(row, "Entry Point", entryPoint);
-            pdh.addCol(row, "Enrollment", r[10]);
-            pdh.addCol(row, "CPT", cpt1);
-            pdh.addCol(row, "INH", inh1);
-            pdh.addCol(row, "TB", tb1);
-
-            pdh.addCol(row, "CS1", null);
-            pdh.addCol(row, "CS2", null);
-            pdh.addCol(row, "CS3", null);
-            pdh.addCol(row, "CS4", null);
-            pdh.addCol(row, "Date Eligible", dateEligible);
-            pdh.addCol(row, "Why Eligible", null);
-            pdh.addCol(row, "Date Eligible and Ready", dateEligibleAndReady);
-            pdh.addCol(row, "ART Start Date", artStartDate);
+            String encounters = Joiner.on(",").join(encounterData.asMap().keySet());
 
 
-            for (int i = 0; i <= 15; i++) {
-                String key = String.valueOf(i);
-                if (i <= biggestPeriod) {
-                    String fuStatus = "";
-                    String tbStatus = "";
-                    String cptInhStatus = "";
-                    String nutritionalStatus = "";
+            String obsQuery = String.format("SELECT\n" +
+                    "  person_id,\n" +
+                    "  concept_id,\n" +
+                    "  (SELECT encounter_datetime\n" +
+                    "   FROM encounter e\n" +
+                    "   WHERE e.encounter_id = o.encounter_id)                                                    AS enc_date,\n" +
+                    "  COALESCE(value_coded, COALESCE(DATE(value_datetime), COALESCE(value_numeric, value_text))) AS val\n" +
+                    "FROM obs o\n" +
+                    "WHERE o.voided = 0 AND (o.encounter_id IN (%s) OR person_id IN (%s)) AND o.concept_id IN (%s)\n" +
+                    "UNION ALL\n" +
+                    "SELECT\n" +
+                    "  p.person_id,\n" +
+                    "  'death',\n" +
+                    "  death_date,\n" +
+                    "  DATE(death_date)\n" +
+                    "FROM person p INNER JOIN obs art ON (p.person_id = art.person_id)\n" +
+                    "WHERE art.concept_id = 99161 AND p.person_id IN (%s) AND art.voided = 0 AND p.voided = 0 AND\n" +
+                    "      p.death_date <= art.value_datetime;", encounters, patientsWithoutArtDate, concepts, patients);
 
 
-                    TreeMap<String, String> tb = tbMap.get(key);
-                    TreeMap<String, String> cpt = cptMap.get(key);
-                    TreeMap<String, String> inh = inhMap.get(key);
-                    //TreeMap<String, String> nutritional = nutritionalMap.get(key);
+            Table<String, Integer, String> table = getDataTable(sqlConnection(), obsQuery);
+            Map<Integer, List<PersonDemographics>> demographics = getPatientDemographics(sqlConnection(), patients);
 
-                    if (tb != null) {
-                        tbStatus = tb.lastEntry().getValue();
-                    }
+            PatientDataHelper pdh = new PatientDataHelper();
+            for (Map.Entry<Integer, Date> patient : entries) {
+                Integer key = patient.getKey();
+                List<PersonDemographics> personDemographics = demographics.get(key);
+                Map<String, String> patientData = table.column(key);
 
-                    if (cpt != null || inh != null) {
-                        cptInhStatus = "Y";
-                    }
+                String artStartDate = getData(patientData, "99161");
+                String entryPoint = getData(patientData, "90200");
+                String tbStartDate = getData(patientData, "90217");
+                String tbStopDate = getData(patientData, "90310");
+                String ti = getData(patientData, "99110") == null ? "" : "5";
+                String eligible = getData(patientData, "90297");
+                String eligibleAndReady = getData(patientData, "90299");
+                String death = getData(patientData, "death");
+                String to = getData(patientData, "99165");
 
-                    StringBuilder fp = new StringBuilder()
-                            .append(fuStatus + "\n")
-                            .append(tbStatus + "\n");
+                String died = death != null ? getObsPeriod(DateUtil.parseYmd(death), Enums.Period.QUARTERLY) : "";
+                String transferred = to != null ? getObsPeriod(DateUtil.parseYmd(to), Enums.Period.QUARTERLY) : "";
 
-                    if (StringUtils.isNotBlank(cptInhStatus) && StringUtils.isNotBlank(nutritionalStatus)) {
-                        fp.append(cptInhStatus + "|" + nutritionalStatus);
-                    } else if (StringUtils.isNotBlank(cptInhStatus) && StringUtils.isBlank(nutritionalStatus)) {
-                        fp.append(cptInhStatus);
-                    } else if (StringUtils.isBlank(cptInhStatus) && StringUtils.isNotBlank(nutritionalStatus)) {
-                        fp.append(nutritionalStatus);
-                    } else {
-                        fp.append("");
-                    }
-                    String followupStatus = fp.toString();
-                    pdh.addCol(row, "FUS" + key, followupStatus);
-                } else {
-                    pdh.addCol(row, "FUS" + key, "");
+                boolean hasDied = false;
+                boolean hasTransferred = false;
+
+
+                String eligibleCS = getData(patientData, "99083") == null ? "" : "1";
+                String eligiblePregnant = getData(patientData, "99602") == null ? "" : "3";
+                String eligibleCD4 = getData(patientData, "99082") == null ? "" : "2";
+                String eligibleLactating = getData(patientData, "99601") == null ? "" : "4";
+                String eligibleTb = getData(patientData, "99600") == null ? "" : "5";
+
+                String startedTB = tbStartDate != null ? DateUtil.formatDate(DateUtil.parseYmd(tbStartDate), "MM/yyyy") : "";
+                String stoppedTB = tbStopDate != null ? DateUtil.formatDate(DateUtil.parseYmd(tbStopDate), "MM/yyyy") : "";
+
+                Map<String, Date> clinicalStages = getClinicalStages(patientData, "90203");
+
+                PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
+
+                List<String> addresses = processString2(personDemos.getAddresses());
+                String address = "";
+                if (addresses.size() == 6) {
+                    address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
                 }
-            }
 
-            dataSet.addRow(row);
+                Date firstSummaryDate = dates.get(key);
+
+                String enrollmentQuarter = getObsPeriod(firstSummaryDate, Enums.Period.QUARTERLY);
+                DataSetRow row = new DataSetRow();
+                pdh.addCol(row, "Date Enrolled", firstSummaryDate);
+                pdh.addCol(row, "Unique ID no", key);
+                pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
+                pdh.addCol(row, "Name", personDemos.getNames());
+                pdh.addCol(row, "Gender", personDemos.getGender());
+                if (personDemos.getBirthDate() != null && firstSummaryDate != null) {
+                    Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(firstSummaryDate));
+                    pdh.addCol(row, "Age", age.getYears());
+                } else {
+                    pdh.addCol(row, "Age", "");
+                }
+                pdh.addCol(row, "Address", address);
+                pdh.addCol(row, "Entry Point", convert(entryPoint));
+                pdh.addCol(row, "Enrollment", ti);
+                pdh.addCol(row, "CPT", getMinimum(patientData, "99037"));
+                pdh.addCol(row, "INH", getMinimum(patientData, "99604"));
+
+                pdh.addCol(row, "TB", startedTB + "\n" + stoppedTB);
+
+                pdh.addCol(row, "CS1", clinicalStages.get("1"));
+                pdh.addCol(row, "CS2", clinicalStages.get("2"));
+                pdh.addCol(row, "CS3", clinicalStages.get("3"));
+                pdh.addCol(row, "CS4", clinicalStages.get("4"));
+
+                pdh.addCol(row, "Date Eligible", eligible != null ? DateUtil.parseYmd(eligible) : "");
+                pdh.addCol(row, "Why Eligible", eligibleCS + "\n" + eligibleCD4 + "\n" + eligiblePregnant + "\n" + eligibleLactating + "\n" + eligibleTb);
+                pdh.addCol(row, "Date Eligible and Ready", eligibleAndReady != null ? DateUtil.parseYmd(eligibleAndReady) : "");
+                pdh.addCol(row, "ART Start Date", artStartDate != null ? DateUtil.parseYmd(artStartDate) : "");
+
+                for (int i = 0; i < 16; i++) {
+                    String period = getObsPeriod(Periods.addQuarters(localDate, i).get(0).toDate(), Enums.Period.QUARTERLY);
+                    if (period.compareTo(currentQuarter) < 0) {
+                        if (artStartDate != null && period.compareTo(getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "ART");
+                        } else if ((artStartDate != null && period.compareTo(getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) > 0) || hasDied || hasTransferred) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                        } else if (StringUtils.isNotBlank(died) && period.compareTo(died) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "DIED");
+                            hasDied = true;
+                        } else if (StringUtils.isNotBlank(transferred) && period.compareTo(transferred) == 0) {
+                            pdh.addCol(row, "FUS" + String.valueOf(i), "TO");
+                            hasTransferred = true;
+                        } else {
+                            List<String> tbStatus = getData(patientData, period, "90216");
+                            List<String> cpt = getData(patientData, period, "99037");
+                            List<String> inh = getData(patientData, period, "99604");
+                            List<String> nutrition = getData(patientData, period, "68");
+                            List<String> appointments = getData(patientData, period, "5096");
+
+                            String cptInh = "";
+                            String mul = "";
+                            String tb = "";
+
+                            String cptNutrition = "";
+
+                            if (cpt.size() > 0 || inh.size() > 0) {
+                                cptInh = "Y";
+                            }
+                            if (nutrition.size() > 0) {
+                                mul = nutrition.get(nutrition.size() - 1);
+                            }
+                            if (tbStatus.size() > 0) {
+                                tb = convert(tbStatus.get(tbStatus.size() - 1));
+                            }
+
+                            if (StringUtils.isNotBlank(cptInh) && StringUtils.isNotBlank(mul)) {
+                                cptNutrition = cptInh + "|" + mul;
+                            } else if (StringUtils.isNotBlank(cptInh)) {
+                                cptNutrition = cptInh;
+                            } else if (StringUtils.isNotBlank(mul)) {
+                                cptNutrition = mul;
+                            }
+
+                            if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptNutrition)) {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptNutrition);
+                            } else if (appointments.size() == 0 && period.compareTo(enrollmentQuarter) >= 0) {
+                                String lastPeriod = getObsPeriod(Periods.addQuarters(localDate, i - 1).get(0).toDate(), Enums.Period.QUARTERLY);
+                                List<String> lastAppointments = getData(patientData, lastPeriod, "5096");
+                                if (lastAppointments.size() != 0) {
+                                    String maxAppointment = lastAppointments.get(lastAppointments.size() - 1);
+                                    String maxQuarter = getObsPeriod(DateUtil.parseYmd(maxAppointment), Enums.Period.QUARTERLY);
+                                    if (maxQuarter.compareTo(period) > 0) {
+                                        pdh.addCol(row, "FUS" + String.valueOf(i), "→");
+                                    } else {
+                                        pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                                    }
+                                } else {
+                                    pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                                }
+
+                            } else if (period.compareTo(enrollmentQuarter) < 0) {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                            } else {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                            }
+                        }
+                    } else {
+                        pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                    }
+                }
+                dataSet.addRow(row);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
         }
         return dataSet;
     }
