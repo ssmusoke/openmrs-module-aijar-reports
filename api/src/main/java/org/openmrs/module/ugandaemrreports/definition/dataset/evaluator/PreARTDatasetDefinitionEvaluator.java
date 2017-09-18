@@ -197,6 +197,8 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             String mul = "";
                             String tb = "";
 
+                            String cptNutrition = "";
+
                             if (cpt.size() > 0 || inh.size() > 0) {
                                 cptInh = "Y";
                             }
@@ -207,8 +209,16 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                 tb = convert(tbStatus.get(tbStatus.size() - 1));
                             }
 
-                            if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptInh) || StringUtils.isNotBlank(mul)) {
-                                pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptInh + "|" + mul);
+                            if (StringUtils.isNotBlank(cptInh) && StringUtils.isNotBlank(mul)) {
+                                cptNutrition = cptInh + "|" + mul;
+                            } else if (StringUtils.isNotBlank(cptInh)) {
+                                cptNutrition = cptInh;
+                            } else if (StringUtils.isNotBlank(mul)) {
+                                cptNutrition = mul;
+                            }
+
+                            if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptNutrition)) {
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptNutrition);
                             } else if (appointments.size() == 0 && period.compareTo(enrollmentQuarter) >= 0) {
                                 String lastPeriod = getObsPeriod(Periods.addQuarters(localDate, i - 1).get(0).toDate(), Enums.Period.QUARTERLY);
                                 List<String> lastAppointments = getData(patientData, lastPeriod, "5096");
