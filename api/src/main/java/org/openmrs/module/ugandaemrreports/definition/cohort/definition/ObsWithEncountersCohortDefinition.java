@@ -10,7 +10,6 @@ import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 public class ObsWithEncountersCohortDefinition extends BaseCohortDefinition {
 

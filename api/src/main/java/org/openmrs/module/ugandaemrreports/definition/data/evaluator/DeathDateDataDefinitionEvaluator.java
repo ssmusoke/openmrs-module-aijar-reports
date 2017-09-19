@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 15/09/2016.
  */
 @Handler(supports = DeathDateDataDefinition.class, order = 50)
 public class DeathDateDataDefinitionEvaluator implements PersonDataEvaluator {

@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.common;
 
 /**
- * Created by carapai on 19/01/2017.
  */
 public class ArtPatientData {
     private String encounterId;

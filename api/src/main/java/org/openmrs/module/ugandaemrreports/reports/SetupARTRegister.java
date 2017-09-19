@@ -100,7 +100,7 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:6,dataset:ART");
+        props.put("repeatingSections", "sheet:1,row:6-8,dataset:ART | sheet:2,row:3-5,dataset:ART | sheet:3,row:3-5,dataset:ART | sheet:4,row:3-5,dataset:ART");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -124,6 +124,6 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.3";
     }
 }

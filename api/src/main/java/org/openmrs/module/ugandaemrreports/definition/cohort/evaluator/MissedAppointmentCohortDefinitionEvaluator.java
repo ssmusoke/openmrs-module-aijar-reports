@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Created by carapai on 28/06/2016.
  */
 @Handler(supports = {MissedAppointmentCohortDefinition.class})
 public class MissedAppointmentCohortDefinitionEvaluator implements CohortDefinitionEvaluator {

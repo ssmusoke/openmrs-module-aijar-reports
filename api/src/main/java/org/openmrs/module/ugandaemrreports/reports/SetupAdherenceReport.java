@@ -10,6 +10,7 @@ import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AdherenceDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -24,7 +25,6 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by carapai on 07/06/2016.
  */
 @Component
 
@@ -90,41 +90,16 @@ public class SetupAdherenceReport extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        AdherenceDataSetDefinition dsd = new AdherenceDataSetDefinition();
 
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension adherenceDimension = commonDimensionLibrary.getAdherenceGroup();
-        dsd.addDimension("adherence", Mapped.mapStraightThrough(adherenceDimension));
-
-
-        CohortDefinition adherence = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        addAgeGender(dsd, "1", "Adherence", adherence);
-
-
         return rd;
-    }
-
-    public void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "a", label + " (Good)", cohortDefinition, "adherence=good");
-        addIndicator(dsd, key + "b", label + " (Fair)", cohortDefinition, "adherence=fair");
-        addIndicator(dsd, key + "c", label + " (Poor)", cohortDefinition, "adherence=poor");
-        addIndicator(dsd, key + "d", label + " Total", cohortDefinition, "");
-    }
-
-    public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
-        CohortIndicator ci = new CohortIndicator();
-        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
-        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
-        ci.setType(CohortIndicator.IndicatorType.COUNT);
-        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
-        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.3";
     }
 }

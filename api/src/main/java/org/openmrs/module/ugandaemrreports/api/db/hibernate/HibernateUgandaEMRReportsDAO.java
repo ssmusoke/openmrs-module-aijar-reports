@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.openmrs.module.ugandaemrreports.api.db.UgandaEMRReportsDAO;
 
 /**
- * Created by ssmusoke on 31/03/2016.
  */
 public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 

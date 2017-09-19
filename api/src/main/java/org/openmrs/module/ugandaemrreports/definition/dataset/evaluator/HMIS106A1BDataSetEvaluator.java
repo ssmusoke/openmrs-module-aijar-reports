@@ -39,7 +39,6 @@ import java.text.DecimalFormat;
 import java.util.*;
 
 /**
- * Created by carapai on 17/10/2016.
  */
 @Handler(supports = {HMIS106A1BDataSetDefinition.class})
 public class HMIS106A1BDataSetEvaluator implements DataSetEvaluator {

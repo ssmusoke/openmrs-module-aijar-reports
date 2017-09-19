@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- * Created by carapai on 17/10/2016.
  */
 @Handler(supports = {CBSAdultDatasetDefinition.class})
 public class CBSAdultDataSetEvaluator implements DataSetEvaluator {

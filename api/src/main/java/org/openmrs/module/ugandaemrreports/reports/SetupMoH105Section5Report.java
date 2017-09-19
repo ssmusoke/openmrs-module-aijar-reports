@@ -39,7 +39,7 @@ import java.util.List;
  * 
  */
 @Component
-public class Setup105Section5Report extends UgandaEMRDataExportManager  {
+public class SetupMoH105Section5Report extends UgandaEMRDataExportManager  {
 
     @Autowired
     private CommonReportDimensionLibrary dimensionLibrary;
@@ -69,7 +69,7 @@ public class Setup105Section5Report extends UgandaEMRDataExportManager  {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS 105-5-6.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS_105-5-6.xls");
     }
 
     @Override

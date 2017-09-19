@@ -67,7 +67,6 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by Nicholas Ingosi on 5/10/17.
  */
 @Component
 public class SetupPNCRegister extends UgandaEMRDataExportManager {

@@ -7,7 +7,6 @@ import org.openmrs.module.ugandaemrreports.common.Enums;
 import java.util.Date;
 
 /**
- * Created by carapai on 10/01/2017.
  */
 public class ArtFollowupCD4CohortDefinition extends BaseCohortDefinition {
 

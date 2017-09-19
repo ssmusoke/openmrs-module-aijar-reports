@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
- * Created by carapai on 05/07/2016.
  */
 @Handler(supports = ArtPatientDataDefinition.class)
 public class ArtPatientDataEvaluator implements PatientDataEvaluator {

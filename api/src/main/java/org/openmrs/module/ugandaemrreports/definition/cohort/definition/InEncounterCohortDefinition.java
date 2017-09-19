@@ -8,7 +8,6 @@ import org.openmrs.module.reporting.cohort.definition.BaseCohortDefinition;
 import org.openmrs.module.reporting.definition.configuration.ConfigurationProperty;
 
 /**
- * Created by carapai on 20/04/2016.
  */
 public class InEncounterCohortDefinition extends BaseCohortDefinition {
 
