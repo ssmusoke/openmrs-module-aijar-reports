@@ -77,12 +77,12 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "HMIS 105 - SECTION 3-4";
+        return "HMIS 105 - SECTION 3-4: Outreach and HCT";
     }
 
     @Override
     public String getDescription() {
-        return "Health Unit Outpatient Monthly Report, Section 3 & 4";
+        return "Health Unit Outpatient Monthly Report, Section 3 & 4: Outreach and HCT";
     }
 
 
