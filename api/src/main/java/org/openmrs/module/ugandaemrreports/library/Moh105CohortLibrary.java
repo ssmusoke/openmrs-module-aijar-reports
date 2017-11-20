@@ -137,7 +137,6 @@ public class Moh105CohortLibrary {
         cd.addSearch("assessedBy", ReportUtils.map(assessedByNumericValues(question), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("assessedBy AND ancEncounter");
-        cd.setCompositionString("femaleAndHasAncVisit AND (takingIron OR takingFolic)");
         return cd;
     }
         
