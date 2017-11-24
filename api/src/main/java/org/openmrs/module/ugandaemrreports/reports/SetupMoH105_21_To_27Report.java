@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
+
 /**
  */
 @Component
@@ -100,6 +102,7 @@ public class SetupMoH105_21_To_27Report extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(postnatal()));
         rd.addDataSetDefinition("M", Mapped.mapStraightThrough(maternity()));
         rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
 
         return rd;
     }
@@ -277,6 +280,4 @@ public class SetupMoH105_21_To_27Report extends UgandaEMRDataExportManager {
 
         return dsd;
     }
-    
-
 }
