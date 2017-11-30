@@ -64,6 +64,9 @@ public class Helper {
                 "  (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate) - (RIGHT(e.encounter_datetime, 5) < RIGHT(birthdate, 5))\n" +
                 "   FROM person p\n" +
                 "   WHERE p.person_id = e.patient_id)                       AS age,\n" +
+                "  (SELECT group_concat(concat_ws(':', o.concept_id, o.value_coded, DATE(o.obs_datetime)))\n" +
+                "   FROM obs o\n" +
+                "   WHERE o.concept_id = 90244 AND o.person_id = e.patient_id) AS marital,\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pit.uuid, ''), COALESCE(identifier, '')))\n" +
                 "   FROM patient_identifier pi INNER JOIN patient_identifier_type pit\n" +
                 "       ON (pi.identifier_type = pit.patient_identifier_type_id)\n" +
@@ -116,11 +119,12 @@ public class Helper {
             encounterObs.setGender(rs.getString(4));
             encounterObs.setDob(rs.getDate(5));
             encounterObs.setAge(rs.getInt(6));
-            encounterObs.setIdentifiers(rs.getString(7));
-            encounterObs.setAttributes(rs.getString(8));
-            encounterObs.setAddresses(rs.getString(9));
+            encounterObs.setMaritalStatus(rs.getString(7));
+            encounterObs.setIdentifiers(rs.getString(8));
+            encounterObs.setAttributes(rs.getString(9));
+            encounterObs.setAddresses(rs.getString(10));
 
-            List<String> currentObs = Splitter.on(",").splitToList(rs.getString(10));
+            List<String> currentObs = Splitter.on(",").splitToList(rs.getString(11));
 
             List<Observation> foundObs = new ArrayList<>();
             if (currentObs.size() > 0) {
@@ -532,14 +536,15 @@ public class Helper {
 
     public static Map<String, String> processString(String value) {
         Map<String, String> result = new HashMap<>();
-
-        List<String> splitData = Splitter.on(",").splitToList(value);
-
-        for (String split : splitData) {
-            List<String> keyValue = Splitter.on(":").splitToList(split);
-
-            if (keyValue.size() == 2) {
-                result.put(keyValue.get(0), keyValue.get(1));
+        if (StringUtils.isNotBlank(value)) {
+            List<String> splitData = Splitter.on(",").splitToList(value);
+            for (String split : splitData) {
+                if (StringUtils.isNotBlank(split)) {
+                    List<String> keyValue = Splitter.on(":").splitToList(split);
+                    if (keyValue.size() == 2) {
+                        result.put(keyValue.get(0), keyValue.get(1));
+                    }
+                }
             }
         }
         return result;

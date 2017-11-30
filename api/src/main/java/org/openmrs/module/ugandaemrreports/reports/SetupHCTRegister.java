@@ -4,6 +4,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TBDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +77,9 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	 */
 	@Override	
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "096aHealthUnitTBRegister.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HCTRegister.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:8,dataset:HCT");
+		props.put("repeatingSections", "sheet:1,row:4,dataset:HCT");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -92,8 +93,8 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 		rd.setName(getName());
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
-		
-		TBDatasetDefinition dsd = new TBDatasetDefinition();
+
+		HCTDatasetDefinition dsd = new HCTDatasetDefinition();
 		dsd.setName(getName());
 		dsd.setParameters(getParameters());
 		rd.addDataSetDefinition("HCT", Mapped.mapStraightThrough(dsd));

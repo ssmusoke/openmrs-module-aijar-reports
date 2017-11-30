@@ -15,6 +15,7 @@ public class PatientEncounterObs {
     private String gender;
     private Date dob;
     private Integer age;
+    private String maritalStatus;
     private String identifiers;
     private String attributes;
     private String addresses;
@@ -69,6 +70,14 @@ public class PatientEncounterObs {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getMaritalStatus() {
+        return maritalStatus;
+    }
+
+    public void setMaritalStatus(String maritalStatus) {
+        this.maritalStatus = maritalStatus;
     }
 
     public String getIdentifiers() {
