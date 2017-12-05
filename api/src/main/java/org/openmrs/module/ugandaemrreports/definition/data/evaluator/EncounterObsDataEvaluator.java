@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by carapai on 27/09/2017.
- */
 @Handler(supports = EncounterObsDataDefinition.class, order = 50)
 public class EncounterObsDataEvaluator implements PatientDataEvaluator {
 

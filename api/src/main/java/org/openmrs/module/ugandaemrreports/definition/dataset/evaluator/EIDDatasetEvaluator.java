@@ -20,6 +20,7 @@ import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.EncounterObsDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EIDDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HMIS106A1BDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,8 +42,14 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext evaluationContext) throws EvaluationException {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, evaluationContext);
+
+        EIDDatasetDefinition definition = (EIDDatasetDefinition) dataSetDefinition;
+        System.out.println(definition.getStartDate());
+        System.out.println(definition.getEndDate());
         EncounterObsDataDefinition eidSummaryObsDefinition = new EncounterObsDataDefinition();
         eidSummaryObsDefinition.setEncounterType(hivMetadata.getEIDSummaryPageEncounterType().get(0));
+        eidSummaryObsDefinition.setStartDate(definition.getStartDate());
+        eidSummaryObsDefinition.setEndDate(definition.getEndDate());
 
         EncounterObsDataDefinition eidEncounterObsDefinition = new EncounterObsDataDefinition();
         eidEncounterObsDefinition.setEncounterType(hivMetadata.getEIDEncounterPageEncounterType().get(0));
@@ -76,7 +83,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             this.pdh.addCol(row, "surname", p.getFamilyName());
             this.pdh.addCol(row, "firstName", p.getGivenName());
             this.pdh.addCol(row, "sex", p.getGender());
-            this.pdh.addCol(row, "dob", DateUtil.formatDate(p.getBirthdate(),"dd/MM/yyyy"));
+            this.pdh.addCol(row, "dob", DateUtil.formatDate(p.getBirthdate(), "dd/MM/yyyy"));
             this.pdh.addCol(row, "age", getMonthsBetweenDates(p.getBirthdate(), firstObs.getEncounter().getEncounterDatetime()));
 
             Obs entryPoint = searchObs(summaryObs, 90200);
@@ -115,7 +122,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
 
             this.pdh.addCol(row, "entry", entryPoint != null ? convert(String.valueOf(entryPoint.getValueCoded().getConceptId())) : "");
-            this.pdh.addCol(row, "nvp", nvp != null ? DateUtil.formatDate(nvp.getValueDatetime(),"dd/MM/yyyy") : "");
+            this.pdh.addCol(row, "nvp", nvp != null ? DateUtil.formatDate(nvp.getValueDatetime(), "dd/MM/yyyy") : "");
             this.pdh.addCol(row, "nvpAge", getMonthsBetweenDates(p.getBirthdate(), nvp != null ? nvp.getValueDatetime() : null));
             this.pdh.addCol(row, "cotrim", cotrim != null ? DateUtil.formatDate(cotrim.getValueDatetime(), "dd/MM/yyyy") : "");
             this.pdh.addCol(row, "cotrimAge", getMonthsBetweenDates(p.getBirthdate(), cotrim != null ? cotrim.getValueDatetime() : null));
@@ -173,7 +180,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
             // Rapid Test
 
-            this.pdh.addCol(row, "rapidTestDate", rapidTestDate != null ? DateUtil.formatDate(rapidTestDate.getValueDatetime(),"yyyy-MM-dd") : "");
+            this.pdh.addCol(row, "rapidTestDate", rapidTestDate != null ? DateUtil.formatDate(rapidTestDate.getValueDatetime(), "yyyy-MM-dd") : "");
             this.pdh.addCol(row, "ageAtRapidTest", getMonthsBetweenDates(p.getBirthdate(), rapidTestDate != null ? rapidTestDate.getValueDatetime() : null));
             this.pdh.addCol(row, "rapidTestResult", rapidTestResult != null ? rapidTestResult.getValueCoded().getName().getName() : "");
 

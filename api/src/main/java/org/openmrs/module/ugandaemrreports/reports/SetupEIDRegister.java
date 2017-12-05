@@ -1,12 +1,14 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EIDDatasetDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -36,6 +38,14 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
     @Override
     public String getDescription() {
         return "EID Register";
+    }
+
+    @Override
+    public List<Parameter> getParameters() {
+        List<Parameter> l = new ArrayList<Parameter>();
+        l.add(new Parameter("startDate", "Start date", Date.class));
+        l.add(new Parameter("endDate", "End date", Date.class));
+        return l;
     }
 
     @Override
