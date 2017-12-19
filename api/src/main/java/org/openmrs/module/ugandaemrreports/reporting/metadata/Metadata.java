@@ -12,6 +12,7 @@ public class Metadata {
         public final static String TRANSFER_IN = "ea730d69-7eec-486a-aaf2-54f8bab5a44c";
         public final static String CARE_ENTRY_POINT = "dcdfe3ce-30ab-102d-86b0-7a5022ba4115";
         public final static String CARE_ENTRY_POINT_EMTCT = "dcd7e8e5-30ab-102d-86b0-7a5022ba4115";
+        public final static String RETURN_VISIT_DATE = "dcac04cf-30ab-102d-86b0-7a5022ba4115";
         
         
         public final static String ART_START_DATE = "ab505422-26d9-41f1-a079-c3d222000440";
