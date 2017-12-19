@@ -217,6 +217,14 @@
         "order": 21
       },
       {
+        "id": "Patient Appoinment Book",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "Patient Appointment Book",
+        "url": "reportingui/runReport.page?reportDefinition=4986aa7a-38fb-420e-853e-583eefa065d0",
+        "order": 25
+      },
+      {
         "id": "HMIS 105 Section 2.1 to 2.7",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
