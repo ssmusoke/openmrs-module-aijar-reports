@@ -32,6 +32,9 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+
 @Component
 public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
 
@@ -94,7 +97,7 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
         //connect the report definition to the dsd
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
-
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
         return rd;
     }
     
@@ -162,12 +165,4 @@ public class SetupMOH105Section3And4Report extends UgandaEMRDataExportManager {
         l.add(new Parameter("endDate", "End Date", Date.class));
         return l;
     }
-    
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("ugandaemr.dhis2.organizationuuid");
-        return cst;
-    }
-
 }

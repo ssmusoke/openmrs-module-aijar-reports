@@ -172,6 +172,14 @@
         "order": 12
       },
       {
+        "id": "EID Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "EID Register",
+        "url": "reportingui/runReport.page?reportDefinition=adf50b27-266f-4b46-9569-424eb664ffc6",
+        "order": 16
+      },
+      {
         "id": "Case Based Surveillance EID Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
