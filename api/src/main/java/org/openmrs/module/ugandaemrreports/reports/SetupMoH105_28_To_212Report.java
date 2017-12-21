@@ -31,6 +31,9 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+
 /**
  */
 @Component
@@ -91,7 +94,7 @@ public class SetupMoH105_28_To_212Report extends UgandaEMRDataExportManager {
         //connect the report definition to the datasets
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("T", Mapped.mapStraightThrough(tetanusImmunizations()));
-
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
         return rd;
     }
 
@@ -128,16 +131,5 @@ public class SetupMoH105_28_To_212Report extends UgandaEMRDataExportManager {
         dsd.addColumn("T5NPS","T5-Dose 5 - non-pregnant - static", ReportUtils.map(indicatorLibrary.tetanusImmunizationsDone(5, false), params), "");
         
         return dsd;
-    }    
-
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("ugandaemr.dhis2.organizationuuid");
-        return cst;
     }
-
-
-
-
 }
