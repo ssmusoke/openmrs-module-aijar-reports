@@ -11,9 +11,12 @@ import org.openmrs.module.reporting.common.DurationUnit;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -423,6 +426,22 @@ public class Cohorts {
         cd.addSearch("encounter", ReportUtils.map(encounter, "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("gender AND encounter");
 
+        return cd;
+    }
+
+    /**
+     * Clients with a Return Visit Date
+     *
+     * @return
+     *
+     */
+    public static CohortDefinition patientWithAppoinment() {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setName("Has an appointment date");
+        cd.setQuestion(Dictionary.getConcept(Metadata.Concept.RETURN_VISIT_DATE));
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
         return cd;
     }
 
