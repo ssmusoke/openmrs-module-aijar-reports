@@ -28,6 +28,7 @@ import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateCo
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
 
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
+
+    @Autowired
+    private HIVPatientDataLibrary hivPatientData;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -109,7 +113,8 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("APP");
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(Cohorts.patientWithAppoinment()));
+//        dsd.addRowFilter(Mapped.mapStraightThrough(Cohorts.patientWithAppoinment()));
+        dsd.addRowFilter(Cohorts.patientWithAppoinment(), "value1=${startDate},value2=${endDate}");
 
 
         //start constructing of the dataset
@@ -124,7 +129,6 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         DataDefinition identifierDefEID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(EIDNo.getName(), EIDNo), identifierFormatter);
         DataDefinition identifierDefOpenMRSID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(OpenMRSID.getName(), OpenMRSID), identifierFormatter);
 
-
         //start adding columns here
         dsd.addColumn("ARTNo", identifierDefART, "");
         dsd.addColumn("EIDNo", identifierDefEID, "");
@@ -134,11 +138,12 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd, "LastVisitDate", hivPatientData.getAllEncounters());
+        addColumn(dsd, "healthCenterName", hivPatientData.getAllEncounterLocations());
         dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NextAppointmentDate", sdd.definition("NextAppointmentDate", getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
         rd.addDataSetDefinition("APP", Mapped.mapStraightThrough(dsd));
-        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         return rd;
     }
 
@@ -153,13 +158,6 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
         return l;
-    }
-
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("aijar.healthCenterName");
-        return cst;
     }
 
     private Concept getConcept(String uuid) {
