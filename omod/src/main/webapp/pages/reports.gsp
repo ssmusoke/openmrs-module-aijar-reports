@@ -7,6 +7,7 @@
     def monthly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.monthly")
     def registers = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.registers")
     def quarterly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.quarterly")
+    def integration = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.integrationdataexports")
 
     def contextModel = [:]
 %>
@@ -21,6 +22,11 @@
         }
     ];
 </script>
+<style>
+    .dashboard .info-container {
+        width: 30%;
+    }
+</style>
 <h2>UgandaEMR Reports</h2>
 <div class="dashboard clear">
     <div class="info-container column">
@@ -81,6 +87,23 @@
             <div class="info-section">
                 <ul>
                     <% quarterly.each { %>
+                    <li>
+                        ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+    </div>
+    <div class="info-container column">
+        <% if (integration) { %>
+        <div class="info-section">
+            <div class="info-header"><h3>Integration Data Exports</h3></div>
+
+            <div class="info-body">
+                <ul>
+                    <% integration.each { %>
                     <li>
                         ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
                     </li>

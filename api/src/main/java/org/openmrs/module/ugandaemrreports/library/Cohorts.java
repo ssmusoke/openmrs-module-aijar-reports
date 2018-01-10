@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Concept;
@@ -8,12 +9,17 @@ import org.openmrs.Form;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.DurationUnit;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,7 +32,7 @@ public class Cohorts {
         patientsStartedCareInYear.addParameter(new Parameter("startDate", "startDate", Date.class));
         return patientsStartedCareInYear;
     }
-    
+
     public static SqlCohortDefinition getPatientsWhoEnrolledInCareUntilDate() {
         SqlCohortDefinition patientsStartedCareByDate = new SqlCohortDefinition("select e.patient_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id where e.voided = false and et.uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' AND (TO_DAYS(e.encounter_datetime) < TO_DAYS(:endDate))");
 
@@ -402,11 +408,11 @@ public class Cohorts {
         return obsCohortDefinition;
     }
 
-    public static CohortDefinition genderAndHasAncEncounter(boolean female, boolean male,  String uuid){
+    public static CohortDefinition genderAndHasAncEncounter(boolean female, boolean male, String uuid) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
 
         GenderCohortDefinition gender = new GenderCohortDefinition();
-        gender.setName("gender female "+female+" and male "+male);
+        gender.setName("gender female " + female + " and male " + male);
         gender.setFemaleIncluded(female);
         gender.setMaleIncluded(male);
 
@@ -416,13 +422,32 @@ public class Cohorts {
         encounter.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         encounter.addEncounterType(Context.getEncounterService().getEncounterTypeByUuid(uuid));
 
-        cd.setName("Is specific gender and has "+Context.getEncounterService().getEncounterTypeByUuid(uuid).getName()+" encounter");
+        cd.setName("Is specific gender and has " + Context.getEncounterService().getEncounterTypeByUuid(uuid).getName() + " encounter");
         cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         cd.addParameter(new Parameter("endDate", "End Date", Date.class));
         cd.addSearch("gender", ReportUtils.map(gender));
         cd.addSearch("encounter", ReportUtils.map(encounter, "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("gender AND encounter");
 
+        return cd;
+    }
+
+    /**
+     * Clients with a Return Visit Date
+     *
+     * @return
+     */
+    public static CohortDefinition patientWithAppoinment() {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setName("Has an appointment date");
+        cd.setQuestion(Dictionary.getConcept(Metadata.Concept.RETURN_VISIT_DATE));
+        List<String> encounterTypes = Arrays.asList(Metadata.EncounterType.ANC_ENCOUNTER, Metadata.EncounterType.ART_ENCOUNTER_PAGE, Metadata.EncounterType.EID_ENCOUNTER_PAGE);
+        cd.setEncounterTypeList(Dictionary.getEncounterTypeList(Joiner.on(",").join(encounterTypes)));
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value1", "Before Date", Date.class));
+        cd.addParameter(new Parameter("value2", "After Date", Date.class));
         return cd;
     }
 
