@@ -14,6 +14,8 @@ import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -114,7 +116,9 @@ public class SetupHMIS053PatientAppointmentBook extends UgandaEMRDataExportManag
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition definition = df.getAnyEncounterOfTypesBetweenDates(
+                Arrays.asList(Dictionary.getEncounterType(Metadata.EncounterType.APPOINTMENT_FOLLOWUP_ENCOUNTER))
+        );
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
