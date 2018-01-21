@@ -149,7 +149,7 @@ public class AppointmentFollowupDatasetEvaluator implements DataSetEvaluator {
             pdh.addCol(row, "EID No", eidNo);
             pdh.addCol(row, "Telephone", telephone);
             pdh.addCol(row, "Care", returnVisits);
-            pdh.addCol(row, "Visits", revisit);
+            pdh.addCol(row, "Visits", visits);
             pdh.addCol(row, "Appointment Date", appointment);
             pdh.addCol(row, "Followup Date", nextFollowupDate);
 
