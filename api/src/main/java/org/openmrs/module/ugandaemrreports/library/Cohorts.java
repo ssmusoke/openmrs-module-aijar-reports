@@ -453,7 +453,7 @@ public class Cohorts {
     }
 
 
-    public static CohortDefinition malesAbove7years() {
+    public static CohortDefinition pmtct() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
 
         GenderCohortDefinition gender = new GenderCohortDefinition();

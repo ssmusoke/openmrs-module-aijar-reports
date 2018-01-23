@@ -16,7 +16,6 @@ import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -25,8 +24,6 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -38,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.openmrs.module.ugandaemrreports.library.Cohorts.malesAbove7years;
+import static org.openmrs.module.ugandaemrreports.library.Cohorts.pmtct;
 
 /**
  */
@@ -115,7 +112,7 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("APP");
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(malesAbove7years(), "startDate=${startDate},endDate=${endDate}");
+        dsd.addRowFilter(pmtct(), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
