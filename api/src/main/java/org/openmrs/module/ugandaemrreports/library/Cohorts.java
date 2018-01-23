@@ -441,7 +441,8 @@ public class Cohorts {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setName("Has an appointment date");
         cd.setQuestion(Dictionary.getConcept(Metadata.Concept.RETURN_VISIT_DATE));
-        List<String> encounterTypes = Arrays.asList(Metadata.EncounterType.ANC_ENCOUNTER, Metadata.EncounterType.ART_ENCOUNTER_PAGE, Metadata.EncounterType.EID_ENCOUNTER_PAGE);
+        List<String> encounterTypes = Arrays.asList(Metadata.EncounterType.ANC_ENCOUNTER,
+                Metadata.EncounterType.ART_ENCOUNTER_PAGE, Metadata.EncounterType.EID_ENCOUNTER_PAGE);
         cd.setEncounterTypeList(Dictionary.getEncounterTypeList(Joiner.on(",").join(encounterTypes)));
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setOperator1(RangeComparator.GREATER_EQUAL);
@@ -451,5 +452,24 @@ public class Cohorts {
         return cd;
     }
 
+
+    public static CohortDefinition malesAbove7years() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+
+        GenderCohortDefinition gender = new GenderCohortDefinition();
+        gender.setName("male");
+        gender.setFemaleIncluded(false);
+        gender.setMaleIncluded(true);
+
+        cd.setName("pmtct export");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addSearch("males", ReportUtils.map(gender));
+        cd.addSearch("withVisit", ReportUtils.map(patientWithAppoinment(), "value1=${startDate},value2=${endDate}"));
+        cd.addSearch("above7", ReportUtils.map(createOverXAgeCohort("above7", 7), "effectiveDate=${endDate}"));
+        cd.setCompositionString("withVisit NOT (males AND above7)");
+
+        return cd;
+    }
 
 }

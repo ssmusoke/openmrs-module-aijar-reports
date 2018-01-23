@@ -38,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static org.openmrs.module.ugandaemrreports.library.Cohorts.malesAbove7years;
+
 /**
  */
 @Component
@@ -113,8 +115,7 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("APP");
         dsd.addParameters(getParameters());
-//        dsd.addRowFilter(Mapped.mapStraightThrough(Cohorts.patientWithAppoinment()));
-        dsd.addRowFilter(Cohorts.patientWithAppoinment(), "value1=${startDate},value2=${endDate}");
+        dsd.addRowFilter(malesAbove7years(), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
