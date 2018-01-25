@@ -456,11 +456,15 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, df.getCD4Converter());
     }
 
-    public PatientDataDefinition getAllEncounters() {
+    public PatientDataDefinition getDateOfLastEncounter() {
         return df.getPatientEncounters(df.getEncounterDatetimeConverter());
     }
 
-    public PatientDataDefinition getAllEncounterLocations() {
+    public PatientDataDefinition getEncounterTypeNameForLastEncounter() {
+        return df.getPatientEncounters(df.getEncounterTypeNameConverter());
+    }
+
+    public PatientDataDefinition getLocationOfLastEncounter() {
         return df.getPatientEncounters(df.getEncounterLocationNameConverter());
     }
 

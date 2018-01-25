@@ -64,7 +64,7 @@ public class DataFactory {
     }
 
     public DataConverter getEncounterTypeNameConverter() {
-        return new ChainedConverter(new PropertyConverter(Encounter.class, "type"), new ObjectFormatter());
+        return new ChainedConverter(new PropertyConverter(Encounter.class, "encounterType"), new ObjectFormatter());
     }
 
     public DataConverter getObsDatetimeConverter() {

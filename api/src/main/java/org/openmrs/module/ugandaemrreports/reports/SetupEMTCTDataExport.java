@@ -22,7 +22,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.ObsEncounterConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -128,7 +127,6 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         DataDefinition identifierDefEID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(EIDNo.getName(), EIDNo), identifierFormatter);
         DataDefinition identifierDefOpenMRSID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(OpenMRSID.getName(), OpenMRSID), identifierFormatter);
 
-        DataDefinition dataDefinition = sdd.definition("NextAppointmentDate", getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115"));
         //start adding columns here
         dsd.addColumn("ARTNo", identifierDefART, "");
         dsd.addColumn("EIDNo", identifierDefEID, "");
@@ -138,11 +136,11 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-        addColumn(dsd, "LastVisitDate", hivPatientData.getAllEncounters());
-        addColumn(dsd, "healthCenterName", hivPatientData.getAllEncounterLocations());
-        dsd.addColumn("EncounterType", dataDefinition, "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsEncounterConverter());
+        addColumn(dsd, "LastVisitDate", hivPatientData.getDateOfLastEncounter());
+        addColumn(dsd, "healthCenterName", hivPatientData.getLocationOfLastEncounter());
         dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("NextAppointmentDate", dataDefinition, "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("NextAppointmentDate", sdd.definition("NextAppointmentDate", getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        addColumn(dsd, "EncounterType", hivPatientData.getEncounterTypeNameForLastEncounter());
 
         rd.addDataSetDefinition("APP", Mapped.mapStraightThrough(dsd));
         return rd;
@@ -150,7 +148,7 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.3";
     }
 
     @Override
