@@ -476,6 +476,48 @@ public class Helper {
         return new ArrayList<>();
     }
 
+    public static Map<String, String> processString3(String value) {
+        Map<String, String> result = new HashMap<>();
+
+        List<String> splitData = Splitter.on(",").splitToList(value);
+
+        for (String split : splitData) {
+            List<String> keyValue = Splitter.on(":").splitToList(split);
+
+            if (keyValue.size() >= 2) {
+                String k = keyValue.get(0);
+                String v = keyValue.get(1);
+                if (result.containsKey(k)) {
+                    result.put(k, result.get(k) + "," + v);
+                } else {
+                    result.put(k, v);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static Map<String, String> processString3(String value, Map<String, String> answers) {
+        Map<String, String> result = new HashMap<>();
+
+        List<String> splitData = Splitter.on(",").splitToList(value);
+
+        for (String split : splitData) {
+            List<String> keyValue = Splitter.on(":").splitToList(split);
+
+            if (keyValue.size() >= 2) {
+                String k = keyValue.get(0);
+                String v = keyValue.get(1);
+                if (result.containsKey(k)) {
+                    result.put(k, result.get(k) + "," + answers.get(v));
+                } else {
+                    result.put(k, answers.get(v));
+                }
+            }
+        }
+        return result;
+    }
+
     public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
 
         Properties props = new Properties();
