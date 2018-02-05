@@ -23,6 +23,11 @@
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "description": "Data Exports for Integrations",
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -220,6 +225,14 @@
         "order": 21
       },
       {
+        "id": "Patient Appoinment Book",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "Patient Appointment Book",
+        "url": "reportingui/runReport.page?reportDefinition=4986aa7a-38fb-420e-853e-583eefa065d0",
+        "order": 25
+      },
+      {
         "id": "HMIS 105 Section 2.1 to 2.7",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
@@ -288,6 +301,13 @@
         "label": "HCA 12 and 24 Months Report",
         "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
         "order": 26
+      },{
+        "id": "Family Connect EMTCT Module Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "type": "link",
+        "label": "Family Connect EMTCT Module Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
+        "order": 5
       }
 
     ]

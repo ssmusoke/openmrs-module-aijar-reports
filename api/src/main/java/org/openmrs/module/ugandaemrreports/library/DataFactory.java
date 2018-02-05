@@ -64,7 +64,7 @@ public class DataFactory {
     }
 
     public DataConverter getEncounterTypeNameConverter() {
-        return new ChainedConverter(new PropertyConverter(Encounter.class, "type"), new ObjectFormatter());
+        return new ChainedConverter(new PropertyConverter(Encounter.class, "encounterType"), new ObjectFormatter());
     }
 
     public DataConverter getObsDatetimeConverter() {
@@ -327,10 +327,10 @@ public class DataFactory {
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
-    public PatientDataDefinition getLastEncounterOfTypeAfterDate(EncounterType type, DataConverter converter) {
-        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(type), "onOrAfter");
-        def.setWhich(TimeQualifier.FIRST);
-        return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
+    public PatientDataDefinition getLastEncounterOfTypeBeforeDate(EncounterType type, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(type), "onOrBefore");
+        def.setWhich(TimeQualifier.LAST);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
     public PatientDataDefinition getLastEncounterOfTypeAfterDate(List<EncounterType> types, DataConverter converter) {
@@ -430,6 +430,15 @@ public class DataFactory {
         cd.setPeriodInterval(periodInterval);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getPatientEncounters(DataConverter converter) {
+        EncountersForPatientDataDefinition cd = new EncountersForPatientDataDefinition();
+        cd.setWhich(TimeQualifier.LAST);
+//        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+//        return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"), converter);
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
     // Cohorts Definitions
