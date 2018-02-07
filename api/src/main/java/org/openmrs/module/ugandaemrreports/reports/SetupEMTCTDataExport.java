@@ -16,7 +16,6 @@ import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -25,9 +24,8 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +34,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import static org.openmrs.module.ugandaemrreports.library.Cohorts.pmtct;
 
 /**
  */
@@ -50,6 +50,9 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
 
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
+
+    @Autowired
+    private HIVPatientDataLibrary hivPatientData;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -109,7 +112,7 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("APP");
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(Cohorts.patientWithAppoinment()));
+        dsd.addRowFilter(pmtct(), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
@@ -124,7 +127,6 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         DataDefinition identifierDefEID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(EIDNo.getName(), EIDNo), identifierFormatter);
         DataDefinition identifierDefOpenMRSID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(OpenMRSID.getName(), OpenMRSID), identifierFormatter);
 
-
         //start adding columns here
         dsd.addColumn("ARTNo", identifierDefART, "");
         dsd.addColumn("EIDNo", identifierDefEID, "");
@@ -134,17 +136,19 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd, "LastVisitDate", hivPatientData.getDateOfLastEncounter());
+        addColumn(dsd, "healthCenterName", hivPatientData.getLocationOfLastEncounter());
         dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NextAppointmentDate", sdd.definition("NextAppointmentDate", getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        addColumn(dsd, "EncounterType", hivPatientData.getEncounterTypeNameForLastEncounter());
 
         rd.addDataSetDefinition("APP", Mapped.mapStraightThrough(dsd));
-        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.3";
     }
 
     @Override
@@ -153,13 +157,6 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
         return l;
-    }
-
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("aijar.healthCenterName");
-        return cst;
     }
 
     private Concept getConcept(String uuid) {

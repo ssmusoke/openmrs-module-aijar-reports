@@ -13,11 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -31,6 +26,14 @@ import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonRep
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
 /**
  */
@@ -96,7 +99,8 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         //connect the report definition to the dsd
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("D", Mapped.mapStraightThrough(opdDiagnosis()));
-        
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
+
         return rd;
     }
 
@@ -301,11 +305,5 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         l.add(new Parameter("endDate", "End Date", Date.class));
         return l;
     }
-    
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("ugandaemr.dhis2.organizationuuid");
-        return cst;
-    }    
+
 }

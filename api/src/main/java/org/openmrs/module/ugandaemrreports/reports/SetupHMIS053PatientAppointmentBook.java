@@ -9,11 +9,14 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AppointmentFollowupDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -112,9 +115,17 @@ public class SetupHMIS053PatientAppointmentBook extends UgandaEMRDataExportManag
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+        AppointmentFollowupDatasetDefinition dsd = new AppointmentFollowupDatasetDefinition();
+        dsd.setName(getName());
+        dsd.setParameters(getParameters());
+        rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
+
+        /*PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+
+        CohortDefinition definition = df.getAnyEncounterOfTypesBetweenDates(
+                Arrays.asList(Dictionary.getEncounterType(Metadata.EncounterType.APPOINTMENT_FOLLOWUP_ENCOUNTER))
+        );
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -129,7 +140,7 @@ public class SetupHMIS053PatientAppointmentBook extends UgandaEMRDataExportManag
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));*/
 
         return rd;
     }
