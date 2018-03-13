@@ -11,10 +11,7 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.MapConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PersonToPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PreferredIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.*;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
@@ -458,5 +455,18 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getBaseCD4OnArtDuringQuarter(Integer quartersBack) {
         return df.getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, df.getCD4Converter());
     }
+
+    public PatientDataDefinition getDateOfLastEncounter() {
+        return df.getPatientEncounters(df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getEncounterTypeNameForLastEncounter() {
+        return df.getPatientEncounters(df.getEncounterTypeNameConverter());
+    }
+
+    public PatientDataDefinition getLocationOfLastEncounter() {
+        return df.getPatientEncounters(df.getEncounterLocationNameConverter());
+    }
+
 
 }

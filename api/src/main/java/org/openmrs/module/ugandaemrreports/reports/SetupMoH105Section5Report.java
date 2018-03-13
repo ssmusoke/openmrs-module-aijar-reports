@@ -35,6 +35,9 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+
 /**
  * 
  */
@@ -99,7 +102,7 @@ public class SetupMoH105Section5Report extends UgandaEMRDataExportManager  {
         //connect the report definition to the datasets
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("M", Mapped.mapStraightThrough(smc()));
-
+        rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
         return rd;
     }
 
@@ -114,13 +117,6 @@ public class SetupMoH105Section5Report extends UgandaEMRDataExportManager  {
                 new Parameter("startDate", "Start Date", Date.class),
                 new Parameter("endDate", "End Date", Date.class)
         );
-    }
-
-    protected DataSetDefinition settings() {
-        GlobalPropertyParametersDatasetDefinition cst = new GlobalPropertyParametersDatasetDefinition();
-        cst.setName("S");
-        cst.setGp("ugandaemr.dhis2.organizationuuid");
-        return cst; 
     }
 
     protected DataSetDefinition smc(){

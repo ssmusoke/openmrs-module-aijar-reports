@@ -1,6 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.*;
 import org.apache.commons.lang3.StringUtils;
@@ -86,7 +85,7 @@ public class Helper {
 
     public static String convert(String concept) {
         Map<String, String> result = new HashMap<>();
-
+        // Entry point
         result.put("90012", "eMTCT");
         result.put("90016", "TB");
         result.put("99593", "YCC");
@@ -95,13 +94,31 @@ public class Helper {
         result.put("90015", "STI");
         result.put("90018", "Inpatient");
         result.put("90002", "Other");
+        // TB status
         result.put("90079", "1");
         result.put("90073", "2");
         result.put("90078", "3");
         result.put("90071", "4");
+        // Infant feeding status
+        result.put("5526", "EBF");
+        result.put("99089", "RF");
+        result.put("6046", "MF");
+        result.put("99791", "CF");
+        result.put("99792", "W");
+        result.put("99793", "NLB");
+        // Infant ARVs for eMTCT @TODO Requires revision
+        result.put("163013", "2");
+        result.put("162966", "2");
+        result.put("99789", "2");
+        result.put("99790", "3");
+        result.put("99788", "1");
+        result.put("1067", "5");
+        result.put("163009", "5");
+        result.put("163010", "5");
 
         return result.get(concept);
     }
+
 
     public static String getOneData(Connection connection, String sql) throws SQLException {
 
@@ -457,6 +474,48 @@ public class Helper {
             }
         }
         return new ArrayList<>();
+    }
+
+    public static Map<String, String> processString3(String value) {
+        Map<String, String> result = new HashMap<>();
+
+        List<String> splitData = Splitter.on(",").splitToList(value);
+
+        for (String split : splitData) {
+            List<String> keyValue = Splitter.on(":").splitToList(split);
+
+            if (keyValue.size() >= 2) {
+                String k = keyValue.get(0);
+                String v = keyValue.get(1);
+                if (result.containsKey(k)) {
+                    result.put(k, result.get(k) + "," + v);
+                } else {
+                    result.put(k, v);
+                }
+            }
+        }
+        return result;
+    }
+
+    public static Map<String, String> processString3(String value, Map<String, String> answers) {
+        Map<String, String> result = new HashMap<>();
+
+        List<String> splitData = Splitter.on(",").splitToList(value);
+
+        for (String split : splitData) {
+            List<String> keyValue = Splitter.on(":").splitToList(split);
+
+            if (keyValue.size() >= 2) {
+                String k = keyValue.get(0);
+                String v = keyValue.get(1);
+                if (result.containsKey(k)) {
+                    result.put(k, result.get(k) + "," + answers.get(v));
+                } else {
+                    result.put(k, answers.get(v));
+                }
+            }
+        }
+        return result;
     }
 
     public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
