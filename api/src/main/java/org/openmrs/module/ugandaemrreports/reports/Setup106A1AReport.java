@@ -187,9 +187,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition whoAreMalnourished = df.getPatientsInAny(mUACWasYellowOrRedDuringQuarter, malnourishedDuringQuarter, oedemaWasYesDuringQuarter);
         CohortDefinition onPreArtWhoAreMalnourished = df.getPatientsInAll(onPreArt, whoAreMalnourished);
 
-        CohortDefinition startedArtDuringQuarter = df.getPatientsNotIn(beenOnArtDuringQuarter, beenOnArtBeforeQuarter);
-
-        CohortDefinition startedBasedOnCD4 = df.getPatientsInAll(startedArtDuringQuarter, onArtBasedOnCD4);
+        CohortDefinition startedBasedOnCD4 = df.getPatientsInAll(havingArtStartDateDuringQuarter, onArtBasedOnCD4);
 
         CohortDefinition cumulativeOnArt = df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter);
 
@@ -209,7 +207,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
 
-        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, startedArtDuringQuarter);
+        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
 
         addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
         addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
@@ -226,7 +224,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "13i", "On Pre-ART those who are Malnourished", onPreArtWhoAreMalnourished, "");
         addIndicator(dsd, "14i", "Eligible but not started on art", eligibleButNotStartedByQuarter, "");
         addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", beenOnArtBeforeQuarter);
-        addAgeGender(dsd, "16", "Started Art during the quarter", startedArtDuringQuarter);
+        addAgeGender(dsd, "16", "Started Art during the quarter", havingArtStartDateDuringQuarter);
         addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
         addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", startedArtWhenPregnant);
         addAgeGender(dsd, "19", "Ever enrolled", cumulativeOnArt);
