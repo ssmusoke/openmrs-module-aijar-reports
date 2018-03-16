@@ -91,10 +91,10 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.get106aAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition enrolledBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
+        CohortDefinition enrolledOnOrBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
-        
-        CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
+
+        // CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
 
         CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
@@ -159,16 +159,16 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
 
         CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter, activeWithNoEncounterInQuarter);
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
 
-        CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, transferredInBeforeQuarter);
+        CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledOnOrBeforeQuarter, enrolledInTheQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
-        
+
         CohortDefinition startedINHDuringQuarter = df.getPatientsNotIn(onINHDuringQuarter, onINHBeforeQuarter);
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
-        CohortDefinition onPreArt = df.getPatientsNotIn(df.getPatientsInAny(hadEncounterInQuarter, activeWithNoEncounterInQuarter), df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
+        CohortDefinition onPreArt = df.getPatientsNotIn(hadEncounterInQuarter, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
 
         CohortDefinition onPreArtWhoReceivedCPT = df.getPatientsInAll(onPreArt, onCPTDuringQuarter);
 
@@ -189,7 +189,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition startedBasedOnCD4 = df.getPatientsInAll(havingArtStartDateDuringQuarter, onArtBasedOnCD4);
 
-        CohortDefinition cumulativeOnArt = df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter);
+        CohortDefinition cumulativeOnArt = df.getPatientsInAny(havingArtStartDateBeforeQuarter, havingArtStartDateDuringQuarter);
 
         CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
         CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
@@ -223,7 +223,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "12i", "On Pre-ART Assessed for Malnutrition", onPreArtAssessedForMalnutrition, "");
         addIndicator(dsd, "13i", "On Pre-ART those who are Malnourished", onPreArtWhoAreMalnourished, "");
         addIndicator(dsd, "14i", "Eligible but not started on art", eligibleButNotStartedByQuarter, "");
-        addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", beenOnArtBeforeQuarter);
+        addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", havingArtStartDateBeforeQuarter);
         addAgeGender(dsd, "16", "Started Art during the quarter", havingArtStartDateDuringQuarter);
         addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
         addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", startedArtWhenPregnant);
@@ -245,7 +245,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         return rd;
     }
 
-    public void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
+    private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         addIndicator(dsd, key + "a", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
         addIndicator(dsd, key + "b", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
         addIndicator(dsd, key + "c", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");

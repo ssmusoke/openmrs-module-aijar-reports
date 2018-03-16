@@ -460,11 +460,11 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
     }
 
-    public CohortDefinition getAnyEncounterOfTypesByEndOfPreviousDate(List<EncounterType> types) {
+    public CohortDefinition getAnyEncounterOfTypesByEndOfDate(List<EncounterType> types) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
     }
 
     public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
@@ -946,17 +946,17 @@ public class DataFactory {
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        cd.addParameter(new Parameter("onOrBefore", "onOrBefore", Date.class));
-        Map<String, String> params = ObjectUtil.toMap("onOrBefore=endDate");
+        // cd.addParameter(new Parameter("onOrBefore", "onOrBefore", Date.class));
+        Map<String, String> params = new HashMap<>();
         if (olderThan != null) {
             cd.setOperator1(RangeComparator.LESS_THAN);
             cd.addParameter(new Parameter("value1", "value1", Date.class));
-            params.put("value1", "endDate-" + olderThan);
+            params.put("value1", "startDate-" + olderThan);
         }
         if (onOrPriorTo != null) {
             cd.setOperator2(RangeComparator.GREATER_EQUAL);
             cd.addParameter(new Parameter("value2", "value2", Date.class));
-            params.put("value2", "endDate-" + onOrPriorTo);
+            params.put("value2", "startDate-" + onOrPriorTo);
         }
         return convert(cd, params);
     }
