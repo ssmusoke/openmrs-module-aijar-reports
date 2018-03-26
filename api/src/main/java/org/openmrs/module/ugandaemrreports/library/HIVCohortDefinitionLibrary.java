@@ -45,7 +45,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getEnrolledInCareByEndOfPreviousDate() {
-        return df.getAnyEncounterOfTypesByEndOfPreviousDate(hivMetadata.getARTSummaryPageEncounterType());
+        return df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
     }
 
     public CohortDefinition getEnrolledInCareBetweenDates() {
@@ -147,7 +147,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getArtStartDateBeforePeriod() {
-        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, "1", "");
+        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, "1d", null);
     }
 
     public CohortDefinition getArtStartDateBeforePeriod(String olderThan) {
@@ -159,7 +159,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getArtRegimenTransferInDateBeforePeriod() {
-        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, "1", "");
+        return df.getPatientsWhoseMostRecentObsDateIsBetweenValuesByEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, "1d", null);
     }
 
     public CohortDefinition getPatientsHavingRegimenBeforePeriod() {
@@ -386,7 +386,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsOnArtWithCD4BeforeQuartersAgo(Integer quartersBack, Boolean allBaseCD4) {
         return df.getStartedArtWithCD4BeforePeriod(Enums.Period.QUARTERLY, Enums.PeriodInterval.BEFORE, quartersBack, allBaseCD4);
     }
-    
+
     public CohortDefinition getActiveWithNoEncounterInQuarter() {
         return df.getActiveInPeriodWithoutVisit();
     }
