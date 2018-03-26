@@ -48,7 +48,7 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
     /**
      * @return the uuid for the report design for exporting to Excel
      */
-    
+
     private static final String PARAMS = "startDate=${startDate},endDate=${endDate}";
 
     @Override
@@ -59,8 +59,8 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         return Arrays.asList(buildReportDesign(reportDefinition));
-    }    
-    
+    }
+
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
      *
@@ -262,9 +262,9 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
 
         return dsd;
     }
-    
+
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
-   	
+
     	addIndicator(dsd, key + "aM", label + " (Between 0 and 28 Days) Male", cohortIndicator, "gender=M|age=Between0And28Days");
         addIndicator(dsd, key + "aF", label + " (Between 0 and 28 Days) Female", cohortIndicator, "gender=F|age=Between0And28Days");
         addIndicator(dsd, key + "bM", label + " (Between 29 Days and 4 Years) Male", cohortIndicator, "gender=M|age=Between29DaysAnd4Yrs");
@@ -274,28 +274,28 @@ public class SetupMOH105Section1Report extends UgandaEMRDataExportManager {
         addIndicator(dsd, key + "dM", label + " (>=60) Male", cohortIndicator, "gender=M|age=GreaterOrEqualTo60Yrs");
         addIndicator(dsd, key + "dF", label + " (>=60) Female", cohortIndicator, "gender=F|age=GreaterOrEqualTo60Yrs");
         addIndicator(dsd, key + "e", label + " (Total) ", cohortIndicator, "");
-       
+
     }
 
     public void addRowWithDrugUseColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
-       	
+
         addIndicator(dsd, key + "aM", label + " (Between 10 Years and 19 Years) Male", cohortIndicator, "gender=M|age1=Between10And19Yrs");
         addIndicator(dsd, key + "aF", label + " (Between 10 Years and 19 Years) Female", cohortIndicator, "gender=F|age1=Between10And19Yrs");
         addIndicator(dsd, key + "bM", label + " (Between 20 Years and 24 Years) Male", cohortIndicator, "gender=M|age1=Between20And24Yrs");
         addIndicator(dsd, key + "bF", label + " (Between 20 Years and 24 Years) Female", cohortIndicator, "gender=F|age1=Between20And24Yrs");
-        addIndicator(dsd, key + "cM", label + " (>=25) Male", cohortIndicator, "gender=M|age=GreaterOrEqualTo25Yrs");
-        addIndicator(dsd, key + "cF", label + " (>=25) Female", cohortIndicator, "gender=F|age=GreaterOrEqualTo25Yrs");
+        addIndicator(dsd, key + "cM", label + " (>=25) Male", cohortIndicator, "gender=M|age1=GreaterOrEqualTo25Yrs");
+        addIndicator(dsd, key + "cF", label + " (>=25) Female", cohortIndicator, "gender=F|age1=GreaterOrEqualTo25Yrs");
         addIndicator(dsd, key + "d", label + " (Total) ", cohortIndicator, "");
-       
+
     }
-    
+
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
         dsd.addColumn(key, label, ReportUtils.map(cohortIndicator, PARAMS), dimensionOptions);
     }
-        
+
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.5";
     }
 
     @Override
