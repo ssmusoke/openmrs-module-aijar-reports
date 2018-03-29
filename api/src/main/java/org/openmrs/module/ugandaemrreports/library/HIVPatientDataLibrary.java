@@ -435,6 +435,9 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getDistrictTBRxNo() {
         return df.getObs(hivMetadata.getDistrictTBNo(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueTextConverter());
     }
+    public PatientDataDefinition getTransferInFacility() {
+        return df.getObs(hivMetadata.getTransferInPlace(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueTextConverter());
+    }
 
     public PatientDataDefinition getBaseRegimen() {
         return getFirstObsValueDuringMonth(hivMetadata.getArtStartRegimen(), 0, new ARVConverter());

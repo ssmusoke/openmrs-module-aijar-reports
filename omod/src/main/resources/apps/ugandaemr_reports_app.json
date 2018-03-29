@@ -136,6 +136,20 @@
         "label": "OptionB+ Weekly SMS Report",
         "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
         "order": 55
+      },{
+        "id": "Transfer Out Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Transfer Out Report",
+        "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
+        "order": 60
+      },{
+        "id": "Transfer In Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Transfer In Report",
+        "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
+        "order": 65
       },
       {
         "id": "Pre-ART Register",
