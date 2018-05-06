@@ -24,6 +24,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataCon
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,9 @@ public class SetupTIDataExport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
+
+    @Autowired
+    private HIVMetadata hivMetadata;
 
     @Autowired
     SharedDataDefintion sdd;
@@ -118,16 +122,33 @@ public class SetupTIDataExport extends UgandaEMRDataExportManager {
         //identifier
         PatientIdentifierType ARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-        DataDefinition identifierDefART = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(ARTNo.getName(), ARTNo), identifierFormatter);
+        DataDefinition identifierDefART = new ConvertedPatientDataDefinition("identifier",
+                new PatientIdentifierDataDefinition(ARTNo.getName(), ARTNo), identifierFormatter);
+
+        // Transfer in date
+
+
+        // Date Transferred, Transfer In Regimen, ART Start Date, Baseline CD4, Baseline Regimen
+
+        /*
+         PatientDataDefinition transferInDate = df.getFirstEncounterOfType(hivMetadata.getARTSummaryPageEncounterType(),
+                df.getEncounterDatetimeConverter());
+       */
 
         //start adding columns here
+
         dsd.addColumn("ARTNo", identifierDefART, "");
         dsd.addColumn("Names", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("DOB", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-        addColumn(dsd, "healthCenterName", hivPatientData.getTransferInFacility());
+        addColumn(dsd, "HealthCenterName", hivPatientData.getTransferInFacility());
+        addColumn(dsd, "TransferInDate", hivPatientData.getSummaryPageDate());
+        addColumn(dsd, "ArtStartDate", hivPatientData.getArtStartDate());
+        addColumn(dsd, "TransferInRegimen", hivPatientData.getTransferInRegimen());
+        addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
+        addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
 
         rd.addDataSetDefinition("TI", Mapped.mapStraightThrough(dsd));
         return rd;
