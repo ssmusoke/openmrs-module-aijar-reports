@@ -85,6 +85,10 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 		return UgandaEMRReportUtil.createExcelDesign(reportDesignUuid, reportDefinition);
 	}
 
+	protected ReportDesign createCSVDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
+		return UgandaEMRReportUtil.createCSVDesign(reportDesignUuid, reportDefinition);
+	}
+
 	protected ReportRequest createMonthlyScheduledReportRequest(String requestUuid, String reportDesignUuid,
 	                                                            Map<String, Object> parameters,
 	                                                            ReportDefinition reportDefinition) {
