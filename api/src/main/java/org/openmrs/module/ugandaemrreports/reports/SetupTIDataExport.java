@@ -78,7 +78,7 @@ public class SetupTIDataExport extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TIDataExport.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TransferInList.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:2,dataset:TI");
         props.put("sortWeight", "5000");
@@ -124,16 +124,6 @@ public class SetupTIDataExport extends UgandaEMRDataExportManager {
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
         DataDefinition identifierDefART = new ConvertedPatientDataDefinition("identifier",
                 new PatientIdentifierDataDefinition(ARTNo.getName(), ARTNo), identifierFormatter);
-
-        // Transfer in date
-
-
-        // Date Transferred, Transfer In Regimen, ART Start Date, Baseline CD4, Baseline Regimen
-
-        /*
-         PatientDataDefinition transferInDate = df.getFirstEncounterOfType(hivMetadata.getARTSummaryPageEncounterType(),
-                df.getEncounterDatetimeConverter());
-       */
 
         //start adding columns here
 
