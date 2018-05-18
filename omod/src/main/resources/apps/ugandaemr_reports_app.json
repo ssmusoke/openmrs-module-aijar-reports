@@ -156,16 +156,8 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "Pre-ART Register",
-        "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
-        "order": 5
-      },
-      {
-        "id": "Pre-ART Register CSV",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "Pre-ART Register CSV",
         "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
-        "order": 6
+        "order": 5
       },
 	  {
         "id": "ART Register",

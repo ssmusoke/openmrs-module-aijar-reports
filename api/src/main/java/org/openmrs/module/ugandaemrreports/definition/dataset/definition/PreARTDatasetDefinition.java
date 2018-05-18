@@ -14,6 +14,9 @@ public class PreARTDatasetDefinition extends BaseDataSetDefinition {
     @ConfigurationProperty
     private Date startDate;
 
+    @ConfigurationProperty
+    private Date endDate;
+
     public PreARTDatasetDefinition() {
         super();
     }
@@ -28,5 +31,17 @@ public class PreARTDatasetDefinition extends BaseDataSetDefinition {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }

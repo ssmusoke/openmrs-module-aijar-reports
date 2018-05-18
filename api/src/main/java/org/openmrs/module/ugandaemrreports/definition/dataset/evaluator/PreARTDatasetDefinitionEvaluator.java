@@ -34,8 +34,9 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         PreARTDatasetDefinition definition = (PreARTDatasetDefinition) dataSetDefinition;
 
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
-        Integer year = localDate.getYear();
-        String enrolledQuery = String.format("SELECT patient_id, DATE(encounter_datetime) as enrollment FROM encounter WHERE voided = 0 AND YEAR(encounter_datetime) = %s AND encounter_type = (SELECT encounter_type_id FROM encounter_type WHERE uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f');", year);
+        String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+        String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
+        String enrolledQuery = String.format("SELECT patient_id, DATE(encounter_datetime) as enrollment FROM encounter WHERE voided = 0 AND encounter_datetime BETWEEN '%s' AND '%s' AND encounter_type = (SELECT encounter_type_id FROM encounter_type WHERE uuid = '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f');", startDate, endDate);
 
         try {
             Multimap<Integer, Date> summaryData = getData(sqlConnection(), enrolledQuery, "patient_id", "enrollment");
