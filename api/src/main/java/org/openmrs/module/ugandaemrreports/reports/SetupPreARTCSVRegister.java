@@ -1,14 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,6 +60,7 @@ public class SetupPreARTCSVRegister extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcel(reportDefinition));
         return l;
     }
 
@@ -92,6 +91,14 @@ public class SetupPreARTCSVRegister extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("PRE_ART_CSV", Mapped.mapStraightThrough(dsd));
 
+        return rd;
+    }
+
+    public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("568867cc-591a-42ec-8a79-affaf6eea2f9", reportDefinition, "FacilityPreARTRegister.xls");
+        Properties props = new Properties();
+        props.put("repeatingSections", "sheet:1,row:7,dataset:PRE_ART_CSV");
+        rd.setProperties(props);
         return rd;
     }
 
