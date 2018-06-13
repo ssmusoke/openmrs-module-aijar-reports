@@ -136,19 +136,17 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
                 List<String> addresses = processString2(personDemos.getAddresses());
-                String address = "";
-                if (addresses.size() == 6) {
-                    address = addresses.get(1) + "\n" + addresses.get(3) + "\n" + addresses.get(4) + "\n" + addresses.get(5);
-                }
 
                 Date firstSummaryDate = dates.get(key);
 
                 String enrollmentQuarter = getObsPeriod(firstSummaryDate, Enums.Period.QUARTERLY);
+
                 DataSetRow row = new DataSetRow();
                 pdh.addCol(row, "Date Enrolled", firstSummaryDate);
                 pdh.addCol(row, "Unique ID no", key);
                 pdh.addCol(row, "Patient Clinic ID", processString(personDemos.getIdentifiers()).get("e1731641-30ab-102d-86b0-7a5022ba4115"));
                 pdh.addCol(row, "Name", personDemos.getNames());
+                pdh.addCol(row, "firstName", personDemos.getNames());
                 pdh.addCol(row, "Gender", personDemos.getGender());
                 if (personDemos.getBirthDate() != null && firstSummaryDate != null) {
                     Years age = Years.yearsBetween(StubDate.dateOf(personDemos.getBirthDate()), StubDate.dateOf(firstSummaryDate));
@@ -156,13 +154,26 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                 } else {
                     pdh.addCol(row, "Age", "");
                 }
-                pdh.addCol(row, "Address", address);
+
+                if (addresses.size() == 6) {
+                    pdh.addCol(row, "District", addresses.get(1));
+                    pdh.addCol(row, "Sub-county", addresses.get(3));
+                    pdh.addCol(row, "Parish", addresses.get(5));
+                    pdh.addCol(row, "Village", addresses.get(5));
+
+                }else{
+                    pdh.addCol(row, "District", "");
+                    pdh.addCol(row, "Sub-county", "");
+                    pdh.addCol(row, "Parish", "");
+                    pdh.addCol(row, "Village","");
+                }
                 pdh.addCol(row, "Entry Point", convert(entryPoint));
                 pdh.addCol(row, "Enrollment", ti);
                 pdh.addCol(row, "CPT", getMinimum(patientData, "99037"));
                 pdh.addCol(row, "INH", getMinimum(patientData, "99604"));
 
-                pdh.addCol(row, "TB", startedTB + "\n" + stoppedTB);
+                pdh.addCol(row, "TBStartDate", startedTB);
+                pdh.addCol(row, "TBStopDate", stoppedTB);
 
                 pdh.addCol(row, "CS1", clinicalStages.get("1"));
                 pdh.addCol(row, "CS2", clinicalStages.get("2"));
@@ -179,13 +190,25 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                     if (period.compareTo(currentQuarter) < 0) {
                         if (artStartDate != null && period.compareTo(getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) == 0) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "ART");
+                            pdh.addCol(row, "TB" + String.valueOf(i), "");
+                            pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                            pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                         } else if ((artStartDate != null && period.compareTo(getObsPeriod(DateUtil.parseYmd(artStartDate), Enums.Period.QUARTERLY)) > 0) || hasDied || hasTransferred) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                            pdh.addCol(row, "TB" + String.valueOf(i), "");
+                            pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                            pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                         } else if (StringUtils.isNotBlank(died) && period.compareTo(died) == 0) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "DIED");
+                            pdh.addCol(row, "TB" + String.valueOf(i), "");
+                            pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                            pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                             hasDied = true;
                         } else if (StringUtils.isNotBlank(transferred) && period.compareTo(transferred) == 0) {
                             pdh.addCol(row, "FUS" + String.valueOf(i), "TO");
+                            pdh.addCol(row, "TB" + String.valueOf(i), "");
+                            pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                            pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                             hasTransferred = true;
                         } else {
                             List<String> tbStatus = getData(patientData, period, "90216");
@@ -210,6 +233,7 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                 tb = convert(tbStatus.get(tbStatus.size() - 1));
                             }
 
+
                             if (StringUtils.isNotBlank(cptInh) && StringUtils.isNotBlank(mul)) {
                                 cptNutrition = cptInh + "|" + mul;
                             } else if (StringUtils.isNotBlank(cptInh)) {
@@ -219,7 +243,10 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                             }
 
                             if (StringUtils.isNotBlank(tb) || StringUtils.isNotBlank(cptNutrition)) {
-                                pdh.addCol(row, "FUS" + String.valueOf(i), "✓" + "\n" + tb + "\n" + cptNutrition);
+                                pdh.addCol(row, "FUS" + String.valueOf(i), "OK");
+                                pdh.addCol(row, "TB" + String.valueOf(i), tb);
+                                pdh.addCol(row, "CPT" + String.valueOf(i), cptInh);
+                                pdh.addCol(row, "Nutrition" + String.valueOf(i), mul);
                             } else if (appointments.size() == 0 && period.compareTo(enrollmentQuarter) >= 0) {
                                 String lastPeriod = getObsPeriod(Periods.addQuarters(localDate, i - 1).get(0).toDate(), Enums.Period.QUARTERLY);
                                 List<String> lastAppointments = getData(patientData, lastPeriod, "5096");
@@ -227,22 +254,39 @@ public class PreARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                     String maxAppointment = lastAppointments.get(lastAppointments.size() - 1);
                                     String maxQuarter = getObsPeriod(DateUtil.parseYmd(maxAppointment), Enums.Period.QUARTERLY);
                                     if (maxQuarter.compareTo(period) > 0) {
-                                        pdh.addCol(row, "FUS" + String.valueOf(i), "→");
+                                        pdh.addCol(row, "FUS" + String.valueOf(i), "No appointment");
+                                        pdh.addCol(row, "TB" + String.valueOf(i), "");
+                                        pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                                        pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                                     } else {
                                         pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                                        pdh.addCol(row, "TB" + String.valueOf(i), "");
+                                        pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                                        pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                                     }
                                 } else {
                                     pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                                    pdh.addCol(row, "TB" + String.valueOf(i), "");
+                                    pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                                    pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                                 }
-
                             } else if (period.compareTo(enrollmentQuarter) < 0) {
                                 pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                                pdh.addCol(row, "TB" + String.valueOf(i), "");
+                                pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                                pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                             } else {
                                 pdh.addCol(row, "FUS" + String.valueOf(i), "LOST");
+                                pdh.addCol(row, "TB" + String.valueOf(i), "");
+                                pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                                pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                             }
                         }
                     } else {
                         pdh.addCol(row, "FUS" + String.valueOf(i), "");
+                        pdh.addCol(row, "TB" + String.valueOf(i), "");
+                        pdh.addCol(row, "CPT" + String.valueOf(i), "");
+                        pdh.addCol(row, "Nutrition" + String.valueOf(i), "");
                     }
                 }
                 dataSet.addRow(row);
