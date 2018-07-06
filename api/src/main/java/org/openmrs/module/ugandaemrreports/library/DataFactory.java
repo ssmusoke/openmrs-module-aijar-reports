@@ -441,6 +441,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"), converter);
     }
 
+    public PatientDataDefinition getPatientArtSummaryEncounter(DataConverter converter) {
+        EncountersForPatientDataDefinition cd = new EncountersForPatientDataDefinition();
+        cd.setWhich(TimeQualifier.FIRST);
+        cd.addType(hivMetadata.getARTSummaryEncounter());
+        return convert(cd, converter);
+    }
+
     // Cohorts Definitions
 
     public CohortDefinition getPatientsWhoseObsValueDateIsOnSpecifiedDate(Concept dateConcept, List<EncounterType> types) {

@@ -136,13 +136,27 @@
         "label": "OptionB+ Weekly SMS Report",
         "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
         "order": 55
+      },{
+        "id": "Transfer Out Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Transfer Out Report",
+        "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
+        "order": 60
+      },{
+        "id": "Transfer In Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Transfer In Report",
+        "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
+        "order": 65
       },
       {
         "id": "Pre-ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "Pre-ART Register",
-        "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1cc2",
+        "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
         "order": 5
       },
 	  {

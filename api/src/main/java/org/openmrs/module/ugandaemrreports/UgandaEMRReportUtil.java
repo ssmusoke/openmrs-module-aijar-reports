@@ -86,4 +86,13 @@ public class UgandaEMRReportUtil {
         }
         return new Mapped<T>(parameterizable, paramMap);
     }
+
+    /**
+     * @return a new ReportDesign for a CSV output
+     */
+    public static ReportDesign createCSVDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
+        ReportDesign design = ReportManagerUtil.createCsvReportDesign(reportDesignUuid, reportDefinition);
+        return design;
+    }
+
 }
