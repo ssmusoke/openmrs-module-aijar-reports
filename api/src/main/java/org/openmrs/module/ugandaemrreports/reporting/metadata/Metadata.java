@@ -246,6 +246,12 @@ public class Metadata {
         public static final String EMTCT_CODE_TRK = "81bd3e58-9389-41e7-be1a-c6723f899e56";
         public static final String ASPHYXIA = "121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
+        public static final String TRANSFER_IN_REGIMEN_START_DATE = "f363f153-f659-438b-802f-9cc1828b5fa9";
+        public static final String TRANSFER_IN_REGIMEN = "9a9314ed-0756-45d0-b37c-ace720ca439c";
+        public static final String TRANSFER_IN_REGIMEN_OTHER = "a5bfc18e-c6db-4d5d-81f5-18d61b1355a8";
+
+        public static final String  TRANSFER_OUT_DATE = "fc1b1e96-4afb-423b-87e5-bb80d451c967";
+
     }
 
     public static class Identifier {

@@ -1,15 +1,19 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.PersonAttributeType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +121,9 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
         CohortDefinition definition = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
 
+        PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+
+
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
@@ -124,6 +131,11 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd, "HIVEnrollmentDate", hivPatientData.getSummaryPageDate());
+        addColumn(dsd, "ArtStartDate", hivPatientData.getArtStartDate());
+        addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
+        addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
         addColumn(dsd, "Transfer Out Date", hivPatientData.getTODateDuringPeriod());
         addColumn(dsd, "Transfer Out To", hivPatientData.getToPlaceDuringPeriod());
 
@@ -135,6 +147,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 }

@@ -9,11 +9,9 @@ import org.openmrs.Form;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.DurationUnit;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -121,6 +119,13 @@ public class Cohorts {
             valueList.add(value);
             obsCohortDefinition.setValueList(valueList);
         }
+        return obsCohortDefinition;
+    }
+
+    public static CodedObsCohortDefinition createCodedObsCohortDefinition(String name, Concept question) {
+        CodedObsCohortDefinition obsCohortDefinition = createCodedObsCohortDefinition(question, null, null,
+                BaseObsCohortDefinition.TimeModifier.ANY);
+        obsCohortDefinition.setName(name);
         return obsCohortDefinition;
     }
 
@@ -472,4 +477,37 @@ public class Cohorts {
         return cd;
     }
 
+    public static CohortDefinition transferIn() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+
+        DateObsCohortDefinition tiArtDate = new DateObsCohortDefinition();
+        cd.setName("tiArtDate");
+        tiArtDate.setQuestion(Dictionary.getConcept(Metadata.Concept.TRANSFER_IN_REGIMEN_START_DATE));
+        tiArtDate.setEncounterTypeList(Arrays.asList(Dictionary.getEncounterType(Metadata.EncounterType.ART_SUMMARY_PAGE)));
+        tiArtDate.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CodedObsCohortDefinition ti = createCodedObsCohortDefinition("ti", Dictionary.getConcept(Metadata.Concept.TRANSFER_IN));
+        CodedObsCohortDefinition tiArtRegimen = createCodedObsCohortDefinition("tiArtRegimen",
+                Dictionary.getConcept(Metadata.Concept.TRANSFER_IN_REGIMEN));
+
+        CodedObsCohortDefinition tiArtRegimenOther = createCodedObsCohortDefinition("tiArtRegimenOther",
+                Dictionary.getConcept(Metadata.Concept.TRANSFER_IN_REGIMEN_OTHER));
+
+        EncounterCohortDefinition artSummary = createEncounterParameterizedByDate("summary",
+                Arrays.asList("onOrAfter", "onOrBefore"),
+                Dictionary.getEncounterType(Metadata.EncounterType.ART_SUMMARY_PAGE));
+
+
+        cd.setName("ti export");
+        cd.addParameter(new Parameter("startDate", "Start Date", Date.class));
+        cd.addParameter(new Parameter("endDate", "End Date", Date.class));
+        cd.addSearch("tiArtDate", ReportUtils.map(tiArtDate));
+        cd.addSearch("ti", ReportUtils.map(ti));
+        cd.addSearch("tiArtRegimen", ReportUtils.map(tiArtRegimen));
+        cd.addSearch("tiArtRegimenOther", ReportUtils.map(tiArtRegimenOther));
+        cd.addSearch("withSummary", ReportUtils.map(artSummary, "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("withSummary AND (tiArtDate OR ti OR tiArtRegimen OR tiArtRegimenOther)");
+
+        return cd;
+    }
 }
