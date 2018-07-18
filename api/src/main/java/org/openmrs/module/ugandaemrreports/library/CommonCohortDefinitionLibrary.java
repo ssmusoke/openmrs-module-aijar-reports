@@ -210,6 +210,34 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return agedAtLeast(11);
     }
 
+//    Finer Age Disagregation
+    public CohortDefinition between1And4years() {
+        return agedBetween(1,4);
+    }
+    public CohortDefinition between5And9years() {
+        return agedBetween(5,9);
+    }
+    public CohortDefinition between10And14years() {
+        return agedBetween(10,14);
+    }
+    public CohortDefinition between15And19years() {
+        return agedBetween(15,19);
+    }
+    public CohortDefinition between20And24years() {
+        return agedBetween(20,24);
+    }
+    public CohortDefinition between25And49years() {
+        return agedBetween(25,49);
+    }
+
+    public CohortDefinition below1Year() {
+        AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(12);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
+        return cd;
+    }
+
     /**
      * Patients who have an obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept

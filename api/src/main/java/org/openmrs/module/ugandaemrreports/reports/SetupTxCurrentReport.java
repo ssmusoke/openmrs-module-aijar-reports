@@ -77,11 +77,10 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
         return l;
     }
 
+
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        List<ReportDesign> l = new ArrayList<ReportDesign>();
-        l.add(buildReportDesign(reportDefinition));
-        return l;
+        return Arrays.asList(buildReportDesign(reportDefinition));
     }
 
     /**
@@ -92,14 +91,8 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
      * @return The report design
      */
     @Override
-
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_CURRENT.xls");
-        Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:TX_CURRENT");
-        props.put("sortWeight", "5000");
-        rd.setProperties(props);
-        return rd;
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_CURRENT.xls");
     }
 
     @Override
