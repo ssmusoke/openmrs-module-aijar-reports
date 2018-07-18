@@ -210,7 +210,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return agedAtLeast(11);
     }
 
-//    Finer Age Disagregation
+//    Finer Age Disaggregation
     public CohortDefinition between1And4years() {
         return agedBetween(1,4);
     }
@@ -226,9 +226,21 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between20And24years() {
         return agedBetween(20,24);
     }
-    public CohortDefinition between25And49years() {
-        return agedBetween(25,49);
+    public CohortDefinition between25And29years() {
+        return agedBetween(25,29);
     }
+    public CohortDefinition between30And34years() {
+        return agedBetween(30,34);
+    }
+    public CohortDefinition between35And39years() {
+        return agedBetween(35,39);
+    }
+    public CohortDefinition between40And49years() {
+        return agedBetween(40,49);
+    }
+
+
+
 
     public CohortDefinition below1Year() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(12);
