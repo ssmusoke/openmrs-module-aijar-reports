@@ -239,7 +239,63 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
 
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
 
-        addAgeGender(dsd, "1", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
+        addIndicator(dsd, "1a", "All currently receiving  ART ", cumulativeEverEnrolled, "age=below1female");
+        addIndicator(dsd, "1b", "All currently receiving  ART", cumulativeEverEnrolled, "age=between1and4female");
+        addIndicator(dsd, "1c", "All currently receiving  ART", cumulativeEverEnrolled, "age=between5and9female");
+        addIndicator(dsd, "1d", "All currently receiving  ART", cumulativeEverEnrolled, "age=between10and14female");
+        addIndicator(dsd, "1e", "All currently receiving  ART", cumulativeEverEnrolled, "age=between15and19female");
+        addIndicator(dsd, "1f", "All currently receiving  ART", cumulativeEverEnrolled, "age=between20and24female");
+        addIndicator(dsd, "1g", "All currently receiving  ART", cumulativeEverEnrolled, "age=between25and29female");
+        addIndicator(dsd, "1h", "All currently receiving  ART", cumulativeEverEnrolled, "age=between30and34female");
+        addIndicator(dsd, "1i", "All currently receiving  ART", cumulativeEverEnrolled, "age=between35and39female");
+        addIndicator(dsd, "1j", "All currently receiving  ART", cumulativeEverEnrolled, "age=between40and49female");
+        addIndicator(dsd, "1k", "All currently receiving  ART", cumulativeEverEnrolled, "age=above50female");
+        addIndicator(dsd, "1l", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=below1female");
+        addIndicator(dsd, "1m", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between1and4female");
+        addIndicator(dsd, "1n", "All active Pre-Art in the quarter", cumulativeEverEnrolled,  "age=between5and9female");
+        addIndicator(dsd, "1o", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between10and14female");
+        addIndicator(dsd, "1p", "All active Pre-Art in the quarter", cumulativeEverEnrolled,"age=between15and19female");
+        addIndicator(dsd, "1q", "All active Pre-Art in the quarter", cumulativeEverEnrolled,  "age=between20and24female");
+        addIndicator(dsd, "1r", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between25and29female");
+        addIndicator(dsd, "1s", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between30and34female");
+        addIndicator(dsd, "1t", "All active Pre-Art in the quarter", cumulativeEverEnrolled,  "age=between35and39female");
+        addIndicator(dsd, "1u", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between40and49female");
+        addIndicator(dsd, "1v", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=above50female");
+
+        addIndicator(dsd, "2a", "All currently receiving  ART ", cumulativeEverEnrolled, "age=below1male");
+        addIndicator(dsd, "2b", "All currently receiving  ART", cumulativeEverEnrolled, "age=between1and4male");
+        addIndicator(dsd, "2c", "All currently receiving  ART", cumulativeEverEnrolled, "age=between5and9male");
+        addIndicator(dsd, "2d", "All currently receiving  ART", cumulativeEverEnrolled,"age=between10and14male");
+        addIndicator(dsd, "2e", "All currently receiving  ART", cumulativeEverEnrolled,"age=between15and19male");
+        addIndicator(dsd, "2f", "All currently receiving  ART", cumulativeEverEnrolled, "age=between20and24male");
+        addIndicator(dsd, "2g", "All currently receiving  ART", cumulativeEverEnrolled, "age=between25and29male");
+        addIndicator(dsd, "2h", "All currently receiving  ART", cumulativeEverEnrolled, "age=between30and34male");
+        addIndicator(dsd, "2i", "All currently receiving  ART", cumulativeEverEnrolled, "age=between35and39male");
+        addIndicator(dsd, "2j", "All currently receiving  ART", cumulativeEverEnrolled, "age=between40and49male");
+        addIndicator(dsd, "2k", "All currently receiving  ART", cumulativeEverEnrolled, "age=above50male");
+        addIndicator(dsd, "2l", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=below1male");
+        addIndicator(dsd, "2m", "All active Pre-Art in the quarter", cumulativeEverEnrolled,"age=between1and4male");
+        addIndicator(dsd, "2n", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between5and9male");
+        addIndicator(dsd, "2o", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between10and14male");
+        addIndicator(dsd, "2p", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between15and19male");
+        addIndicator(dsd, "2q", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between20and24male");
+        addIndicator(dsd, "2r", "All active Pre-Art in the quarter", cumulativeEverEnrolled,"age=between25and29male");
+        addIndicator(dsd, "2s", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between30and34male");
+        addIndicator(dsd, "2t", "All active Pre-Art in the quarter", cumulativeEverEnrolled,  "age=between35and39male");
+        addIndicator(dsd, "2u", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=between40and49male");
+        addIndicator(dsd, "2v", "All active Pre-Art in the quarter", cumulativeEverEnrolled, "age=above50male");
+
+        addAgeGender(dsd, "1.1", "All active on Art on 1st line", onFirstLineRegimen);
+        addAgeGender(dsd, "2.1", "All active on Art on 2nd line", onSecondLineRegimen);
+        addAgeGender(dsd, "3.1", "All active on Art on 3rd line", onThirdLineRegimenDuringQuarter);
+        addIndicator(dsd, "4.1j", "PreArt" + " Total", onPreArt, "age=child");
+        addIndicator(dsd, "4.2j", "PreArt" + " Total", onPreArt, "age=adult");
+
+      //  addAgeGender(dsd, "4.1", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
+
+
+        //add all values up to cell 11
+
 
 
 
@@ -250,15 +306,17 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
     }
 
     private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "a", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
-        addIndicator(dsd, key + "b", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
-        addIndicator(dsd, key + "c", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
-        addIndicator(dsd, key + "d", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
-        addIndicator(dsd, key + "e", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
-        addIndicator(dsd, key + "f", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
-        addIndicator(dsd, key + "g", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
-        addIndicator(dsd, key + "h", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
-        addIndicator(dsd, key + "i", label + " Total", cohortDefinition, "");
+        addIndicator(dsd, "1" +key , label + " (Below 2 Females)", cohortDefinition, "age=below1female");
+        addIndicator(dsd, "2" +key, label + " (Below 2 Males)", cohortDefinition, "age=below1male");
+        addIndicator(dsd, key + "c", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
+        addIndicator(dsd, key + "d", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
+        addIndicator(dsd, key + "e", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
+        addIndicator(dsd, key + "f", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
+        addIndicator(dsd, key + "g", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
+        addIndicator(dsd, key + "h", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
+        addIndicator(dsd, key + "i", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
+        addIndicator(dsd, key + "k", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
+
     }
 
 
@@ -269,6 +327,12 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
         ci.setType(CohortIndicator.IndicatorType.COUNT);
         ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
+    }
+
+    public void addAge(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
+        addIndicator(dsd, key + "a", label + " (Between 0 and 15 years)", cohortDefinition, "age=child");
+        addIndicator(dsd, key + "b", label + " (Above 15 years)", cohortDefinition, "age=adult");
+        addIndicator(dsd, key + "i", label + " Total", cohortDefinition, "");
     }
 
     @Override
