@@ -243,11 +243,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
 
     public CohortDefinition below1Year() {
-        AgeCohortDefinition cd = (AgeCohortDefinition) agedAtMost(12);
-        cd.setMinAgeUnit(DurationUnit.MONTHS);
-        UUID uuid = UUID.randomUUID();
-        cd.setUuid(String.valueOf(uuid));
-        return cd;
+        return agedAtMost(1);
     }
 
     /**
