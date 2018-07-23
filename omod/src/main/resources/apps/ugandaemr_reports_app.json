@@ -322,6 +322,13 @@
         "label": "Family Connect EMTCT Module Data Export",
         "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
         "order": 5
+      },{
+        "id": "Tx Current Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "Tx Current Report",
+        "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
+        "order": 5
       }
 
     ]
