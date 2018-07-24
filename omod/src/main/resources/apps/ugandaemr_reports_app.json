@@ -329,6 +329,13 @@
         "label": "Tx Current Report",
         "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
         "order": 5
+      },{
+        "id": "Tx New Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "Tx New Report",
+        "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
+        "order": 5
       }
 
     ]
