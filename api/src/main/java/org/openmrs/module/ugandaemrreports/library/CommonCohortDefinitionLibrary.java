@@ -238,7 +238,9 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between40And49years() {
         return agedBetween(40,49);
     }
-
+    public CohortDefinition between25And49years() {
+        return agedBetween(25,49);
+    }
 
 
 
