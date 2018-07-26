@@ -152,6 +152,10 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition below5Years() {
         return agedAtMost(4);
     }
+    public CohortDefinition below10Years() {
+        return agedAtMost(9);
+    }
+
 
     public CohortDefinition between6And59months() {
         AgeCohortDefinition cd = (AgeCohortDefinition) agedBetween(6, 59);
@@ -241,7 +245,12 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between25And49years() {
         return agedBetween(25,49);
     }
-
+    public CohortDefinition between10And19years() {
+        return agedBetween(10,19);
+    }
+    public CohortDefinition is25AndAboveyears() {
+        return agedAtLeast(25);
+    }
 
 
     public CohortDefinition below1Year() {

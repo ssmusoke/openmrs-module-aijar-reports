@@ -118,7 +118,7 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("PMTCT_STAT", Mapped.mapStraightThrough(dsd));
         //rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxCurrentAgeGenderGroup();
+        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getPMTCT_STAT_AgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition enrolledOnOrBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
@@ -239,84 +239,44 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
 
-        addIndicator(dsd, "1a", "All currently receiving  ART ",beenOnArtDuringQuarter, "age=below1female");
-        addIndicator(dsd, "1b", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between1and4female");
-        addIndicator(dsd, "1c", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between5and9female");
-        addIndicator(dsd, "1d", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between10and14female");
-        addIndicator(dsd, "1e", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between15and19female");
-        addIndicator(dsd, "1f", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between20and24female");
-        addIndicator(dsd, "1g", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between25and29female");
-        addIndicator(dsd, "1h", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between30and34female");
-        addIndicator(dsd, "1i", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between35and39female");
-        addIndicator(dsd, "1j", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between40and49female");
-        addIndicator(dsd, "1k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50female");
-        addIndicator(dsd, "1l", "All active Pre-Art in the quarter", onPreArt, "age=below1female");
-        addIndicator(dsd, "1m", "All active Pre-Art in the quarter", onPreArt, "age=between1and4female");
-        addIndicator(dsd, "1n", "All active Pre-Art in the quarter", onPreArt,  "age=between5and9female");
-        addIndicator(dsd, "1o", "All active Pre-Art in the quarter", onPreArt, "age=between10and14female");
-        addIndicator(dsd, "1p", "All active Pre-Art in the quarter", onPreArt,"age=between15and19female");
-        addIndicator(dsd, "1q", "All active Pre-Art in the quarter", onPreArt,  "age=between20and24female");
-        addIndicator(dsd, "1r", "All active Pre-Art in the quarter", onPreArt, "age=between25and29female");
-        addIndicator(dsd, "1s", "All active Pre-Art in the quarter", onPreArt, "age=between30and34female");
-        addIndicator(dsd, "1t", "All active Pre-Art in the quarter", onPreArt,  "age=between35and39female");
-       addIndicator(dsd, "1u", "All active Pre-Art in the quarter", onPreArt, "age=between40and49female");
-        addIndicator(dsd, "1v", "All active Pre-Art in the quarter", onPreArt, "age=above50female");
+        addGender(dsd,"a","Total  Pregnant With HIV status at entry",beenOnArtBeforeQuarter,"female");
+        addGender(dsd,"b","Total  Pregnant Known HIV positives at entry",beenOnArtBeforeQuarter,"female");
+        addGender(dsd,"c","Total  Pregnant Total Newly tested for HIV",beenOnArtBeforeQuarter,"female");
+        addGender(dsd,"d","Total  Pregnant Tested  HIV Positive",beenOnArtBeforeQuarter,"female");
+        addGender(dsd,"e","Total  Number of NEW ANC Clients ",beenOnArtBeforeQuarter,"female");
+       // addGender(dsd,"a","Total  Pregnant With HIV status at entry",beenOnArtBeforeQuarter,"female");
+        addGender(dsd,"f","Total  Male that tested For HIV",beenOnArtBeforeQuarter,"male");
+        addGender(dsd,"g","Total  Male that tested HIV +ve",beenOnArtBeforeQuarter,"male");
+        add105AgeGenderDimensions(dsd,"h","Pregnant newly and tested for HIV",beenOnArtBeforeQuarter);
+        add105AgeGenderDimensions(dsd,"i","Pregnant newly and tested HIV +ve for 1st time",beenOnArtBeforeQuarter);
+        add105AgeGenderDimensions(dsd,"j","1st ANC Visit",beenOnArtBeforeQuarter);
 
-        addIndicator(dsd, "2a", "All currently receiving  ART ", beenOnArtDuringQuarter, "age=below1male");
-        addIndicator(dsd, "2b", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between1and4male");
-        addIndicator(dsd, "2c", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between5and9male");
-        addIndicator(dsd, "2d", "All currently receiving  ART", beenOnArtDuringQuarter,"age=between10and14male");
-        addIndicator(dsd, "2e", "All currently receiving  ART", beenOnArtDuringQuarter,"age=between15and19male");
-        addIndicator(dsd, "2f", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between20and24male");
-        addIndicator(dsd, "2g", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between25and29male");
-        addIndicator(dsd, "2h", "All currently receiving  ART",beenOnArtDuringQuarter, "age=between30and34male");
-        addIndicator(dsd, "2i", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between35and39male");
-        addIndicator(dsd, "2j", "All currently receiving  ART",beenOnArtDuringQuarter, "age=between40and49male");
-        addIndicator(dsd, "2k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50male");
-        addIndicator(dsd, "2l", "All active Pre-Art in the quarter", onPreArt, "age=below1male");
-        addIndicator(dsd, "2m", "All active Pre-Art in the quarter", onPreArt,"age=between1and4male");
-        addIndicator(dsd, "2n", "All active Pre-Art in the quarter", onPreArt, "age=between5and9male");
-        addIndicator(dsd, "2o", "All active Pre-Art in the quarter", onPreArt, "age=between10and14male");
-        addIndicator(dsd, "2p", "All active Pre-Art in the quarter", onPreArt, "age=between15and19male");
-        addIndicator(dsd, "2q", "All active Pre-Art in the quarter", onPreArt, "age=between20and24male");
-        addIndicator(dsd, "2r", "All active Pre-Art in the quarter", onPreArt,"age=between25and29male");
-        addIndicator(dsd, "2s", "All active Pre-Art in the quarter", onPreArt, "age=between30and34male");
-        addIndicator(dsd, "2t", "All active Pre-Art in the quarter", onPreArt,  "age=between35and39male");
-        addIndicator(dsd, "2u", "All active Pre-Art in the quarter", onPreArt, "age=between40and49male");
-        addIndicator(dsd, "2v", "All active Pre-Art in the quarter", onPreArt, "age=above50male");
-
-        addAgeGender(dsd, "1.1", "All active on Art on 1st line", onFirstLineRegimen);
-        addAgeGender(dsd, "2.1", "All active on Art on 2nd line", onSecondLineRegimen);
-        addAgeGender(dsd, "3.1", "All active on Art on 3rd line", onThirdLineRegimenDuringQuarter);
-        addIndicator(dsd, "4.1j", "PreArt" + " Total", onPreArt, "age=child");
-        addIndicator(dsd, "4.2j", "PreArt" + " Total", onPreArt, "age=adult");
-
-
-
-      //  addAgeGender(dsd, "4.1", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
-
-
-        //add all values up to cell 11
-
-
-
-
-
-       // rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+        addIndicator(dsd, "4h" , "Total pregnant who knew HIV status before 1st ANC" , activeOnArtOnCPT, "age=female");
+        addIndicator(dsd, "5h" , "Total pregnant who were HIV +ve before 1st ANC" , activeOnArtOnCPT, "age=female");
+        addIndicator(dsd, "9h" ,"Pregnant Women testing HIV+ on a retest " , activeOnArtOnCPT, "age=female");
+        addIndicator(dsd, "13h" ,"Total Males received HIV test results" , activeOnArtOnCPT, "age=male");
+        addIndicator(dsd, "14h" ,"Males received HIV test +ve " , activeOnArtOnCPT, "age=male");
 
         return rd;
     }
 
-    private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "c", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
-        addIndicator(dsd, key + "d", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
-        addIndicator(dsd, key + "e", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
-        addIndicator(dsd, key + "f", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
-        addIndicator(dsd, key + "g", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
-        addIndicator(dsd, key + "h", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
-        addIndicator(dsd, key + "i", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
-        addIndicator(dsd, key + "k", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
 
+    public void addGender (CohortIndicatorDataSetDefinition dsd,String key ,String label,CohortDefinition cohortDefinition , String gender){
+        addIndicator(dsd, "1" + key, label , cohortDefinition, "age=below10"+gender);
+        addIndicator(dsd, "2" + key, label , cohortDefinition, "age=between10and14"+gender);
+        addIndicator(dsd, "3" + key, label , cohortDefinition, "age=between15and19"+gender);
+        addIndicator(dsd, "4" + key, label , cohortDefinition, "age=between20and24"+gender);
+        addIndicator(dsd, "5" + key, label , cohortDefinition, "age=between25and29"+gender);
+        addIndicator(dsd, "6" + key, label , cohortDefinition, "age=between30and34"+gender);
+        addIndicator(dsd, "7" + key, label , cohortDefinition, "age=between35and39"+gender);
+        addIndicator(dsd, "8" + key, label , cohortDefinition, "age=between40and49"+gender);
+        addIndicator(dsd, "9" + key, label , cohortDefinition, "age=above50"+gender);
+    }
+
+    public void add105AgeGenderDimensions(CohortIndicatorDataSetDefinition dsd,String key ,String label,CohortDefinition cohortDefinition){
+        addIndicator(dsd, "1" + key, label , cohortDefinition, "age=between10and19female");
+        addIndicator(dsd, "2" + key, label , cohortDefinition, "age=between20and24female");
+        addIndicator(dsd, "3" + key, label , cohortDefinition, "age=25+female");
     }
 
 
@@ -332,6 +292,6 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.1.2";
     }
 }
