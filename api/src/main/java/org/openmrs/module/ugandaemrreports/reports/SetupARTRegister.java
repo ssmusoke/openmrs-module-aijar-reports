@@ -9,6 +9,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
@@ -56,12 +58,12 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "98e9202d-8c00-415f-9882-43917181f023";
+        return "7c8301e3-439e-4084-a9f1-dad1a2b6e3c3";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e206-c3cd-4dc1-b332-13f1d02f1c54";
+        return "291b3798-ecdc-457e-8f71-9cba159a0e75";
     }
 
     @Override
@@ -85,8 +87,11 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcel(reportDefinition));
         return l;
     }
+
+
 
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding
@@ -96,9 +101,12 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
      * @return The report design
      */
     @Override
-
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTRegister.xls");
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        return rd;
+    }
+    public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("cedbd4f6-35bf-4500-b386-bd22d0e34e46", reportDefinition, "FacilityARTRegister.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:6-8,dataset:ART | sheet:2,row:3-5,dataset:ART | sheet:3,row:3-5,dataset:ART | sheet:4,row:3-5,dataset:ART");
         props.put("sortWeight", "5000");
