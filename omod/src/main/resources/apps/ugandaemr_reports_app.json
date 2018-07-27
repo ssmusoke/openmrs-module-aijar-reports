@@ -159,12 +159,12 @@
         "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
         "order": 5
       },
-      {
+	  {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "ART Register",
-        "url": "reportingui/runReport.page?reportDefinition=291b3798-ecdc-457e-8f71-9cba159a0e75",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
         "order": 10
       },{
         "id": "Maternity Register",
@@ -174,7 +174,7 @@
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
       },
-      {
+	  {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -253,8 +253,8 @@
         "label": "HMIS 105 Section 2.1 to 2.7",
         "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
         "order": 23
-      },
-      {
+	  },
+	  {
         "id": "HMIS 105 - 1",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
