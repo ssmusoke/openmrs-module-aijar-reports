@@ -60,7 +60,7 @@ import java.util.Properties;
 public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Autowired
-    private DataFactory df;
+    private DataFactgiory df;
 
     @Autowired
     SharedDataDefintion sdd;
@@ -74,9 +74,15 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     }
 
     @Override
+    public String getUuid() {
+        return "f717a684-3c78-11e7-adec-507b9dc4c741";
+    }
+
+    @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcel(reportDefinition));
         return l;
     }
 
@@ -86,9 +92,15 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
      * @param reportDefinition
      * @return The report design
      */
+
+
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister.xls");
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        return rd;
+    }
+    public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("8ad7fd9f-5e67-4d60-a121-a48ee77ae1db", reportDefinition, "ANCRegister.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:10-13,dataset:ANC");
         props.put("sortWeight", "5000");
@@ -96,10 +108,10 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         return rd;
     }
 
-    @Override
-    public String getUuid() {
-        return "f717a684-3c78-11e7-adec-507b9dc4c741";
-    }
+
+
+
+
 
     @Override
     public String getName() {
