@@ -60,7 +60,7 @@ import java.util.Properties;
 public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Autowired
-    private DataFactgiory df;
+    private DataFactory df;
 
     @Autowired
     SharedDataDefintion sdd;
