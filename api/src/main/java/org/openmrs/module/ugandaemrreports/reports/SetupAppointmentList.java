@@ -122,9 +122,11 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
         addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
-        addColumn(dsd, "Given Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Middle Name", builtInPatientData.getPreferredMiddleName());
+        addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
@@ -136,6 +138,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.6";
+        return "0.65";
     }
 }

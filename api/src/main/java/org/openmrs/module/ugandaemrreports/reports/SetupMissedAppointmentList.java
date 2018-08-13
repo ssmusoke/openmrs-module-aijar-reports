@@ -124,8 +124,10 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
         addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("MISSED_APPOINTMENT", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -135,6 +137,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "0.21";
     }
 }
