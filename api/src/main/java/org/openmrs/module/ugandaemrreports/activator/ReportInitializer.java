@@ -36,8 +36,6 @@ public class ReportInitializer implements Initializer {
 	 */
 	@Override
 	public synchronized void started() {
-		removeOldReports();
-		
 		ReportManagerUtil.setupAllReports(UgandaEMRReportManager.class);
 		ReportUtil.updateGlobalProperty(ReportingConstants.GLOBAL_PROPERTY_DATA_EVALUATION_BATCH_SIZE, "-1");
 	}
@@ -47,16 +45,5 @@ public class ReportInitializer implements Initializer {
 	 */
 	@Override
 	public void stopped() {
-	}
-
-	private void removeOldReports() {
-		String gpVal = Context.getAdministrationService().getGlobalProperty("ugandaemr.reports.oldReportsRemoved");
-		AdministrationService as = Context.getAdministrationService();
-		log.warn("Removing all reports");
-		as.executeSQL("delete from reporting_report_design_resource;", false);
-		as.executeSQL("delete from reporting_report_design;", false);
-		as.executeSQL("delete from global_property WHERE property LIKE 'reporting.reportManager%';", false);
-		as.executeSQL("delete from serialized_object WHERE type LIKE 'org.openmrs.module.reporting.report%'", false);
-		ReportUtil.updateGlobalProperty("ugandaemr.reports.oldReportsRemoved", "true");
 	}
 }
