@@ -11,10 +11,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,6 +39,8 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVMetadata hivMetadata;
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -93,7 +92,7 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DueForViralLoad.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:DUE_FOR_VIRAL_LOAD");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:DUE_FOR_VIRAL_LOAD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -111,11 +110,11 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsOnArt = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsOnArt));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -135,7 +134,7 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOnArt));
 
         return rd;
     }
