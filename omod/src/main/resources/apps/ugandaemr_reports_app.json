@@ -137,17 +137,17 @@
         "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
         "order": 55
       },{
-        "id": "Transfer Out Report",
+        "id": "Transfer Out List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Transfer Out Report",
+        "label": "Transfer Out List",
         "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
         "order": 60
       },{
-        "id": "Transfer In Report",
+        "id": "Transfer In List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Transfer In Report",
+        "label": "Transfer In List",
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
         "order": 65
       },
@@ -247,74 +247,67 @@
         "order": 25
       },
       {
-        "id": "HMIS 105 Section 2.1 to 2.7",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 Section 2.1 to 2.7",
-        "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
-        "order": 23
-	  },
-	  {
-        "id": "HMIS 105 - 1",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 - 1",
-        "url": "reportingui/runReport.page?reportDefinition=85b9a42b-d16b-4b3c-992f-adbb806f0b00",
-        "order": 16
-      },
-      {
-        "id": "HMIS 106 A Refactored",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
-        "type": "link",
-        "label": "HMIS 106 A Refactored",
-        "url": "reportingui/runReport.page?reportDefinition=c80ee1d9-9648-4749-bedc-03cc61b74399",
-        "order": 17
-      },
-      {
-        "id": "HMIS 105 Section 2.8 to 2.12",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 Section 2.8 to 2.12",
-        "url": "reportingui/runReport.page?reportDefinition=9401662d-e715-4370-bfc7-048825dd8107",
-        "order": 24
-      },
-      {
-        "id": "HMIS 105 - 3 to 4",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 - 3 to 4",
-        "url": "reportingui/runReport.page?reportDefinition=fe02c34a-5c67-453b-93e9-4946e7bd8c59",
-        "order": 17
-      },
-      {
-        "id": "HMIS 105 Section 5 to 6",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 Section 5 to 6",
-        "url": "reportingui/runReport.page?reportDefinition=54d3f8fa-712a-11e7-a3df-507b9dc4c741",
-        "order": 25
-      },
-      {
         "id": "SMC Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "SMC Register",
         "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
         "order": 30
-      },{
+      },
+      {
+        "id": "HMIS 105 - 1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 - 1: OPD",
+        "url": "reportingui/runReport.page?reportDefinition=85b9a42b-d16b-4b3c-992f-adbb806f0b00",
+        "order": 20
+      },
+      {
+        "id": "HMIS 105 Section 2.1 to 2.7",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.1 to 2.7: MCH",
+        "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
+        "order": 25
+	  },
+      {
+        "id": "HMIS 105 Section 2.8 to 2.12",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.8 to 2.12: MCH - Child Services",
+        "url": "reportingui/runReport.page?reportDefinition=9401662d-e715-4370-bfc7-048825dd8107",
+        "order": 30
+      },
+      {
+        "id": "HMIS 105 - 3 to 4",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 - 3 to 4: Outreach and HCT",
+        "url": "reportingui/runReport.page?reportDefinition=fe02c34a-5c67-453b-93e9-4946e7bd8c59",
+        "order": 35
+      },
+      {
+        "id": "HMIS 105 Section 5",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 5: SMC",
+        "url": "reportingui/runReport.page?reportDefinition=54d3f8fa-712a-11e7-a3df-507b9dc4c741",
+        "order": 40
+      },
+      {
         "id": "HCA Annual Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
         "label": "HCA Annual Report",
         "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
-        "order": 25
+        "order": 45
       },{
         "id": "HCA 12 and 24 Months Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
         "label": "HCA 12 and 24 Months Report",
         "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
-        "order": 26
+        "order": 50
       },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
