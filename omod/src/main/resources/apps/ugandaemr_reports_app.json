@@ -332,6 +332,14 @@
         "label": "Family Connect EMTCT Module Data Export",
         "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
         "order": 5
+      },
+      {
+        "id": "Lost To Follow Up",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Lost To Follow Up",
+        "url": "reportingui/runReport.page?reportDefinition=e66d26f2-baf9-4b07-bbb8-335e4258ced0",
+        "order": 5
       }
 
     ]
