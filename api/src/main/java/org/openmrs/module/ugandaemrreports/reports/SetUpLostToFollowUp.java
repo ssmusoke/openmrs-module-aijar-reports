@@ -1,5 +1,4 @@
 package org.openmrs.module.ugandaemrreports.reports;
-
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
@@ -21,7 +20,6 @@ import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLib
 import org.openmrs.reporting.data.DatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,27 +28,20 @@ import java.util.Properties;
 public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
-
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
-
     @Autowired
     private HIVPatientDataLibrary hivPatientData;
-
     @Autowired
     private BasePatientDataLibrary basePatientData;
-
     @Autowired
     private HIVMetadata hivMetadata;
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
     @Autowired
     private ARTCohortLibrary  artCohortLibrary;
-
     /**
      * @return the uuid for the report design for exporting to Excel
      */
@@ -58,22 +49,18 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
     public String getExcelDesignUuid() {
         return "3e7363e9-33d8-4b6c-b290-0314d1910c87";
     }
-
     @Override
     public String getUuid() {
         return "e66d26f2-baf9-4b07-bbb8-335e4258ced0";
     }
-
     @Override
     public String getName() {
         return "Lost To Follow Up";
     }
-
     @Override
     public String getDescription() {
         return "Lost To Follow Up";
     }
-
     @Override
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
@@ -81,14 +68,12 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         l.add(df.getEndDateParameter());
         return l;
     }
-
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
         return l;
     }
-
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding
      * properties and other metadata to the report design
@@ -97,7 +82,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
      * @return The report design
      */
     @Override
-
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "LostToFollowUp.xls");
         Properties props = new Properties();
@@ -106,45 +90,36 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         rd.setProperties(props);
         return rd;
     }
-
     @Override
     public ReportDefinition constructReportDefinition() {
         ReportDefinition rd = new ReportDefinition();
-
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-
         CohortDefinition patientOnArt = artCohortLibrary.activeClientOnART();
-
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(patientOnArt));
         addColumn( dsd,"Patient ID", builtInPatientData.getPatientId());
 //        addColumn( dsd,"Start Date", df.getStartDateParameter());
-
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-        addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
-        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
+//        addColumn(dsd, "Last Clinical Consultation", hivPatientData.getDateOfLastEncounter());
+//        addColumn(dsd, "Last Expected Return", hivPatientData.getExpectedReturnDate());
 
+
+        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientOnArt));
-
         return rd;
-
     }
-
     @Override
     public String getVersion() {
         return "0.56";
     }
 }
-
-
