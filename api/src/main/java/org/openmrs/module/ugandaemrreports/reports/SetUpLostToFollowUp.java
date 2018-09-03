@@ -98,10 +98,12 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition patientOnArt = artCohortLibrary.activeClientOnART();
+//        CohortDefinition patientOnArt = artCohortLibrary.activeClientOnART();
+        CohortDefinition cleintsLostToFollowUp = df.getLostToFollowUp();
+
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientOnArt));
+        dsd.addRowFilter(Mapped.mapStraightThrough(cleintsLostToFollowUp));
         addColumn( dsd,"Patient ID", builtInPatientData.getPatientId());
 //        addColumn( dsd,"Start Date", df.getStartDateParameter());
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -109,13 +111,13 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-//        addColumn(dsd, "Last Clinical Consultation", hivPatientData.getDateOfLastEncounter());
+        addColumn(dsd, "Last Clinical Consultation",hivPatientData.getLastARTEncounter());
 //        addColumn(dsd, "Last Expected Return", hivPatientData.getExpectedReturnDate());
 
 
         addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientOnArt));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(cleintsLostToFollowUp));
         return rd;
     }
     @Override

@@ -980,8 +980,9 @@ public class DataFactory {
     public CohortDefinition getLostToFollowUp() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(90);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
-        return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getEverLost() {
@@ -1012,6 +1013,7 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
+
 
 
     public CohortDefinition getLostDuringPeriod() {
