@@ -976,6 +976,8 @@ public class DataFactory {
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
+
+
     public CohortDefinition getLostToFollowUp() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(90);

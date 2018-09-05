@@ -99,7 +99,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         CohortDefinition cleintsLostToFollowUp = df.getLostToFollowUp();
-
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(cleintsLostToFollowUp));
