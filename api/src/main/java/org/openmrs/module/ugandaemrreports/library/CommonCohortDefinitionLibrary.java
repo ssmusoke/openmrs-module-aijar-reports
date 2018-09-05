@@ -220,7 +220,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 		return hasObs(question, Arrays.asList(answers));
     }
 
-    /**
+    /*
      * Patients who have an obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param the answers to include as an ArrayList
@@ -240,7 +240,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
 	}    
     
-    /**
+    /*
      * Patients who have a text obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param answers the answers to include
@@ -284,7 +284,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
     
-    /**
+    /*
      * Patients who have a numeric obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param Operator 1
@@ -311,7 +311,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;    	
     }
     
-    /**
+    /*
      * Patients who have a numeric obs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param Operator 1
@@ -320,6 +320,8 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      */
     public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
         return hasNumericObs(question, operator1, value1, null, null);
-    }    
-    
+    }
+
+
+
 }
