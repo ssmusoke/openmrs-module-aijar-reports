@@ -79,7 +79,16 @@
         "label": "Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
         "order": 5
-      },{
+      },
+      {
+        "id": "Over Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Over Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=25794fdc-ad78-44f9-899a-f6c94ce0b7a5",
+        "order": 85
+      }
+    ,{
         "id": "Missed Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
