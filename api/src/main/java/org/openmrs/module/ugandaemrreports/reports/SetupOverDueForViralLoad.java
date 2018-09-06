@@ -90,7 +90,7 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "OverDueForViralLoad.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8,dataset:OVER_DUE_FOR_VIRAL_LOAD");
         props.put("sortWeight", "5000");
