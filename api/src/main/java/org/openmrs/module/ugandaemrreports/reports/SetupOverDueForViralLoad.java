@@ -141,7 +141,7 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.6";
+        return "0.8";
     }
 }
 
