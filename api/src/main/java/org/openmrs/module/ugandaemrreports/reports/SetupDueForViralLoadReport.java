@@ -110,7 +110,7 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition patientsOnArt = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition patientsOnArt = df.getPatientsDueForViralLoad(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());

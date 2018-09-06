@@ -110,11 +110,12 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition patientsOnArt = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition patientsOverDueForViralLoad = df.getPatientsOverDueForViralLoad(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientsOnArt));
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsOverDueForViralLoad));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -134,7 +135,7 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("OVER_DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOnArt));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOverDueForViralLoad));
 
         return rd;
     }

@@ -884,6 +884,29 @@ public class DataFactory {
         cd.addParameter(new Parameter("value2", "value2", Date.class));
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
     }
+    public CohortDefinition getPatientsDueForViralLoad(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
+    }
+
+    public CohortDefinition getPatientsOverDueForViralLoad(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
+    }
 
     public CohortDefinition getPatientsWithObsDuringWeek(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
