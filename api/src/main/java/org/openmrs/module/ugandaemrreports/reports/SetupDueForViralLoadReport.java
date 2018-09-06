@@ -110,11 +110,11 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition patientsOnArt = df.getPatientsDueForViralLoad(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsDueForViralLoad = df.getPatientsDueForViralLoad(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientsOnArt));
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsDueForViralLoad));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -134,7 +134,7 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOnArt));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsDueForViralLoad));
 
         return rd;
     }
