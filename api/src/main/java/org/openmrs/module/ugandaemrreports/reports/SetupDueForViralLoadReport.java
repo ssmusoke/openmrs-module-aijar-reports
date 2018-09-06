@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 @Component
-public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
+public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
 
@@ -47,22 +47,22 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "b26ab897-c2db-428a-81a3-17a275b21bf9";
+        return "19ec94ea-defe-4b1d-ae29-79c13de557b3";
     }
 
     @Override
     public String getUuid() {
-        return "25794fdc-ad78-44f9-899a-f6c94ce0b7a5";
+        return "23ef26dd-8e26-4109-b8f2-d102a119b901";
     }
 
     @Override
     public String getName() {
-        return " Over Due For Viral Load";
+        return "Due For Viral Load";
     }
 
     @Override
     public String getDescription() {
-        return " Over Due For Viral Load";
+        return "Due For Viral Load";
     }
 
     @Override
@@ -90,9 +90,9 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DueForViralLoad.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:OVER_DUE_FOR_VIRAL_LOAD");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:DUE_FOR_VIRAL_LOAD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -133,7 +133,7 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
-        rd.addDataSetDefinition("OVER_DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOnArt));
 
         return rd;
@@ -141,7 +141,7 @@ public class SetupOverDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.6";
+        return "0.56";
     }
 }
 

@@ -161,6 +161,14 @@
         "order": 65
       },
       {
+        "id": "Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
+        "order": 70
+      },
+      {
         "id": "Pre-ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
