@@ -166,7 +166,7 @@
         "type": "link",
         "label": "Over Due For Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=25794fdc-ad78-44f9-899a-f6c94ce0b7a5",
-        "order": 85
+        "order": 75
       }
     ,
       {
