@@ -23,6 +23,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("ab505422-26d9-41f1-a079-c3d222000440");
     }
 
+    public Concept getViralLoadQualitative() {
+        return getConcept("dca12261-30ab-102d-86b0-7a5022ba4115");
+    }
+
     public Concept getArtRegimenTransferInDate() {
         return getConcept("f363f153-f659-438b-802f-9cc1828b5fa9");
     }
@@ -181,7 +185,9 @@ public class HIVMetadata extends Metadata {
     public Concept getCurrentRegimen() {
         return getConcept("dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
     }
-
+    public Concept getCurrentViralLoad() {
+        return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
+    }
     public Concept getTransferIn() {
         return getConcept("ea730d69-7eec-486a-aaf2-54f8bab5a44c");
     }

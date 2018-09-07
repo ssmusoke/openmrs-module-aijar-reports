@@ -79,7 +79,16 @@
         "label": "Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
         "order": 5
-      },{
+      },
+      {
+        "id": "Over Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Over Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=25794fdc-ad78-44f9-899a-f6c94ce0b7a5",
+        "order": 85
+      }
+    ,{
         "id": "Missed Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -150,6 +159,14 @@
         "label": "Transfer In List",
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
         "order": 65
+      },
+      {
+        "id": "Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
+        "order": 70
       },
       {
         "id": "Pre-ART Register",
