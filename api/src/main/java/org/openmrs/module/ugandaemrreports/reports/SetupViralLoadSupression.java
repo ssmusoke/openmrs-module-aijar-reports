@@ -168,7 +168,9 @@ public class SetupViralLoadSupression extends UgandaEMRDataExportManager {
             dsd.addColumn("DOB", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
             addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
             addColumn(dsd,"intiationDate",hivPatientData.getARTStartDate());
-            
+            addColumn(dsd, "viralLoadDate", hivPatientData.getViralLoadDate());
+            addColumn(dsd, "viralLoad", hivPatientData.getCurrentViralLoad());
+
 
 
 
@@ -194,6 +196,6 @@ public class SetupViralLoadSupression extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-            return "0.1.5";
+            return "1.0";
         }
     }
