@@ -122,14 +122,10 @@ public class SetupDueForViralLoadReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-        addColumn(dsd, "Viral Load Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd, "Viral Load Date", hivPatientData.getMostRecentViralLoadDate());
         addColumn(dsd, "Viral Load Qualitative", hivPatientData.getViralLoadQualitative());
-        addColumn(dsd, "Viral Load", hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "Viral Load", hivPatientData.getViralLoad());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
-
-
-
-
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
