@@ -141,6 +141,6 @@ package org.openmrs.module.ugandaemrreports.reports;
 
         @Override
         public String getVersion() {
-        return "0.3";
+        return "0.1";
         }
         }
