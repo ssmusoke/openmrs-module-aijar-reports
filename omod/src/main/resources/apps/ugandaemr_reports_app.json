@@ -152,6 +152,14 @@
         "order": 65
       },
       {
+        "id": "Lost To Follow Up",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Lost To Follow Up",
+        "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
+        "order": 90
+      },
+      {
         "id": "Pre-ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
