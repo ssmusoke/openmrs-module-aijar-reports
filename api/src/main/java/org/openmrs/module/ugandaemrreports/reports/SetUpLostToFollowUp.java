@@ -124,15 +124,13 @@ package org.openmrs.module.ugandaemrreports.reports;
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
-                addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
-                addColumn(dsd, "Telephone", basePatientData.getTelephone());
-                addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
-                addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-                addColumn(dsd, "Current Regimen",hivPatientData.getCurrentRegimen());
-                addColumn(dsd, "Last Visit Date",hivPatientData.getLastVisitDate());
-                addColumn(dsd, "Last Appointment",hivPatientData.getExpectedReturnDate());
-                addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
-
+        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
+        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
+        addColumn(dsd, "Current Regimen",hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "Last Visit Date",hivPatientData.getLastVisitDate());
+        addColumn(dsd, "Last Appointment",hivPatientData.getExpectedReturnDate());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(clientsLostToFollowUp));
 
