@@ -158,7 +158,7 @@
         "type": "link",
         "label": "Lost Clients",
         "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
-        "order": 65
+        "order": 100
       },
       {
         "id": "Pre-ART Register",
