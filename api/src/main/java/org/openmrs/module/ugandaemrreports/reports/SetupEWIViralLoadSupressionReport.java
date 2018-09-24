@@ -40,7 +40,7 @@ import java.util.*;
 /**
  */
 @Component
-public class SetupViralLoadSupression extends UgandaEMRDataExportManager {
+public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManager {
 
         @Autowired
         private DataFactory df;

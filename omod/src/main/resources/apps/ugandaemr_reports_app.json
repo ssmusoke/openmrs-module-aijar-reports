@@ -81,14 +81,6 @@
         "order": 5
       },
       {
-        "id": "Over Due For Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Over Due For Viral Load",
-        "url": "reportingui/runReport.page?reportDefinition=25794fdc-ad78-44f9-899a-f6c94ce0b7a5",
-        "order": 85
-      }
-    ,{
         "id": "Missed Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -159,14 +151,6 @@
         "label": "Transfer In List",
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
         "order": 65
-      },
-      {
-        "id": "Due For Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Due For Viral Load",
-        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
-        "order": 70
       },
       {
         "id": "Pre-ART Register",
@@ -346,13 +330,6 @@
         "label": "Tx New Report",
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
-      },{
-        "id": "Pill Pickup Indicator",
-        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
-        "type": "link",
-        "label": "Pill Pickup Indicator",
-        "url": "reportingui/runReport.page?reportDefinition=06d0f9fb-29b6-4453-9b61-71a6c77cdf20",
-        "order":79
       },{
         "id": "Viral Load Supression Indicator",
         "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
