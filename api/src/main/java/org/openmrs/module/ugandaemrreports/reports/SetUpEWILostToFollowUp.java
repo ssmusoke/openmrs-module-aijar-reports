@@ -55,11 +55,11 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     }
     @Override
     public String getName() {
-        return " EWI Lost To Follow Up";
+        return " Early Warning Indicators - Lost to Followup";
     }
     @Override
     public String getDescription() {
-        return "EWI Lost To Follow Up";
+        return "Lost To Follow Up";
     }
     @Override
     public List<Parameter> getParameters() {
@@ -83,7 +83,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "LostToFollowUp.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EWILostToFollowUp.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:16,dataset:LOST_TO_FOLLOW_UP");
         props.put("sortWeight", "5000");
@@ -93,6 +93,9 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     @Override
     public ReportDefinition constructReportDefinition() {
         ReportDefinition rd = new ReportDefinition();
+        String startDate = "12m";
+        String enddate   ="15m";
+
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
@@ -110,6 +113,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Last Clinical Consultation",hivPatientData.getLastARTEncounter());
 
+      addColumn(dsd, "Last Clinical Consultation Missed",hivPatientData.getLastVisitDate());
 
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(cleintsLostToFollowUp));
@@ -117,6 +121,6 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "0.56";
+        return "0.58";
     }
 }
