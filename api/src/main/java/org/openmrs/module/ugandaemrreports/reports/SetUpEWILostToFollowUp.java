@@ -98,7 +98,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition cleintsLostToFollowUp = df.getLostToFollowUp();
+        CohortDefinition cleintsLostToFollowUp = hivCohortDefinitionLibrary.getEarlyWarningIndicatorDataAbstractionCohort();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(cleintsLostToFollowUp));
@@ -111,7 +111,6 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "Last Clinical Consultation",hivPatientData.getLastARTEncounter());
 
 
-        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(cleintsLostToFollowUp));
         return rd;
