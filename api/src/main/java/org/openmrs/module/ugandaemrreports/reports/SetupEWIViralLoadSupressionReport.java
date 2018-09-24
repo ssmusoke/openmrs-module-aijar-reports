@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.joda.time.LocalDate;
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttributeType;
@@ -7,12 +8,16 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -23,6 +28,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
@@ -88,7 +94,7 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
         @Override
         public String getName() {
-            return "Viral Load Supression";
+            return "Early Warning Indicator/Viral Load Supression";
         }
 
         @Override
@@ -177,6 +183,14 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
             return rd;
         }
 
+//        public PatientDataDefinition getViralLoad9T015AfterARTStartDate(){
+//            LocalDate date =  StubDate.dateOf(hivPatientData.getARTStartDate().toString());
+//            String dateString = date.toString("yyyy-MM-dd");
+//            ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(hivMetadata.getViralLoadDate(),Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.FIRST);
+//            String startDate = Parameters.createParameterBeforeDuration("startDate", dateString, "9m");
+//            String endDate = Parameters.createParameterBeforeDuration("endDate", dateString,"15m");
+//           return  df.createPatientDataDefinition(def,  df.getObsDatetimeConverter(), Parameters.combineParameters(startDate, endDate));
+//        }
 
 
         public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
@@ -196,6 +210,6 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
         @Override
         public String getVersion() {
-            return "1.0";
+            return "1.5";
         }
     }

@@ -331,10 +331,10 @@
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
       },{
-        "id": "Viral Load Supression Indicator",
+        "id": "Viral Load Supression Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
         "type": "link",
-        "label": "Viral Load Supression Indicator",
+        "label": "Viral Load Supression Report",
         "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
         "order":89
       }
