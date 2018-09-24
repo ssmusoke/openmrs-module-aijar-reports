@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 @Component
-public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
+public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
     @Autowired
