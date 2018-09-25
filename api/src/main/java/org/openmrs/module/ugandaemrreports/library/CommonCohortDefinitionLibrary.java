@@ -244,6 +244,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 
 
 
+
     public CohortDefinition below1Year() {
         return agedAtMost(1);
     }
