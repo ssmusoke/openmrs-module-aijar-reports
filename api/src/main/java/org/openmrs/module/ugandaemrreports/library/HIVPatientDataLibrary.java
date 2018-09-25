@@ -88,6 +88,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
+    public PatientDataDefinition getCurrentViralLoad() {
+        return df.getObs(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
+
+    }
+
     public PatientDataDefinition getCurrentRegimen() {
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
@@ -446,6 +451,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getArtStartDate() {
         return df.getObs(hivMetadata.getArtStartDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsDatetimeConverter());
     }
+    public PatientDataDefinition getViralLoadDate() {
+        return df.getObs(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+    }
+
 
     public PatientDataDefinition getAnyBaselineCD4() {
         return df.getObs(hivMetadata.getBaselineCD4(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueNumericConverter());
