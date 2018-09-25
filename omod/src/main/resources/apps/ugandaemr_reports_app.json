@@ -349,8 +349,14 @@
         "label": "Pill Pickup Indicator",
         "url": "reportingui/runReport.page?reportDefinition=06d0f9fb-29b6-4453-9b61-71a6c77cdf20",
         "order":79
+      },{
+        "id": "Viral Load Supression Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Viral Load Supression Report",
+        "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
+        "order":89
       }
-
 
     ]
   }
