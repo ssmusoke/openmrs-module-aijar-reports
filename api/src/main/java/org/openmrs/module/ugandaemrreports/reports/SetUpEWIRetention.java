@@ -1,31 +1,24 @@
 package org.openmrs.module.ugandaemrreports.reports;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EarlyWarningIndicatorsDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
-import org.openmrs.reporting.data.DatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-@Component
-public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
+
+public class SetUpEWIRetention extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
     @Autowired
@@ -41,25 +34,25 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
     @Autowired
-    private ARTCohortLibrary  artCohortLibrary;
+    private ARTCohortLibrary artCohortLibrary;
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "3e7363e9-33d8-4b6c-b290-0314d1910c87";
+        return "53b870e7-ecb9-4b57-8a0c-2778a884e4d3";
     }
     @Override
     public String getUuid() {
-        return "e66d26f2-baf9-4b07-bbb8-335e4258ced0";
+        return "34d5e226-d408-4bc4-bda7-f6b5407aefed";
     }
     @Override
     public String getName() {
-        return " Early Warning Indicators - Lost to Followup";
+        return " Early Warning Indicators - Retention";
     }
     @Override
     public String getDescription() {
-        return "Lost To Follow Up";
+        return "Retention";
     }
     @Override
     public List<Parameter> getParameters() {
@@ -77,13 +70,13 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding
      * properties and other metadata to the report design
-     *
+     *created by solemabrothers
      * @param reportDefinition
      * @return The report design
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EWILostToFollowUp.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "Retention.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:16,dataset:LOST_TO_FOLLOW_UP");
         props.put("sortWeight", "5000");
@@ -105,7 +98,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(cleintsLostToFollowUp));
-        addColumn( dsd,"Patient ID", hivPatientData.getClinicNumber());
+        addColumn( dsd,"Patient ID", builtInPatientData.getPatientId());
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
@@ -113,7 +106,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Last Clinical Consultation",hivPatientData.getLastARTEncounter());
 
-      addColumn(dsd, "Last Clinical Consultation Missed",hivPatientData.getLastVisitDate());
+        addColumn(dsd, "Last Clinical Consultation Missed",hivPatientData.getLastVisitDate());
 
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(cleintsLostToFollowUp));
@@ -124,3 +117,5 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         return "0.58";
     }
 }
+
+
