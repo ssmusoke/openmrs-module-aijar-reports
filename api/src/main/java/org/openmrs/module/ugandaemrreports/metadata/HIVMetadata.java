@@ -185,6 +185,9 @@ public class HIVMetadata extends Metadata {
     public Concept getTransferIn() {
         return getConcept("ea730d69-7eec-486a-aaf2-54f8bab5a44c");
     }
+    public Concept getCurrentViralLoad() {
+        return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
+    }
 
     public Concept getYes() {
         return getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115");
