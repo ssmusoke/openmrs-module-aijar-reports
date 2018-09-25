@@ -99,7 +99,6 @@
 
     </div>
     <div class="info-container column">
-
        <% if (mer) { %>
           <div class="info-section">
                 <div class="info-header"><h3>Mer Reports</h3></div>
@@ -131,8 +130,6 @@
             </div>
         </div>
         <% } %>
-
-
 
         <% if (integration) { %>
         <div class="info-section">
