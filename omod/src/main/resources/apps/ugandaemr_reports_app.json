@@ -351,6 +351,20 @@
         "label": "Tx New Report",
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
+      },{
+        "id": "Pill Pickup",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Pill Pickup",
+        "url": "reportingui/runReport.page?reportDefinition=06d0f9fb-29b6-4453-9b61-71a6c77cdf20",
+        "order":79
+      },{
+        "id": "Viral Load Supression",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Viral Load Supression",
+        "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
+        "order":89
       }
 
     ]
