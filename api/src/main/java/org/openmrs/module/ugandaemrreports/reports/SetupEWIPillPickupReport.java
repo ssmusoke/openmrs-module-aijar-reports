@@ -39,7 +39,7 @@ import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.
 /**
  */
 @Component
-public class SetupPillPickupIndicator extends UgandaEMRDataExportManager {
+public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -87,7 +87,7 @@ public class SetupPillPickupIndicator extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Pill Pickup";
+        return "Early Warning Indicators/Pill Pickup";
     }
 
     @Override
