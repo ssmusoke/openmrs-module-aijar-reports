@@ -4,12 +4,11 @@ import java.util.Arrays;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -394,5 +393,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getActiveWithNoEncounterInQuarter() {
         return df.getActiveInPeriodWithoutVisit();
+    }
+
+    public PatientDataDefinition getMissedAppoinmentBetween12And15(String startDate, String enddate) {
+        return (PatientDataDefinition) df.getMissedAppointmentDuringperiod(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(),startDate,enddate, BaseObsCohortDefinition.TimeModifier.ANY);
+
     }
 }

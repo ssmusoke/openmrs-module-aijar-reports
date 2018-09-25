@@ -935,6 +935,14 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=startDate"));
     }
 
+    public CohortDefinition getMisssedAppointmentBetween12an15(Concept dateConcept, List<EncounterType> types, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(7);
+
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate-" + olderThan + ",value2=endDate-" + olderThan));
+    }
     public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(Concept dateConcept, List<EncounterType> types, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -953,7 +961,6 @@ public class DataFactory {
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        // cd.addParameter(new Parameter("onOrBefore", "onOrBefore", Date.class));
         Map<String, String> params = new HashMap<>();
         if (olderThan != null) {
             cd.setOperator1(RangeComparator.LESS_THAN);
@@ -1028,6 +1035,14 @@ public class DataFactory {
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+    public CohortDefinition getMissedAppointmentDuringperiod(Concept dateConcept, List<EncounterType> types,String startDate,String endDate, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(7);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate-" + startDate + ",value2=endDate-" + endDate));
+
     }
 
 
