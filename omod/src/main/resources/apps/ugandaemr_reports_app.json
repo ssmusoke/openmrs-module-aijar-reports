@@ -328,14 +328,7 @@
         "order": 5
       },
 
-      {
-        "id": " EWI Retention ",
-        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
-        "type": "link",
-        "label": " Retention",
-        "url": "reportingui/runReport.page?reportDefinition=34d5e226-d408-4bc4-bda7-f6b5407aefed",
-        "order": 5
-      },
+     
 
       {
         "id": "Tx Current Report",
