@@ -36,12 +36,12 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c";
+		return "2b12d696-cb8a-407c-905b-c86583d62416";
 	}
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "1.0";
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "19cb4e89-cc1a-49ce-82aa-8c5982a00599";
+		return "9c382154-29ff-498d-8d83-93a10ccf4589";
 	}
 	
 	@Override
@@ -58,10 +58,12 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		l.add(df.getStartDateParameter());
 		return l;
 	}
+
 	
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
+		l.add(buildExcel(reportDefinition));
 		l.add(buildReportDesign(reportDefinition));
 		return l;
 	}
@@ -73,9 +75,15 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	 * @param reportDefinition
 	 * @return The report design
 	 */
-	@Override	
+	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MaternityRegister.xls");
+		ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+		return rd;
+	}
+
+
+	public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+		ReportDesign rd = createExcelTemplateDesign("bf653af7-f832-48ce-8c87-43e357093745", reportDefinition, "MaternityRegister.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:8,dataset:Maternity");
 		props.put("sortWeight", "5000");
