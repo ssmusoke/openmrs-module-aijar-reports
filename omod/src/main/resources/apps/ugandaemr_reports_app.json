@@ -174,7 +174,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "Maternity Register",
-        "url": "reportingui/runReport.page?reportDefinition=640cfa10-c96b-4a37-837f-77cffe08d771",
+        "url": "reportingui/runReport.page?reportDefinition=57a1a1b6-097f-4596-b150-c01215dc5fae",
         "order": 11
       },
 	  {
