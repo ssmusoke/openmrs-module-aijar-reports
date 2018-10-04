@@ -105,7 +105,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(cleintsLostToFollowUp));
-        addColumn( dsd,"Patient ID", builtInPatientData.getPatientId());
+        addColumn( dsd,"Patient ID", hivPatientData.getClinicNumber());
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
