@@ -36,7 +36,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getUuid() {
-		return "57a1a1b6-097f-4596-b150-c01215dc5fae";
+		return "2b12d696-cb8a-407c-905b-c86583d62416";
 	}
 	
 	@Override
@@ -49,7 +49,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "898f734e-f635-422d-af73-ff2298c4a682";
+		return "9c382154-29ff-498d-8d83-93a10ccf4589";
 	}
 	
 	@Override
@@ -83,7 +83,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 
 
 	public ReportDesign buildExcel(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign("cadc47e8-d893-40ef-9256-eba0c0aa7753", reportDefinition, "MaternityRegister.xls");
+		ReportDesign rd = createExcelTemplateDesign("bf653af7-f832-48ce-8c87-43e357093745", reportDefinition, "MaternityRegister.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:8,dataset:Maternity");
 		props.put("sortWeight", "5000");
