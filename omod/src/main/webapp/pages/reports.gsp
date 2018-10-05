@@ -8,7 +8,8 @@
     def registers = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.registers")
     def quarterly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.quarterly")
     def integration = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.integrationdataexports")
-
+    def mer = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.mer")
+    def ewi = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.ewi")
     def contextModel = [:]
 %>
 
@@ -95,8 +96,41 @@
             </div>
         </div>
         <% } %>
+
     </div>
     <div class="info-container column">
+       <% if (mer) { %>
+          <div class="info-section">
+                <div class="info-header"><h3>Mer Reports</h3></div>
+
+                <div class="info-body">
+                    <ul>
+                        <% mer.each { %>
+                        <li>
+                            ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                        </li>
+                        <% } %>
+                    </ul>
+                </div>
+           </div>
+       <% } %>
+
+       <% if (ewi) { %>
+        <div class="info-section">
+            <div class="info-header"><h3>Early Warning Indicators</h3></div>
+
+            <div class="info-body">
+                <ul>
+                    <% ewi.each { %>
+                    <li>
+                        ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+
         <% if (integration) { %>
         <div class="info-section">
             <div class="info-header"><h3>Integration Data Exports</h3></div>

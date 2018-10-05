@@ -1,20 +1,16 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,35 +26,17 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
 
-    @Autowired
-    private CommonReportMetadata commonMetadata;
-
-    @Autowired
-    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
-
-    @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
-
-    @Autowired
-    private HIVPatientDataLibrary hivPatientData;
-
-    @Autowired
-    private BasePatientDataLibrary basePatientData;
-
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "98e9202d-8c00-415f-9882-43917181f087";
+        return "59f5f5fb-8a85-4b1d-ab09-229277540d38";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e206-c3cd-4dc1-b332-13f1d02f1cc2";
+        return "a4743b94-c76a-4d9d-90f1-d48003394da6";
     }
 
     @Override
@@ -75,7 +53,7 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
-        //l.add(df.getEndDateParameter());
+        l.add(df.getEndDateParameter());
         return l;
     }
 
@@ -83,6 +61,7 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcel(reportDefinition));
         return l;
     }
 
@@ -95,10 +74,7 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityPreARTRegister.xls");
-        Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:PRE_ART");
-        rd.setProperties(props);
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
         return rd;
     }
 
@@ -119,8 +95,16 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
         return rd;
     }
 
+    public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("568867cc-591a-42ec-8a79-affaf6eea2f9", reportDefinition, "FacilityPreARTRegister.xls");
+        Properties props = new Properties();
+        props.put("repeatingSections", "sheet:1,row:9,dataset:PRE_ART");
+        rd.setProperties(props);
+        return rd;
+    }
+
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2.1";
     }
 }
