@@ -41,7 +41,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.4";
+		return "0.6";
 	}
 	
 	/**
@@ -56,6 +56,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
 		l.add(df.getStartDateParameter());
+		l.add(df.getEndDateParameter());
 		return l;
 	}
 	
