@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
@@ -23,6 +24,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EWIPillPickupDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EarlyWarningIndicatorsDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
@@ -50,26 +52,15 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
 
-    @Autowired
+//    @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
 
     @Autowired
     private HIVPatientDataLibrary hivPatientData;
 
     @Autowired
-    private BasePatientDataLibrary basePatientData;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
-
-    @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
-    @Autowired
-    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
-
-    @Autowired
-    private CommonDimensionLibrary commonDimensionLibrary;
 
 
     /**
@@ -100,14 +91,15 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
-
         return l;
     }
 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -139,7 +131,8 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
         CohortIndicatorDataSetDefinition cd = new CohortIndicatorDataSetDefinition();
         rd.addDataSetDefinition("CD", Mapped.mapStraightThrough(cd));
-        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+//        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+        EWIPillPickupDataSetDefinition dsd = new EWIPillPickupDataSetDefinition();
         dsd.setParameters(getParameters());
 
         rd.addDataSetDefinition("PP", Mapped.mapStraightThrough(dsd));
@@ -149,25 +142,23 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
         CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
 
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-        CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-        CohortDefinition havingEncounterDuringPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter,transferredInToCareDuringPeriod,havingEncounterDuringPeriod);
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
 
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
+//        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
+//        dsd.addRowFilter(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
 
-       addIndicator(cd,"noOfPatients","",beenOnArtDuringQuarter,"");
+       addIndicator(cd,"noOfPatients","",onArtDuringQuarter,"");
 
-        addColumn(dsd,"PatientID", builtInPatientData.getPatientId());
-        addColumn(dsd, "PatientID", builtInPatientData.getPatientId());
-        addColumn( dsd,"Sex", builtInPatientData.getGender());
-        dsd.addColumn("DOB", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
-        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
-        addColumn(dsd,"pickupDate",hivPatientData.getExpectedReturnDateDuringPeriod());
+//        addColumn(dsd,"PatientID", builtInPatientData.getPatientId());
+//        addColumn(dsd, "PatientID", builtInPatientData.getPatientId());
+//        addColumn( dsd,"Sex", builtInPatientData.getGender());
+//        dsd.addColumn("DOB", builtInPatientData.getBirthdate(),"",new BirthDateConverter());
+//        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
+//        addColumn(dsd,"pickupDate",hivPatientData.getExpectedReturnDateDuringPeriod());
 
 
 
@@ -193,6 +184,6 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.7";
+        return "0.4.3.3";
     }
 }
