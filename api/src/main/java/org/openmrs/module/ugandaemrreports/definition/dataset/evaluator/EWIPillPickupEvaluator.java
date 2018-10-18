@@ -59,7 +59,7 @@ public class EWIPillPickupEvaluator implements DataSetEvaluator {
 
 
             String ewiDataQuery = ewiPillPickupPatientDataQuery(startDate,endDate,cohortString);
-            List<EWIPatientData> ewiPatientData = getEWIPatients(sqlConnection(), ewiDataQuery);
+            List<EWIPatientData> ewiPatientData = getEWIPillPickupPatients(sqlConnection(), ewiDataQuery);
             Map<Integer, List<EWIPatientData>> groupedPatientData = ewiPatientData.stream().collect(groupingBy(EWIPatientData::getPersonId));
             PatientDataHelper pdh = new PatientDataHelper();
             for (Integer patient : patients) {
@@ -79,6 +79,8 @@ public class EWIPillPickupEvaluator implements DataSetEvaluator {
 
                         else if(patientData.getDeathDate()==null &&patientData.getTransferOutDate()!=null)
                             pdh.addCol(row,"transferOrDeath",new SimpleDateFormat("yyyy-MM-dd").parse(patientData.getTransferOutDate()));
+                        else if(patientData.getDeathDate()==null &&patientData.getTransferOutDate()==null &&patientData.getArv_stop()!=null)
+                            pdh.addCol(row,"transferOrDeath",new SimpleDateFormat("yyyy-MM-dd").parse(patientData.getArv_stop()));
                         else
                             pdh.addCol(row,"transferOrDeath","");
 

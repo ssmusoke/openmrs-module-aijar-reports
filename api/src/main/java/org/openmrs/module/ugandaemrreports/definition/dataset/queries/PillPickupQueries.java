@@ -47,7 +47,9 @@ public class PillPickupQueries {
         return String.format("select p.person_id,\n" +
                 "       p.gender,\n" +
                 "      DATE(p.birthdate) ,\n" +
-                "       p.death_date,\n" +
+                "       (select DATE(pe.death_date) from person pe where \n" +
+                " pe.death_date between '%s' and '%s' and \n" +
+                "pe.person_id= p.person_id group by pe.person_id)as  death_date,\n" +
                 "       pi.identifier,\n" +
                 "       (select DATE(o.value_datetime)\n" +
                 "        from obs o\n" +
@@ -58,14 +60,16 @@ public class PillPickupQueries {
                 "       (select DATE(o.value_datetime)\n" +
                 "        from obs o\n" +
                 "        where o.person_id = p.person_id\n" +
-                "          and o.concept_id = 99165\n" +
+                "          and o.concept_id = 99165 \n" +
                 "          and o.voided = 0\n" +
-                "        and o.value_datetime between '%s' and '%s' group by o.person_id) as transfer\n" +
+                "        and o.value_datetime between '%s' and '%s' group by o.person_id) as transfer,\n" +
+                "(select DATE(o.value_datetime) from obs o  where o.person_id = p.person_id \n" +
+                "and o.value_datetime between '%s' and '%s' and o.concept_id =99084 group by o.person_id) as arv_stop \n" +
                 "from person p\n" +
                 "       inner join patient_identifier pi on (p.person_id = pi.patient_id)\n" +
                 "where pi.identifier_type = (select patient_identifier_type_id\n" +
                 "                            from patient_identifier_type pit\n" +
                 "                            where pit.uuid = 'e1731641-30ab-102d-86b0-7a5022ba4115')\n" +
-                "  and p.person_id in (%s);",startDate,endDate, cohortString);
+                "  and p.person_id in (%s);",startDate,endDate,startDate,endDate,startDate,endDate, cohortString);
     }
 }

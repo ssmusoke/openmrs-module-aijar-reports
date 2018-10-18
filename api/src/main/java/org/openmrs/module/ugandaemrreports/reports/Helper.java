@@ -515,7 +515,7 @@ public class Helper {
         return result;
     }
 
-    public static List<EWIPatientData> getEWIPatients(Connection connection, String sql)
+    public static List<EWIPatientData> getEWIPillPickupPatients(Connection connection, String sql)
             throws SQLException {
         Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
                 java.sql.ResultSet.CONCUR_READ_ONLY);
@@ -529,8 +529,9 @@ public class Helper {
             String deathDate = rs.getString(4);
             String clinicNo = rs.getString(5);
             String artStartDate = rs.getString(6);
-            String transferOutDate = rs.getString(6);
-            EWIPatientData p = new EWIPatientData(personId, gender, dob, deathDate, clinicNo, artStartDate, transferOutDate);
+            String transferOutDate = rs.getString(7);
+            String arv_stop = rs.getString(8);
+            EWIPatientData p = new EWIPatientData(personId, gender, dob, deathDate, clinicNo, artStartDate, transferOutDate,arv_stop);
             ewiPatientData.add(p);
         }
         rs.close();

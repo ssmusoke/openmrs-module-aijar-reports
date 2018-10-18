@@ -8,8 +8,21 @@ public class EWIPatientData {
     private String artClinicNumber;
     private String artStartDate;
     private String transferOutDate;
+    private String arv_stop;
     public EWIPatientData() {
     }
+
+    public EWIPatientData(Integer personId, String gender, String dob, String deathDate, String artClinicNumber, String artStartDate, String transferOutDate,String arv_stop) {
+        this.personId = personId;
+        this.gender = gender;
+        this.dob = dob;
+        this.deathDate = deathDate;
+        this.artClinicNumber = artClinicNumber;
+        this.artStartDate = artStartDate;
+        this.transferOutDate = transferOutDate;
+        this.arv_stop = arv_stop;
+    }
+
     public EWIPatientData(Integer personId, String gender, String dob, String deathDate, String artClinicNumber, String artStartDate, String transferOutDate) {
         this.personId = personId;
         this.gender = gender;
@@ -19,6 +32,7 @@ public class EWIPatientData {
         this.artStartDate = artStartDate;
         this.transferOutDate = transferOutDate;
     }
+
     public Integer getPersonId() {
         return personId;
     }
@@ -61,4 +75,6 @@ public class EWIPatientData {
     public void setTransferOutDate(String transferOutDate) {
         this.transferOutDate = transferOutDate;
     }
+    public String getArv_stop() { return arv_stop; }
+    public void setArv_stop(String arv_stop) { this.arv_stop = arv_stop; }
 }
