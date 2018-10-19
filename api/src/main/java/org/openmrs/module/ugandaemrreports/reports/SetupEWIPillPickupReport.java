@@ -129,38 +129,14 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(healthFacilityName()));
         String params = "startDate=${startDate},endDate=${endDate}";
 
-        CohortIndicatorDataSetDefinition cd = new CohortIndicatorDataSetDefinition();
-        rd.addDataSetDefinition("CD", Mapped.mapStraightThrough(cd));
-//        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
+
         EWIPillPickupDataSetDefinition dsd = new EWIPillPickupDataSetDefinition();
         dsd.setParameters(getParameters());
 
         rd.addDataSetDefinition("PP", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
-
-        CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
-
-        CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
-
-//        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
-
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-//        dsd.addRowFilter(Mapped.mapStraightThrough(beenOnArtDuringQuarter));
-
-       addIndicator(cd,"noOfPatients","",onArtDuringQuarter,"");
-
-//        addColumn(dsd,"PatientID", builtInPatientData.getPatientId());
-//        addColumn(dsd, "PatientID", builtInPatientData.getPatientId());
-//        addColumn( dsd,"Sex", builtInPatientData.getGender());
-//        dsd.addColumn("DOB", builtInPatientData.getBirthdate(),"",new BirthDateConverter());
-//        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
-//        addColumn(dsd,"pickupDate",hivPatientData.getExpectedReturnDateDuringPeriod());
-
-
 
         return rd;
     }
@@ -184,6 +160,6 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4.3.8";
+        return "0.4.4.7";
     }
 }

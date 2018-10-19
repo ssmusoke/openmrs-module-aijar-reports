@@ -5,6 +5,7 @@ import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
+import org.openmrs.module.reporting.dataset.DataSetColumn;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
@@ -48,16 +49,12 @@ public class EWIPillPickupEvaluator implements DataSetEvaluator {
             String cohortString = Joiner.on(',').join(patients);
             String encounterQuery = ewiPillPickupEncounterQuery(startDate, cohortString);
             String ewiPillPickupBaselinePickupQuery = ewiPillPickupBaselinePickupQuery(startDate,endDate,cohortString);
-//            List<EWIPatientEncounter> encounters = getEWIPatientEncounters(sqlConnection(), encounterQuery);
-//            Map<Integer, List<EWIPatientEncounter>> groupedPatients = encounters.stream().collect(groupingBy(EWIPatientEncounter::getPersonId));
 
             List<EWIPatientEncounter> encounters =getBaselinePickup(sqlConnection(),ewiPillPickupBaselinePickupQuery);
             List<EWIPatientEncounter> noOfDaysPickedEncounters = getNumberOfDaysPickedAtBaseline(sqlConnection(), ewiNumberOfDaysPickedAtBaselinePickup(startDate,endDate,cohortString));
-//
+
             Map<Integer, List<EWIPatientEncounter>> groupedPatients = encounters.stream() .collect(Collectors.groupingBy(EWIPatientEncounter::getPersonId));
             Map<Integer, List<EWIPatientEncounter>> groupedDaysOfPatients = noOfDaysPickedEncounters.stream() .collect(Collectors.groupingBy(EWIPatientEncounter::getPersonId));
-
-
             String ewiDataQuery = ewiPillPickupPatientDataQuery(startDate,endDate,cohortString);
             List<EWIPatientData> ewiPatientData = getEWIPillPickupPatients(sqlConnection(), ewiDataQuery);
             Map<Integer, List<EWIPatientData>> groupedPatientData = ewiPatientData.stream().collect(groupingBy(EWIPatientData::getPersonId));
