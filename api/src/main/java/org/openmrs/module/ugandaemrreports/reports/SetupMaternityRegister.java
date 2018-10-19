@@ -71,7 +71,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "4.2.2";
+		return "4.7";
 	}
 
 	/**
@@ -235,6 +235,8 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		dsd.addColumn("Breathing At Birth", sdd.definition("Breathing At Birth", getConcept("dc958e5c-ab9b-4c0c-b02d-d136b7505754")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BreathingStatusAtBirthDataConverter());
 		dsd.addColumn("Delivered By", nameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Name of Person Discharging", nameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
+		dsd.addColumn("First Minute", sdd.definition("First Minute", getConcept("056ee92e-3104-4529-8f83-70580e0f4501")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Fifth Minute", sdd.definition("First Minute", getConcept("015ab92b-c5de-40cc-903d-21612bf4d9ab")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
 		dsd.addColumn("Polio", sdd.definition("Polio", getConcept("dc883964-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
 		dsd.addColumn("BCG", sdd.definition("BCG", getConcept("dc8e1be9-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
