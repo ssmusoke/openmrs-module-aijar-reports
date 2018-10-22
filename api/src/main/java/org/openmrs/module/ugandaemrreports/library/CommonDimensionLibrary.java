@@ -1,5 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Program;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -9,6 +11,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +33,9 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
     private DataFactory df;
     @Autowired
     private HIVMetadata hivMetadata;
+
+    @Autowired
+    private CommonCohortLibrary commonCohortLibrary;
 
 
     @Override
@@ -339,7 +345,59 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     }
 
+    public CohortDefinitionDimension getProgramsDimensionGroup() {
+        CohortDefinitionDimension programDimension = new CohortDefinitionDimension();
 
+        CohortDefinition below2Years = cohortDefinitionLibrary.below2Years();
+        CohortDefinition between2And4Years = cohortDefinitionLibrary.between2And5Years();
+        CohortDefinition between5And14Years = cohortDefinitionLibrary.between5And14Years();
+        CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
+
+        CohortDefinition males = cohortDefinitionLibrary.males();
+        CohortDefinition females = cohortDefinitionLibrary.females();
+
+        CohortDefinition below2Male = df.getPatientsInAll(below2Years, males);
+        CohortDefinition below2Female = df.getPatientsInAll(below2Years, females);
+        CohortDefinition between2And4male = df.getPatientsInAll(between2And4Years, males);
+        CohortDefinition between2And4Female = df.getPatientsInAll(between2And4Years, females);
+
+        CohortDefinition between5And14Male = df.getPatientsInAll(between5And14Years, males);
+        CohortDefinition between5And14Female = df.getPatientsInAll(between5And14Years, females);
+        CohortDefinition above15Male = df.getPatientsInAll(above15Years, males);
+        CohortDefinition above15Female = df.getPatientsInAll(above15Years, females);
+
+//        getting cohort definitions for programs
+        CohortDefinition fbim_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition ftr = commonCohortLibrary.enrolled(getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
+        programDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        programDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+
+        //cohort defintion combiming programs to ageAndGenderCombined
+        CohortDefinition fbim_Below2Male = df.getPatientsInAll(fbim_patients,below2Male);
+        CohortDefinition fbim_Below2Female = df.getPatientsInAll(fbim_patients,below2Female);
+        CohortDefinition fbim_between2And4Male = df.getPatientsInAll(fbim_patients,between2And4male);
+        CohortDefinition fbim_between2And4Female = df.getPatientsInAll(fbim_patients,between2And4Female);
+        CohortDefinition fbim_between5And14Male = df.getPatientsInAll(fbim_patients,between5And14Male);
+        CohortDefinition fbim_between5And14Female = df.getPatientsInAll(fbim_patients,between5And14Female);
+        CohortDefinition fbim_above15Male = df.getPatientsInAll(fbim_patients,above15Male);
+        CohortDefinition fbim_above15Female = df.getPatientsInAll(fbim_patients,above15Female);
+
+        programDimension.addCohortDefinition("fbimbelow2Male", Mapped.mapStraightThrough(fbim_Below2Male));
+        programDimension.addCohortDefinition("fbimbelow2Female", Mapped.mapStraightThrough(fbim_Below2Female));
+        programDimension.addCohortDefinition("fbimbetween2And4Male", Mapped.mapStraightThrough(fbim_between2And4Male));
+        programDimension.addCohortDefinition("fbimbetween2And4Female", Mapped.mapStraightThrough(fbim_between2And4Female));
+        programDimension.addCohortDefinition("fbimbetween5And14Male", Mapped.mapStraightThrough(fbim_between5And14Male));
+        programDimension.addCohortDefinition("fbimbetween5And14Female", Mapped.mapStraightThrough(fbim_between5And14Female));
+        programDimension.addCohortDefinition("fbimabove15Male", Mapped.mapStraightThrough(fbim_above15Male));
+        programDimension.addCohortDefinition("fbimabove15Female", Mapped.mapStraightThrough(fbim_above15Female));
+
+        return programDimension;
+    }
+
+    public Program getProgramByUuid(String uuid){
+        Program program=Context.getProgramWorkflowService().getProgramByUuid(uuid);
+        return  program;
+    }
 
     public CohortDefinitionDimension getAdherenceGroup() {
         CohortDefinitionDimension adherenceDimension = new CohortDefinitionDimension();

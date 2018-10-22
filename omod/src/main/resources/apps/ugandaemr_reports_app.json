@@ -356,6 +356,14 @@
         "label": "Viral Load Supression",
         "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
         "order":89
+      },
+      {
+        "id": "HMIS 106a/DSDM",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106a /DSDM",
+        "url": "reportingui/runReport.page?reportDefinition=c05879b8-77db-4a91-90a9-34631cd0ca3b",
+        "order":99
       }
 
     ]
