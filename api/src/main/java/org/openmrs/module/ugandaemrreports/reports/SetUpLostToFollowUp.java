@@ -1,46 +1,43 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 
-        import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-        import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-        import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-        import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-        import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-        import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
-        import org.openmrs.module.reporting.evaluation.parameter.Mapped;
-        import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-        import org.openmrs.module.reporting.report.ReportDesign;
-        import org.openmrs.module.reporting.report.definition.ReportDefinition;
-        import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-        import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-        import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-        import org.openmrs.module.ugandaemrreports.library.DataFactory;
-        import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-        import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-        import org.springframework.beans.factory.annotation.Autowired;
-        import org.springframework.stereotype.Component;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.report.ReportDesign;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-        import java.util.ArrayList;
-        import java.util.List;
-        import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Daily Appointments List report
  */
-        @Component
-        public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
+@Component
+public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
+    @Autowired
+    private DataFactory df;
 
-        @Autowired
-        private DataFactory df;
+    @Autowired
+    ARTClinicCohortDefinitionLibrary hivCohorts;
 
-        @Autowired
-        ARTClinicCohortDefinitionLibrary hivCohorts;
+    @Autowired
+    private BuiltInPatientDataLibrary builtInPatientData;
 
-        @Autowired
-        private BuiltInPatientDataLibrary builtInPatientData;
-
-        @Autowired
-        private HIVPatientDataLibrary hivPatientData;
+    @Autowired
+    private HIVPatientDataLibrary hivPatientData;
 
         @Autowired
         private BasePatientDataLibrary basePatientData;
