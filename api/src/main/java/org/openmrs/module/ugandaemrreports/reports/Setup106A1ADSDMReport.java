@@ -213,17 +213,17 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
 
        // addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
-        addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
-        addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", enrolledWhenPregnantOrLactating);
-        addIndicator(dsd, "4i", "INH During Quarter", startedINHDuringQuarter, "");
-        addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
-        addIndicator(dsd, "6i", "Transfer In", transferredInTheQuarter, "");
-        addAge(dsd, "7", "On Pre-ART", onPreArt);
-        addAge(dsd, "8", "On Pre-ART CPT", onPreArtWhoReceivedCPT);
-        addIndicator(dsd, "9i", "On Pre-ART Assessed for TB", onPreArtAssessedForTB, "");
-        addIndicator(dsd, "10i", " Pre-ART Diagnosed with TB", onPreArtDiagnosedWithTB, "");
-        addIndicator(dsd, "11i", "On Pre-ART started TB Rx", onPreArtStartedTBRx, "");
-        addIndicator(dsd, "12i", "On Pre-ART Assessed for Malnutrition", onPreArtAssessedForMalnutrition, "");
+//        addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
+//        addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", enrolledWhenPregnantOrLactating);
+//        addIndicator(dsd, "4i", "INH During Quarter", startedINHDuringQuarter, "");
+//        addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
+//        addIndicator(dsd, "6i", "Transfer In", transferredInTheQuarter, "");
+////        addAge(dsd, "7", "On Pre-ART", onPreArt);
+//        addAge(dsd, "8", "On Pre-ART CPT", onPreArtWhoReceivedCPT);
+//        addIndicator(dsd, "9i", "On Pre-ART Assessed for TB", onPreArtAssessedForTB, "");
+//        addIndicator(dsd, "10i", " Pre-ART Diagnosed with TB", onPreArtDiagnosedWithTB, "");
+//        addIndicator(dsd, "11i", "On Pre-ART started TB Rx", onPreArtStartedTBRx, "");
+//        addIndicator(dsd, "12i", "On Pre-ART Assessed for Malnutrition", onPreArtAssessedForMalnutrition, "");
         addIndicator(dsd, "13i", "On Pre-ART those who are Malnourished", onPreArtWhoAreMalnourished, "");
         addIndicator(dsd, "14i", "Eligible but not started on art", eligibleButNotStartedByQuarter, "");
         addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", havingArtStartDateBeforeQuarter);
@@ -244,7 +244,72 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "29i", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition, "");
         addIndicator(dsd, "30i", "On Art malnourished", activeOnArtWhoAreMalnourished, "");
 
-        addProgram(dsd,"1","new cleints on ART ",havingArtStartDateDuringQuarter);
+        addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
+        addProgram(dsd, "2","fbim", "Started Art based on CD4", startedBasedOnCD4);
+        addProgram(dsd, "3", "fbim","Started ART when pregnant ", startedArtWhenPregnant);
+        addProgram(dsd,"4","fbim","Ever enrolled", cumulativeOnArt);
+        addProgram(dsd,"4","fbg","Ever enrolled", cumulativeOnArt);
+        addProgram(dsd,"4","ftr","Ever enrolled", cumulativeOnArt);
+        addProgram(dsd,"4","cddp","Ever enrolled", cumulativeOnArt);
+        addProgram(dsd,"4","cclad","Ever enrolled", cumulativeOnArt);
+
+        addProgram(dsd,"5","fbim","on First Line Regimen",onFirstLineRegimen);
+        addProgram(dsd,"5","fbg","on First Line Regimen",onFirstLineRegimen);
+        addProgram(dsd,"5","ftr","on First Line Regimen",onFirstLineRegimen);
+        addProgram(dsd,"5","cddp","on First Line Regimen",onFirstLineRegimen);
+        addProgram(dsd,"5","cclad","on First Line Regimen",onFirstLineRegimen);
+
+        addProgram(dsd,"6","fbim","on Second Line Regimen",onSecondLineRegimen);
+        addProgram(dsd,"6","fbg","on Second Line Regimen",onSecondLineRegimen);
+        addProgram(dsd,"6","ftr","on Second Line Regimen",onSecondLineRegimen);
+        addProgram(dsd,"6","cddp","on Second Line Regimen",onSecondLineRegimen);
+        addProgram(dsd,"6","cclad","on Second Line Regimen",onSecondLineRegimen);
+
+        addProgram(dsd,"7","fbim","on Third Line Regimen",onThirdLineRegimenDuringQuarter);
+
+        addProgram(dsd, "8","fbim", "On Art Received CPT", activeOnArtOnCPT);
+        addProgram(dsd, "8","fbg", "On Art Received CPT", activeOnArtOnCPT);
+        addProgram(dsd, "8","ftr", "On Art Received CPT", activeOnArtOnCPT);
+        addProgram(dsd, "8","cddp", "On Art Received CPT", activeOnArtOnCPT);
+        addProgram(dsd, "8","cclad", "On Art Received CPT", activeOnArtOnCPT);
+
+        addProgram(dsd, "9","fbim", "On Art assessed for TB", activeOnArtAssessedForTB);
+        addProgram(dsd, "9","fbg", "On Art assessed for TB", activeOnArtAssessedForTB);
+        addProgram(dsd, "9","ftr", "On Art assessed for TB", activeOnArtAssessedForTB);
+        addProgram(dsd, "9","cddp", "On Art assessed for TB", activeOnArtAssessedForTB);
+        addProgram(dsd, "9","cclad", "On Art assessed for TB", activeOnArtAssessedForTB);
+
+        addProgram(dsd, "10", "fbim","On Art diagnosed with TB", activeOnArtDiagnosedWithTB);
+        addProgram(dsd, "10", "fbg","On Art diagnosed with TB", activeOnArtDiagnosedWithTB);
+        addProgram(dsd, "10", "ftr","On Art diagnosed with TB", activeOnArtDiagnosedWithTB);
+        addProgram(dsd, "10", "cddp","On Art diagnosed with TB", activeOnArtDiagnosedWithTB);
+        addProgram(dsd, "10", "cclad","On Art diagnosed with TB", activeOnArtDiagnosedWithTB);
+
+        addProgram(dsd, "11","fbim", "On Art started TB Rx this quarter", activeOnArtStartedTBRx);
+
+        addProgram(dsd, "12","fbim", "On Art and TB treatment", activeOnArtOnTBRx);
+        addProgram(dsd, "12","fbg", "On Art and TB treatment", activeOnArtOnTBRx);
+        addProgram(dsd, "12","ftr", "On Art and TB treatment", activeOnArtOnTBRx);
+        addProgram(dsd, "12","cddp", "On Art and TB treatment", activeOnArtOnTBRx);
+        addProgram(dsd, "12","cclad", "On Art and TB treatment", activeOnArtOnTBRx);
+
+        addProgram(dsd, "13","fbim", "On Art good adherence", activeOnArtWithGoodAdherence);
+        addProgram(dsd, "13","fbg", "On Art good adherence", activeOnArtWithGoodAdherence);
+        addProgram(dsd, "13","ftr", "On Art good adherence", activeOnArtWithGoodAdherence);
+        addProgram(dsd, "13","cddp", "On Art good adherence", activeOnArtWithGoodAdherence);
+        addProgram(dsd, "13","cclad", "On Art good adherence", activeOnArtWithGoodAdherence);
+
+        addProgram(dsd, "14","fbim", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition);
+        addProgram(dsd, "14","fbg", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition);
+        addProgram(dsd, "14","ftr", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition);
+        addProgram(dsd, "14","cddp", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition);
+        addProgram(dsd, "14","cclad", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition);
+
+        addProgram(dsd, "15","fbim", "On Art malnourished", activeOnArtWhoAreMalnourished);
+        addProgram(dsd, "15","fbg", "On Art malnourished", activeOnArtWhoAreMalnourished);
+        addProgram(dsd, "15","ftr", "On Art malnourished", activeOnArtWhoAreMalnourished);
+        addProgram(dsd, "15","cddp", "On Art malnourished", activeOnArtWhoAreMalnourished);
+        addProgram(dsd, "15","cclad", "On Art malnourished", activeOnArtWhoAreMalnourished);
 
         return rd;
     }
@@ -267,15 +332,19 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, key + "i", label + " Total", cohortDefinition, "");
     }
 
-    public void addProgram(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key +"FBIMa" , label + " (FBIM below 2 years male)", cohortDefinition, "program=fbimbelow2Male");
-        addIndicator(dsd, key +"FBIMb" , label + " (FBIM below 2 years female)", cohortDefinition, "program=fbimbelow2Female");
-        addIndicator(dsd, key +"FBIMc" , label + " (FBIM between 2 and 4 years male)", cohortDefinition, "program=fbimbetween2And4Male");
-        addIndicator(dsd, key +"FBIMd" , label + " (FBIM between 2 and 4 years female)", cohortDefinition, "program=fbimbetween2And4Female");
-        addIndicator(dsd, key +"FBIMe" , label + " (FBIM between 5 and 14 years male)", cohortDefinition, "program=fbimbetween5And14Male");
-        addIndicator(dsd, key +"FBIMf" , label + " (FBIM between 5 and 14 years female)", cohortDefinition, "program=fbimbetween5And14Female");
-        addIndicator(dsd, key +"FBIMg" , label + " (FBIM above 15 years male)", cohortDefinition, "program=fbimabove15Male");
-        addIndicator(dsd, key +"FBIMh" , label + " (FBIM above 15 years female)", cohortDefinition, "program=fbimabove15Female");
+    public void addProgram(CohortIndicatorDataSetDefinition dsd, String key,String programKey, String label, CohortDefinition cohortDefinition) {
+        addProgramKey(dsd,key,programKey,label,cohortDefinition);
+    }
+
+    public void addProgramKey(CohortIndicatorDataSetDefinition dsd, String key, String programkey, String label, CohortDefinition cohortDefinition){
+        addIndicator(dsd, key +programkey.toUpperCase()+"a" , label + " (below 2 years male)", cohortDefinition, "program="+programkey+"below2Male");
+        addIndicator(dsd, key +programkey.toUpperCase() +"b" , label + " ( below 2 years female)", cohortDefinition, "program="+programkey+"below2Female");
+        addIndicator(dsd, key +programkey.toUpperCase()+"c" , label + " (between 2 and 4 years male)", cohortDefinition, "program="+programkey+"between2And4Male");
+        addIndicator(dsd, key +programkey.toUpperCase()+"d" , label + " (between 2 and 4 years female)", cohortDefinition, "program="+programkey+"between2And4Female");
+        addIndicator(dsd, key +programkey.toUpperCase()+"e" , label + " ( between 5 and 14 years male)", cohortDefinition, "program="+programkey+"between5And14Male");
+        addIndicator(dsd, key +programkey.toUpperCase()+"f" , label + " ( between 5 and 14 years female)", cohortDefinition, "program="+programkey+"between5And14Female");
+        addIndicator(dsd, key +programkey.toUpperCase()+"g" , label + " ( above 15 years male)", cohortDefinition, "program="+programkey+"above15Male");
+        addIndicator(dsd, key +programkey.toUpperCase()+"h" , label + " (above 15 years female)", cohortDefinition, "program="+programkey+"above15Female");
 
     }
 
@@ -296,6 +365,6 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.5";
+        return "0.2.5";
     }
 }
