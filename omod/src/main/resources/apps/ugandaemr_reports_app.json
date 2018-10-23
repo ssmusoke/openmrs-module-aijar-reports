@@ -144,7 +144,10 @@
         "label": "Transfer Out List",
         "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
         "order": 60
-      },{
+      },
+
+
+      {
         "id": "Transfer In List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -333,7 +336,17 @@
         "label": "Family Connect EMTCT Module Data Export",
         "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
         "order": 5
-      },{
+      },
+      {
+        "id": " EWI Lost To Follow Up",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": " Lost To Follow Up",
+        "url": "reportingui/runReport.page?reportDefinition=e66d26f2-baf9-4b07-bbb8-335e4258ced0",
+        "order": 5
+      },
+
+      {
         "id": "Tx Current Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
@@ -347,6 +360,20 @@
         "label": "Tx New Report",
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
+      },{
+        "id": "Pill Pickup",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Pill Pickup",
+        "url": "reportingui/runReport.page?reportDefinition=06d0f9fb-29b6-4453-9b61-71a6c77cdf20",
+        "order":79
+      },{
+        "id": "Viral Load Supression",
+        "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
+        "type": "link",
+        "label": "Viral Load Supression",
+        "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
+        "order":89
       }
 
     ]
