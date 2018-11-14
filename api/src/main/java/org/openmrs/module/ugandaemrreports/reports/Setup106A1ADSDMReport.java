@@ -170,6 +170,37 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
 
+        CohortDefinition diedDuringPeriod = df.getPatientsInAll(df.getDeadPatientsDuringPeriod());
+
+        CohortDefinition enrolledOnOrBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
+        CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
+
+        CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
+
+        CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod();
+
+        CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
+        CohortDefinition transferredInBeforeQuarter = hivCohortDefinitionLibrary.getTransferredInToCareBeforePeriod();
+
+        CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
+
+        CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledOnOrBeforeQuarter, enrolledInTheQuarter);
+        CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
+
+        CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
+        CohortDefinition lostToFollowup = df.getPatientsInAll(df.getEverLost(),cumulativeEverEnrolled);
+
+        CohortDefinition enrolledOnDSDMDuringQuarter =df.getEnrolledOnDSDM();
+        CohortDefinition goodAdherenceForLast6Months =df.getPatientsWithGoodAdherenceForLast6Months();
+        CohortDefinition onClinicalStage1or2 = df.getOnClinicalStage1or2();
+        CohortDefinition virallySupressedForLast12Months = df.getPatientsVirallySupressedForLast12Months();
+        CohortDefinition stablePatients = df.getPatientsInAll(onClinicalStage1or2,virallySupressedForLast12Months,
+                goodAdherenceForLast6Months,df.getPatientsInAny(onFirstLineRegimen,onSecondLineRegimen),onArtDuringQuarter);
+
+
+        addIndicator(dsd,"CUM","total on art before quater", havingArtStartDateBeforeQuarter,"");
+
+        addIndicator(dsd,"STABLE","total of stable patients", virallySupressedForLast12Months,"");
 
         addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
         addProgram(dsd, "2","fbim", "Started Art based on CD4", startedBasedOnCD4);
@@ -238,6 +269,26 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addProgram(dsd, "15","cddp", "On Art malnourished", activeOnArtWhoAreMalnourished);
         addProgram(dsd, "15","cclad", "On Art malnourished", activeOnArtWhoAreMalnourished);
 
+        addProgram(dsd,"18","fbim","lost to followup",lostToFollowup);
+        addProgram(dsd,"18","fbg","lost to followup",lostToFollowup);
+        addProgram(dsd,"18","ftr","lost to followup",lostToFollowup);
+        addProgram(dsd,"18","cddp","lost to followup",lostToFollowup);
+        addProgram(dsd,"18","cclad","lost to followup",lostToFollowup);
+
+        addProgram(dsd,"19","fbim","Dead",diedDuringPeriod);
+        addProgram(dsd,"19","fbg","Dead",diedDuringPeriod);
+        addProgram(dsd,"19","ftr","Dead",diedDuringPeriod);
+        addProgram(dsd,"19","cddp","Dead",diedDuringPeriod);
+        addProgram(dsd,"19","cclad","Dead",diedDuringPeriod);
+
+        addProgram(dsd,"16","fbg","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","ftr","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","cddp","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","cclad","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+
+
+
+
         return rd;
     }
 
@@ -286,6 +337,6 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.7";
+        return "0.2.44";
     }
 }

@@ -1030,6 +1030,33 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
+    public CohortDefinition getEnrolledOnDSDM() {
+        DSDMCohortDefinition cd = new DSDMCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithGoodAdherenceForLast6Months() {
+        DSDMAdherenceCohortDefinition cd = new DSDMAdherenceCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getOnClinicalStage1or2() {
+        DSDMClinicalStage1or2CohortDefinition cd = new DSDMClinicalStage1or2CohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsVirallySupressedForLast12Months() {
+        DSDMVirallySupressedCohortDefinition cd = new DSDMVirallySupressedCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
 
     public CohortDefinition getLostDuringPeriod() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
