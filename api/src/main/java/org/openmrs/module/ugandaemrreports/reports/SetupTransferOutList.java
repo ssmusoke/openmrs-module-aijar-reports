@@ -101,7 +101,7 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TransferOutList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:5,dataset:TRANSFER_OUT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:TRANSFER_OUT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -147,6 +147,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.4";
     }
 }
