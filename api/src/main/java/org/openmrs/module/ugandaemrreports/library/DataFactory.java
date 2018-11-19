@@ -1058,6 +1058,21 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
+    public CohortDefinition getUnsupressedVLPatients() {
+        DSDMUnsupressedVLCohortDefinition cd = new DSDMUnsupressedVLCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsOnArtForMoreThansMonths(Integer month) {
+        ArtStartCohortDefinition cd = new ArtStartCohortDefinition();
+        cd.setPeriodDifference(month);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
     public CohortDefinition getLostDuringPeriod() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(7);

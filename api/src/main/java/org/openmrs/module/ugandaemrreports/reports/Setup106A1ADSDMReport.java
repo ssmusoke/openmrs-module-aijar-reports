@@ -194,13 +194,16 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         CohortDefinition goodAdherenceForLast6Months =df.getPatientsWithGoodAdherenceForLast6Months();
         CohortDefinition onClinicalStage1or2 = df.getOnClinicalStage1or2();
         CohortDefinition virallySupressedForLast12Months = df.getPatientsVirallySupressedForLast12Months();
-        CohortDefinition stablePatients = df.getPatientsInAll(onClinicalStage1or2,virallySupressedForLast12Months,
-                goodAdherenceForLast6Months,df.getPatientsInAny(onFirstLineRegimen,onSecondLineRegimen),onArtDuringQuarter);
+        CohortDefinition onArtFor12MonthsAbove = df.getPatientsOnArtForMoreThansMonths(12);
+        CohortDefinition stablePatients = df.getPatientsInAll(virallySupressedForLast12Months,onClinicalStage1or2,
+                df.getPatientsInAny(onFirstLineRegimen,onSecondLineRegimen),goodAdherenceForLast6Months,onArtFor12MonthsAbove);
+
+        CohortDefinition unsupressedVL = df.getUnsupressedVLPatients();
 
 
         addIndicator(dsd,"CUM","total on art before quater", havingArtStartDateBeforeQuarter,"");
 
-        addIndicator(dsd,"STABLE","total of stable patients", virallySupressedForLast12Months,"");
+        addIndicator(dsd,"STABLE","total of stable patients",stablePatients,"");
 
         addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
         addProgram(dsd, "2","fbim", "Started Art based on CD4", startedBasedOnCD4);
@@ -269,6 +272,17 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addProgram(dsd, "15","cddp", "On Art malnourished", activeOnArtWhoAreMalnourished);
         addProgram(dsd, "15","cclad", "On Art malnourished", activeOnArtWhoAreMalnourished);
 
+        addProgram(dsd,"16","fbg","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","ftr","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","cddp","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+        addProgram(dsd,"16","cclad","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
+
+        addProgram(dsd,"17","fbim","unsupressed vl",unsupressedVL);
+        addProgram(dsd,"17","fbg","unsupressed vl",unsupressedVL);
+        addProgram(dsd,"17","ftr","unsupressed vl",unsupressedVL);
+        addProgram(dsd,"17","cddp","unsupressed vl",unsupressedVL);
+        addProgram(dsd,"17","cclad","unsupressed vl",unsupressedVL);
+
         addProgram(dsd,"18","fbim","lost to followup",lostToFollowup);
         addProgram(dsd,"18","fbg","lost to followup",lostToFollowup);
         addProgram(dsd,"18","ftr","lost to followup",lostToFollowup);
@@ -281,10 +295,6 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addProgram(dsd,"19","cddp","Dead",diedDuringPeriod);
         addProgram(dsd,"19","cclad","Dead",diedDuringPeriod);
 
-        addProgram(dsd,"16","fbg","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
-        addProgram(dsd,"16","ftr","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
-        addProgram(dsd,"16","cddp","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
-        addProgram(dsd,"16","cclad","DSDMEnrollment",enrolledOnDSDMDuringQuarter);
 
 
 
@@ -337,6 +347,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.44";
+        return "0.3";
     }
+
 }
