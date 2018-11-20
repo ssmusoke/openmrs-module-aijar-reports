@@ -43,6 +43,11 @@ public class LongRefillsCohortEvaluator implements CohortDefinitionEvaluator {
         String startDate = DateUtil.formatDate(cd.getStartDate(), "yyyy-MM-dd");
         String endDate = DateUtil.formatDate(cd.getEndDate(), "yyyy-MM-dd");
 
+
+    /*  query to get patients whose last encounter date in the
+       2 last quarters has return visit date wc is after current period
+       picks maximum encounters from  2 last quaters  which have return
+       visit date greater than current period*/
         String q ="select e.patient_id from obs o inner  join  \n " +
                 "    encounter e on o.encounter_id = e.encounter_id inner  join (SELECT patient_id,max(e.encounter_datetime )last_encounter FROM  encounter e where \n" +
         String.format("    e.encounter_datetime >= date_sub('%s', interval 6 month)  and e.encounter_datetime < '%s' group by patient_id) t  \n",startDate,startDate) +

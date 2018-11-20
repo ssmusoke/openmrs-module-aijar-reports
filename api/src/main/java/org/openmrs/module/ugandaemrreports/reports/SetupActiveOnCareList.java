@@ -62,12 +62,12 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Active On Care List";
+        return "Active Patients in Care";
     }
 
     @Override
     public String getDescription() {
-        return "Active On Care List";
+        return "Active Patients in Care";
     }
 
     @Override
@@ -115,12 +115,12 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
         CohortDefinition returnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition longAppointments = df.getPatientsWithLongRefills();
-        CohortDefinition definition = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInQuarter);
+        CohortDefinition definition = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInPeriod);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -136,12 +136,14 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         addColumn(dsd,"EnrollmentDate",hivPatientData.getEnrollmentDate());
         addColumn(dsd,"ARTStartDate",hivPatientData.getArtStartDate());
         addColumn(dsd,"BaseLineCD4",hivPatientData.getBaselineCD4());
+        addColumn(dsd,"BaselineRegimen",hivPatientData.getBaselineRegimen());
         addColumn(dsd,"CurrentRegimen",hivPatientData.getCurrentRegimen());
 
-        addColumn(dsd,"lastEncounterDate",hivPatientData.getLastEncounterDuringPeriod());
+        addColumn(dsd,"lastEncounterDate",hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd,"latestViralLoadDate",hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd,"latestViralLoad",hivPatientData.getViralLoadByEndDate());
-        addColumn(dsd,"returnVisitDate",hivPatientData.getReturnDateFromLastEncounterDuringPeriod());
+        addColumn(dsd,"latestVLQualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd,"returnVisitDate",hivPatientData.getLastReturnDateByEndDate());
 
 
 
@@ -154,6 +156,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.31";
+        return "0.33";
     }
 }

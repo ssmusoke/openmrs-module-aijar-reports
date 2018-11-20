@@ -357,10 +357,10 @@
         "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
         "order":89
       },{
-        "id": "Active On Care List",
+        "id": "Active Patients in Care",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Active on Care List",
+        "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
         "order": 99
       }
