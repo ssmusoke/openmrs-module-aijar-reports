@@ -500,4 +500,15 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getPatientArtSummaryEncounter(df.getEncounterDatetimeConverter());
     }
 
+    public PatientDataDefinition getLastViralLoadDateByEndDate() {
+        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+    }
+
+    public PatientDataDefinition getViralLoadByEndDate(){
+        return   df.getObsByEndDate(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
+    }
+    public PatientDataDefinition getVLQualitativeByEndDate(){
+        return   df.getObsByEndDate(hivMetadata.getViralLoadDetection(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+
 }

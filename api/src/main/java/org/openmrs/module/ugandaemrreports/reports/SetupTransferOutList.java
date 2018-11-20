@@ -138,6 +138,13 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
         addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
         addColumn(dsd, "Transfer Out Date", hivPatientData.getTODateDuringPeriod());
         addColumn(dsd, "Transfer Out To", hivPatientData.getToPlaceDuringPeriod());
+        addColumn(dsd, "mostRecentEncounter", df.getPatientEncounters(df.getEncounterDatetimeConverter()));
+        addColumn(dsd, "currentRegimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "lastViralLoadDate", hivPatientData.getLastViralLoadDateByEndDate());
+        addColumn(dsd, "lastViralLoad", hivPatientData.getViralLoadByEndDate());
+        addColumn(dsd, "lastVLQualitative", hivPatientData.getVLQualitativeByEndDate());
+
+
 
         rd.addDataSetDefinition("TRANSFER_OUT", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -147,6 +154,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4";
+        return "0.45";
     }
 }
