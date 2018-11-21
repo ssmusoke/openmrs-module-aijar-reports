@@ -1117,7 +1117,14 @@ public class DataFactory {
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate"));
     }
+    public CohortDefinition getClientsDueForViralLoad() {
+        DueForViralLoadPatientDataDefinition def = new DueForViralLoadPatientDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(def, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
 
+
+    }
 
 
 
