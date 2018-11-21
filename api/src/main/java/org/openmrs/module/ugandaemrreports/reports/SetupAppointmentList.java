@@ -121,8 +121,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-        addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
-        addColumn(dsd, "Given Name", builtInPatientData.getPreferredFamilyName());
+
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
