@@ -510,4 +510,14 @@ public class Cohorts {
 
         return cd;
     }
+    public static SqlCohortDefinition getPatientsOnARTForSixMOnths() {
+        SqlCohortDefinition patientsStartedCareByDate = new SqlCohortDefinition("select o.person_id from obs o where o.voided = false and o.concept_id in (99161) and TIMESTAMPDIFF(MONTH,o.value_datetime,(:endDate))>6 group by o.person_id");
+        patientsStartedCareByDate.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return patientsStartedCareByDate;
+    }
+    public static SqlCohortDefinition getPatientsWithViralLoad() {
+        SqlCohortDefinition patientsStartedCareByDate = new SqlCohortDefinition("Select o.person_id from obs o where o.concept_id =163023");
+//        patientsStartedCareByDate.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return patientsStartedCareByDate;
+    }
 }
