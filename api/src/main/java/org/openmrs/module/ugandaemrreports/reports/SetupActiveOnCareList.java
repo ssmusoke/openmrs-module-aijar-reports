@@ -115,12 +115,17 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition exclusionpatients =df.getPatientsInAny(deadPatients,transferedOut);
+
         CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
         CohortDefinition returnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition longAppointments = df.getPatientsWithLongRefills();
-        CohortDefinition definition = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInPeriod);
+        CohortDefinition eligiblePatientOnCare = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInPeriod);
+        CohortDefinition definition =df.getPatientsNotIn(eligiblePatientOnCare,exclusionpatients);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -156,6 +161,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.35";
+        return "0.3";
     }
 }
