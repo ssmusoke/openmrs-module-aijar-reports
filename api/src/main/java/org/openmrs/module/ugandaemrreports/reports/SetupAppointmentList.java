@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.reports;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -121,7 +122,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-
+        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
@@ -135,6 +136,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.56";
+        return "0.7";
     }
 }
