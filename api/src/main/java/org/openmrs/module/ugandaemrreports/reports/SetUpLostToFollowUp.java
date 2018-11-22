@@ -2,7 +2,8 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
+import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -10,10 +11,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Daily Appointments List report
+ * Lost to follow up Clients  report
  */
 @Component
 public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
@@ -38,6 +36,8 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVPatientDataLibrary hivPatientData;
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
         @Autowired
         private BasePatientDataLibrary basePatientData;
@@ -112,12 +112,16 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition patientsDeadAndtransferedOut =df.getPatientsInAny(deadPatients,transferedOut);
         CohortDefinition clientsLostToFollowUp = df.getLostToFollowUp();
+
+        CohortDefinition definition = df.getPatientsNotIn(clientsLostToFollowUp,patientsDeadAndtransferedOut);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(clientsLostToFollowUp));
+        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
@@ -129,13 +133,13 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "Last Visit Date",hivPatientData.getLastVisitDate());
         addColumn(dsd, "Last Appointment",hivPatientData.getExpectedReturnDate());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(clientsLostToFollowUp));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
         return rd;
         }
 
         @Override
         public String getVersion() {
-        return "0.1";
+        return "0.4";
         }
         }
