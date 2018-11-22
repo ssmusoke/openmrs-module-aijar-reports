@@ -1,23 +1,21 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.PersonAttributeType;
-import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.*;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,17 +23,13 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupTransferOutList extends UgandaEMRDataExportManager {
+public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-
-    @Autowired
-    HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
 
     @Autowired
     private BuiltInPatientDataLibrary builtInPatientData;
@@ -49,27 +43,31 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
     @Autowired
     private HIVMetadata hivMetadata;
 
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "f609e69b-1015-44c4-a9d1-0f401b49918b";
+        return "929ccd38-7efb-4b7d-b6a5-255b258d5d01";
     }
 
     @Override
     public String getUuid() {
-        return "2404d86c-81a4-4fda-9e77-ea4d6eacdfb6";
+        return "9d6c7e51-2257-4f56-addc-e37e8272ff9d";
     }
 
     @Override
     public String getName() {
-        return "Transfer Out List";
+        return "Active Patients in Care";
     }
 
     @Override
     public String getDescription() {
-        return "Transfer Out List";
+        return "Active Patients in Care";
     }
 
     @Override
@@ -97,9 +95,9 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TransferOutList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ActiveoncareList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:TRANSFER_OUT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:ACTIVEONCARE_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -117,35 +115,45 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition exclusionpatients =df.getPatientsInAny(deadPatients,transferedOut);
 
-        PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
+        CohortDefinition returnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition longAppointments = df.getPatientsWithLongRefills();
+        CohortDefinition eligiblePatientOnCare = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInPeriod);
+        CohortDefinition definition =df.getPatientsNotIn(eligiblePatientOnCare,exclusionpatients);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
-        dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
-        dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
-        dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-        addColumn(dsd, "HIVEnrollmentDate", hivPatientData.getSummaryPageDate());
-        addColumn(dsd, "ArtStartDate", hivPatientData.getArtStartDate());
-        addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
-        addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
-        addColumn(dsd, "Transfer Out Date", hivPatientData.getTODateDuringPeriod());
-        addColumn(dsd, "Transfer Out To", hivPatientData.getToPlaceDuringPeriod());
-        addColumn(dsd, "mostRecentEncounter", df.getPatientEncounters(df.getEncounterDatetimeConverter()));
-        addColumn(dsd, "currentRegimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "lastViralLoadDate", hivPatientData.getLastViralLoadDateByEndDate());
-        addColumn(dsd, "lastViralLoad", hivPatientData.getViralLoadByEndDate());
-        addColumn(dsd, "lastVLQualitative", hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
+        addColumn(dsd, "Sex", builtInPatientData.getGender());
+        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd,"Age",hivPatientData.getAgeDuringPeriod());
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd,"Address",basePatientData.getVillage());
+        addColumn(dsd,"EnrollmentDate",hivPatientData.getEnrollmentDate());
+        addColumn(dsd,"ARTStartDate",hivPatientData.getArtStartDate());
+        addColumn(dsd,"BaseLineCD4",hivPatientData.getBaselineCD4());
+        addColumn(dsd,"BaselineRegimen",hivPatientData.getBaselineRegimen());
+        addColumn(dsd,"CurrentRegimen",hivPatientData.getCurrentRegimen());
+
+        addColumn(dsd,"lastEncounterDate",hivPatientData.getLastEncounterByEndDate());
+        addColumn(dsd,"latestViralLoadDate",hivPatientData.getLastViralLoadDateByEndDate());
+        addColumn(dsd,"latestViralLoad",hivPatientData.getViralLoadByEndDate());
+        addColumn(dsd,"latestVLQualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd,"returnVisitDate",hivPatientData.getLastReturnDateByEndDate());
 
 
 
-        rd.addDataSetDefinition("TRANSFER_OUT", Mapped.mapStraightThrough(dsd));
+
+        rd.addDataSetDefinition("ACTIVEONCARE_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
         return rd;
@@ -153,6 +161,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.45";
+        return "0.39";
     }
 }
