@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Daily Appointments List report
+ * Lost Patients Report
  */
 @Component
 public class SetUpLostReport extends UgandaEMRDataExportManager {
@@ -62,12 +62,12 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
         @Override
         public String getName() {
-                return "LOST CLIENTS";
+                return "Lost Patients";
         }
 
         @Override
         public String getDescription() {
-                return "LOST CLIENTS";
+                return "Lost Patients";
         }
 
         @Override
@@ -88,7 +88,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         /**
          * Build the report design for the specified report, this allows a user to override the report design by adding
          * properties and other metadata to the report design
-         *
+         * @ssevvumesolomon
          * @param reportDefinition
          * @return The report design
          */
@@ -97,7 +97,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
                 ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "Lost.xls");
                 Properties props = new Properties();
-                props.put("repeatingSections", "sheet:1,row:7,dataset:LOST_CLIENTS");
+                props.put("repeatingSections", "sheet:1,row:7,dataset:LOST_PATIENTS");
                 props.put("sortWeight", "5000");
                 rd.setProperties(props);
                 return rd;
@@ -126,6 +126,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
                 dsd.setName(getName());
                 dsd.setParameters(getParameters());
                 dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+                addColumn(dsd, "Clinic Number", hivPatientData.getClinicNumber());
                 dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
                 dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
                 dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
@@ -134,10 +135,9 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
                 addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
                 addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
                 addColumn(dsd, "Current Regimen",hivPatientData.getCurrentRegimen());
-                addColumn(dsd, "Last Visit Date",hivPatientData.getLastVisitDate());
+                addColumn(dsd, "Last Visit Date",hivPatientData.getDateOfLastEncounter());
                 addColumn(dsd, "Last Appointment",hivPatientData.getExpectedReturnDate());
-
-                rd.addDataSetDefinition("LOST_CLIENTS", Mapped.mapStraightThrough(dsd));
+                rd.addDataSetDefinition("LOST_PATIENTS", Mapped.mapStraightThrough(dsd));
                 rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
 
                 return rd;
@@ -145,6 +145,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-                return "0.4";
+                return "0.9";
         }
 }
