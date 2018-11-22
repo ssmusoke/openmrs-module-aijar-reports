@@ -154,6 +154,23 @@
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
         "order": 65
       },
+
+      {
+        "id": "Lost Clients",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Lost Clients",
+        "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
+        "order": 100
+      },
+      {
+        "id": "Lost To Follow Up",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Lost To Follow Up",
+        "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
+        "order": 90
+      },
       {
         "id": "Pre-ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
