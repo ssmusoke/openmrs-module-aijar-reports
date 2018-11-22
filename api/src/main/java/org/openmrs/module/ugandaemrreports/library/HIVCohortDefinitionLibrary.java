@@ -347,9 +347,14 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getDateEligibleAndReadyForART(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getEarlyWarningIndicatorDataAbstractionCohort() {
+        return df.EarlyWarningIndicatorDataAbstractionCohort(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getPatientsWithFirstEncounterInThePeriod() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+
 
     public CohortDefinition getPatientsWithTransferInPlace() {
         return df.getTextBasedObs(hivMetadata.getTransferInPlace());

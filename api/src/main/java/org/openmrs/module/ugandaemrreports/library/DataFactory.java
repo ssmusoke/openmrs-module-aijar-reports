@@ -984,15 +984,14 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
+
     public CohortDefinition getLostToFollowUp() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(90);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
-        return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
-
-
-
     public CohortDefinition getEverLost() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(90);
@@ -1005,6 +1004,20 @@ public class DataFactory {
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+    public CohortDefinition EarlyWarningIndicatorDataAbstractionCohort(Concept dateConcept,List<EncounterType> types,BaseObsCohortDefinition.TimeModifier timeModifier)
+    {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
+
+
     }
 
     public CohortDefinition getActiveInPeriodWithoutVisit() {
@@ -1147,4 +1160,25 @@ public class DataFactory {
         return convert(encountersForPatientDataDefinition, ObjectUtil.toMap(parameters), converter);
     }
 
+    public CohortDefinition getPatientsWhoseObsValueDateIsAfterEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_THAN);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithLongRefills(){
+        LongRefillsCohortDefinition cd = new LongRefillsCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public PatientDataDefinition getValueDatetimeObsOfEncounterDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.combineParameters(Parameters.ON_OR_AFTER_START_DATE, Parameters.ON_OR_BEFORE_END_DATE));
+    }
 }
