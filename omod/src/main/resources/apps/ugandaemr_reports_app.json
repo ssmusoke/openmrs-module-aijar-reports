@@ -156,10 +156,10 @@
       },
 
       {
-        "id": "Lost Clients",
+        "id": "Lost Patients",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Lost Clients",
+        "label": "Lost Patients",
         "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
         "order": 100
       },
