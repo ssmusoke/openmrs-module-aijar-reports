@@ -155,7 +155,7 @@ public class HIVMetadata extends Metadata {
 
     public List<EncounterType> getARTEncounterPageEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
-        l.add(MetadataUtils.existing(EncounterType.class, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"));
+        l.add(MetadataUtils.existing(EncounterType.class, "mvn"));
         return l;
     }
 
