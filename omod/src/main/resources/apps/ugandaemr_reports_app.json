@@ -336,6 +336,14 @@
         "url": "reportingui/runReport.page?reportDefinition=e66d26f2-baf9-4b07-bbb8-335e4258ced0",
         "order": 5
       },
+      {
+        "id": "Lost To Follow Up Patients",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Lost To Follow Up Patients",
+        "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
+        "order": 90
+      },
 
       {
         "id": "Tx Current Report",

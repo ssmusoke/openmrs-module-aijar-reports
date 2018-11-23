@@ -122,6 +122,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        addColumn(dsd, "Clinic Number", hivPatientData.getClinicNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
@@ -130,7 +131,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen",hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "Last Visit Date",hivPatientData.getLastVisitDate());
+        addColumn(dsd, "Last Visit Date",hivPatientData.getDateOfLastEncounter());
         addColumn(dsd, "Last Appointment",hivPatientData.getExpectedReturnDate());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
