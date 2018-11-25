@@ -2,22 +2,23 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCAddressCalculation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Daily Appointments List report
@@ -137,7 +138,7 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd,"Age",hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
-        addColumn(dsd,"Address",basePatientData.getVillage());
+        addColumn(dsd,"Address",basePatientData.getAddressFull());
         addColumn(dsd,"EnrollmentDate",hivPatientData.getEnrollmentDate());
         addColumn(dsd,"ARTStartDate",hivPatientData.getArtStartDate());
         addColumn(dsd,"BaseLineCD4",hivPatientData.getBaselineCD4());
@@ -161,6 +162,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.39";
+        return "0.5";
     }
 }

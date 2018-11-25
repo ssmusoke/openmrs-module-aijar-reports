@@ -43,7 +43,7 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
     }
     
     public PatientDataDefinition getParish() {
-        return df.getPreferredAddress("adddress4");
+        return df.getPreferredAddress("address4");
     }
 
     public PatientDataDefinition getDistrict() {
@@ -52,7 +52,7 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
 
     public PatientDataDefinition getAddressFull() {
         PreferredAddressDataDefinition pdd = new PreferredAddressDataDefinition();
-        return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "district", "county", "subcounty", "parish", "village"));
+        return df.convert(pdd, new ConcatenatedPropertyConverter(", ", "countyDistrict", "stateProvince", "address3", "address4", "address5"));
     }
 
     public PatientDataDefinition getTelephone() {
