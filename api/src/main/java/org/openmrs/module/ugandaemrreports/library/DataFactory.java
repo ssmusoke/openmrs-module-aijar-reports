@@ -970,6 +970,14 @@ public class DataFactory {
         return convert(cd, params);
     }
 
+    public CohortDefinition getLostClients() {
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(30);
+        cd.setMaximumDays(89);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
     public CohortDefinition getLastVisitInTheQuarter(Concept question, TimeModifier timeModifier) {
         HavingVisitCohortDefinition cd = new HavingVisitCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -990,8 +998,6 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
 
     }
-
-
     public CohortDefinition getEverLost() {
         LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
         cd.setMinimumDays(90);
