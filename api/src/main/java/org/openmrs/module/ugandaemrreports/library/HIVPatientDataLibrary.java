@@ -82,7 +82,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getARTStartDate() {
-        return df.getObs(hivMetadata.getArtStartDate(), null, TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
+        return df.getObs(hivMetadata.getArtStartDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLastRegimenPickupDate() {

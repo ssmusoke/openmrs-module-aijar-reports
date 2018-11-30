@@ -15,14 +15,6 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "Due For Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Due For Viral Load",
-        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
-        "order": 70
-      },
-      {
         "id": "org.openmrs.module.ugandaemr.reports.registers",
         "description": "Links to available Registers",
         "supportedExtensionTypes": [ "link" ]
@@ -389,6 +381,13 @@
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
         "order": 99
+      },{
+        "id": "Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
+        "order": 98
       }
 
     ]
