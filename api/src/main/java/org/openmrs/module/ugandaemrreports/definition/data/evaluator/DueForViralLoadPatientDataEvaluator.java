@@ -51,7 +51,7 @@ public class DueForViralLoadPatientDataEvaluator
                 "   (Select o.person_id as id\n" +
                 "  from obs o where o.concept_id =163023 \n" +
                 "   And " +
-                String.format("TIMESTAMPDIFF(MONTH,o.value_datetime,'2017-03-31') = 6 group by o.person_id)C \n",endDateString) +
+                String.format("TIMESTAMPDIFF(MONTH,o.value_datetime,'%s') = 6 group by o.person_id)C \n",endDateString) +
                 "   INNER JOIN\n" +
                 "   (select p.person_id \n" +
                 "from person p where " +

@@ -1,7 +1,9 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -9,6 +11,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -19,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 @Component
-public class SetUpDueForViralLoad extends UgandaEMRDataExportManager {
+public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
 
@@ -108,34 +111,37 @@ public class SetUpDueForViralLoad extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition patientsDueForViralLoad = hivCohortDefinitionLibrary.getPatientsDueForViralLoad();
+        CohortDefinition onARTFor6Months = hivCohortDefinitionLibrary.getPatientsWhoStartedArtMonthsAgo("6m");
+        CohortDefinition viralLoadDuringperiod = hivCohortDefinitionLibrary.getPatientsWithViralLoadDuringPeriod();
+
+        CohortDefinition onArtFor6MonthsAndNoViralLoadTaken = df.getPatientsNotIn(onARTFor6Months,viralLoadDuringperiod);
+//        CohortDefinition patientsDueForViralLoad = hivCohortDefinitionLibrary.getPatientsDueForViralLoad();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientsDueForViralLoad));
+        dsd.addRowFilter(Mapped.mapStraightThrough(onArtFor6MonthsAndNoViralLoadTaken));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
-        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
-        addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
-        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-        addColumn(dsd, "Viral Load Date", hivPatientData.getMostRecentViralLoadDate());
-        addColumn(dsd, "Viral Load Qualitative", hivPatientData.getViralLoadQualitative());
-        addColumn(dsd, "Viral Load", hivPatientData.getViralLoad());
-        addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
-        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
+        dsd.addColumn( "Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
+        addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
+        addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Viral Load Date", hivPatientData.getLastViralLoadDateByEndDate());
+        addColumn(dsd, "Viral Load Qualitative", hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd, "Viral Load", hivPatientData.getViralLoadByEndDate());
+        addColumn(dsd, "Last Visit Date", hivPatientData.getLastEncounterByEndDate());
+        addColumn(dsd, "Appointment Date", hivPatientData.getLastReturnDateByEndDate());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsDueForViralLoad));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(onArtFor6MonthsAndNoViralLoadTaken));
 
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.4";
+        return "0.57";
     }
 }
-
 

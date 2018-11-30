@@ -82,7 +82,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getARTStartDate() {
-        return df.getObs(hivMetadata.getArtStartDate(), null, TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
+        return df.getObs(hivMetadata.getArtStartDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLastRegimenPickupDate() {
@@ -529,7 +529,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getViralLoadByEndDate(){
-      return   df.getObsByEndDate(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
+        return   df.getObsByEndDate(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getVLQualitativeByEndDate(){
@@ -537,6 +537,6 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getLastEncounterByEndDate(){
-       return df.getPatientEncounters(df.getEncounterDatetimeConverter());
+        return df.getPatientEncounters(df.getEncounterDatetimeConverter());
     }
 }
