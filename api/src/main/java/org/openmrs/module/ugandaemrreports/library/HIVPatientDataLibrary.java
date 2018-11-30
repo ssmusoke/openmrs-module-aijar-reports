@@ -278,6 +278,9 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getARTEligibilityCD4() {
         return getSummaryPageObsValue(hivMetadata.getDateEligibilityWHOStage(), df.getObsValueNumericConverter());
     }
+    public PatientDataDefinition getMostRecentViralLoadDate() {
+        return df.getObs(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+    }
 
     public PatientDataDefinition getStatusAtEnrollment() {
         StatusAtEnrollmentPatientDatasetDefinition def = new StatusAtEnrollmentPatientDatasetDefinition();
@@ -436,6 +439,14 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getViralLoad(Integer month) {
         return getFirstObsValueDuringMonth(hivMetadata.getViralLoad(), month, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getViralLoadQualitative() {
+        return df.getObs(hivMetadata.getViralLoadQualitative(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+
+    }
+    public PatientDataDefinition getViralLoad() {
+        return df.getObs(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
+
     }
 
     public PatientDataDefinition getDistrictTBRxNo() {
