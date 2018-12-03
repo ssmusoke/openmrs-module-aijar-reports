@@ -139,6 +139,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
+        l.add(df.getEndDateParameter());
         return l;
     }
 
