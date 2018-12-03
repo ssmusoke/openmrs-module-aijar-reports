@@ -50,7 +50,6 @@ public class SetupOPDRegister extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
-
         return l;
     }
 
@@ -97,6 +96,6 @@ public class SetupOPDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.5";
+        return "0.6";
     }
 }
