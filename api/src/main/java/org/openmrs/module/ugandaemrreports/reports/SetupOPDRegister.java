@@ -1,9 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -12,6 +8,10 @@ import org.openmrs.module.ugandaemrreports.definition.dataset.definition.OPDData
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * OPD Register
@@ -49,6 +49,8 @@ public class SetupOPDRegister extends UgandaEMRDataExportManager {
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
+        l.add(df.getEndDateParameter());
+
         return l;
     }
 
@@ -95,6 +97,6 @@ public class SetupOPDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.5";
     }
 }

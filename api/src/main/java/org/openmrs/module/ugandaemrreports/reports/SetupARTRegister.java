@@ -1,17 +1,11 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.PreARTDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -19,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -80,6 +73,8 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
     public List<Parameter> getParameters() {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
+        l.add(df.getEndDateParameter());
+
         return l;
     }
 
@@ -132,6 +127,6 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.4";
     }
 }
