@@ -394,10 +394,6 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getActiveInPeriodWithoutVisit();
     }
 
-    public CohortDefinition getPatientsDueForViralLoad() {
-        return df.getClientsDueForViralLoad();
-    }
-
     public CohortDefinition getPatientsWhoStartedArtMonthsAgo(String monthsBack) {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(),
                 hivMetadata.getARTSummaryPageEncounterType(), monthsBack, BaseObsCohortDefinition.TimeModifier.ANY);
@@ -411,5 +407,17 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsWithViralLoadDuringPeriod(String monthsBack) {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsBack, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod(String monthsBack){
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),monthsBack,BaseObsCohortDefinition.TimeModifier.LAST
+                );
+    }
+
+    public CohortDefinition getPatientsPregnant() {
+       CohortDefinition lastVLwas6MonthsAgo = getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m");
+       CohortDefinition pregnantonMTCT = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPregnant(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getYesPregnant()), BaseObsCohortDefinition.TimeModifier.FIRST);
+    return null;
     }
 }

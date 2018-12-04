@@ -39,6 +39,9 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
     private BasePatientDataLibrary basePatientData;
 
     @Autowired
+    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
+
+    @Autowired
     private HIVMetadata hivMetadata;
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
@@ -114,16 +117,22 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         CohortDefinition onARTFor6Months = hivCohortDefinitionLibrary.getPatientsWhoStartedArtMonthsAgo("6m");
         CohortDefinition viralLoadDuringperiod = hivCohortDefinitionLibrary.getPatientsWithViralLoadDuringPeriod();
 
+        CohortDefinition adultsDueForViralLoad = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(),
+                hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("12m"));
+
+        CohortDefinition childDueForViralLoad = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(),
+                hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m"));
+
         CohortDefinition onArtFor6MonthsAndNoViralLoadTaken = df.getPatientsNotIn(onARTFor6Months,viralLoadDuringperiod);
-//        CohortDefinition patientsDueForViralLoad = hivCohortDefinitionLibrary.getPatientsDueForViralLoad();
+        CohortDefinition dueForViralLoad = df.getPatientsInAny(onArtFor6MonthsAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad);
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(onArtFor6MonthsAndNoViralLoadTaken));
+        dsd.addRowFilter(Mapped.mapStraightThrough(dueForViralLoad));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
-        dsd.addColumn( "Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
+        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd, "Viral Load Date", hivPatientData.getLastViralLoadDateByEndDate());
@@ -134,14 +143,14 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(onArtFor6MonthsAndNoViralLoadTaken));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(dueForViralLoad));
 
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.57";
+        return "0.66";
     }
 }
 
