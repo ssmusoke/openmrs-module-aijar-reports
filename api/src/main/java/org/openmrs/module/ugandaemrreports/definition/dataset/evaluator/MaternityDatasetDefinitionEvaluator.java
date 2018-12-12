@@ -257,6 +257,7 @@ public class MaternityDatasetDefinitionEvaluator implements DataSetEvaluator {
 			"	) EP ON EP.encounter_id = A.encounter_id\r\n";
 		
 		SqlQueryBuilder q = new SqlQueryBuilder(sql);
+//		System.out.println(q.getSqlQuery());
 		
 		List<Object[]> results = evaluationService.evaluateToList(q, context);
 		
@@ -420,7 +421,9 @@ public class MaternityDatasetDefinitionEvaluator implements DataSetEvaluator {
 			pdh.addCol(row, "Date of Discharge and Name of person Discharging", dateOfDischargeAndNameOfPersonDischarging);
 			
 			dataSet.addRow(row);
+
 		}
+		System.out.println(dataSet);
 		return dataSet;
 		
 	}

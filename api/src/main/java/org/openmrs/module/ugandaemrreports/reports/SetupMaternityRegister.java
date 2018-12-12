@@ -1,11 +1,9 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -27,13 +25,18 @@ import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.MaternityEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumciserNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Integrated Maternity Register Report
