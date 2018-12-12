@@ -13,7 +13,6 @@ import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.converter.PropertyConverter;
 import org.openmrs.module.reporting.data.patient.definition.*;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -21,6 +20,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.AdherencePatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.WhyEligibleForARTPatientDatasetDefinition;
@@ -105,6 +105,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getARVDuration() {
         return df.getObsByEndDate(hivMetadata.getARVDuration(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
+    public PatientDataDefinition getViralLoadQualitative() {
+        return df.getObs(hivMetadata.getViralLoadQualitative(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+
+    }
 
     public PatientDataDefinition getExpectedReturnDate() {
         return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
@@ -184,6 +188,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getCPTStartDate() {
         return getEncounterPageObsValue(hivMetadata.getCPTDosage(), df.getObsDatetimeConverter());
+    }
+    public PatientDataDefinition getAdherence(Integer number) {
+        AdherencePatientDataDefinition def = new AdherencePatientDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return convert(def, new AdherenceConverter(number));
     }
 
     public PatientDataDefinition getCPTStatusDuringQuarter(Integer num) {
