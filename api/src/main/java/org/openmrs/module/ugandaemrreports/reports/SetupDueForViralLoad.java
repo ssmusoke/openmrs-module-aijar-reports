@@ -1,10 +1,21 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
+import org.openmrs.module.reporting.data.converter.DataConverter;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -15,16 +26,23 @@ import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+
 @Component
 public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
     @Autowired
     private DataFactory df;
+
+    @Autowired
+    CommonCohortDefinitionLibrary definitionLibrary;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
@@ -45,6 +63,12 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
     private HIVMetadata hivMetadata;
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+    @Autowired
+    private Moh105CohortLibrary cohortLibrary;
+
+    @Autowired
+    SharedDataDefintion sdd;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -114,17 +138,35 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
+        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
+        CohortDefinition onArt = df.getPatientsInAny(onArtBeforeQuarter,onArtDuringQuarter);
+        CohortDefinition onArtAnd1stANC = df.getPatientsInAll(onArt,anc1stVisitDuringPeriod());
         CohortDefinition onARTFor6Months = hivCohortDefinitionLibrary.getPatientsWhoStartedArtMonthsAgo("6m");
         CohortDefinition viralLoadDuringperiod = hivCohortDefinitionLibrary.getPatientsWithViralLoadDuringPeriod();
+        CohortDefinition viralLoadByEndOfPeriod = hivCohortDefinitionLibrary.getPatientsWithLastViralLoadByEndDate();
+        CohortDefinition onEMTCTDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.FIRST);
 
+        CohortDefinition startedEMTCTLast6Months =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(),
+                                                        Arrays.asList(hivMetadata.getARTEncounterEncounterType()),Arrays.asList(hivMetadata.getYes()),"6m", BaseObsCohortDefinition.TimeModifier.FIRST);
         CohortDefinition adultsDueForViralLoad = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(),
                 hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("12m"));
 
         CohortDefinition childDueForViralLoad = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(),
                 hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m"));
+        CohortDefinition firstANCOrEMTCTDuringPeriod = df.getPatientsInAny(onArtAnd1stANC,onEMTCTDuringPeriod);
 
-        CohortDefinition onArtFor6MonthsAndNoViralLoadTaken = df.getPatientsNotIn(onARTFor6Months,viralLoadDuringperiod);
-        CohortDefinition dueForViralLoad = df.getPatientsInAny(onArtFor6MonthsAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad);
+        CohortDefinition firstANCOrEMTCTAndNoViralLoadTaken = df.getPatientsNotIn(firstANCOrEMTCTDuringPeriod,viralLoadDuringperiod);
+        CohortDefinition hadFirstAncOrEmtct6MonthsFromPeriod = df.getPatientsInAny(anc1stVisit6MonthsFromPeriod(), startedEMTCTLast6Months);
+
+        CohortDefinition hadFirstAncOrEmtct6MonthsFromPeriodAndLastViralLoadWas6MonthsAgo =df.getPatientsInAll(hadFirstAncOrEmtct6MonthsFromPeriod,
+                hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m"));
+
+
+        CohortDefinition onArtFor6MonthsAndNoViralLoadTaken = df.getPatientsNotIn(onARTFor6Months,viralLoadByEndOfPeriod);
+        CohortDefinition dueForViralLoad = df.getPatientsInAny(onArtFor6MonthsAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad,
+                firstANCOrEMTCTAndNoViralLoadTaken,hadFirstAncOrEmtct6MonthsFromPeriodAndLastViralLoadWas6MonthsAgo);
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(dueForViralLoad));
@@ -141,6 +183,8 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getLastReturnDateByEndDate());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd,"pregnant",getObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(), null, TimeQualifier.FIRST, "6m", df.getObsValueCodedConverter()));
+
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(dueForViralLoad));
@@ -148,9 +192,29 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         return rd;
     }
 
+    public CohortDefinition anc1stVisitDuringPeriod(){
+        return cohortLibrary.femaleAndHasAncVisit(0.0, 1.0);
+    }
+
+    public CohortDefinition anc1stVisit6MonthsFromPeriod(){
+        return df.getPatientsWithNumericObsDuringPeriod(getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb"),
+                Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.ANC_ENCOUNTER)),"6m", RangeComparator.GREATER_THAN,0.0,RangeComparator.LESS_EQUAL,1.0, BaseObsCohortDefinition.TimeModifier.FIRST);
+    }
+
+    private Concept getConcept(String uuid) {
+        return Dictionary.getConcept(uuid);
+    }
+
+    public PatientDataDefinition getObsDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String startDateolderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
+        String startDate = Parameters.createParameterBeforeDuration("onOrAfter", "startDate", startDateolderThan);
+        String endDate = Parameters.ON_OR_BEFORE_END_DATE;
+        return df.createPatientDataDefinition(def, converter, Parameters.combineParameters(startDate, endDate));
+    }
+
     @Override
     public String getVersion() {
-        return "0.66";
+        return "1.06";
     }
 }
 
