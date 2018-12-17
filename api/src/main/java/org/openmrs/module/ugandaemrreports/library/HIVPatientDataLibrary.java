@@ -254,6 +254,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getTBStopDate() {
         return getEncounterPageObsValue(hivMetadata.getTBStopDate(), df.getObsValueDatetimeConverter());
     }
+    public PatientDataDefinition getFirstRegimenPickupDate() {
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.FIRST, df.getObsDatetimeConverter());
+    }
+    public PatientDataDefinition getWHOClinicStage() {
+        return df.getObs(hivMetadata.getWHOClinicalStage(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+
+    }
 
 
     public PatientDataDefinition getWHOStage1Date() {

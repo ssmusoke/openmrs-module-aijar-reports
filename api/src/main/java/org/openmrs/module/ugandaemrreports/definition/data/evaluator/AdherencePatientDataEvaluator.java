@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.definition.data.evaluator;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
@@ -14,15 +15,14 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Adherence;
+import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.AdherencePatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -57,12 +57,18 @@ public class AdherencePatientDataEvaluator implements PatientDataEvaluator {
             return c;
         }
 
+
+        Map<Integer, Date> m = new HashMap<Integer, Date>();
+
+        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd"));
+
+
         String startDate = DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd");
+        String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
         String query = String.format("select o.person_id,cn.name,o.obs_datetime  from obs o\n" +
                 "inner join  (concept_name cn) on o.value_coded = cn.concept_id \n" +
-                "where o.concept_id = 90221 and obs_datetime >= date_sub('%s', interval 6 month)  and obs_datetime < '%s' " +
-                "and cn.concept_name_type='FULLY_SPECIFIED'\n", startDate, startDate);
+                "where o.concept_id = 90221 and obs_datetime >= date_sub('%s', interval 6 month) and cn.concept_name_type='FULLY_SPECIFIED' and obs_datetime < '%s';", startDate, startDate);
 
 
         SqlQueryBuilder q = new SqlQueryBuilder(query);

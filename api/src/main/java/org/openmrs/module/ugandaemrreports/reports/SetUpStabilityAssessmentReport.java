@@ -7,6 +7,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -127,9 +128,10 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-//        addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Qualitative",hivPatientData.getViralLoadQualitative());
         addColumn(dsd,"1",hivPatientData.getAdherence(0));
         addColumn(dsd,"2",hivPatientData.getAdherence(1));
@@ -137,6 +139,8 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd,"4",hivPatientData.getAdherence(3));
         addColumn(dsd,"5",hivPatientData.getAdherence(4));
         addColumn(dsd,"6",hivPatientData.getAdherence(5));
+        dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
+
 
         rd.addDataSetDefinition("STABILITYASSESSMENT", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
