@@ -20,6 +20,14 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
+        "id": "DSDM:Stability Assessment Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Stability Assessment Report",
+        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
+        "order": 100
+      },
+      {
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
