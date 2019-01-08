@@ -23,7 +23,7 @@ import java.util.Properties;
 /**
  */
 @Component
-public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
+public class SetUpUnstableClientsReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -58,12 +58,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
      */
     @Override
     public String getUuid() {
-        return "9d066d2b-3cee-4fba-a148-bb82c4ba65ef";
+        return "1dd5626a-f1f6-4073-81d4-a7cf4f3afd4e";
     }
 
     @Override
     public String getExcelDesignUuid() {
-        return "6df401ef-91fe-4495-8a9d-46ddd142ba15";
+        return "364443e9-2183-4deb-9c57-f527cd789600";
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "StabilityReport.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:4,dataset:STABILITYASSESSMENT");
+        props.put("repeatingSections", "sheet:1,row:4,dataset:UNSTABLECLIENTS");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -92,12 +92,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Stable Clients";
+        return "Unstable Clients";
     }
 
     @Override
     public String getDescription() {
-        return "Stable Clients";
+        return "Unstable Clients";
     }
 
     @Override
@@ -112,14 +112,19 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
     public ReportDefinition constructReportDefinition() {
 
         ReportDefinition rd = new ReportDefinition();
-//
+
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimen();
+        CohortDefinition patientsOnThirdLineRegimenDuringPeriod = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
+        CohortDefinition clinicalStage3 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage3();
+        CohortDefinition clinicalStage4 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage4();
+        CohortDefinition patientsWithBadAdherence = hivCohortDefinitionLibrary.getPatientsWithPoorAdherence();
+        CohortDefinition artcohortDefinition = df.getPatientsInAny(patientsOnThirdLineRegimenDuringPeriod,patientsWithBadAdherence);
+
 
 
         dsd.setName(getName());
@@ -134,6 +139,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
+        addColumn(dsd, "Adherence",hivPatientData.getAdherence());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
@@ -146,7 +152,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd,"6",hivPatientData.getAdherence(5));
         dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
 
-        rd.addDataSetDefinition("STABILITYASSESSMENT", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("UNSTABLECLIENTS", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
 
         return rd;
@@ -155,7 +161,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.1.5";
     }
 }
 

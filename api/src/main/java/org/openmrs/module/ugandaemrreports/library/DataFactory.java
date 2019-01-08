@@ -468,7 +468,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + numMonths + "m+1d"));
     }
-
+    public CohortDefinition getSuppresedViralLoads() {
+        ViralLoadCohortDefinition cd = new ViralLoadCohortDefinition();
+        cd.setCopiesFrom(1000.00);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
     public CohortDefinition getAnyEncounterOfTypesByEndOfDate(List<EncounterType> types) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
@@ -1024,6 +1030,12 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
 
 
+    }
+    public CohortDefinition getPatientsWithGoodAdherenceForLast6Months() {
+        GoodAdherenceCohortDefinition cd = new GoodAdherenceCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
 
     public CohortDefinition getActiveInPeriodWithoutVisit() {

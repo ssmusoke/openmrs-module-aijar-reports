@@ -23,7 +23,7 @@ import java.util.Properties;
 /**
  */
 @Component
-public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
+public class SetUpStableClientsReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -49,6 +49,8 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVMetadata hivMetadata;
+    @Autowired
+    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
 
     @Autowired
     private ARTCohortLibrary artCohortLibrary;
@@ -58,12 +60,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
      */
     @Override
     public String getUuid() {
-        return "9d066d2b-3cee-4fba-a148-bb82c4ba65ef";
+        return "65193385-bdf6-4685-8078-4fef9c9e30d2";
     }
 
     @Override
     public String getExcelDesignUuid() {
-        return "6df401ef-91fe-4495-8a9d-46ddd142ba15";
+        return "ebf67e8f-e022-4c5e-9729-c583562b896d";
     }
 
     @Override
@@ -119,12 +121,20 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimen();
+        CohortDefinition patientsWithGoodAdherence  = df.getPatientsWithGoodAdherenceForLast6Months();
+        CohortDefinition patientsOnThirdLineRegimenDuringPeriod = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
+        CohortDefinition clinicalStage1 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage1();
+        CohortDefinition clinicalStage2 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage2();
+        CohortDefinition stablePatients = df.getPatientsInAny(clinicalStage1,clinicalStage2);
+        CohortDefinition viralLoadPatients =df.getViralLoadDuringPeriod(1000.0);
+        CohortDefinition patientsNotIn = df.getPatientsNotIn(patientsWithGoodAdherence,patientsOnThirdLineRegimenDuringPeriod);
+//        CohortDefinition  stablePatients = df.getPatientsInAll(patientsNotIn,viralLoadPatients,patientsInClinicalStage1and2);
+
 
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(artcohortDefinition));
+        dsd.addRowFilter(Mapped.mapStraightThrough(stablePatients));
         addColumn(dsd, "Clinic number", hivPatientData.getClinicNumber());
         addColumn(dsd, "Middle Name", builtInPatientData.getPreferredMiddleName());
         addColumn(dsd, "Surname", builtInPatientData.getPreferredFamilyName());
@@ -137,17 +147,18 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+        addColumn(dsd, "Adherence",hivPatientData.getAdherence());
         addColumn(dsd, "VL Qualitative",hivPatientData.getViralLoadQualitative());
         addColumn(dsd,"1",hivPatientData.getAdherence(0));
-        addColumn(dsd,"2",hivPatientData.getAdherence(1));
-        addColumn(dsd,"3",hivPatientData.getAdherence(2));
-        addColumn(dsd,"4",hivPatientData.getAdherence(3));
-        addColumn(dsd,"5",hivPatientData.getAdherence(4));
-        addColumn(dsd,"6",hivPatientData.getAdherence(5));
+//        addColumn(dsd,"2",hivPatientData.getAdherence(1));
+//        addColumn(dsd,"3",hivPatientData.getAdherence(2));
+//        addColumn(dsd,"4",hivPatientData.getAdherence(3));
+//        addColumn(dsd,"5",hivPatientData.getAdherence(4));
+//        addColumn(dsd,"6",hivPatientData.getAdherence(5));
         dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
 
         rd.addDataSetDefinition("STABILITYASSESSMENT", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(stablePatients));
 
         return rd;
     }
@@ -155,7 +166,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.1.6";
     }
 }
 

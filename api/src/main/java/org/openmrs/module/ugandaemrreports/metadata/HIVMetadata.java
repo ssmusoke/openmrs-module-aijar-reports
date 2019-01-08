@@ -392,7 +392,7 @@ public class HIVMetadata extends Metadata {
     }
 
     public List<Concept> getThirdLineDrugs() {
-        return getConceptList("607ffca4-6f15-4e85-b0a5-8226d4f25592,4c27fe52-98fd-4068-9e81-ea9caba4b583");
+        return getConceptList("607ffca4-6f15-4e85-b0a5-8226d4f25592,4c27fe52-98fd-4068-9e81-ea9caba4b583,583a954b-0cd5-4b69-aef6-87c281e03a55,6cdbfee8-87bf-406c-8dc3-3a22d95e952c");
     }
 
     public Concept getTransferredOut() {

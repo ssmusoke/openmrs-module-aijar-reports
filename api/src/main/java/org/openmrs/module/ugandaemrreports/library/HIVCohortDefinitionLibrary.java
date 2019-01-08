@@ -1,18 +1,16 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
 
 /**
  */
@@ -278,6 +276,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsWithGoodAdherence() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdherence(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getGoodAdherence()), BaseObsCohortDefinition.TimeModifier.MAX);
     }
+    public CohortDefinition getPatientsWithPoorAdherence() {
+        return  df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPoorAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+
+    }
 
     public CohortDefinition getChildrenOnFirstLineRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -289,6 +291,14 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getChildrenOnSecondLineRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsOnClinicalStage1() {
+
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getWHOClinicalStage1(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getWHOClinicalStage1()), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+    public CohortDefinition getPatientsOnClinicalStage2() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getWHOClinicalStage2(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getWHOClinicalStage2()), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getChildrenOnSecondLineRegimen() {
@@ -394,5 +404,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getActiveWithNoEncounterInQuarter() {
         return df.getActiveInPeriodWithoutVisit();
+    }
+
+    public CohortDefinition getPatientsOnClinicalStage3() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getWHOClinicalStage3(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getWHOClinicalStage3()), BaseObsCohortDefinition.TimeModifier.LAST);
+
+    }
+
+    public CohortDefinition getPatientsOnClinicalStage4() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getWHOClinicalStage4(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getWHOClinicalStage4()), BaseObsCohortDefinition.TimeModifier.LAST);
+
     }
 }
