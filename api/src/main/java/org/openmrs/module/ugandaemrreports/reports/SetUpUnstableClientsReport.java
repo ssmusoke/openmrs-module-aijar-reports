@@ -122,8 +122,9 @@ public class SetUpUnstableClientsReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsOnThirdLineRegimenDuringPeriod = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
         CohortDefinition clinicalStage3 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage3();
         CohortDefinition clinicalStage4 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage4();
+        CohortDefinition clinicalStage1or2 = df.getOnClinicalStage1or2();
         CohortDefinition patientsWithBadAdherence = hivCohortDefinitionLibrary.getPatientsWithPoorAdherence();
-        CohortDefinition artcohortDefinition = df.getPatientsInAny(patientsOnThirdLineRegimenDuringPeriod,patientsWithBadAdherence);
+        CohortDefinition artcohortDefinition = df.getPatientsInAny(patientsOnThirdLineRegimenDuringPeriod,patientsWithBadAdherence,df.getPatientsNotIn(clinicalStage1or2));
 
 
 
