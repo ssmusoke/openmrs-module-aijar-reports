@@ -7,7 +7,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -123,8 +122,10 @@ public class SetUpUnstableClientsReport extends UgandaEMRDataExportManager {
         CohortDefinition clinicalStage3 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage3();
         CohortDefinition clinicalStage4 = hivCohortDefinitionLibrary.getPatientsOnClinicalStage4();
         CohortDefinition clinicalStage1or2 = df.getOnClinicalStage1or2();
+
         CohortDefinition patientsWithBadAdherence = hivCohortDefinitionLibrary.getPatientsWithPoorAdherence();
-        CohortDefinition artcohortDefinition = df.getPatientsInAny(patientsOnThirdLineRegimenDuringPeriod,patientsWithBadAdherence,df.getPatientsNotIn(clinicalStage1or2));
+//        CohortDefinition artcohortDefinition = df.getPatientsInAny(patientsOnThirdLineRegimenDuringPeriod,patientsWithBadAdherence,df.getPatientsNotIn(clinicalStage1or2));
+        CohortDefinition artcohortDefinition = df.getPatientsNotIn(df.getPatientsOnArtForMoreThansMonths(12));
 
 
 
@@ -146,12 +147,12 @@ public class SetUpUnstableClientsReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "VL Qualitative",hivPatientData.getViralLoadQualitative());
         addColumn(dsd,"1",hivPatientData.getAdherence(0));
-        addColumn(dsd,"2",hivPatientData.getAdherence(1));
-        addColumn(dsd,"3",hivPatientData.getAdherence(2));
-        addColumn(dsd,"4",hivPatientData.getAdherence(3));
-        addColumn(dsd,"5",hivPatientData.getAdherence(4));
-        addColumn(dsd,"6",hivPatientData.getAdherence(5));
-        dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
+//        addColumn(dsd,"2",hivPatientData.getAdherence(1));
+//        addColumn(dsd,"3",hivPatientData.getAdherence(2));
+//        addColumn(dsd,"4",hivPatientData.getAdherence(3));
+//        addColumn(dsd,"5",hivPatientData.getAdherence(4));
+//        addColumn(dsd,"6",hivPatientData.getAdherence(5));
+//        dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
 
         rd.addDataSetDefinition("UNSTABLECLIENTS", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
@@ -162,7 +163,7 @@ public class SetUpUnstableClientsReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.5";
+        return "1.1.6";
     }
 }
 

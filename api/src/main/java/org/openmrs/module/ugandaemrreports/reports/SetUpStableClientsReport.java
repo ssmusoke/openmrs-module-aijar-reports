@@ -123,11 +123,14 @@ public class SetUpStableClientsReport extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         CohortDefinition patientsWithGoodAdherence  = df.getPatientsWithGoodAdherenceForLast6Months();
         CohortDefinition patientsOnThirdLineRegimenDuringPeriod = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
-        CohortDefinition clinicalStage1or2 = df.getOnClinicalStage1or2();
-        CohortDefinition viralLoadPatients =df.getViralLoadDuringPeriod(1.0,999.0);
+        CohortDefinition stablePatients = df.getOnClinicalStage1or2();
+//        CohortDefinition stablePatients =df.getViralLoadDuringPeriod(1.0,999.0);
         CohortDefinition patientsNotIn = df.getPatientsNotIn(patientsWithGoodAdherence,patientsOnThirdLineRegimenDuringPeriod);
-        CohortDefinition viralLoadAndClinincalStage = df.getPatientsInAll(viralLoadPatients,patientsNotIn);
-        CohortDefinition  stablePatients = df.getPatientsInAll(viralLoadAndClinincalStage,patientsNotIn);
+//        CohortDefinition viralLoadAndClinincalStage = df.getPatientsInAll(viralLoadPatients,patientsNotIn);
+//        CohortDefinition  stablePatients = df.getPatientsInAll(viralLoadAndClinincalStage,patientsNotIn);
+//        CohortDefinition  stablePatients = df.getPatientsOnArtForMoreThansMonths(12);
+
+
 
 
 
@@ -166,7 +169,7 @@ public class SetUpStableClientsReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.1";
+        return "2.0.1.3";
     }
 }
 
