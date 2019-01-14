@@ -382,21 +382,14 @@
         "order": 99
       },
       {
-        "id": "DSDM:Stable Clients Report",
+        "id": "DSDM:Stablity Assessment Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Stable Clients Report",
-        "url": "reportingui/runReport.page?reportDefinition=65193385-bdf6-4685-8078-4fef9c9e30d2",
+        "label": "Stablity Assessment Report",
+        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
         "order": 120
-      },
-      {
-        "id": "DSDM:Unstable Clients",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Unstable Clients  Report",
-        "url": "reportingui/runReport.page?reportDefinition=1dd5626a-f1f6-4073-81d4-a7cf4f3afd4e",
-        "order": 125
       }
+
 
     ]
   }

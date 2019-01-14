@@ -92,12 +92,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Stable Clients";
+        return "Stablity Assessment Report";
     }
 
     @Override
     public String getDescription() {
-        return "Stable Clients";
+        return "Stablity Assessment Report";
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimen();
+        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
 
 
         dsd.setName(getName());
@@ -155,7 +155,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.1.7";
     }
 }
 
