@@ -205,7 +205,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"CUM","total on art before quater", havingArtStartDateBeforeQuarter,"");
 
         addIndicator(dsd,"STABLE","total of stable patients",stablePatients,"");
-        addIndicator(dsd,"UNSTABLE","total of unstable patients",unstablePatients,"");
+//        addIndicator(dsd,"UNSTABLE","total of unstable patients",unstablePatients,"");
 
         addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
         addProgram(dsd, "2","fbim", "Started Art based on CD4", startedBasedOnCD4);
@@ -297,6 +297,12 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         addProgram(dsd,"19","cddp","Dead",diedDuringPeriod);
         addProgram(dsd,"19","cclad","Dead",diedDuringPeriod);
 
+        addProgram(dsd,"20","fbim","Dead",unstablePatients);
+        addProgram(dsd,"20","fbg","Dead",unstablePatients);
+        addProgram(dsd,"20","ftr","Dead",unstablePatients);
+        addProgram(dsd,"20","cddp","Dead",unstablePatients);
+        addProgram(dsd,"20","cclad","Dead",unstablePatients);
+
 
 
 
@@ -349,7 +355,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.42";
+        return "0.44";
     }
 
 }
