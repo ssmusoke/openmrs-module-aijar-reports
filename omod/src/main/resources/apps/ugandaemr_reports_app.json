@@ -375,10 +375,10 @@
         "order":89
       },
       {
-        "id": "HMIS 106a/DSDM",
+        "id": "HMIS 106a With DSDM Aggregations",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106a /DSDM",
+        "label": "HMIS 106a With DSDM Aggregations",
         "url": "reportingui/runReport.page?reportDefinition=c05879b8-77db-4a91-90a9-34631cd0ca3b",
         "order":99
       },{
@@ -387,7 +387,7 @@
         "type": "link",
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
-        "order": 01
+        "order": 1
       }
 
     ]

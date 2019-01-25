@@ -199,11 +199,13 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
                 df.getPatientsInAny(onFirstLineRegimen,onSecondLineRegimen),goodAdherenceForLast6Months,onArtFor12MonthsAbove);
 
         CohortDefinition unsupressedVL = df.getUnsupressedVLPatients();
+        CohortDefinition unstablePatients = df.getPatientsNotIn(onArtDuringQuarter,stablePatients);
 
 
         addIndicator(dsd,"CUM","total on art before quater", havingArtStartDateBeforeQuarter,"");
 
         addIndicator(dsd,"STABLE","total of stable patients",stablePatients,"");
+        addIndicator(dsd,"UNSTABLE","total of unstable patients",unstablePatients,"");
 
         addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
         addProgram(dsd, "2","fbim", "Started Art based on CD4", startedBasedOnCD4);
@@ -347,7 +349,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.42";
     }
 
 }
