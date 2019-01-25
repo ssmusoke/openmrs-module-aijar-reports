@@ -163,13 +163,19 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         CohortDefinition hadFirstAncOrEmtct6MonthsFromPeriodAndLastViralLoadWas6MonthsAgo =df.getPatientsInAll(hadFirstAncOrEmtct6MonthsFromPeriod,
                 hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m"));
 
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition patientsDeadAndtransferedOut =df.getPatientsInAny(deadPatients,transferedOut);
+
 
         CohortDefinition onArtFor6MonthsAndNoViralLoadTaken = df.getPatientsNotIn(onARTFor6Months,viralLoadByEndOfPeriod);
         CohortDefinition dueForViralLoad = df.getPatientsInAny(onArtFor6MonthsAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad,
                 firstANCOrEMTCTAndNoViralLoadTaken,hadFirstAncOrEmtct6MonthsFromPeriodAndLastViralLoadWas6MonthsAgo);
+
+        CohortDefinition activeAndDueForViralLoad = df.getPatientsNotIn(dueForViralLoad,patientsDeadAndtransferedOut);
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(dueForViralLoad));
+        dsd.addRowFilter(Mapped.mapStraightThrough(activeAndDueForViralLoad));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -187,7 +193,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(dueForViralLoad));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activeAndDueForViralLoad));
 
         return rd;
     }
@@ -214,7 +220,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.06";
+        return "1.09";
     }
 }
 
