@@ -80,9 +80,25 @@ public class AdherencePatientDataEvaluator implements PatientDataEvaluator {
 
         for (Object[] row : results) {
             String patientId = String.valueOf(row[0]);
+            String replaced_code = null;
             String value_coded = String.valueOf(row[1]);
+            if(value_coded.equals("GOOD ADHERENCE"))
+            {
+              replaced_code = value_coded.replace("ADHERENCE","");
+            }
+            else if (value_coded.equals("FAIR ADHERENCE"))
+            {
+                replaced_code = value_coded.replace("ADHERENCE","");
+
+            }
+            else if (value_coded.equals("POOR ADHERENCE"))
+            {
+                replaced_code = value_coded.replace("ADHERENCE","");
+
+            }
+
             String obs_datetime = String.valueOf(row[2]);
-            adherences.add(new Adherence(patientId, value_coded, obs_datetime));
+            adherences.add(new Adherence(patientId, replaced_code, obs_datetime));
         }
 
         Map<String, List<Adherence>> grouped = adherences.stream().collect(groupingBy(Adherence::getPatientId));

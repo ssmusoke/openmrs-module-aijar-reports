@@ -83,7 +83,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "StabilityReport.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:4,dataset:STABILITYASSESSMENT");
+        props.put("repeatingSections", "sheet:1,row:5,dataset:STABILITYASSESSMENT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -131,19 +131,20 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
-        addColumn(dsd, "VL Qualitative",hivPatientData.getViralLoadQualitative());
         addColumn(dsd,"1",hivPatientData.getAdherence(0));
         addColumn(dsd,"2",hivPatientData.getAdherence(1));
         addColumn(dsd,"3",hivPatientData.getAdherence(2));
         addColumn(dsd,"4",hivPatientData.getAdherence(3));
         addColumn(dsd,"5",hivPatientData.getAdherence(4));
         addColumn(dsd,"6",hivPatientData.getAdherence(5));
+
         dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
 
         rd.addDataSetDefinition("STABILITYASSESSMENT", Mapped.mapStraightThrough(dsd));
@@ -155,7 +156,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0";
+        return "3.0.1";
     }
 }
 

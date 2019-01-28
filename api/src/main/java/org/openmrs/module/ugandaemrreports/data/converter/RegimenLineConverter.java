@@ -25,7 +25,7 @@ public class RegimenLineConverter implements DataConverter {
                 case "6cdbfee8-87bf-406c-8dc3-3a22d95e952c":
                 case "f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c":
                 case "f99ef0fa-b299-4573-ae31-f4d09b1b69d5":
-                    RegimenLine = "FirstLine";
+                    RegimenLine = "1";
                     break;
                 case "dd2b9181-30ab-102d-86b0-7a5022ba4115":
                 case "fe78521e-eb7a-440f-912d-0eb9bf2d4b2c":
@@ -36,7 +36,7 @@ public class RegimenLineConverter implements DataConverter {
                 case "4a608d68-516f-44d2-9e0b-1783dc0d870e":
                 case "f00e5ff7-73bb-4385-8ee1-ea7aa772ec3e":
                 case "faf13d3c-7ca8-4995-ab29-749f3960b83d":
-                    RegimenLine = "Second Line";
+                    RegimenLine = "2";
                     break;
 
 
@@ -53,7 +53,7 @@ public class RegimenLineConverter implements DataConverter {
                 case "25b0b83c-a7b8-4663-b727-0c03c982bab2":
                 case "dd2b3eee-30ab-102d-86b0-7a5022ba4115":
                 case "20bcbf56-2784-4bf0-a6b4-23ba43764163":
-                    RegimenLine = "First Line";
+                    RegimenLine = "1";
                     break;
                 case "d4393bd0-3a9e-4716-8968-1057c58c32bc":
                 case "4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6":
@@ -61,13 +61,13 @@ public class RegimenLineConverter implements DataConverter {
                 case "942e427c-7a3b-49b6-97f3-5cdbfeb8d0e3":
                 case "f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c":
                 case "b06bdb63-dd08-4b80-af5a-d17f6b3062a5":
-                    RegimenLine = "Second Line";
+                    RegimenLine = "2";
                     break;
                 case "607ffca4-6f15-4e85-b0a5-8226d4f25592":
                 case "4c27fe52-98fd-4068-9e81-ea9caba4b583":
                 case "583a954b-0cd5-4b69-aef6-87c281e03a55":
                 case "6cdbfee8-87bf-406c-8dc3-3a22d95e952c":
-                    RegimenLine = "Third Line";
+                    RegimenLine = "3";
                     break;
             }
             return RegimenLine;
