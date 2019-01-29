@@ -186,6 +186,14 @@
         "label": "ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
         "order": 10
+      },
+      {
+        "id": "HMIS 055-HTC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HTC Register",
+        "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
+        "order": 10
       },{
         "id": "Maternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
