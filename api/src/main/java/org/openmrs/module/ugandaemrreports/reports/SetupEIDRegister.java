@@ -51,8 +51,15 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildExcelReport(reportDefinition));
         l.add(buildReportDesign(reportDefinition));
+
         return l;
+    }
+
+    public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createCSVDesign("6574db2e-1699-45cf-a772-688e8dac176d", reportDefinition);
+        return rd;
     }
 
     /**
@@ -62,9 +69,8 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
      * @param reportDefinition
      * @return The report design
      */
-    @Override
 
-    public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+    public ReportDesign buildExcelReport(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityEIDRegister.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:3-6,dataset:EID | sheet:2,row:3-9,dataset:EID");
@@ -91,6 +97,6 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "0.3";
     }
 }
