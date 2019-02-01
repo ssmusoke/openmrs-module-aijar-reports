@@ -1,7 +1,10 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import org.joda.time.Months;
-import org.openmrs.*;
+import org.openmrs.Obs;
+import org.openmrs.PatientIdentifier;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.Person;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
@@ -20,7 +23,6 @@ import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.EncounterObsDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EIDDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HMIS106A1BDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -120,7 +122,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             Obs enrolled = searchObs(summaryObs, 163004);
             Obs preArtNo = searchObs(summaryObs, 99751);
 
-
+//   ✓
             this.pdh.addCol(row, "entry", entryPoint != null ? convert(String.valueOf(entryPoint.getValueCoded().getConceptId())) : "");
             this.pdh.addCol(row, "nvp", nvp != null ? DateUtil.formatDate(nvp.getValueDatetime(), "dd/MM/yyyy") : "");
             this.pdh.addCol(row, "nvpAge", getMonthsBetweenDates(p.getBirthdate(), nvp != null ? nvp.getValueDatetime() : null));
@@ -139,7 +141,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             this.pdh.addCol(row, "infantARV4PMTCT", infantARV4PMTCT != null ? convert(String.valueOf(infantARV4PMTCT.getValueCoded().getConceptId())) : "");
 
             // First PCR
-            this.pdh.addCol(row, "firstPCR", firstPCRDate != null ? "✓" : "");
+            this.pdh.addCol(row, "firstPCR", firstPCRDate != null ? "Y" : "");
             this.pdh.addCol(row, "firstPCRDateCollected", firstPCRDate != null ? DateUtil.formatDate(firstPCRDate.getValueDatetime(), "yyyy-MM-dd") : "");
             this.pdh.addCol(row, "firstPCRDateDispatched", "");
             this.pdh.addCol(row, "ageAtFirstPCR", getMonthsBetweenDates(p.getBirthdate(), firstPCRDate != null ? firstPCRDate.getValueDatetime() : null));
@@ -159,7 +161,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             this.pdh.addCol(row, "dateFirstPCRRepeatGiven2CareGiver", "");
 
             //Second PCR
-            this.pdh.addCol(row, "secondPCR", secondPCRDate != null ? "✓" : "");
+            this.pdh.addCol(row, "secondPCR", secondPCRDate != null ? "Y" : "");
             this.pdh.addCol(row, "secondPCRDateCollected", secondPCRDate != null ? DateUtil.formatDate(secondPCRDate.getValueDatetime(), "yyyy-MM-dd") : "");
             this.pdh.addCol(row, "secondPCRDateDispatched", "");
             this.pdh.addCol(row, "ageAtSecondPCR", getMonthsBetweenDates(p.getBirthdate(), secondPCRDate != null ? secondPCRDate.getValueDatetime() : null));
