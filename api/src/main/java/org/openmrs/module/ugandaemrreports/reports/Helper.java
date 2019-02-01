@@ -6,14 +6,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.ugandaemrreports.common.Enums;
-import org.openmrs.module.ugandaemrreports.common.ObsData;
-import org.openmrs.module.ugandaemrreports.common.PersonDemographics;
-import org.openmrs.module.ugandaemrreports.common.StubDate;
+import org.openmrs.module.ugandaemrreports.common.*;
 
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.sort;
@@ -47,6 +45,108 @@ public class Helper {
         return personDemographics;
     }
 
+
+    public static List<PatientEncounterObs> getEncounterObs(Connection connection, String encounterType, String obs, Date startDate, Date endDate) throws SQLException {
+
+        String sql = "SELECT\n" +
+                "  e.patient_id,\n" +
+                "  DATE(encounter_datetime)                                 AS encounter_date,\n" +
+                "  (SELECT GROUP_CONCAT(CONCAT_WS(' ', COALESCE(given_name, ''), COALESCE(family_name, '')))\n" +
+                "   FROM person_name pn\n" +
+                "   WHERE e.patient_id = pn.person_id)                      AS 'names',\n" +
+                "  (SELECT p.gender\n" +
+                "   FROM person p\n" +
+                "   WHERE p.person_id = e.patient_id)                       AS gender,\n" +
+                "  (SELECT birthdate\n" +
+                "   FROM person p\n" +
+                "   WHERE p.person_id = e.patient_id)                       AS dob,\n" +
+                "  (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate) - (RIGHT(e.encounter_datetime, 5) < RIGHT(birthdate, 5))\n" +
+                "   FROM person p\n" +
+                "   WHERE p.person_id = e.patient_id)                       AS age,\n" +
+                "  (SELECT group_concat(concat_ws(':', o.concept_id, o.value_coded, DATE(o.obs_datetime)))\n" +
+                "   FROM obs o\n" +
+                "   WHERE o.concept_id = 90244 AND o.person_id = e.patient_id) AS marital,\n" +
+                "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pit.uuid, ''), COALESCE(identifier, '')))\n" +
+                "   FROM patient_identifier pi INNER JOIN patient_identifier_type pit\n" +
+                "       ON (pi.identifier_type = pit.patient_identifier_type_id)\n" +
+                "   WHERE pi.patient_id = e.patient_id)                     AS 'identifiers',\n" +
+                "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pat.uuid, ''), COALESCE(value, '')))\n" +
+                "   FROM person_attribute pa INNER JOIN person_attribute_type pat\n" +
+                "       ON (pa.person_attribute_type_id = pat.person_attribute_type_id)\n" +
+                "   WHERE e.patient_id = pa.person_id)                      AS 'attributes',\n" +
+                "  (SELECT GROUP_CONCAT(\n" +
+                "      CONCAT_WS(':', COALESCE(country, ''), COALESCE(county_district, ''), COALESCE(state_province, ''),\n" +
+                "                COALESCE(address3, ''),\n" +
+                "                COALESCE(address4, ''), COALESCE(address5, '')))\n" +
+                "   FROM person_address pas\n" +
+                "   WHERE e.patient_id = pas.person_id)                     AS 'addresses',\n" +
+                "  (SELECT group_concat(\n" +
+                "      concat_ws(':', o.concept_id, concat_ws('', DATE(o.value_datetime), o.value_text, o.value_coded, o.value_numeric),\n" +
+                "                DATE(o.obs_datetime),COALESCE(o.obs_group_id, '')))\n" +
+                "   FROM obs o\n";
+        if (obs != null) {
+            sql += String.format("   WHERE o.encounter_id = e.encounter_id AND o.voided = 0 AND concept_id IN(%s)) AS obs\n", obs);
+        } else {
+            sql += "   WHERE o.encounter_id = e.encounter_id AND o.voided = 0) AS obs\n";
+        }
+
+        sql += "FROM encounter e\n" +
+                "WHERE e.encounter_type = (SELECT encounter_type_id\n" +
+                "                          FROM encounter_type\n" +
+                "                          WHERE uuid =\n" +
+                String.format("                                '%s') AND voided = 0", encounterType);
+
+        if (startDate != null) {
+            sql += " AND e.encounter_datetime >= '" + DateUtil.formatDate(startDate, "yyyy-MM-dd") + "'";
+        }
+
+        if (endDate != null) {
+            sql += " AND e.encounter_datetime <= '" + DateUtil.formatDate(endDate, "yyyy-MM-dd") + "'";
+        }
+
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+
+        ResultSet rs = stmt.executeQuery(sql);
+        List<PatientEncounterObs> patientEncounterObs = new ArrayList<>();
+        while (rs.next()) {
+            PatientEncounterObs encounterObs = new PatientEncounterObs();
+            encounterObs.setPatientId(rs.getInt(1));
+            encounterObs.setEncounterDate(rs.getDate(2));
+            encounterObs.setNames(rs.getString(3));
+            encounterObs.setGender(rs.getString(4));
+            encounterObs.setDob(rs.getDate(5));
+            encounterObs.setAge(rs.getInt(6));
+            encounterObs.setMaritalStatus(rs.getString(7));
+            encounterObs.setIdentifiers(rs.getString(8));
+            encounterObs.setAttributes(rs.getString(9));
+            encounterObs.setAddresses(rs.getString(10));
+
+            List<String> currentObs = Splitter.on(",").splitToList(rs.getString(11));
+
+            List<Observation> foundObs = new ArrayList<>();
+            if (currentObs.size() > 0) {
+                for (String o : currentObs) {
+                    List<String> data = Splitter.on(":").splitToList(o);
+                    Integer concept = Integer.valueOf(data.get(0));
+                    String value = data.get(1);
+                    Date obsDatetime = DateUtil.parseYmd(data.get(2));
+                    Integer obsGroup = null;
+
+                    if (StringUtils.isNotBlank(data.get(3))) {
+                        obsGroup = Integer.valueOf(data.get(3));
+                    }
+                    foundObs.add(new Observation(concept, obsDatetime, value, obsGroup));
+                }
+            }
+            encounterObs.setObs(foundObs);
+            patientEncounterObs.add(encounterObs);
+        }
+        rs.close();
+        stmt.close();
+        return patientEncounterObs;
+    }
 
     private static String constructSQLInQuery(String column, String values) {
         return column + " IN(" + values + ")";
@@ -369,7 +469,7 @@ public class Helper {
                 .build();
     }
 
-    private static Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
+    public static Connection getDatabaseConnection(Properties props) throws ClassNotFoundException, SQLException {
 
         String driverClassName = props.getProperty("driver.class");
         String driverURL = props.getProperty("driver.url");
@@ -453,14 +553,15 @@ public class Helper {
 
     public static Map<String, String> processString(String value) {
         Map<String, String> result = new HashMap<>();
-
-        List<String> splitData = Splitter.on(",").splitToList(value);
-
-        for (String split : splitData) {
-            List<String> keyValue = Splitter.on(":").splitToList(split);
-
-            if (keyValue.size() == 2) {
-                result.put(keyValue.get(0), keyValue.get(1));
+        if (StringUtils.isNotBlank(value)) {
+            List<String> splitData = Splitter.on(",").splitToList(value);
+            for (String split : splitData) {
+                if (StringUtils.isNotBlank(split)) {
+                    List<String> keyValue = Splitter.on(":").splitToList(split);
+                    if (keyValue.size() == 2) {
+                        result.put(keyValue.get(0), keyValue.get(1));
+                    }
+                }
             }
         }
         return result;
@@ -525,6 +626,22 @@ public class Helper {
         props.setProperty("driver.url", Context.getRuntimeProperties().getProperty("connection.url"));
         props.setProperty("user", Context.getRuntimeProperties().getProperty("connection.username"));
         props.setProperty("password", Context.getRuntimeProperties().getProperty("connection.password"));
+        return getDatabaseConnection(props);
+    }
+
+    public static Observation searchObservations(List<Observation> observations, Predicate<Observation> predicate) {
+        return observations.stream()
+                .filter(predicate)
+                .findAny()
+                .orElse(null);
+    }
+
+    public static Connection testSqlConnection() throws SQLException, ClassNotFoundException {
+        Properties props = new Properties();
+        props.setProperty("driver.class", "com.mysql.jdbc.Driver");
+        props.setProperty("driver.url", "jdbc:mysql://localhost:3306/openmrs");
+        props.setProperty("user", "openmrs");
+        props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
     }
 
