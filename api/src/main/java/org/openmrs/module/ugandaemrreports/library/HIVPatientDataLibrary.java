@@ -180,10 +180,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObs(hivMetadata.getAdherence(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
 
     }
-    public PatientDataDefinition getViralLoadQualitative() {
-        return df.getObs(hivMetadata.getViralLoadQualitative(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
 
-    }
     public PatientDataDefinition getAdherence(Integer number) {
         AdherencePatientDataDefinition def = new AdherencePatientDataDefinition();
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
