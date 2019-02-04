@@ -86,12 +86,12 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "OverDue For Viral Load";
+        return "Overdue For Viral Load";
     }
 
     @Override
     public String getDescription() {
-        return "OverDue For Viral Load";
+        return "Overdue For Viral Load";
     }
 
     @Override
@@ -170,13 +170,13 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
 
         CohortDefinition beenOnArtAndNoViralLoadTaken = df.getPatientsNotIn(onARTForMoreThan7Months,viralLoadByEndOfPeriod);
-        CohortDefinition dueForViralLoad = df.getPatientsInAny(beenOnArtAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad,
+        CohortDefinition overdueForViralLoad = df.getPatientsInAny(beenOnArtAndNoViralLoadTaken,childDueForViralLoad,adultsDueForViralLoad,
                 firstANCOrEMTCTAndNoViralLoadTaken,hadFirstAncOrEmtctByEndOfPreviousDateAndLastViralLoadWas6MonthsAgo);
 
-        CohortDefinition activeAndDueForViralLoad = df.getPatientsNotIn(dueForViralLoad,patientsDeadAndtransferedOut);
+        CohortDefinition activeAndOverDueForViralLoad = df.getPatientsNotIn(overdueForViralLoad,patientsDeadAndtransferedOut);
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(activeAndDueForViralLoad));
+        dsd.addRowFilter(Mapped.mapStraightThrough(activeAndOverDueForViralLoad));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn( "Patient Name",  new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
@@ -194,7 +194,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
 
         rd.addDataSetDefinition("OVER_DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activeAndDueForViralLoad));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activeAndOverDueForViralLoad));
 
         return rd;
     }
@@ -220,7 +220,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.359";
+        return "0.36";
     }
 }
 
