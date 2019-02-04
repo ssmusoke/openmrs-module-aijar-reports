@@ -380,6 +380,13 @@
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
         "order": 99
+      },{
+        "id": "OverDue for Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "OverDue for Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=41814bf8-dfa9-4d67-a197-bd4b6e40db63",
+        "order":36
       }
 
     ]
