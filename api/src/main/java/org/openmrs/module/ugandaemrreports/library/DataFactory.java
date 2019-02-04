@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.*;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.*;
@@ -27,9 +28,11 @@ import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Time;
 import java.util.*;
 
 @Component
@@ -308,6 +311,16 @@ public class DataFactory {
 
     public PatientDataDefinition getCodedObsPresentByEndDate(Concept question, Concept answer, List<EncounterType> encounterTypes) {
         return getObsByEndDate(question, encounterTypes, null, getObsValueCodedPresentConverter(answer));
+    }
+
+    public PatientDataDefinition getCodedObsDuringPeriod(Concept question, List<EncounterType> encounterTypes,List<Concept> codedValues,TimeQualifier timeQualifier) {
+
+        ObsForPersonDataDefinition cd = new ObsForPersonDataDefinition();
+        cd.setWhich(timeQualifier);
+        cd.setValueCodedList(codedValues);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"),getObsValueCodedConverter());
     }
 
 
@@ -778,6 +791,20 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
+    public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes,String olderThan, RangeComparator operator, Double value, RangeComparator operator2, Double value2, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator1(operator);
+        cd.setValue1(value);
+        cd.setOperator2(operator2);
+        cd.setValue2(value2);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+    }
+
     public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes,String olderThan, RangeComparator operator, Double value, RangeComparator operator2, Double value2, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -1238,5 +1265,36 @@ public class DataFactory {
     public PatientDataDefinition getValueDatetimeObsOfEncounterDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
         ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
         return createPatientDataDefinition(def, converter, Parameters.combineParameters(Parameters.ON_OR_AFTER_START_DATE, Parameters.ON_OR_BEFORE_END_DATE));
+    }
+
+    public CohortDefinition getPatientsWithLastViralLoadDuringPeriodBetween(double lower, double upper) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Viral Load Quantitative between "+lower+" and "+upper);
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setQuestion(hivMetadata.getViralLoad());
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.LAST);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setValue1(lower);
+        cd.setOperator2(RangeComparator.LESS_THAN);
+        cd.setValue2(upper);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ART_ENCOUNTER_PAGE)));
+        return cd;
+    }
+
+    public CohortDefinition getPatientsWithLastViralLoadDuringPeriodByEndDate(double lower, double upper) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Viral Load Quantitative between "+lower+" and "+upper);
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setQuestion(hivMetadata.getViralLoadCopies());
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.LAST);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setValue1(lower);
+        cd.setOperator2(RangeComparator.LESS_THAN);
+        cd.setValue2(upper);
+        cd.setEncounterTypeList( Arrays.asList(hivMetadata.getARTEncounterEncounterType()));
+        return convert(cd, ObjectUtil.toMap( ",onOrBefore=endDate" ));
+
     }
 }

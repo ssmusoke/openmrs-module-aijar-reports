@@ -179,7 +179,7 @@
         "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
         "order": 5
       },
-	  {
+      {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -194,7 +194,7 @@
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
         "order": 11
       },
-	  {
+      {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -289,7 +289,7 @@
         "label": "HMIS 105 Section 2.1 to 2.7: MCH",
         "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
         "order": 25
-	  },
+      },
       {
         "id": "HMIS 105 Section 2.8 to 2.12",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
@@ -380,6 +380,13 @@
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
         "order": 99
+      },{
+        "id": "Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
+        "order": 98
       },{
         "id": "OverDue for Viral Load",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
