@@ -161,7 +161,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             this.pdh.addCol(row, "dateFirstPCRRepeatGiven2CareGiver", "");
 
             //Second PCR
-            this.pdh.addCol(row, "secondPCR", secondPCRDate != null ? "√" : "");
+            this.pdh.addCol(row, "secondPCR", secondPCRDate != null ? "=UNICHAR(8730)" : "");
             this.pdh.addCol(row, "secondPCRDateCollected", secondPCRDate != null ? DateUtil.formatDate(secondPCRDate.getValueDatetime(), "yyyy-MM-dd") : "");
             this.pdh.addCol(row, "secondPCRDateDispatched", "");
             this.pdh.addCol(row, "ageAtSecondPCR", getMonthsBetweenDates(p.getBirthdate(), secondPCRDate != null ? secondPCRDate.getValueDatetime() : null));
@@ -211,7 +211,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             this.pdh.addCol(row, "transferred", finalOutcome != null && finalOutcome.getValueCoded().getConceptId().equals(90306) ? "✓" : "");
             this.pdh.addCol(row, "died", finalOutcome != null && finalOutcome.getValueCoded().getConceptId().equals(99112) ? "✓" : "");
 
-            this.pdh.addCol(row, "enrolled", enrolled != null ? "✓" : "");
+            this.pdh.addCol(row, "enrolled", enrolled != null ? "=UNICHAR(8730)" : "");
             this.pdh.addCol(row, "preArtNo", preArtNo != null ? preArtNo.getValueText() : "");
             this.pdh.addCol(row, "clinic1", "");
             this.pdh.addCol(row, "clinic2", "");
