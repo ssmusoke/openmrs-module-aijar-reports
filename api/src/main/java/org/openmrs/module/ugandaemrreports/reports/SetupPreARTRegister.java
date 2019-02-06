@@ -41,12 +41,12 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Pre-ART CSV Register";
+        return "Pre-ART Register";
     }
 
     @Override
     public String getDescription() {
-        return "Pre-ART CSV Register";
+        return "Pre-ART Register";
     }
 
     @Override
@@ -98,13 +98,13 @@ public class SetupPreARTRegister extends UgandaEMRDataExportManager {
     public ReportDesign buildExcel(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign("568867cc-591a-42ec-8a79-affaf6eea2f9", reportDefinition, "FacilityPreARTRegister.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:PRE_ART");
+        props.put("repeatingSections", "sheet:1,row:9,dataset:PRE_ART");
         rd.setProperties(props);
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2.1";
     }
 }
