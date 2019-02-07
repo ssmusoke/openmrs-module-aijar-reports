@@ -40,10 +40,10 @@ public class EmctCodesDataConverter implements DataConverter {
             return "T";
         }
         else if(value != null && value.equals(Dictionary.getConcept("12d878f9-899c-4b3c-bf57-c6226c307a53"))) {
-            return "TR✔";
+            return "=CONCATENATE(\"TR\",UNICHAR(8730))";
         }
         else if(value != null && value.equals(Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f"))) {
-            return "TRR✔";
+            return "=CONCATENATE(\"TR\",UNICHAR(8730))";
         }
         else if(value != null && value.equals(Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"))) {
             return "TRK";

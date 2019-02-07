@@ -1,11 +1,9 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
-import org.openmrs.*;
+import org.openmrs.Concept;
+import org.openmrs.PatientIdentifierType;
+import org.openmrs.PersonAttributeType;
+import org.openmrs.PersonName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -27,13 +25,18 @@ import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.MaternityEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.CircumciserNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Integrated Maternity Register Report
@@ -71,7 +74,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "4.7";
+		return "5.0.6";
 	}
 
 	/**
@@ -197,7 +200,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		dsd.addColumn("Weeks of Gestation", sdd.definition("Gestational Age", getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FinalDiagnosisDataConverter());
 		dsd.addColumn("Mode of Delivery", sdd.definition("Mode of Delivery", getConcept("dcc3ac63-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("Date Of Deliverly", sdd.definition("Date Of Deliverly", getConcept("5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
+		dsd.addColumn("Date Of Deliverly", sdd.definition("Date of Delivery", getConcept("f9573837-6a9b-4f2f-9298-aecf27b15fb3")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Time of Delivery", sdd.definition("Time of Delivery", getConcept("f9573837-6a9b-4f2f-9298-aecf27b15fb3")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Weight", sdd.definition("Weight", getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Height", sdd.definition("Height", getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -217,6 +220,7 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		dsd.addColumn("Condition of Mother", sdd.definition("Condition of Mother", getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ConditionOfMotherAtDischargeConverter());
 		dsd.addColumn("Pre-ART No", identifierDefn, "");
 		dsd.addColumn("First Minute", sdd.definition("First Minute", getConcept("056ee92e-3104-4529-8f83-70580e0f4501")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FirstMinuteAgparScoreDataConverter());
+		dsd.addColumn("Fifth Minute", sdd.definition("Fifth Minute", getConcept("015ab92b-c5de-40cc-903d-21612bf4d9ab")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Baby Weight", sdd.definition("Baby Weight", getConcept("dcce847a-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", getConcept("9e825e42-be00-4d4d-8774-257ddb29581b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsAdministerdToBabyDataConverter());
 		dsd.addColumn("PNC at 6 Baby", sdd.definition("PNC at 6 Baby", getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -235,9 +239,6 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		dsd.addColumn("Breathing At Birth", sdd.definition("Breathing At Birth", getConcept("dc958e5c-ab9b-4c0c-b02d-d136b7505754")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BreathingStatusAtBirthDataConverter());
 		dsd.addColumn("Delivered By", nameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Name of Person Discharging", nameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
-		dsd.addColumn("First Minute", sdd.definition("First Minute", getConcept("056ee92e-3104-4529-8f83-70580e0f4501")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("Fifth Minute", sdd.definition("First Minute", getConcept("015ab92b-c5de-40cc-903d-21612bf4d9ab")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-
 		dsd.addColumn("Polio", sdd.definition("Polio", getConcept("dc883964-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
 		dsd.addColumn("BCG", sdd.definition("BCG", getConcept("dc8e1be9-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
 
