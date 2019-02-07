@@ -81,11 +81,11 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
             PatientIdentifier identifier = (PatientIdentifier) patientIdentifiers.get(data.getKey());
 
             this.pdh.addCol(row, "EIDNo", identifier != null ? identifier.getIdentifier() : "");
-            this.pdh.addCol(row, "registrationDate", DateUtil.formatDate(firstObs.getEncounter().getEncounterDatetime(), "yyyy-MM-dd"));
+            this.pdh.addCol(row, "registrationDate", DateUtil.formatDate(firstObs.getEncounter().getEncounterDatetime(), "dd-MM-yyyy"));
             this.pdh.addCol(row, "surname", p.getFamilyName());
             this.pdh.addCol(row, "firstName", p.getGivenName());
             this.pdh.addCol(row, "sex", p.getGender());
-            this.pdh.addCol(row, "dob", DateUtil.formatDate(p.getBirthdate(), "dd/MM/yyyy"));
+            this.pdh.addCol(row, "dob", DateUtil.formatDate(p.getBirthdate(), "dd-MM-yyyy"));
             this.pdh.addCol(row, "age", getMonthsBetweenDates(p.getBirthdate(), firstObs.getEncounter().getEncounterDatetime()));
 
             Obs entryPoint = searchObs(summaryObs, 90200);
@@ -124,9 +124,9 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
 //   ✓
             this.pdh.addCol(row, "entry", entryPoint != null ? convert(String.valueOf(entryPoint.getValueCoded().getConceptId())) : "");
-            this.pdh.addCol(row, "nvp", nvp != null ? DateUtil.formatDate(nvp.getValueDatetime(), "dd/MM/yyyy") : "");
+            this.pdh.addCol(row, "nvp", nvp != null ? DateUtil.formatDate(nvp.getValueDatetime(), "dd-MM-yyyy") : "");
             this.pdh.addCol(row, "nvpAge", getMonthsBetweenDates(p.getBirthdate(), nvp != null ? nvp.getValueDatetime() : null));
-            this.pdh.addCol(row, "cotrim", cotrim != null ? DateUtil.formatDate(cotrim.getValueDatetime(), "dd/MM/yyyy") : "");
+            this.pdh.addCol(row, "cotrim", cotrim != null ? DateUtil.formatDate(cotrim.getValueDatetime(), "dd-MM-yyyy") : "");
             this.pdh.addCol(row, "cotrimAge", getMonthsBetweenDates(p.getBirthdate(), cotrim != null ? cotrim.getValueDatetime() : null));
             this.pdh.addCol(row, "motherFirstName", motherFirstName != null ? motherFirstName.getValueText() : "");
             this.pdh.addCol(row, "motherLastName", motherLastName != null ? motherLastName.getValueText() : "");
@@ -142,14 +142,14 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
             // First PCR
             this.pdh.addCol(row, "firstPCR", firstPCRDate != null ? "=UNICHAR(8730)" : "");
-            this.pdh.addCol(row, "firstPCRDateCollected", firstPCRDate != null ? DateUtil.formatDate(firstPCRDate.getValueDatetime(), "yyyy-MM-dd") : "");
+            this.pdh.addCol(row, "firstPCRDateCollected", firstPCRDate != null ? DateUtil.formatDate(firstPCRDate.getValueDatetime(), "dd-MM-yyyy") : "");
             this.pdh.addCol(row, "firstPCRDateDispatched", "");
             this.pdh.addCol(row, "ageAtFirstPCR", getMonthsBetweenDates(p.getBirthdate(), firstPCRDate != null ? firstPCRDate.getValueDatetime() : null));
             this.pdh.addCol(row, "fsAtFirstPCR", fsAtFirstPCR != null ? convert(String.valueOf(fsAtFirstPCR.getValueCoded().getConceptId())) : "");
             this.pdh.addCol(row, "firstPCRResult", firstPCRResult != null ? firstPCRResult.getValueCoded().getName().getName() : "");
             this.pdh.addCol(row, "firstPCRResultDateReceived", "");
             this.pdh.addCol(row, "dateFirstPCRGiven2CareGiver", dateFirstPCRGiven2CareGiver != null ?
-                    DateUtil.formatDate(dateFirstPCRGiven2CareGiver.getValueDatetime(), "yyyy-MM-dd") : "");
+                    DateUtil.formatDate(dateFirstPCRGiven2CareGiver.getValueDatetime(), "dd-MM-yyyy") : "");
 
             this.pdh.addCol(row, "firstPCRRepeat", "");
             this.pdh.addCol(row, "firstPCRRepeatDateCollected", "");
@@ -162,14 +162,14 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
             //Second PCR
             this.pdh.addCol(row, "secondPCR", secondPCRDate != null ? "=UNICHAR(8730)" : "");
-            this.pdh.addCol(row, "secondPCRDateCollected", secondPCRDate != null ? DateUtil.formatDate(secondPCRDate.getValueDatetime(), "yyyy-MM-dd") : "");
+            this.pdh.addCol(row, "secondPCRDateCollected", secondPCRDate != null ? DateUtil.formatDate(secondPCRDate.getValueDatetime(), "dd-MM-yyyy") : "");
             this.pdh.addCol(row, "secondPCRDateDispatched", "");
             this.pdh.addCol(row, "ageAtSecondPCR", getMonthsBetweenDates(p.getBirthdate(), secondPCRDate != null ? secondPCRDate.getValueDatetime() : null));
             this.pdh.addCol(row, "fsAtSecondPCR", fsAtSecondPCR != null ? convert(String.valueOf(fsAtSecondPCR.getValueCoded().getConceptId())) : "");
             this.pdh.addCol(row, "secondPCRResult", secondPCRResult != null ? secondPCRResult.getValueCoded().getName().getName() : "");
             this.pdh.addCol(row, "secondPCRResultDateReceived", "");
             this.pdh.addCol(row, "dateSecondPCRGiven2CareGiver", dateSecondPCRGiven2CareGiver != null ?
-                    DateUtil.formatDate(dateSecondPCRGiven2CareGiver.getValueDatetime(), "yyyy-MM-dd") : "");
+                    DateUtil.formatDate(dateSecondPCRGiven2CareGiver.getValueDatetime(), "dd-MM-yyyy") : "");
 
             this.pdh.addCol(row, "secondPCRRepeat", "");
             this.pdh.addCol(row, "secondPCRRepeatDateCollected", "");
@@ -182,7 +182,7 @@ public class EIDDatasetEvaluator implements DataSetEvaluator {
 
             // Rapid Test
 
-            this.pdh.addCol(row, "rapidTestDate", rapidTestDate != null ? DateUtil.formatDate(rapidTestDate.getValueDatetime(), "yyyy-MM-dd") : "");
+            this.pdh.addCol(row, "rapidTestDate", rapidTestDate != null ? DateUtil.formatDate(rapidTestDate.getValueDatetime(), "dd-MM-yyyy") : "");
             this.pdh.addCol(row, "ageAtRapidTest", getMonthsBetweenDates(p.getBirthdate(), rapidTestDate != null ? rapidTestDate.getValueDatetime() : null));
             this.pdh.addCol(row, "rapidTestResult", rapidTestResult != null ? rapidTestResult.getValueCoded().getName().getName() : "");
 
