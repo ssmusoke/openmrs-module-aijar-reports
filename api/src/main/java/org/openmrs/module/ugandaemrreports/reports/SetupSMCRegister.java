@@ -82,6 +82,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcel(reportDefinition));
         return l;
     }
 
@@ -93,7 +94,11 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "SMCRegister.xls");
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        return rd;
+    }
+    public ReportDesign buildExcel(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("f10d34f6-c7c0-47eb-a1ec-629b9e340421", reportDefinition, "SMCRegister.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:10-12,dataset:SMC");
         props.put("sortWeight", "5000");
@@ -131,7 +136,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.2";
     }
 
     @Override
