@@ -27,7 +27,7 @@ public class RoutineAdminDataConverter implements DataConverter{
         }
         Concept concept = ((Obs) obj).getValueCoded();
         if(concept != null){
-            return "✔";
+            return "=UNICHAR(8730)";
         }
         return null;
     }
