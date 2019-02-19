@@ -189,6 +189,10 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     public CohortDefinition between0And10years() {
         return agedAtMost(10);
     }
+
+    public CohortDefinition below10Years() {
+        return agedAtMost(9);
+    }
     
     /**
      * MoH definition of children who is anybody 14 years and below
@@ -242,6 +246,12 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return agedBetween(25,49);
     }
 
+    public CohortDefinition between10And19years() {
+        return agedBetween(10,19);
+    }
+    public CohortDefinition is25AndAboveyears() {
+        return agedAtLeast(25);
+    }
 
 
 

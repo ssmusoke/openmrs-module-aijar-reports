@@ -204,6 +204,10 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Pregnant Women re-tested later in pregnancy (TR+&TRR+))", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    public CohortIndicator retestedTrrPlusAndNewlyTestedForHivThisPregnancy(){
+        return cohortIndicator("(Trr And Trr+)",map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f"),Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465")),"onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
     /**
      * Pregnant Women testing HIV+ on a retest (TRR+)
      * @return CohortIndicator

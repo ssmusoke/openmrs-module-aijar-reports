@@ -129,8 +129,8 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
         addGender(dsd,"a","Total  Pregnant With known HIV status at entry",ReportUtils.map(indicatorLibrary.pregnantTrkTrrk(),params),"female"); ;
         addGender(dsd,"b","Total  Pregnant Known HIV positives at entry",ReportUtils.map(indicatorLibrary.pregnantTrrk(),params),"female");
         addGender(dsd,"c","Pregnant Total Newly tested for HIV",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(),params),"female");
-        addGender(dsd,"d","Total  newly Pregnant Tested  HIV Positive",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRR(),params),"female");
-        addGender(dsd,"e","Total  Number of NEW ANC Clients ",ReportUtils.map(indicatorLibrary.anc1stVisit()),"female");
+        addGender(dsd,"d","Total  newly Pregnant Tested  HIV Positive And HIv+ at retest ",ReportUtils.map(indicatorLibrary.retestedTrrPlusAndNewlyTestedForHivThisPregnancy(),params),"female");
+        addGender(dsd,"e","Total  Number of NEW ANC Clients ",ReportUtils.map(indicatorLibrary.anc1stVisit(),params),"female");
         addGender(dsd,"f","Total  Male that tested For HIV",ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params),"male");
         addGender(dsd,"g","Total  Male that tested HIV +ve",ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params),"male");
 
@@ -141,14 +141,8 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "4h" , "Total pregnant who knew HIV status before 1st ANC" , ReportUtils.map(indicatorLibrary.pregnantTrkTrrk(), params), "");
         addIndicator(dsd, "5h" , "Total pregnant who were HIV +ve before 1st ANC" , ReportUtils.map(indicatorLibrary.pregnantTrrk(), params), "");
         addIndicator(dsd, "9h" ,"Pregnant Women testing HIV+ on a retest " , ReportUtils.map(indicatorLibrary.retestedTrrPlus(), params),"");
-        addIndicator(dsd, "13h" ,"Total Males received HIV test results" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params),"");
-        addIndicator(dsd, "14h" ,"Males received HIV test +ve " , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params),"");
-
-        addIndicator(dsd, "2f" , "Total  Male that tested For HIV" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "age=below10male");
-        addIndicator(dsd, "3f" , "Total  Male that tested For HIV" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "age=below10male");
-        addIndicator(dsd, "4f" , "Total  Male that tested For HIV" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "age=below10male");
-        addIndicator(dsd, "5f" , "Total  Male that tested For HIV" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params), "age=below10male");
-
+        addIndicator(dsd, "13h" ,"Total Males received HIV test results" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params),"age=male");
+        addIndicator(dsd, "14h" ,"Males received HIV test +ve " , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params),"age=male");
         return rd;
     }
 
@@ -179,6 +173,6 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1";
+        return "0.1.5";
     }
 }
