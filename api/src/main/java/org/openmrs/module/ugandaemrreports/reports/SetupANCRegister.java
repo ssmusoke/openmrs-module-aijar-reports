@@ -131,7 +131,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.5";
+        return "0.7";
     }
 
     @Override
