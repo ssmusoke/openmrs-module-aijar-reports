@@ -5,6 +5,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TBDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +42,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.4";
+		return "0.1";
 	}
 	
 	/**
@@ -64,7 +65,6 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
 		l.add(buildReportDesign(reportDefinition));
-		l.add(buildExcelDesign(reportDefinition));
 		return l;
 	}
 	
@@ -75,12 +75,8 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	 * @param reportDefinition
 	 * @return The report design
 	 */
-	@Override
+	@Override	
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createCSVDesign("18df4f29-4dc2-4b23-a71a-ea292665dc89", reportDefinition);
-		return rd;
-	}
-	public ReportDesign buildExcelDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HCTRegister.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:4,dataset:HCT");
@@ -88,7 +84,6 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 		rd.setProperties(props);
 		return rd;
 	}
-
 	
 	@Override
 	public ReportDefinition constructReportDefinition() {

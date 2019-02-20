@@ -45,7 +45,7 @@ public class IronGivenCalculation extends AbstractPatientCalculation {
                 ironAmountGiven = ironAmount.toString();
             }
             if(ironConcept != null && ironConcept.equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-                ironGiven = "=UNICHAR(8730)"+ironAmountGiven;
+                ironGiven = "✔ "+ironAmountGiven;
             }
 
             ret.put(ptId, new SimpleResult(ironGiven, this));

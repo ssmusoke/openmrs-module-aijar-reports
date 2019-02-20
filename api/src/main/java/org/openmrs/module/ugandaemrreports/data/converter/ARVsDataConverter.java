@@ -38,10 +38,10 @@ public class ARVsDataConverter implements DataConverter {
         }
 
         else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("2c000b41-f9d7-40c1-8de0-bce91dbae932"))){
-            return "=CONCATENATE(\"ART\",UNICHAR(8730))";
+            return "ART✔";
         }
         else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("bbc63761-0741-4583-9396-a34d3a18601c"))){
-            return "=CONCATENATE(\"ARTK\",UNICHAR(8730))";
+            return "ARTK✔";
         }
         else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))){
             return "NA";

@@ -44,7 +44,7 @@ public class FolicAcidCalculation extends AbstractPatientCalculation {
                 folicAmountGiven = folicAmount.toString();
             }
             if(folicConcept != null && folicConcept.equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-                folicGiven = "=UNICHAR(8730)"+folicAmountGiven;
+                folicGiven = "✔ "+folicAmountGiven;
             }
 
             ret.put(ptId, new SimpleResult(folicGiven, this));

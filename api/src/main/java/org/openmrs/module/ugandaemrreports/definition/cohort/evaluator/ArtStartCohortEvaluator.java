@@ -6,9 +6,11 @@ import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.evaluator.CohortDefinitionEvaluator;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
+import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.common.Periods;
@@ -48,6 +50,8 @@ public class ArtStartCohortEvaluator implements CohortDefinitionEvaluator {
         Date artDate = cd.getStartDate();
         LocalDate beginningDate = StubDate.dateOf(artDate);
 
+        String startDate = DateUtil.formatDate(cd.getStartDate(), "yyyy-MM-dd");
+
         List<Date> dates = getDates(beginningDate, cd.getPeriod(), cd.getPeriodInterval(), cd.getPeriodDifference());
 
         HqlQueryBuilder obsQuery = new HqlQueryBuilder();
@@ -62,8 +66,20 @@ public class ArtStartCohortEvaluator implements CohortDefinitionEvaluator {
         }
         obsQuery.whereEqual("o.person.personVoided", false);
 
+//        period on art  query
+        String sql =String.format("select person_id from obs o  where timestampdiff(month ,value_datetime,'%s') >= '%d' and concept_id = \n",startDate,cd.getPeriodDifference()) +
+                "(select concept_id from concept where concept.uuid='ab505422-26d9-41f1-a079-c3d222000440') and o.voided= 0 group by person_id ";
+
+        SqlQueryBuilder q = new SqlQueryBuilder();
+        q.append(sql);
+
+        if(cd.getPeriodDifference()!=null && cd.getStartDate()!=null){
+            List<Integer> patients=this.evaluationService.evaluateToList(q, Integer.class, context);
+            ret.getMemberIds().addAll(patients);
+        }else{
+
         List<Integer> pIds = this.evaluationService.evaluateToList(obsQuery, Integer.class, context);
-        ret.getMemberIds().addAll(pIds);
+        ret.getMemberIds().addAll(pIds);}
         return ret;
     }
 }

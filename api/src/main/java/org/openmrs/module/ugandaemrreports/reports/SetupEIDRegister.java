@@ -97,6 +97,6 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.5";
+        return "0.3";
     }
 }
