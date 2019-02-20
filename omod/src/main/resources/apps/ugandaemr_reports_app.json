@@ -386,6 +386,13 @@
         "label": "Due For Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
         "order": 98
+      },{
+        "id": "DSDM:Stablity Assessment Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Stablity Assessment Report",
+        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
+        "order": 120
       }
 
     ]
