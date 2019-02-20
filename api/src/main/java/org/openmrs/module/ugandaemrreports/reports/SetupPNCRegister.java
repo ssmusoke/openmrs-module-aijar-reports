@@ -89,7 +89,6 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
-        l.add(buildExcelDesign(reportDefinition));
         return l;
     }
 
@@ -101,11 +100,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
-        return rd;
-    }
-    public ReportDesign buildExcelDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign("ebde67bc-686c-454a-a4a2-863f6265dd74", reportDefinition, "PNCRegister.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8-10,dataset:PNC");
         props.put("sortWeight", "5000");
@@ -142,7 +137,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4";
+        return "0.1";
     }
 
     @Override
@@ -171,9 +166,9 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-        dsd.addColumn("Age 10-19", age(10, 19), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age 20-24", age(20, 24), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Age >=25", age(25, 200), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age-10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age-20-24yrs", age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Age-25+yrs", age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("6 Hours", sdd.definition("6 Hours", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Days", sdd.definition("6 Days", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Weeks", sdd.definition("6 Weeks", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
@@ -198,7 +193,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("VL", whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Other treatment mother", sdd.definition("Other treatment mother", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Baby status", sdd.definition("Baby status", getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BabyStatusDataConveter());
-        dsd.addColumn("Age", sdd.definition("Age", getConcept("274d8abf-f41d-4dce-a496-8c949d362466")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Age", sdd.definition("Age", getConcept("164438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WT", sdd.definition("WT", getConcept("94e4aeea-84d0-4207-aacb-ce38fe8e109c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Diagnosis-C", sdd.definition("Diagnosis-C", getConcept("a16b3a8e-6412-4344-908a-2a96344fa017")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("IFO", sdd.definition("IFO", getConcept("dc9a00a2-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IFODataConverter());
