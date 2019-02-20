@@ -425,10 +425,19 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
                 );
     }
 
+    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromEndDate(String monthsBack){
+        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getViralLoadDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),BaseObsCohortDefinition.TimeModifier.LAST,monthsBack);
+    }
+
     public CohortDefinition getPatientsWithLastViralLoadByEndDate(){
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getViralLoadDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()),BaseObsCohortDefinition.TimeModifier.ANY
         );
+    }
+
+    public CohortDefinition getPatientsWithArtStartDateByEndDate(String olderThan) {
+        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, olderThan);
     }
 
 }

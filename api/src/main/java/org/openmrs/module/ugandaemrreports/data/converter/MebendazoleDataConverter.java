@@ -29,7 +29,7 @@ public class MebendazoleDataConverter implements DataConverter {
         Obs obs = ((Obs) obj);
 
         if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("a7a9d632-b266-4085-9a5e-57fc8dd56f0c"))) {
-            return "✔";
+            return "=UNICHAR(8730)";
         }
         else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("0134c1d3-a255-46b2-ac77-38c0edcd9e53"))) {
             return "x";
