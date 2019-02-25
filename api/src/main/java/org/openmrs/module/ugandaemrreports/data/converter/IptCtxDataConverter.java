@@ -47,7 +47,7 @@ public class IptCtxDataConverter implements DataConverter {
             return "CTX";
         }
         else if(value != null && value.equals(Dictionary.getConcept("b0439b8e-469e-43e6-9dda-9b6b49f2147b"))){
-            return "=CONCATENATE(\"CTX\",UNICHAR(8730))";
+            return "CTX✔";
         }
 
         return null;
