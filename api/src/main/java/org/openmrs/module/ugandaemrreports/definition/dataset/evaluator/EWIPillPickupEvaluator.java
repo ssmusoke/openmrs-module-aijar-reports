@@ -70,6 +70,7 @@ public class EWIPillPickupEvaluator implements DataSetEvaluator {
                         pdh.addCol(row, "PatientID", patientData.getArtClinicNumber());
                         pdh.addCol(row, "Sex", patientData.getGender());
                         pdh.addCol(row, "DOB", new SimpleDateFormat("yyyy-MM-dd").parse(patientData.getDob()));
+                        pdh.addCol(row,"Age",patientData.getAge());
 
                         if(patientData.getTransferOutDate()==null &&patientData.getDeathDate()!=null)
                             pdh.addCol(row,"transferOrDeath",new SimpleDateFormat("yyyy-MM-dd").parse(patientData.getDeathDate()));
@@ -105,12 +106,13 @@ public class EWIPillPickupEvaluator implements DataSetEvaluator {
                         pdh.addCol(row, "PatientID", "");
                         pdh.addCol(row, "Sex", "");
                         pdh.addCol(row, "DOB", "");
+                        pdh.addCol(row,"Age","");
                         pdh.addCol(row, "pickupDate", "");
                         pdh.addCol(row,"pickup1","");
                         pdh.addCol(row,"noOfDaysPicked","");
                         pdh.addCol(row,"transferOrDeath","");
                     }
-                    pdh.addCol(row, "Age", "");
+//                    pdh.addCol(row, "Age", "");
                   dataSet.addRow(row);
             }
         } catch (Exception e) {

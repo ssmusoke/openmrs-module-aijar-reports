@@ -526,12 +526,13 @@ public class Helper {
             Integer personId = rs.getInt(1);
             String gender = rs.getString(2);
             String dob = rs.getString(3);
-            String deathDate = rs.getString(4);
-            String clinicNo = rs.getString(5);
-            String artStartDate = rs.getString(6);
-            String transferOutDate = rs.getString(7);
-            String arv_stop = rs.getString(8);
-            EWIPatientData p = new EWIPatientData(personId, gender, dob, deathDate, clinicNo, artStartDate, transferOutDate,arv_stop);
+            Integer age = rs.getInt(4);
+            String deathDate = rs.getString(5);
+            String clinicNo = rs.getString(6);
+            String artStartDate = rs.getString(7);
+            String transferOutDate = rs.getString(8);
+            String arv_stop = rs.getString(9);
+            EWIPatientData p = new EWIPatientData(personId, gender, dob, deathDate, clinicNo, artStartDate, transferOutDate,arv_stop,age);
             ewiPatientData.add(p);
         }
         rs.close();

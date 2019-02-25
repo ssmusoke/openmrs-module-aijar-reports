@@ -160,6 +160,6 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4.4.7";
+        return "0.4.4.1.2";
     }
 }
