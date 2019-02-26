@@ -619,6 +619,103 @@ public class Helper {
         return result;
     }
 
+    public static List<EWIPatientData> getEWIPillPickupPatients(Connection connection, String sql)
+            throws SQLException {
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<EWIPatientData> ewiPatientData = new ArrayList<>();
+        while (rs.next()) {
+            Integer personId = rs.getInt(1);
+            String gender = rs.getString(2);
+            String dob = rs.getString(3);
+            Integer age = rs.getInt(4);
+            String deathDate = rs.getString(5);
+            String clinicNo = rs.getString(6);
+            String artStartDate = rs.getString(7);
+            String transferOutDate = rs.getString(8);
+            String arv_stop = rs.getString(9);
+            EWIPatientData p = new EWIPatientData(personId, gender, dob, deathDate, clinicNo, artStartDate, transferOutDate,arv_stop,age);
+            ewiPatientData.add(p);
+        }
+        rs.close();
+        stmt.close();
+        return ewiPatientData;
+    }
+    public static List<Integer> getEWICohort(Connection connection, String sql)
+            throws SQLException {
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Integer> ewiPatients = new ArrayList<>();
+        while (rs.next()) {
+            Integer patient = rs.getInt(1);
+            ewiPatients.add(patient);
+        }
+        rs.close();
+        stmt.close();
+        return ewiPatients;
+    }
+    public static List<EWIPatientEncounter> getEWIPatientEncounters(Connection connection, String sql)
+            throws SQLException {
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<EWIPatientEncounter> ewiPatients = new ArrayList<>();
+        while (rs.next()) {
+            Integer patient = rs.getInt(1);
+            Integer encounterId = rs.getInt(2);
+            String encounterDate = rs.getString(3);
+            String nextVisitDate = rs.getString(4);
+            EWIPatientEncounter ewiPatient = new EWIPatientEncounter(patient, encounterId, encounterDate, nextVisitDate);
+            ewiPatients.add(ewiPatient);
+        }
+        rs.close();
+        stmt.close();
+        return ewiPatients;
+    }
+
+    public static List<EWIPatientEncounter> getBaselinePickup(Connection connection, String sql)
+            throws SQLException {
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<EWIPatientEncounter> ewiPatients = new ArrayList<>();
+        while (rs.next()) {
+            Integer patient = rs.getInt(1);
+            String baselinepickup = rs.getString(2);
+
+            EWIPatientEncounter ewiPatient = new EWIPatientEncounter(patient, baselinepickup);
+            ewiPatients.add(ewiPatient);
+        }
+        rs.close();
+        stmt.close();
+        return ewiPatients;
+    }
+
+    public static List<EWIPatientEncounter> getNumberOfDaysPickedAtBaseline(Connection connection,String sql) throws SQLException{
+        Statement stmt = connection.createStatement(java.sql.ResultSet.TYPE_FORWARD_ONLY,
+                java.sql.ResultSet.CONCUR_READ_ONLY);
+        stmt.setFetchSize(Integer.MIN_VALUE);
+        ResultSet rs = stmt.executeQuery(sql);
+        List<EWIPatientEncounter> ewiPatients = new ArrayList<>();
+        while (rs.next()) {
+            Integer patient = rs.getInt(1);
+            Integer noOfDays = rs.getInt(2);
+
+            EWIPatientEncounter ewiPatient = new EWIPatientEncounter(patient, noOfDays);
+            ewiPatients.add(ewiPatient);
+        }
+        rs.close();
+        stmt.close();
+        return ewiPatients;
+
+    }
+
     public static Connection sqlConnection() throws SQLException, ClassNotFoundException {
 
         Properties props = new Properties();
