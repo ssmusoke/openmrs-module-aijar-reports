@@ -193,51 +193,92 @@
         "order":95
       },
       {
+        "id": "OPD Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 031: OPD Register",
+        "url": "reportingui/runReport.page?reportDefinition=df041e1d-0043-4a01-815b-c9f66edcac7e",
+        "order": 5
+      },
+      {
+        "id": "SMC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 035: SMC Register",
+        "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
+        "order": 10
+      },
+      {
+        "id": "Patient Appointment Book",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 053: Patient Appointment Book",
+        "url": "reportingui/runReport.page?reportDefinition=4986aa7a-38fb-420e-853e-583eefa065d0",
+        "order": 15
+      },
+      {
+        "id": "HMIS 055-HCT Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 055 : HCT Register",
+        "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
+        "order": 20
+      },
+      {
+        "id": "ANC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 071: ANC Register",
+        "url": "reportingui/runReport.page?reportDefinition=f717a684-3c78-11e7-adec-507b9dc4c741",
+        "order": 25
+      },
+      {
+        "id": "Maternity Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 072: Maternity Register",
+        "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
+        "order": 30
+      },
+      {
+        "id": "PNC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 078: PNC Register",
+        "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
+        "order": 35
+      },
+      {
         "id": "Pre-ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "Pre-ART Register",
+        "label": "HMIS 080: Pre-ART Register ",
         "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
-        "order": 5
+        "order": 40
       },
       {
         "id": "ART Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "ART Register",
+        "label": "HMIS 081: ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
-        "order": 10
-      },{
-        "id": "Maternity Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "Maternity Register",
-        "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
-        "order": 11
-      },
-      {
-        "id": "OPD Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "OPD Register",
-        "url": "reportingui/runReport.page?reportDefinition=df041e1d-0043-4a01-815b-c9f66edcac7e",
-        "order": 13
-      },
-      {
-        "id": "TB Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "TB Register",
-        "url": "reportingui/runReport.page?reportDefinition=00002c21-2c46-4ea1-9993-4ea63c3d7e06",
-        "order": 12
+        "order": 45
       },
       {
         "id": "EID Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "EID Register",
+        "label": "HMIS 082: EID Register",
         "url": "reportingui/runReport.page?reportDefinition=adf50b27-266f-4b46-9569-424eb664ffc6",
-        "order": 16
+        "order": 50
+      },
+      {
+        "id": "TB Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 096a: TB Register",
+        "url": "reportingui/runReport.page?reportDefinition=00002c21-2c46-4ea1-9993-4ea63c3d7e06",
+        "order": 55
       },
       {
         "id": "Case Based Surveillance EID Report",
@@ -262,38 +303,6 @@
         "label": "Early Warning Indicator Report",
         "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
         "order": 15
-      },
-      {
-        "id": "ANC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "ANC Register",
-        "url": "reportingui/runReport.page?reportDefinition=f717a684-3c78-11e7-adec-507b9dc4c741",
-        "order": 20
-      },
-      {
-        "id": "PNC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "PNC Register",
-        "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
-        "order": 21
-      },
-      {
-        "id": "Patient Appoinment Book",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "Patient Appointment Book",
-        "url": "reportingui/runReport.page?reportDefinition=4986aa7a-38fb-420e-853e-583eefa065d0",
-        "order": 25
-      },
-      {
-        "id": "SMC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
-        "type": "link",
-        "label": "SMC Register",
-        "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
-        "order": 30
       },
       {
         "id": "HMIS 105 - 1",
