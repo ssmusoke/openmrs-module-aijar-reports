@@ -67,6 +67,18 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortDefinition femaleAndHasAncVisitBeforePeriod(double lower, double upper){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Female and has ANC Visit");
+//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("female", ReportUtils.map(definitionLibrary.females(), ""));
+        cd.addSearch("ancVist", ReportUtils.map(totalAncVisitsBeforePeriod(lower, upper), "onOrBefore=${endDate}"));
+        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrBefore=${endDate}"));
+        cd.setCompositionString("female AND ancVist AND ancEncounter");
+        return cd;
+    }
+
     /**
      * Total ANC visits - including new clients and re-attendances
      * @return CohortDefinition
@@ -85,6 +97,21 @@ public class Moh105CohortLibrary {
         cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
         return cd;
     }
+
+    public CohortDefinition totalAncVisitsBeforePeriod(double lower, double upper) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setName("Anc visit between "+lower+" and "+upper);
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setQuestion(Dictionary.getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb"));
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
+        cd.setOperator1(RangeComparator.GREATER_THAN);
+        cd.setValue1(lower);
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.setValue2(upper);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
+        return cd;
+    }
+
 
     /**
      * Pregnant women receiving iron/folic acid on ANC 1st Visit
