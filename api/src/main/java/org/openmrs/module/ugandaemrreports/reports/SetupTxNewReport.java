@@ -109,80 +109,55 @@ public class SetupTxNewReport extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_NEW", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxNewAgeGenderGroup();
+        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getTxNewAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
 
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-//        CohortDefinition pregnantOrLactating = hivCohortDefinitionLibrary.getPregnantOrLactating();
-
-//        CohortDefinition pregnantAtFirstEncounter = hivCohortDefinitionLibrary.getPatientsPregnantAtFirstEncounter();
-
-        CohortDefinition diagnosedWithTBDuringQuarter = hivCohortDefinitionLibrary.getDiagnosedWithTBDuringPeriod();
-
-        CohortDefinition onTBRxDuringQuarter = hivCohortDefinitionLibrary.getStartedTBRxDuringPeriod();
-        CohortDefinition onTBRxBeforeQuarter = hivCohortDefinitionLibrary.getStartedTBRxBeforePeriod();
-
-        CohortDefinition pregnant = addParameters(artCohortLibrary.pregnantAtARTStart());
-        CohortDefinition lactating =addParameters(artCohortLibrary.lactatingAtARTStart());
-        CohortDefinition pregnantOrLactating =df.getPatientsInAll(addParameters(artCohortLibrary.pregnantOrLactatingAtARTStart()),havingArtStartDateDuringQuarter);
+        CohortDefinition lactating = addParameters(artCohortLibrary.lactatingAtARTStart());
 
 
-        CohortDefinition lactatingAtStartOfArt =df.getPatientsInAll(lactating,havingArtStartDateDuringQuarter);
-        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnant, havingArtStartDateDuringQuarter);
-        CohortDefinition startedArtAndDiagnosedWithTB =df.getPatientsInAll(havingArtStartDateDuringQuarter,df.getPatientsInAny(diagnosedWithTBDuringQuarter,onTBRxDuringQuarter,onTBRxBeforeQuarter));
+        CohortDefinition lactatingAtStartOfArt = df.getPatientsInAll(lactating, havingArtStartDateDuringQuarter);
 
-        addGender(dsd,"a","All Newly enrolled  on ART ",  havingArtStartDateDuringQuarter);
-        addGender(dsd,"b","All Newly enrolled  on ART ",  havingArtStartDateDuringQuarter);
+        addGender(dsd, "a", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
+        addGender(dsd, "b", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
 
-        addAgeGender(dsd, "1", "Start on ART ",  havingArtStartDateDuringQuarter);
 
-        addIndicator(dsd,"2h","Pregnant and lactating enrolled in care ", pregnantOrLactating, "age=between5and14female");
-        addIndicator(dsd,"2j","Pregnant and lactating enrolled in care ", pregnantOrLactating,"age=above15female");
-
-        addIndicator(dsd,"10a","started Art And Diagnosed With TB",startedArtAndDiagnosedWithTB,"age=female");
-        addIndicator(dsd,"10b","started Art And Diagnosed With TB",startedArtAndDiagnosedWithTB,"age=male");
-        addIndicator(dsd,"11a","Were pregnant when started ART",startedArtWhenPregnant,"");
-        addIndicator(dsd,"12a","Lactating At start on Art",lactatingAtStartOfArt,"");
-
+//        addIndicator(dsd,"10a","started Art And Diagnosed With TB",startedArtAndDiagnosedWithTB,"age=female");
+//        addIndicator(dsd,"10b","started Art And Diagnosed With TB",startedArtAndDiagnosedWithTB,"age=male");
+//        addIndicator(dsd,"11a","Were pregnant when started ART",startedArtWhenPregnant,"");
+        addIndicator(dsd, "LAC", "Lactating At start on Art", lactatingAtStartOfArt, "");
         return rd;
     }
 
-    public void addGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition){
-        if(key=="a"){
-           // addIndicator(dsd, "1"+key, label,cohortDefinition, "age=below1female");
-            addIndicator(dsd, "2"+key, label, cohortDefinition, "age=below1female");
-            addIndicator(dsd, "3"+key, label, cohortDefinition, "age=between1and4female");
-            addIndicator(dsd, "4"+key, label, cohortDefinition, "age=between5and9female");
-            addIndicator(dsd, "5"+key, label, cohortDefinition, "age=between10and14female");
-            addIndicator(dsd, "6"+key, label, cohortDefinition, "age=between15and19female");
-            addIndicator(dsd, "7"+key, label, cohortDefinition, "age=between20and24female");
-            addIndicator(dsd, "8"+key, label, cohortDefinition, "age=between25and49female");
-            addIndicator(dsd, "9"+key,label, cohortDefinition, "age=above50female");
+    public void addGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
+        if (key == "a") {
+            addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1female");
+            addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4female");
+            addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9female");
+            addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14female");
+            addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19female");
+            addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24female");
+            addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29female");
+            addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34female");
+            addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39female");
+            addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44female");
+            addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49female");
+            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50female");
+        } else if (key == "b") {
+            addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1male");
+            addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4male");
+            addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9male");
+            addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14male");
+            addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19male");
+            addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24male");
+            addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29male");
+            addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34male");
+            addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39male");
+            addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44male");
+            addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49male");
+            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50male");
         }
-        else if(key=="b"){
-          //  addIndicator(dsd, "1"+key, label,cohortDefinition, "age=below1male");
-            addIndicator(dsd, "2"+key, label, cohortDefinition, "age=below1male");
-            addIndicator(dsd, "3"+key, label, cohortDefinition, "age=between1and4male");
-            addIndicator(dsd, "4"+key, label, cohortDefinition, "age=between5and9male");
-            addIndicator(dsd, "5"+key, label, cohortDefinition, "age=between10and14male");
-            addIndicator(dsd, "6"+key, label, cohortDefinition, "age=between15and19male");
-            addIndicator(dsd, "7"+key, label, cohortDefinition, "age=between20and24male");
-            addIndicator(dsd, "8"+key, label, cohortDefinition, "age=between25and49male");
-            addIndicator(dsd, "9"+key,label, cohortDefinition, "age=above50male");
-        }
-    }
-
-    private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "c", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
-        addIndicator(dsd, key + "d", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
-        addIndicator(dsd, key + "e", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
-        addIndicator(dsd, key + "f", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
-        addIndicator(dsd, key + "g", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
-        addIndicator(dsd, key + "h", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
-        addIndicator(dsd, key + "i", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
-        addIndicator(dsd, key + "j", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
-
     }
 
 
@@ -195,12 +170,13 @@ public class SetupTxNewReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
-    public CohortDefinition addParameters(CohortDefinition cohortDefinition){
-      return   df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+
+    public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
+        return df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
     @Override
     public String getVersion() {
-        return "0.4.0";
+        return "0.4.5.0";
     }
 }
