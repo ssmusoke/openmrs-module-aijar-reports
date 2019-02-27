@@ -44,7 +44,7 @@ public class ObsDataConverter implements DataConverter {
         }
 
         else if (obs.getValueNumeric() != null) {
-            return obs.getValueNumeric();
+            return obs.getValueNumeric().toString();
         }
 
         else if (obs.getValueText() != null) {
