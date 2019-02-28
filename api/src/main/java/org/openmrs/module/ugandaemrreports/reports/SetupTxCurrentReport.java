@@ -120,33 +120,24 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxCurrentAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+//        CohortDefinition losttofollowupFor30Days = df.getPatientsLostToFollowupByMaximumDays(30);
+        CohortDefinition exclusionpatients =df.getPatientsInAny(deadPatients,transferedOut);
 
-        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
-        CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
 
+        //cohorts for currently on ART
+        CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
         CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
-        CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod();
-
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-        CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod();
+        CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition longRefills = df.getPatientsWithLongRefills();
 
+        CohortDefinition eligible = df.getPatientsInAny(longRefills,transferredInToCareDuringPeriod,havingArtStartDateDuringQuarter,
+                hadEncounterInQuarter,onArtDuringQuarter, havingBaseRegimenDuringQuarter);
 
-        CohortDefinition childrenOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnFirstLineRegimenDuringPeriod());
-        CohortDefinition childrenOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod());
-
-        CohortDefinition adultsOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(), hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimenDuringPeriod());
-        CohortDefinition adultsOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(), hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimenDuringPeriod());
-
-        CohortDefinition onThirdLineRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
-
-        CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
-
-        CohortDefinition onPreArt = df.getPatientsNotIn(hadEncounterInQuarter, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
-
-        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
-        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsNotIn(eligible,exclusionpatients);
 
         addIndicator(dsd, "1a", "All currently receiving  ART ",beenOnArtDuringQuarter, "age=below1female");
         addIndicator(dsd, "1b", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between1and4female");
@@ -157,19 +148,10 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "1g", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between25and29female");
         addIndicator(dsd, "1h", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between30and34female");
         addIndicator(dsd, "1i", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between35and39female");
-        addIndicator(dsd, "1j", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between40and49female");
-        addIndicator(dsd, "1k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50female");
-        addIndicator(dsd, "1l", "All active Pre-Art in the quarter", onPreArt, "age=below1female");
-        addIndicator(dsd, "1m", "All active Pre-Art in the quarter", onPreArt, "age=between1and4female");
-        addIndicator(dsd, "1n", "All active Pre-Art in the quarter", onPreArt,  "age=between5and9female");
-        addIndicator(dsd, "1o", "All active Pre-Art in the quarter", onPreArt, "age=between10and14female");
-        addIndicator(dsd, "1p", "All active Pre-Art in the quarter", onPreArt,"age=between15and19female");
-        addIndicator(dsd, "1q", "All active Pre-Art in the quarter", onPreArt,  "age=between20and24female");
-        addIndicator(dsd, "1r", "All active Pre-Art in the quarter", onPreArt, "age=between25and29female");
-        addIndicator(dsd, "1s", "All active Pre-Art in the quarter", onPreArt, "age=between30and34female");
-        addIndicator(dsd, "1t", "All active Pre-Art in the quarter", onPreArt,  "age=between35and39female");
-       addIndicator(dsd, "1u", "All active Pre-Art in the quarter", onPreArt, "age=between40and49female");
-        addIndicator(dsd, "1v", "All active Pre-Art in the quarter", onPreArt, "age=above50female");
+        addIndicator(dsd, "1j", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between40and44female");
+        addIndicator(dsd, "1k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between45and49female");
+        addIndicator(dsd, "1l", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50female");
+
 
         addIndicator(dsd, "2a", "All currently receiving  ART ", beenOnArtDuringQuarter, "age=below1male");
         addIndicator(dsd, "2b", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between1and4male");
@@ -180,40 +162,14 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "2g", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between25and29male");
         addIndicator(dsd, "2h", "All currently receiving  ART",beenOnArtDuringQuarter, "age=between30and34male");
         addIndicator(dsd, "2i", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between35and39male");
-        addIndicator(dsd, "2j", "All currently receiving  ART",beenOnArtDuringQuarter, "age=between40and49male");
-        addIndicator(dsd, "2k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50male");
-        addIndicator(dsd, "2l", "All active Pre-Art in the quarter", onPreArt, "age=below1male");
-        addIndicator(dsd, "2m", "All active Pre-Art in the quarter", onPreArt,"age=between1and4male");
-        addIndicator(dsd, "2n", "All active Pre-Art in the quarter", onPreArt, "age=between5and9male");
-        addIndicator(dsd, "2o", "All active Pre-Art in the quarter", onPreArt, "age=between10and14male");
-        addIndicator(dsd, "2p", "All active Pre-Art in the quarter", onPreArt, "age=between15and19male");
-        addIndicator(dsd, "2q", "All active Pre-Art in the quarter", onPreArt, "age=between20and24male");
-        addIndicator(dsd, "2r", "All active Pre-Art in the quarter", onPreArt,"age=between25and29male");
-        addIndicator(dsd, "2s", "All active Pre-Art in the quarter", onPreArt, "age=between30and34male");
-        addIndicator(dsd, "2t", "All active Pre-Art in the quarter", onPreArt,  "age=between35and39male");
-        addIndicator(dsd, "2u", "All active Pre-Art in the quarter", onPreArt, "age=between40and49male");
-        addIndicator(dsd, "2v", "All active Pre-Art in the quarter", onPreArt, "age=above50male");
+        addIndicator(dsd, "2j", "All currently receiving  ART",beenOnArtDuringQuarter, "age=between40and44male");
+        addIndicator(dsd, "2k", "All currently receiving  ART", beenOnArtDuringQuarter, "age=between45and49male");
+        addIndicator(dsd, "2l", "All currently receiving  ART", beenOnArtDuringQuarter, "age=above50male");
 
-        addAgeGender(dsd, "1.1", "All active on Art on 1st line", onFirstLineRegimen);
-        addAgeGender(dsd, "2.1", "All active on Art on 2nd line", onSecondLineRegimen);
-        addAgeGender(dsd, "3.1", "All active on Art on 3rd line", onThirdLineRegimenDuringQuarter);
-        addIndicator(dsd, "4.1j", "PreArt" + " Total", onPreArt, "age=child");
-        addIndicator(dsd, "4.2j", "PreArt" + " Total", onPreArt, "age=adult");
 
         return rd;
     }
 
-    private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "c", label + " (Below 2 Males)", cohortDefinition, "age=below2male");
-        addIndicator(dsd, key + "d", label + " (Below 2 Females)", cohortDefinition, "age=below2female");
-        addIndicator(dsd, key + "e", label + " (Between 2 and 5 Males)", cohortDefinition, "age=between2and5male");
-        addIndicator(dsd, key + "f", label + " (Between 2 and 5 Females)", cohortDefinition, "age=between2and5female");
-        addIndicator(dsd, key + "g", label + " (Between 5 and 14 Males)", cohortDefinition, "age=between5and14male");
-        addIndicator(dsd, key + "h", label + " (Between 5 and 14 Females)", cohortDefinition, "age=between5and14female");
-        addIndicator(dsd, key + "i", label + " (Above 15 Males)", cohortDefinition, "age=above15male");
-        addIndicator(dsd, key + "k", label + " (Above 15 Females)", cohortDefinition, "age=above15female");
-
-    }
 
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
@@ -228,6 +184,6 @@ public class SetupTxCurrentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.53";
+        return "0.6";
     }
 }
