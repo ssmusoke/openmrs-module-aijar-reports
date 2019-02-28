@@ -38,18 +38,12 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
         ARTDatasetDefinition definition = (ARTDatasetDefinition) dataSetDefinition;
 
-        String month = getObsPeriod(definition.getStartDate(), Enums.Period.MONTHLY);
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
         String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
         String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
-//        LocalDate endDate = StubDate.dateOf(definition.getEndDate());
 
 
-
-//        String startArtThisMonth = ("select person_id,DATE(value_datetime) as obs_date from obs where " +
-//                "DATE_FORMAT(value_datetime, '%Y%m') = '%s' and concept_id = 99161 and voided = 0")
-//                .replaceAll("%s", month);
         String startArtThisMonth =String.format("select person_id,DATE(value_datetime) as obs_date from obs where \n" +
                         "value_datetime between '%s' and '%s'  and concept_id = 99161 and voided = 0;",startDate,endDate);
 
