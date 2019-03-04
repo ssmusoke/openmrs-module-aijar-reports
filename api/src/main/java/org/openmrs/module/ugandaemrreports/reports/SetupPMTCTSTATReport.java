@@ -126,24 +126,13 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getPMTCT_STAT_AgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        addGender(dsd,"a","Total  Pregnant With known HIV status at entry",ReportUtils.map(indicatorLibrary.pregnantTrkTrrk(),params),"female"); ;
-        addGender(dsd,"b","Total  Pregnant Known HIV positives at entry",ReportUtils.map(indicatorLibrary.pregnantTrrk(),params),"female");
-        addGender(dsd,"c","Pregnant Total Newly tested for HIV",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(),params),"female");
-        addGender(dsd,"d","Total  newly Pregnant Tested  HIV Positive And HIv+ at retest ",ReportUtils.map(indicatorLibrary.retestedTrrPlusAndNewlyTestedForHivThisPregnancy(),params),"female");
-        addGender(dsd,"e","Total  Number of NEW ANC Clients ",ReportUtils.map(indicatorLibrary.anc1stVisit(),params),"female");
-        addGender(dsd,"f","Total  Male that tested For HIV",ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params),"male");
-        addGender(dsd,"g","Total  Male that tested HIV +ve",ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params),"male");
+        addGender(dsd,"a","Total  Pregnant With known HIV- status at entry (TRK)",ReportUtils.map(indicatorLibrary.pregnantTrkAt1stANC(),params),"female"); ;
+        addGender(dsd,"b","Total  Pregnant Known HIV positives at entry(TRRK)",ReportUtils.map(indicatorLibrary.pregnantTrrkAt1stANC(),params),"female");
+        addGender(dsd,"e","Total  Number of NEW ANC Clients",ReportUtils.map(indicatorLibrary.anc1stVisit(),params),"female");
+        addGender(dsd,"d","Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit ",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRRAt1stVisit(),params),"female");
+        addGender(dsd,"c","Pregnant Women tested HIV- for 1st time this pregnancy (TRR) at 1st visit",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedNegativeForHivThisPregnancyTRAt1stVisit(),params),"female");
 
-        add105AgeGenderDimensions(dsd,"h","Pregnant newly and tested for HIV",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(), params));
-        add105AgeGenderDimensions(dsd,"i","Pregnant newly and tested HIV +ve for 1st time",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRR(), params));
-        add105AgeGenderDimensions(dsd,"j","1st ANC Visit",ReportUtils.map(indicatorLibrary.anc1stVisit(), params));
-
-        addIndicator(dsd, "4h" , "Total pregnant who knew HIV status before 1st ANC" , ReportUtils.map(indicatorLibrary.pregnantTrkTrrk(), params), "");
-        addIndicator(dsd, "5h" , "Total pregnant who were HIV +ve before 1st ANC" , ReportUtils.map(indicatorLibrary.pregnantTrrk(), params), "");
-        addIndicator(dsd, "9h" ,"Pregnant Women testing HIV+ on a retest " , ReportUtils.map(indicatorLibrary.retestedTrrPlus(), params),"");
-        addIndicator(dsd, "13h" ,"Total Males received HIV test results" , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultTotal(), params),"age=male");
-        addIndicator(dsd, "14h" ,"Males received HIV test +ve " , ReportUtils.map(indicatorLibrary.malePatinersRecievedHivResultHivPositive(), params),"age=male");
-        return rd;
+         return rd;
     }
 
 
@@ -155,14 +144,9 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "5" + key, label , cohortIndicator, "age=between25and29"+gender);
         addIndicator(dsd, "6" + key, label , cohortIndicator, "age=between30and34"+gender);
         addIndicator(dsd, "7" + key, label , cohortIndicator, "age=between35and39"+gender);
-        addIndicator(dsd, "8" + key, label , cohortIndicator, "age=between40and49"+gender);
-        addIndicator(dsd, "9" + key, label , cohortIndicator, "age=above50"+gender);
-    }
-
-    public void add105AgeGenderDimensions(CohortIndicatorDataSetDefinition dsd,String key ,String label,Mapped<? extends CohortIndicator> cohortIndicator){
-        addIndicator(dsd, "1" + key, label , cohortIndicator, "age=between10and19female");
-        addIndicator(dsd, "2" + key, label , cohortIndicator, "age=between20and24female");
-        addIndicator(dsd, "3" + key, label , cohortIndicator, "age=25+female");
+        addIndicator(dsd, "8" + key, label , cohortIndicator, "age=between40and44"+gender);
+        addIndicator(dsd, "9" + key, label , cohortIndicator, "age=between45and49"+gender);
+        addIndicator(dsd, "10" + key, label , cohortIndicator, "age=above50"+gender);
     }
 
 
@@ -173,6 +157,6 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.5";
+        return "0.1.9.4";
     }
 }

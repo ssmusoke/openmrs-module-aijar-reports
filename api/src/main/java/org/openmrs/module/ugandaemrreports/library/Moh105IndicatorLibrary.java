@@ -140,7 +140,15 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR() {
-        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Pregnant Women newly tested for HIV this pregnancyand are negative (TR )
+     * @return CohortIndicator
+     */
+    public CohortIndicator pregnantWomenNewlyTestedNegativeForHivThisPregnancyTRAt1stVisit() {
+        return cohortIndicator("Pregnant Women tested HIV- for 1st time this pregnancy (TRR) at 1st visit", map(cohortLibrary.pregnantWomenNewlyTestedForHivThisPregnancyAt1stVisitTR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -155,6 +163,15 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit", map(cclibrary.hasANCObs(
 		        Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),  Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+
+    /**
+     * TRR at 1st ANC VISIT
+     * @return cohortindicator
+     */
+    public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRRAt1stVisit() {
+        return cohortIndicator("Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at 1st visit", map(cohortLibrary.pregnantWomenNewlyTestedForHivThisPregnancyAt1stVisitTRR(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
 
     /**
      * HIV+ Pregnant women assessed by CD4 or WHO clinical stage the 1 time
@@ -188,6 +205,13 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Pregnant women who knew status before 1st ANC total TRRK", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    public CohortIndicator pregnantTrkAt1stANC() {
+        return cohortIndicator("Pregnant women who knew status before 1st ANC total TRK", map(cohortLibrary.pregnantWomenThisPregnancyAt1stANCVisit(Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),"trk"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator pregnantTrrkAt1stANC() {
+        return cohortIndicator("Pregnant women who knew status before 1st ANC total TRK", map(cohortLibrary.pregnantWomenThisPregnancyAt1stANCVisit(Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),"trrk"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     /**
      * Pregnant Women already on ART before 1 ANC (ART-K)
      * @return CohortIndicator
