@@ -5,12 +5,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -43,14 +38,14 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
         ARTDatasetDefinition definition = (ARTDatasetDefinition) dataSetDefinition;
 
-        String month = getObsPeriod(definition.getStartDate(), Enums.Period.MONTHLY);
         Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
         LocalDate localDate = StubDate.dateOf(definition.getStartDate());
+        String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+        String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
 
 
-        String startArtThisMonth = ("select person_id,DATE(value_datetime) as obs_date from obs where " +
-                "DATE_FORMAT(value_datetime, '%Y%m') = '%s' and concept_id = 99161 and voided = 0")
-                .replaceAll("%s", month);
+        String startArtThisMonth =String.format("select person_id,DATE(value_datetime) as obs_date from obs where \n" +
+                        "value_datetime between '%s' and '%s'  and concept_id = 99161 and voided = 0;",startDate,endDate);
 
         try {
             Connection connection = sqlConnection();
@@ -417,7 +412,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                         } else if (returnDate != null) {
                             status = "3";
                         } else if (currentEncounter != null) {
-                            status = "✓";
+                            status = "=UNICHAR(8730)";
                         } else {
                             if (arvStopDate != null) {
                                 status = "2";
@@ -434,7 +429,7 @@ public class ARTDatasetDefinitionEvaluator implements DataSetEvaluator {
                                     Integer appointmentPeriod = Integer.parseInt(getObsPeriod(DateUtil.parseYmd(visit.getVal()), Enums.Period.MONTHLY));
                                     Integer diff = period - appointmentPeriod;
                                     if (diff <= 0) {
-                                        status = "→";
+                                        status = "=UNICHAR(8594)";
                                     } else if (diff < 3) {
                                         status = "3";
                                     } else {
