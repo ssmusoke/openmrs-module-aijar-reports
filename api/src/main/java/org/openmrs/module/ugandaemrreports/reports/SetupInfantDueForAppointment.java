@@ -1,9 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -29,12 +25,15 @@ import org.openmrs.module.ugandaemrreports.definition.data.definition.Calculatio
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.DateFromBirthDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherPhoneNumberCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Infants due for appointment
@@ -99,7 +98,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.3";
 	}
 	
 	@Override
@@ -137,6 +136,8 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 		dsd.addColumn("Mother Name", new CalculationDataDefinition("Mother Name", new ExposedInfantMotherCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother Phone", new CalculationDataDefinition("Mother Phone", new ExposedInfantMotherPhoneNumberCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother ART No", sdd.definition("Mother ART No",  hivMetadata.getExposedInfantMotherARTNumber()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		
 		dsd.addColumn("NextAppointmentDate", sdd.definition("Next Appointment Date",  hivMetadata.getReturnVisitDate()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		

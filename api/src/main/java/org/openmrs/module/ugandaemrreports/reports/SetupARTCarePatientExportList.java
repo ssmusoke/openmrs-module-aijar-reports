@@ -1,27 +1,20 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.openmrs.module.reporting.common.SortCriteria;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.SortCriteria;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Export of all ART patients enrolled into care until a specified date
@@ -124,6 +117,8 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
 		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
 		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		addColumn(dsd, "Telephone", basePatientData.getTelephone());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
@@ -147,6 +142,6 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.2";
 	}
 }

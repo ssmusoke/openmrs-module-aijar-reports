@@ -131,6 +131,8 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "HIVEnrollmentDate", hivPatientData.getSummaryPageDate());
         addColumn(dsd, "ArtStartDate", hivPatientData.getArtStartDate());
         addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
@@ -153,6 +155,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.45";
+        return "0.5";
     }
 }
