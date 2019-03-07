@@ -47,6 +47,8 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
     @Autowired
     private HIVMetadata hivMetadata;
 
+
+
     /**
      * @return the uuid for the report design for exporting to Excel
      */
@@ -125,6 +127,8 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
@@ -136,6 +140,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.7";
+        return "0.9";
     }
 }
