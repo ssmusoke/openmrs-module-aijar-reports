@@ -140,6 +140,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
         addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getViralLoadByEndDate());
+        addColumn(dsd, "Viral Load Qualitative", hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "Last Appointment Date",hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd, "Next Appointment Date",hivPatientData.getExpectedReturnDate());
@@ -153,7 +154,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "1.0.8";
+        return "2.0";
     }
 }
 
