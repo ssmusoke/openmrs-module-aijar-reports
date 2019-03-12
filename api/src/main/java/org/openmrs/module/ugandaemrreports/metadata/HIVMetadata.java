@@ -303,6 +303,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("dcdac38b-30ab-102d-86b0-7a5022ba4115");
     }
 
+    public Concept getTBStatusNoSignsOrSymptoms() {
+        return getConcept("dcdaccc1-30ab-102d-86b0-7a5022ba4115");
+    }
+
     public Concept getTBStatusRx() {
         return getConcept("dcdaa6b4-30ab-102d-86b0-7a5022ba4115");
     }

@@ -234,6 +234,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusDiagnosed()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getScreenedForTBNegativeDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusNoSignsOrSymptoms()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getStartedTBRxBeforePeriod() {
         return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusRx()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
