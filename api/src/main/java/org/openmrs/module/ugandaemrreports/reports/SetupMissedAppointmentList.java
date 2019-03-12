@@ -96,7 +96,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MissedAppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:MISSED_APPOINTMENT");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:MISSED_APPOINTMENT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -124,6 +124,12 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
+        addColumn(dsd, "Enrollment Date", hivPatientData.getSummaryPageDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
         addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
 
@@ -135,6 +141,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2";
+        return "1.0.1";
     }
 }
