@@ -99,7 +99,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.2";
+		return "0.3";
 	}
 	
 	@Override
