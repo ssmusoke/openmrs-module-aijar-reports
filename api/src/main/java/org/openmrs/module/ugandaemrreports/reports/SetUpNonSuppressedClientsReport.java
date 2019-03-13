@@ -82,7 +82,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "NonSuppressedViralLoad.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:5,dataset:NON_SUPPRESSED_VIRAL_LOAD");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:NON_SUPPRESSED_VIRAL_LOAD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -140,7 +140,6 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
         addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getViralLoadByEndDate());
-        addColumn(dsd, "Viral Load Qualitative", hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "Last Appointment Date",hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd, "Next Appointment Date",hivPatientData.getExpectedReturnDate());
@@ -154,7 +153,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "2.0";
+        return "2.0.4";
     }
 }
 
