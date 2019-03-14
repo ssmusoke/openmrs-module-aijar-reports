@@ -153,7 +153,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "2.0.4";
+        return "2.0.9";
     }
 }
 
