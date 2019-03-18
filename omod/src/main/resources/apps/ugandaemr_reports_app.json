@@ -193,6 +193,14 @@
         "order":95
       },
       {
+        "id": "Non Suppressed Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Non Suppressed Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=8067d0cf-9925-4377-9b16-31e4c8500fe1",
+        "order":100
+      },
+      {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
