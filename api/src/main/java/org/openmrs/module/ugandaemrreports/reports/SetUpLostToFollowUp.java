@@ -95,7 +95,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "LostToFollowUp.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:LOST_TO_FOLLOW_UP");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:LOST_TO_FOLLOW_UP");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -142,6 +142,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-        return "0.5";
+        return "0.7";
         }
         }

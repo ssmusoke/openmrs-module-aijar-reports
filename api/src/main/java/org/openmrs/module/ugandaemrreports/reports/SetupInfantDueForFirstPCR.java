@@ -63,7 +63,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForFirstPCR.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:7,dataset:PCR");
+		props.put("repeatingSections", "sheet:1,row:8,dataset:PCR");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -99,7 +99,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.3";
+		return "1.0.1";
 	}
 	
 	@Override

@@ -116,7 +116,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DueForViralLoad.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:DUE_FOR_VIRAL_LOAD");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:DUE_FOR_VIRAL_LOAD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -218,7 +218,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.1";
+        return "2.0.3";
     }
 }
 
