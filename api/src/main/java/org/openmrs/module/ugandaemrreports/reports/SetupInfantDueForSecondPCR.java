@@ -98,7 +98,7 @@ public class SetupInfantDueForSecondPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "1.0.5";
+		return "1.0.6";
 	}
 	
 	@Override

@@ -141,6 +141,6 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.8";
+        return "1.0.2";
     }
 }

@@ -98,7 +98,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "1.0.9";
+		return "2.0";
 	}
 	
 	@Override

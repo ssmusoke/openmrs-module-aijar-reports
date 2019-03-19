@@ -85,7 +85,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTPatientExport.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:2,dataset:PatientExport");
+		props.put("repeatingSections", "sheet:1,row:4,dataset:PatientExport");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -133,15 +133,13 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "CD4 at Enrollment", hivPatientData.getCD4AtEnrollment());
 		addColumn(dsd, "Baseline CD4", hivPatientData.getBaselineCD4());
 		addColumn(dsd, "CD4 at 6 months", hivPatientData.getCD4At6months());
-		/*addColumn(dsd, "Date of CD4 at 6 months", hivPatientData.getDateofCD4At6months());
-		addColumn(dsd, "CD4 at 12 months", hivPatientData.getCD4At12months());
-		addColumn(dsd, "Date of CD4 at 12 months", hivPatientData.getDateofCD4At12months());*/
+
 
 		return rd;
 	}
 
 	@Override
 	public String getVersion() {
-		return "0.2";
+		return "0.5";
 	}
 }
