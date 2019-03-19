@@ -32,7 +32,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Time;
 import java.util.*;
 
 @Component
@@ -1299,6 +1298,13 @@ public class DataFactory {
 
     public CohortDefinition getPatientsWithLongRefills(){
         LongRefillsCohortDefinition cd = new LongRefillsCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithNonSuppressedViralLoad(){
+        NonSuppresssedViralLoadsDataDefinition cd = new NonSuppresssedViralLoadsDataDefinition();
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
