@@ -106,12 +106,13 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1.2";
+		return "0.1.4";
 	}
 	
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(df.getStartDateParameter());
 		l.add(df.getEndDateParameter());
 		return l;
 	}
@@ -129,7 +130,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 		dsd.addParameters(getParameters());
 		CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
 		CohortDefinition eidDueForFirstPCR = df.getPatientsNotIn(eidCohortDefinitionLibrary.getExposedInfantsDueForFirstPCR(),enrolledInTheQuarter);
-		dsd.addRowFilter(eidDueForFirstPCR, "endDate=${endDate}");
+		dsd.addRowFilter(eidDueForFirstPCR, "startDate=${startDate},endDate=${endDate}");
 		
 		//identifier
 		// TODO: Standardize this as a external method that takes the UUID of the PatientIdentifier
