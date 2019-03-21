@@ -7,7 +7,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -23,7 +22,7 @@ import java.util.Properties;
 /**
  */
 @Component
-public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
+public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -58,12 +57,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
      */
     @Override
     public String getUuid() {
-        return "9d066d2b-3cee-4fba-a148-bb82c4ba65ef";
+        return "8067d0cf-9925-4377-9b16-31e4c8500fe1";
     }
 
     @Override
     public String getExcelDesignUuid() {
-        return "6df401ef-91fe-4495-8a9d-46ddd142ba15";
+        return "2e42dc77-71d7-4665-a49b-0c1247d0e8e3 ";
     }
 
     @Override
@@ -81,9 +80,9 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "StabilityReport.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "NonSuppressedViralLoad.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:5,dataset:STABILITYASSESSMENT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:NON_SUPPRESSED_VIRAL_LOAD");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -92,12 +91,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Stablity Assessment Report";
+        return "Non Suppressed Viral Load Report";
     }
 
     @Override
     public String getDescription() {
-        return "Stablity Assessment Report";
+        return "Patients with Non Suppressed Viral Loads";
     }
 
     @Override
@@ -119,7 +118,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition artcohortDefinition = df.getPatientsWithNonSuppressedViralLoad();
 
 
         dsd.setName(getName());
@@ -130,24 +129,22 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Surname", builtInPatientData.getPreferredFamilyName());
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Sex", builtInPatientData.getGender());
+        addColumn(dsd, "Telephone", basePatientData.getTelephone());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
+        addColumn(dsd,"Enrollment Date",hivPatientData.getEnrollmentDate());
         addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
-        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getViralLoadByEndDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
-        addColumn(dsd,"1",hivPatientData.getAdherence(0));
-        addColumn(dsd,"2",hivPatientData.getAdherence(1));
-        addColumn(dsd,"3",hivPatientData.getAdherence(2));
-        addColumn(dsd,"4",hivPatientData.getAdherence(3));
-        addColumn(dsd,"5",hivPatientData.getAdherence(4));
-        addColumn(dsd,"6",hivPatientData.getAdherence(5));
+        addColumn(dsd, "Last Appointment Date",hivPatientData.getLastEncounterByEndDate());
+        addColumn(dsd, "Next Appointment Date",hivPatientData.getExpectedReturnDate());
 
-        dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
-
-        rd.addDataSetDefinition("STABILITYASSESSMENT", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("NON_SUPPRESSED_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
 
         return rd;
@@ -156,7 +153,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.3";
+        return "2.0.9";
     }
 }
 
