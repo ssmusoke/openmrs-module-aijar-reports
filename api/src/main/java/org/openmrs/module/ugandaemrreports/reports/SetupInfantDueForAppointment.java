@@ -98,7 +98,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "1.0.2";
+		return "1.0.5";
 	}
 	
 	@Override

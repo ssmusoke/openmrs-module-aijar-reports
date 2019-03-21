@@ -65,7 +65,7 @@ public class ObsDataConverter implements DataConverter {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
         return dateFormatter.format(date);
     }
 }
