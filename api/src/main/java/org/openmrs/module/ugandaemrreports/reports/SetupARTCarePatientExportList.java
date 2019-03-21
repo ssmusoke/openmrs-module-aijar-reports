@@ -8,6 +8,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -115,7 +116,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
 		addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
-		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
+		dsd.addColumn("Date of Birth", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
 		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
 		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
 		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
