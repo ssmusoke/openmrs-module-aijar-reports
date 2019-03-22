@@ -2,13 +2,14 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.SortCriteria;
+import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -116,7 +117,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
 		addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
-		dsd.addColumn("Date of Birth", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+		dsd.addColumn("Date of Birth", new BirthdateDataDefinition(), "", new BirthdateConverter("MMM dd,yyyy"));
 		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
 		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
 		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
@@ -141,6 +142,6 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.8";
+		return "1.0.1";
 	}
 }
