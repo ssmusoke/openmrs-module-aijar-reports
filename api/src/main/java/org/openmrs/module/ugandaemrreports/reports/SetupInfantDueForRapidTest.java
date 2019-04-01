@@ -1,7 +1,13 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
@@ -21,6 +27,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.DateFromBirthDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherCalculation;
@@ -52,7 +59,10 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	
 	@Autowired
 	HIVMetadata hivMetadata;
-	
+
+	@Autowired
+	private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
 	@Override
 	public String getExcelDesignUuid() {
 		return "0b6ffe40-5526-11e7-b407-15be7a295d59";
@@ -98,12 +108,13 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "2.0";
+		return "0.1.5.1";
 	}
 	
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(df.getStartDateParameter());
 		l.add(df.getEndDateParameter());
 		return l;
 	}
@@ -119,7 +130,9 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("RapidTest");
 		dsd.addParameters(getParameters());
-		dsd.addRowFilter(eidCohortDefinitionLibrary.getExposedInfantsDueForRapidTest(), "endDate=${endDate}");
+		CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
+		CohortDefinition eidDueForRapidTest = df.getPatientsNotIn(eidCohortDefinitionLibrary.getExposedInfantsDueForRapidTest(),enrolledInTheQuarter);
+		dsd.addRowFilter(eidDueForRapidTest, "startDate=${startDate},endDate=${endDate}");
 		
 		//identifier
 		// TODO: Standardize this as a external method that takes the UUID of the PatientIdentifier
