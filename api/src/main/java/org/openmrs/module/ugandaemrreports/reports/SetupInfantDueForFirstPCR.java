@@ -110,6 +110,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(df.getStartDateParameter());
 		l.add(df.getEndDateParameter());
 		return l;
 	}
