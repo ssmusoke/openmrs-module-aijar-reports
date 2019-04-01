@@ -1,9 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -31,7 +27,6 @@ import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.DateFromBirthDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherPhoneNumberCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -72,7 +67,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForAppointment.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:7,dataset:Appointments");
+		props.put("repeatingSections", "sheet:1,row:8,dataset:Appointments");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -108,7 +103,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1.2";
+		return "1.7";
 	}
 	
 	@Override
