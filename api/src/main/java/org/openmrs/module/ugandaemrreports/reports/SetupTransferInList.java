@@ -80,7 +80,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TransferInList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:TI");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:TI");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -133,6 +133,8 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "HIVEnrolledDate", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "HealthCenterName", hivPatientData.getTransferInFacility());
         addColumn(dsd, "TransferInDate", hivPatientData.getSummaryPageDate());
@@ -147,7 +149,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.54";
+        return "1.0.9";
     }
 
     @Override

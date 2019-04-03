@@ -1,10 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -15,11 +10,7 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.RelationshipsForPersonDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.*;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -41,6 +32,11 @@ import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDa
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
 /**
  * Infants due for Rapid test which is at 18 months of age
  */
@@ -61,7 +57,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 
 	@Autowired
 	private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-	
+
 	@Override
 	public String getExcelDesignUuid() {
 		return "0b6ffe40-5526-11e7-b407-15be7a295d59";
@@ -71,7 +67,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForRapidTest.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:7,dataset:RapidTest");
+		props.put("repeatingSections", "sheet:1,row:8,dataset:RapidTest");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -146,7 +142,8 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 		dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
 		dsd.addColumn("Mother Name", new CalculationDataDefinition("Mother Name", new ExposedInfantMotherCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother Phone", new CalculationDataDefinition("Mother Phone", new ExposedInfantMotherPhoneNumberCalculation()), "", new CalculationResultDataConverter());
-		
+		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		dsd.addColumn("Mother ART No", sdd.definition("Mother ART No",  hivMetadata.getExposedInfantMotherARTNumber()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("1st PCR Date", sdd.definition("1st PCR Date",  hivMetadata.getFirstPCRTestDate()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("1st PCR Results", sdd.definition("1st PCR Results",  hivMetadata.getFirstPCRTestResults()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
