@@ -1089,6 +1089,20 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
+
+    /**
+     * Cohort defines patients who have no had a appeared since their last
+     * missed appoinment date for minimum days passed to the method
+     * @param minimumDays
+     * @return
+     */
+    public CohortDefinition getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(int minimumDays){
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(minimumDays);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
     public CohortDefinition EarlyWarningIndicatorDataAbstractionCohort(Concept dateConcept,List<EncounterType> types,BaseObsCohortDefinition.TimeModifier timeModifier)
     {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
