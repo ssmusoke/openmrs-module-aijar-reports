@@ -522,7 +522,7 @@ public class Moh105CohortLibrary {
 	}    
 
     /**
-     * Tested HIV Positive
+     * Tested HIV Negative
      * @return CohortDefinition
      */    
     public CohortDefinition testedHivNegative() {

@@ -397,6 +397,13 @@
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
       },{
+        "id": "TB STAT Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "TB STAT Report",
+        "url": "reportingui/runReport.page?reportDefinition=a781267d-2793-496f-81a6-aa460df5777e",
+        "order": 15
+      },{
         "id": "Pill Pickup",
         "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
         "type": "link",

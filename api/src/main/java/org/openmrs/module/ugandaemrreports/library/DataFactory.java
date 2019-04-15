@@ -488,6 +488,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
     }
 
+    public CohortDefinition getAnyEncounterOfTypesByStartDate(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate"));
+    }
+
     public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
