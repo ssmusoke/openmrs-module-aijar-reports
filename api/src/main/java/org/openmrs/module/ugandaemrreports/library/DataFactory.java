@@ -1056,7 +1056,7 @@ public class DataFactory {
     }
 
     public CohortDefinition getLostClients() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(30);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -1076,7 +1076,7 @@ public class DataFactory {
 
 
     public CohortDefinition getLostToFollowUp() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(90);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
@@ -1084,17 +1084,31 @@ public class DataFactory {
 
     }
     public CohortDefinition getEverLost() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(90);
         return cd;
     }
 
     public CohortDefinition getLost() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+
+    /**
+     * Cohort defines patients who have no had a appeared since their last
+     * missed appoinment date for minimum days passed to the method
+     * @param minimumDays
+     * @return
+     */
+    public CohortDefinition getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(int minimumDays){
+        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        cd.setMinimumDays(minimumDays);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
     public CohortDefinition EarlyWarningIndicatorDataAbstractionCohort(Concept dateConcept,List<EncounterType> types,BaseObsCohortDefinition.TimeModifier timeModifier)
     {
@@ -1112,14 +1126,14 @@ public class DataFactory {
     }
 
     public CohortDefinition getActiveInPeriodWithoutVisit() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMaximumDays(30);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
 
     public CohortDefinition getMissedAppointment() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
@@ -1170,7 +1184,7 @@ public class DataFactory {
     }
 
     public CohortDefinition getLostDuringPeriod() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));

@@ -10,7 +10,7 @@ import java.util.Date;
 /**
  */
 @Caching(strategy = ConfigurationPropertyCachingStrategy.class)
-public class LostPatientsCohortDefinition extends BaseCohortDefinition {
+public class PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition extends BaseCohortDefinition {
 
     private static final long serialVersionUID = 1L;
 
