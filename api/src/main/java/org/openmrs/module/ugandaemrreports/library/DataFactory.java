@@ -1104,7 +1104,7 @@ public class DataFactory {
      * @return
      */
     public CohortDefinition getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(int minimumDays){
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(minimumDays);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
