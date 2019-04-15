@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.definition.data.converter;
 
-import org.openmrs.Concept;
-import org.openmrs.Obs;
 import org.openmrs.module.reporting.common.Birthdate;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.DateConverter;
@@ -38,7 +36,7 @@ public class BirthDateConverter implements DataConverter {
     public Object convert(Object original) {
         Birthdate o = (Birthdate) original;
         if (o != null) {
-            return (new DateConverter("MMM d, yyyy")).convert(o.getBirthdate());
+            return (new DateConverter("MMM dd, yyyy")).convert(o.getBirthdate());
         }
         return null;
     }

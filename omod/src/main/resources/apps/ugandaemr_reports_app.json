@@ -383,12 +383,19 @@
         "order": 5
       },
       {
-        "id": "Tx Current Report",
+        "id": "Tx Current_30Days Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
-        "label": "Tx Current Report",
+        "label": "Tx Current_30Days Report",
         "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
         "order": 5
+      },{
+        "id": "Tx Current_90Days Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "Tx Current_90Days Report",
+        "url": "reportingui/runReport.page?reportDefinition=660bdb55-36ea-4e57-8c62-136300035ce3",
+        "order": 6
       },{
         "id": "Tx New Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",

@@ -1,27 +1,22 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import org.openmrs.module.reporting.common.SortCriteria;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.SortCriteria;
+import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Export of all ART patients enrolled into care until a specified date
@@ -92,7 +87,7 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "FacilityARTPatientExport.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:2,dataset:PatientExport");
+		props.put("repeatingSections", "sheet:1,row:4,dataset:PatientExport");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -122,8 +117,10 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "Family Name", builtInPatientData.getPreferredFamilyName());
 		addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
 		addColumn(dsd, "Gender", builtInPatientData.getGender());
-		addColumn(dsd, "Date of Birth", builtInPatientData.getBirthdate());
+		dsd.addColumn("Date of Birth", new BirthdateDataDefinition(), "", new BirthdateConverter("MMM dd,yyyy"));
 		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		addColumn(dsd, "Telephone", basePatientData.getTelephone());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
@@ -138,15 +135,13 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd, "CD4 at Enrollment", hivPatientData.getCD4AtEnrollment());
 		addColumn(dsd, "Baseline CD4", hivPatientData.getBaselineCD4());
 		addColumn(dsd, "CD4 at 6 months", hivPatientData.getCD4At6months());
-		/*addColumn(dsd, "Date of CD4 at 6 months", hivPatientData.getDateofCD4At6months());
-		addColumn(dsd, "CD4 at 12 months", hivPatientData.getCD4At12months());
-		addColumn(dsd, "Date of CD4 at 12 months", hivPatientData.getDateofCD4At12months());*/
+
 
 		return rd;
 	}
 
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "1.0.1";
 	}
 }
