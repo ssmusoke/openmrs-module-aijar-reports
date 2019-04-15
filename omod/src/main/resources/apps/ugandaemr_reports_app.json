@@ -419,6 +419,14 @@
         "order": 120
       },
       {
+        "id": "DSDM:Model Enrollment Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Model Enrollment Report",
+        "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
+        "order": 125
+      },
+      {
         "id": "HMIS 106a With DSDM Aggregations",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
