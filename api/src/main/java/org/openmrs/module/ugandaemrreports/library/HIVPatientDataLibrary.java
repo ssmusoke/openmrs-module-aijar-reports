@@ -20,10 +20,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.AdherencePatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.StatusAtEnrollmentPatientDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.WhyEligibleForARTPatientDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -189,6 +186,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         AdherencePatientDataDefinition def = new AdherencePatientDataDefinition();
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
         return convert(def, new AdherenceConverter(number));
+    }
+
+    public PatientDataDefinition getDSDMModel() {
+        DSDMModelDataDefinition def = new DSDMModelDataDefinition();
+        return convert(def, df.getDSDMProgramConverter());
     }
 
     public PatientDataDefinition getFirstTB() {
