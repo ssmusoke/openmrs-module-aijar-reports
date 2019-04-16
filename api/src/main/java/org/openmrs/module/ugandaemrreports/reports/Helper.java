@@ -5,7 +5,12 @@ import com.google.common.collect.*;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.common.*;
 
 import java.sql.*;
@@ -643,6 +648,15 @@ public class Helper {
         props.setProperty("user", "openmrs");
         props.setProperty("password", "openmrs");
         return getDatabaseConnection(props);
+    }
+
+    public static void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
+        CohortIndicator ci = new CohortIndicator();
+        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ci.setType(CohortIndicator.IndicatorType.COUNT);
+        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
+        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
 }

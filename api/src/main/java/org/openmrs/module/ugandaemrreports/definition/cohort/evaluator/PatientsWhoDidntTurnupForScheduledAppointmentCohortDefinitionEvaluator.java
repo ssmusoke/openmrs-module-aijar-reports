@@ -1,5 +1,7 @@
 package org.openmrs.module.ugandaemrreports.definition.cohort.evaluator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.annotation.Handler;
@@ -10,29 +12,32 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
+import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.LostPatientsCohortDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
  */
-@Handler(supports = {LostPatientsCohortDefinition.class})
-public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEvaluator {
+@Handler(supports = {PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition.class})
+public class PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinitionEvaluator implements CohortDefinitionEvaluator {
 
     @Autowired
     EvaluationService evaluationService;
 
     @Autowired
+
     HIVMetadata hivMetadata;
 
     @Override
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) throws EvaluationException {
         EvaluatedCohort ret = new EvaluatedCohort(cohortDefinition, context);
-        LostPatientsCohortDefinition cd = (LostPatientsCohortDefinition) cohortDefinition;
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = (PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition) cohortDefinition;
 
         // Maximum appointment date during the period
         HqlQueryBuilder obsQuery = new HqlQueryBuilder();
@@ -63,6 +68,22 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
 
         encounterQuery.groupBy("e.patient.patientId");
 
+        // Early visits before the return visit date appointed
+        String startDate = "";
+        String endDate = "";
+
+        startDate = DateUtil.formatDate(cd.getStartDate(), "yyyy-MM-dd");
+        endDate = DateUtil.formatDate(cd.getEndDate(), "yyyy-MM-dd");
+        String earlyBirdPatientsQuery ="select patient_id from encounter e2 \n" +
+                "inner join ( select o.person_id,encounter_datetime, max(value_datetime)as return_date from obs o \n" +
+                " inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                String.format("where o.concept_id=5096 and  o.value_datetime between '%s' and '%s' \n",startDate,endDate) +
+                "and o.voided=0 group by person_id) as t on e2.patient_id =t.person_id \n" +
+                " where e2.encounter_datetime > t.encounter_datetime and e2.encounter_datetime < return_date group by patient_id;";
+        SqlQueryBuilder q = new SqlQueryBuilder();
+        q.append(earlyBirdPatientsQuery);
+        List<Integer> earlyBirdPatientsResults = evaluationService.evaluateToList(q,Integer.class, context);
+
         Map<Integer, Date> obsResults = evaluationService.evaluateToMap(obsQuery, Integer.class, Date.class, context);
         Map<Integer, Date> encounterResults = evaluationService.evaluateToMap(encounterQuery, Integer.class, Date.class, context);
 
@@ -81,6 +102,13 @@ public class LostPatientsCohortDefinitionEvaluator implements CohortDefinitionEv
             } else {
                 // All members who didn't have any encounter after visit date will be considered lost,missed appointment or lost to followup
                 ret.addMember(patientId);
+            }
+        }
+
+        //remove the early comers
+        if(earlyBirdPatientsResults.size()>0 && !earlyBirdPatientsResults.isEmpty()){
+            for (Integer patientId:earlyBirdPatientsResults) {
+                ret.removeMember(patientId);
             }
         }
         return ret;

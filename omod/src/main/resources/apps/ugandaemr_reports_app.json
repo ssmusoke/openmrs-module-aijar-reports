@@ -193,6 +193,14 @@
         "order":95
       },
       {
+        "id": "Non Suppressed Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Non Suppressed Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=8067d0cf-9925-4377-9b16-31e4c8500fe1",
+        "order":100
+      },
+      {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
@@ -375,12 +383,19 @@
         "order": 5
       },
       {
-        "id": "Tx Current Report",
+        "id": "Tx Current_30Days Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
-        "label": "Tx Current Report",
+        "label": "Tx Current_30Days Report",
         "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
         "order": 5
+      },{
+        "id": "Tx Current_90Days Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "Tx Current_90Days Report",
+        "url": "reportingui/runReport.page?reportDefinition=660bdb55-36ea-4e57-8c62-136300035ce3",
+        "order": 6
       },{
         "id": "Tx New Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
@@ -388,6 +403,13 @@
         "label": "Tx New Report",
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
+      },{
+        "id": "PMTCT STAT  Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "PMTCT STAT  Report",
+        "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
+        "order": 15
       },{
         "id": "Pill Pickup",
         "extensionPointId": "org.openmrs.module.ugandaemr.ewi",

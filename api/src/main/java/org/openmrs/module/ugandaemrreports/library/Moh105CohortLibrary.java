@@ -465,7 +465,33 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("trr AND anyVisit AND ancEncounter");
 		return cd;
     }
-        
+
+    /**
+     * pregnantWomenNewlyTestedForHivThisPregnancyTRR at 1st visit
+     * @return CohortDefinition
+     */
+    public CohortDefinition pregnantWomenNewlyTestedForHivThisPregnancyAt1stVisitTRR(){
+        return pregnantWomenThisPregnancyAt1stANCVisit(Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465"),"trr");
+    }
+
+    /**
+     * pregnantWomenNewlyTestedForHivThisPregnancyTR at 1st visit
+     * @return CohortDefinition
+     */
+    public CohortDefinition pregnantWomenNewlyTestedForHivThisPregnancyAt1stVisitTR(){
+     return pregnantWomenThisPregnancyAt1stANCVisit(Dictionary.getConcept("86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a"),"tr");
+    }
+
+    public CohortDefinition pregnantWomenThisPregnancyAt1stANCVisit(Concept answer,String name){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch(name, ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74"),answer), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("firstVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString(name+" AND firstVisit AND ancEncounter");
+        return cd;
+    }
      /** With HIV Test Results
      * @return CohortDefinition
      */
