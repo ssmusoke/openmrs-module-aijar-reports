@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -13,6 +14,7 @@ import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +36,8 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
     @Autowired
     private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
 
+    @Autowired
+    private ARTCohortLibrary artCohortLibrary;
     @Autowired
     private DataFactory df;
 
@@ -207,7 +211,9 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
         CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
 
-        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantAtFirstEncounter, havingArtStartDateDuringQuarter);
+        CohortDefinition pregnantOrLactating = addParameters(artCohortLibrary.pregnantOrLactatingAtARTStart());
+
+        CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantOrLactating, havingArtStartDateDuringQuarter);
 
         addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
         addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
@@ -226,7 +232,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", havingArtStartDateBeforeQuarter);
         addAgeGender(dsd, "16", "Started Art during the quarter", havingArtStartDateDuringQuarter);
         addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
-        addAgeGenderFemale(dsd, "18", "Started ART when pregnant ", startedArtWhenPregnant);
+        addAgeGenderFemale(dsd, "18", "Started ART when pregnant or lactating", startedArtWhenPregnant);
         addAgeGender(dsd, "19", "Ever enrolled", cumulativeOnArt);
         addAgeGender(dsd, "20", "First Line Regimen", onFirstLineRegimen);
         addAgeGender(dsd, "21", "Second Line Regimen", onSecondLineRegimen);
@@ -278,8 +284,12 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
+    public CohortDefinition addParameters(CohortDefinition cohortDefinition){
+        return   df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
+
     @Override
     public String getVersion() {
-        return "0.1.2";
+        return "0.2.0";
     }
 }
