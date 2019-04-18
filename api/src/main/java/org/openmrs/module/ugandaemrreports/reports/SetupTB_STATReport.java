@@ -2,7 +2,6 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -112,7 +111,7 @@ public class SetupTB_STATReport extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("TB_STAT", Mapped.mapStraightThrough(dsd));
         //rd.addDataSetDefinition("indicators", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTB_STATAgeGenderGroup();
+        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTB_STATAndTB_ARTAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition knownPositivePatientsBeforePeriod = df.getAnyEncounterOfTypesByStartDate(hivMetadata.getARTSummaryPageEncounterType());

@@ -487,7 +487,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         return eMTCTDimension;
     }
 
-    public CohortDefinitionDimension getTB_STATAgeGenderGroup(){
+    public CohortDefinitionDimension getTB_STATAndTB_ARTAgeGenderGroup(){
         CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
 
         CohortDefinition below1Year = cohortDefinitionLibrary.below1Year();
