@@ -119,7 +119,7 @@ public class SetupTB_ART_Report extends UgandaEMRDataExportManager {
         CohortDefinition newOnART = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
         CohortDefinition havingRegimenBeforePeriod = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
         CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-        CohortDefinition alreadyOnART = df.getPatientsInAll(havingRegimenBeforePeriod,transferredInToCareDuringPeriod);
+        CohortDefinition alreadyOnART = df.getPatientsInAny(havingRegimenBeforePeriod,transferredInToCareDuringPeriod);
 
         CohortDefinition testedPositiveDuringPeriod =hivCohortDefinitionLibrary.getPatientsWhoTestedHIVPositiveDuringPeriod();
         CohortDefinition newHivPOSAndTBPatientsDuringPeriod =df.getPatientsInAll(testedPositiveDuringPeriod,newAndRelapsedPatients);
@@ -169,6 +169,6 @@ public class SetupTB_ART_Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.2";
+        return "0.1.3";
     }
 }
