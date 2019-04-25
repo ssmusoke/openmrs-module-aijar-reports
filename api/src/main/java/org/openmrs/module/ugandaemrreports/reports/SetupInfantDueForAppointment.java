@@ -85,7 +85,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "Infants Due for Appointment";
+		return "Infants List Due for Appointment";
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "1.7";
+		return "1.7.0";
 	}
 	
 	@Override

@@ -68,7 +68,7 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Death List";
+        return "Facility Dead patients List";
     }
 
     @Override
@@ -141,6 +141,6 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.2.3";
+        return "1.2.4";
     }
 }

@@ -92,7 +92,7 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Pill Pickup";
+        return "Early warning Indicators for Drug Pickup patients";
     }
 
     @Override
@@ -193,6 +193,6 @@ public class SetupEWIPillPickupReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.7";
+        return "0.2.8";
     }
 }
