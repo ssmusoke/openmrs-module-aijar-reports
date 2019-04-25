@@ -65,12 +65,12 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "DSDM MODEL ENROLLMENT";
+        return "Patient DSDM Model Report";
     }
 
     @Override
     public String getDescription() {
-        return "DSDM MODEL ENROLLMENT";
+        return "A Report Indicating all the Current Model Patient Model and the Date when they enrolled Into the Model";
     }
 
     @Override
@@ -100,7 +100,7 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ModelEnrollmentReport.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:DSDMMODELENROLLMENT");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:PATIENTDSDMMODEL");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -140,7 +140,7 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd,"Model", hivPatientData.getDSDMModel());
         dsd.addColumn("Date Enrolled", new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter());
         dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
-        rd.addDataSetDefinition("DSDMMODELENROLLMENT", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("PATIENTDSDMMODEL", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
 
         return rd;
@@ -148,6 +148,6 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.8";
+        return "2.0.11";
     }
 }

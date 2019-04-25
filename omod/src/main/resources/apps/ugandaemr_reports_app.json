@@ -426,10 +426,10 @@
         "order": 120
       },
       {
-        "id": "DSDM:Model Enrollment Report",
+        "id": "Patient DSDM Model Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Model Enrollment Report",
+        "label": "Patient DSDM Model Report",
         "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
         "order": 125
       },
