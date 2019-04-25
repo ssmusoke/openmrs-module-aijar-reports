@@ -61,7 +61,7 @@ public class SetupAdherenceReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Adherence report";
+        return "This report provides the percentage of patients in different categories of adherences";
     }
 
     @Override
@@ -100,6 +100,6 @@ public class SetupAdherenceReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.3.0";
     }
 }

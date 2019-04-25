@@ -58,7 +58,7 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "HMIS 106A1A";
+        return "This is a quarterly report HMIS 106a as by MoH Uganda ";
     }
 
     @Override
@@ -290,6 +290,6 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.0";
+        return "0.2.1";
     }
 }

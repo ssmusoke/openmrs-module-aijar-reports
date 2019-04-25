@@ -65,7 +65,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
         @Override
         public String getDescription() {
-        return "Lost to Follow up";
+        return "List of  Clients Lost to Follow up";
         }
 
         @Override
@@ -142,6 +142,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-        return "0.8";
+        return "0.8.0";
         }
         }
