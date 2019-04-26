@@ -1,15 +1,18 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *  TX Current Report
+ *  PMTCT STAT Report
  */
 @Component
-public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
+public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -50,28 +53,31 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
 
+    @Autowired
+    private Moh105IndicatorLibrary indicatorLibrary;
+
 
     /**
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
     public String getExcelDesignUuid() {
-        return "52c7d919-c978-4272-ab21-9bd94c123525";
+        return "880cf4b5-07eb-4951-b13d-c77701daef5c";
     }
 
     @Override
     public String getUuid() {
-        return "660bdb55-36ea-4e57-8c62-136300035ce3";
+        return "2356ee4a-c974-40e3-b28d-5b56f76ce295";
     }
 
     @Override
     public String getName() {
-        return "Tx Current90Days Report";
+        return "PMTCT STAT Report";
     }
 
     @Override
     public String getDescription() {
-        return "MER Indicator Report For Tx Curr with Lost To Followup taken as 90 Days After last Missed Appointment";
+        return "MER Indicator Report for PMTCT STAT";
     }
 
     @Override
@@ -81,6 +87,7 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
         l.add(df.getEndDateParameter());
         return l;
     }
+
 
 
     @Override
@@ -97,11 +104,12 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_CURRENT.xls");
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_PMTCT_STAT.xls");
     }
 
     @Override
     public ReportDefinition constructReportDefinition() {
+        String params = "startDate=${startDate},endDate=${endDate}";
 
         ReportDefinition rd = new ReportDefinition();
 
@@ -113,35 +121,42 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
 
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("TX_CURRENT_90Days", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("PMTCT_STAT", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxCurrentAgeGenderGroup();
+        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getPMTCT_STAT_AgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
-        CohortDefinition tx_Curr_lost_to_followup = df.getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(90);
-        CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferedOut,tx_Curr_lost_to_followup);
+        addGender(dsd,"a","Total  Pregnant With known HIV- status at entry (TRK)",ReportUtils.map(indicatorLibrary.pregnantTrkAt1stANC(),params),"female"); ;
+        addGender(dsd,"b","Total  Pregnant Known HIV positives at entry(TRRK)",ReportUtils.map(indicatorLibrary.pregnantTrrkAt1stANC(),params),"female");
+        addGender(dsd,"e","Total  Number of NEW ANC Clients",ReportUtils.map(indicatorLibrary.anc1stVisit(),params),"female");
+        addGender(dsd,"d","Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit ",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRRAt1stVisit(),params),"female");
+        addGender(dsd,"c","Pregnant Women tested HIV- for 1st time this pregnancy (TRR) at 1st visit",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedNegativeForHivThisPregnancyTRAt1stVisit(),params),"female");
 
-
-        //cohorts for currently on ART
-        CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-        CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
-        CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
-        CohortDefinition longRefills = df.getPatientsWithLongRefills();
-
-        CohortDefinition eligible = df.getPatientsInAny(longRefills,transferredInToCareDuringPeriod,havingArtStartDateDuringQuarter,
-                                            onArtDuringQuarter, havingBaseRegimenDuringQuarter);
-
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsNotIn(eligible,excludedPatients);
-
-        SetupTxCurrent_30DaysReport.insertingValuesIntoTemplate(dsd,beenOnArtDuringQuarter);
-        return rd;
+         return rd;
     }
+
+
+    public void addGender (CohortIndicatorDataSetDefinition dsd,String key ,String label,Mapped<? extends CohortIndicator> cohortIndicator , String gender){
+        addIndicator(dsd, "1" + key, label , cohortIndicator, "age=below10"+gender);
+        addIndicator(dsd, "2" + key, label , cohortIndicator, "age=between10and14"+gender);
+        addIndicator(dsd, "3" + key, label , cohortIndicator, "age=between15and19"+gender);
+        addIndicator(dsd, "4" + key, label , cohortIndicator, "age=between20and24"+gender);
+        addIndicator(dsd, "5" + key, label , cohortIndicator, "age=between25and29"+gender);
+        addIndicator(dsd, "6" + key, label , cohortIndicator, "age=between30and34"+gender);
+        addIndicator(dsd, "7" + key, label , cohortIndicator, "age=between35and39"+gender);
+        addIndicator(dsd, "8" + key, label , cohortIndicator, "age=between40and44"+gender);
+        addIndicator(dsd, "9" + key, label , cohortIndicator, "age=between45and49"+gender);
+        addIndicator(dsd, "10" + key, label , cohortIndicator, "age=above50"+gender);
+    }
+
+
+    public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, Mapped<? extends CohortIndicator> ci, String dimensionOptions) {
+        dsd.addColumn(key, label, ci, dimensionOptions);
+    }
+
 
     @Override
     public String getVersion() {
-        return "0.1.9";
+        return "0.2.1";
     }
 }

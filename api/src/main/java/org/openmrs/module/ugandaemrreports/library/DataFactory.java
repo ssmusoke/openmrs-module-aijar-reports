@@ -496,6 +496,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
     }
 
+    public CohortDefinition getAnyEncounterOfTypesByStartDate(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate"));
+    }
+
     public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
@@ -1105,7 +1112,7 @@ public class DataFactory {
      * @return
      */
     public CohortDefinition getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(int minimumDays){
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(minimumDays);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));

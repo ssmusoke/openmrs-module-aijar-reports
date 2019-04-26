@@ -404,6 +404,27 @@
         "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
         "order": 10
       },{
+        "id": "TB STAT Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "TB STAT Report",
+        "url": "reportingui/runReport.page?reportDefinition=a781267d-2793-496f-81a6-aa460df5777e",
+        "order": 20
+      },{
+        "id": "TB ART Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "TB ART Report",
+        "url": "reportingui/runReport.page?reportDefinition=ebab92eb-90b8-460d-a356-c2f7800e068f",
+        "order": 25
+      },{
+        "id": "PMTCT STAT  Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "PMTCT STAT  Report",
+        "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
+        "order": 15
+      },{
         "id": "Pill Pickup",
         "extensionPointId": "org.openmrs.module.ugandaemr.ewi",
         "type": "link",

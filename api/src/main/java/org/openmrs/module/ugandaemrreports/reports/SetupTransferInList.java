@@ -98,7 +98,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Transfer In List";
+        return "List of Clients Transferred In";
     }
 
     @Override
@@ -149,7 +149,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.9";
+        return "1.1.0";
     }
 
     @Override

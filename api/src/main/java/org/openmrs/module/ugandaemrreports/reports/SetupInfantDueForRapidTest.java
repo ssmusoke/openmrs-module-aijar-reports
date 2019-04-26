@@ -85,7 +85,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "Infants Due for Rapid Test at 18 months of age";
+		return "Infants List Due for Rapid Test at 18 months of age";
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class SetupInfantDueForRapidTest extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1.5.1";
+		return "0.1.5.2";
 	}
 	
 	@Override

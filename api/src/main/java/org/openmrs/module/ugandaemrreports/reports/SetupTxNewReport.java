@@ -60,7 +60,7 @@ public class SetupTxNewReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Tx New Report";
+        return "MER Indicator Report For Tx New ";
     }
 
     @Override
@@ -177,6 +177,6 @@ public class SetupTxNewReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4.5.0";
+        return "0.4.5.1";
     }
 }
