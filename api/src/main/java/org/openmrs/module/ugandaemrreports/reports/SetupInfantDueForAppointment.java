@@ -1,11 +1,8 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
@@ -28,13 +25,17 @@ import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.DateFromBirthDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.eid.ExposedInfantMotherPhoneNumberCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Infants due for appointment
@@ -53,7 +54,10 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Autowired
 	HIVMetadata hivMetadata;
-	
+
+	@Autowired
+	private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
 	@Override
 	public String getExcelDesignUuid() {
 		return "63dd99ad-db0d-4c15-b0da-f1f5676f3062";
@@ -63,7 +67,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForAppointment.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:7,dataset:Appointments");
+		props.put("repeatingSections", "sheet:1,row:8,dataset:Appointments");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -81,7 +85,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "Infants Due for Appointment";
+		return "Infants List Due for Appointment";
 	}
 	
 	@Override
@@ -99,7 +103,7 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "1.7.0";
 	}
 	
 	@Override
@@ -121,7 +125,10 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 		dsd.setName("Appointments");
 		dsd.addParameters(getParameters());
-		dsd.addRowFilter(eidCohortDefinitionLibrary.getEIDInfantsDueForAppointment(), "onOrAfter=${startDate},onOrBefore=${endDate}");
+
+		CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
+		CohortDefinition eidDueForAppoinment = df.getPatientsNotIn(eidCohortDefinitionLibrary.getEIDInfantsDueForAppointment(),enrolledInTheQuarter);
+		dsd.addRowFilter(eidDueForAppoinment, "onOrAfter=${startDate},onOrBefore=${endDate}");
 		
 		//identifier
 		// TODO: Standardize this as a external method that takes the UUID of the PatientIdentifier
@@ -137,7 +144,9 @@ public class SetupInfantDueForAppointment extends UgandaEMRDataExportManager {
 		dsd.addColumn("Mother Name", new CalculationDataDefinition("Mother Name", new ExposedInfantMotherCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother Phone", new CalculationDataDefinition("Mother Phone", new ExposedInfantMotherPhoneNumberCalculation()), "", new CalculationResultDataConverter());
 		dsd.addColumn("Mother ART No", sdd.definition("Mother ART No",  hivMetadata.getExposedInfantMotherARTNumber()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		
+		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
+
 		dsd.addColumn("NextAppointmentDate", sdd.definition("Next Appointment Date",  hivMetadata.getReturnVisitDate()), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		
 		return dsd;

@@ -16,7 +16,7 @@ public class DeathDate {
     }
 
     public String toString() {
-        return DateUtil.formatDate(deathDate, "MMM d, yyyy", "");
+        return DateUtil.formatDate(deathDate, "MMM dd, yyyy", "");
     }
 
     public DeathDate(Date deathDate, String caseOfDeath, Integer ageAtDeath) {

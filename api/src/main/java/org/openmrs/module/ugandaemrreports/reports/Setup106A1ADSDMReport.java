@@ -54,7 +54,8 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "HMIS 106A1A/DSDM";
+        return "This report provides the totals of indicators \n" +
+                "in the 106a report disaggregated by DSD Models, Age and Sex";
     }
 
     @Override
@@ -355,7 +356,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.44";
+        return "0.44.0";
     }
 
 }
