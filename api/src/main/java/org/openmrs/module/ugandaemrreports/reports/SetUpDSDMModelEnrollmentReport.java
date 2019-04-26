@@ -148,6 +148,6 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.12";
+        return "2.0.13";
     }
 }

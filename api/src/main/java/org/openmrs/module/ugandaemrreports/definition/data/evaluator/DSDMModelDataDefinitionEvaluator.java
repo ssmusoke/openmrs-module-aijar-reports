@@ -62,11 +62,20 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
 
         for (Object[] row : results) {
             Integer patientId = Integer.valueOf(String.valueOf(row[0]));
+            String replaced_code = null;
             String progId = String.valueOf(row[1]);
             Date obs_datetime = (Date) (row[2]) ;
             if(obs_datetime!=null)
             {
-                c.addData(patientId, new DSDMModel(obs_datetime,progId));
+                if(progId.equals("SUSTAIN") || progId.equals("MOH"))
+                {
+                    replaced_code = progId.replace(progId,"FBIM");
+                    c.addData(patientId, new DSDMModel(obs_datetime,replaced_code));
+                }
+                else {
+                    c.addData(patientId, new DSDMModel(obs_datetime,progId));
+                }
+
 
             }
             else
