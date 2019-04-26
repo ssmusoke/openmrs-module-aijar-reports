@@ -86,7 +86,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Overdue For Viral Load";
+        return "List of Clients that are Overdue For Viral Load";
     }
 
     @Override
@@ -177,6 +177,8 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
         dsd.addColumn( "Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd, "Viral Load Date", hivPatientData.getLastViralLoadDateByEndDate());
@@ -215,7 +217,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.36";
+        return "0.8.o";
     }
 }
 

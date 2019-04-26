@@ -5,13 +5,17 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.*;
+import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
+import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +73,7 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Transfer Out List";
+        return "List of Clients Transferred Out";
     }
 
     @Override
@@ -99,7 +103,7 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TransferOutList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:TRANSFER_OUT");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:TRANSFER_OUT");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -128,9 +132,11 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "HIVEnrollmentDate", hivPatientData.getSummaryPageDate());
         addColumn(dsd, "ArtStartDate", hivPatientData.getArtStartDate());
         addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
@@ -153,6 +159,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.45";
+        return "1.1";
     }
 }

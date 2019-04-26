@@ -98,10 +98,10 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
         return "Early Warning Indicators - Viral Load Supression";
     }
 
-    @Override
-    public String getDescription() {
-        return "Viral Load Supression";
-    }
+        @Override
+        public String getDescription() {
+            return "Early warning report on Viral Load Supression of the active patients in care ";
+        }
 
     @Override
     public List<Parameter> getParameters() {

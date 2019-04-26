@@ -59,7 +59,7 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     }
     @Override
     public String getDescription() {
-        return "Lost To Follow Up";
+        return "Early warning indicators for patients Lost To Follow Up";
     }
     @Override
     public List<Parameter> getParameters() {
@@ -121,6 +121,6 @@ public class SetUpEWILostToFollowUp extends UgandaEMRDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "0.58";
+        return "0.59";
     }
 }

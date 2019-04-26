@@ -47,6 +47,8 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
     @Autowired
     private HIVMetadata hivMetadata;
 
+
+
     /**
      * @return the uuid for the report design for exporting to Excel
      */
@@ -67,7 +69,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Appointments List";
+        return "Lists Patients With Appointments in a particular period";
     }
 
     @Override
@@ -97,7 +99,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "AppointmentList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:APPOINTMENT_LIST");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:APPOINTMENT_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -125,6 +127,8 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
@@ -136,6 +140,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.7";
+        return "1.0.7";
     }
 }

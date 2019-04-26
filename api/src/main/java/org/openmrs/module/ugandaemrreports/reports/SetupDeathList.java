@@ -68,7 +68,7 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Death List";
+        return "Facility Dead patients List";
     }
 
     @Override
@@ -98,7 +98,7 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DeathList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:DEATH_LIST");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:DEATH_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -127,6 +127,8 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", new BirthdateDataDefinition(), "", new BirthDateConverter());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         dsd.addColumn("Death Date", new DeathDateDataDefinition(), "", df.getDeathDateConverter());
         dsd.addColumn("Age At Death", new DeathDateDataDefinition(), "", df.getAgeAtDeathConverter());
         dsd.addColumn("Death Course", new DeathDateDataDefinition(), "", df.getDeathCourseConverter());
@@ -139,6 +141,6 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.41";
+        return "1.2.4";
     }
 }
