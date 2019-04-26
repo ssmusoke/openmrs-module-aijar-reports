@@ -99,7 +99,7 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
         @Override
         public String getDescription() {
-            return "Viral Load Supression";
+            return "Early warning report on Viral Load Supression of the active patients in care ";
         }
 
         @Override
@@ -210,6 +210,6 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
         @Override
         public String getVersion() {
-            return "1.5";
+            return "1.5.0";
         }
     }

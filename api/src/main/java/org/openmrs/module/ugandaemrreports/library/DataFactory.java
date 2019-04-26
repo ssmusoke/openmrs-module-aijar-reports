@@ -32,7 +32,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Time;
 import java.util.*;
 
 @Component
@@ -489,6 +488,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
     }
 
+    public CohortDefinition getAnyEncounterOfTypesByStartDate(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate"));
+    }
+
     public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
@@ -646,6 +652,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("diedOnOrAfter=startDate,diedOnOrBefore=endDate"));
     }
 
+    public CohortDefinition getDeadPatientsByEndDate() {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"));
+    }
+
     public CohortDefinition getDeadPatients() {
         BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
         cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
@@ -714,6 +727,28 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-" + olderThan));
     }
 
+    public CohortDefinition getPatientsWithCodedObsByEndDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator(SetComparator.IN);
+        cd.setValueList(codedValues);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate-" + olderThan));
+    }
+
+    public CohortDefinition getPatientsWithCodedObsByEndDate(Concept question, List<EncounterType> restrictToTypes, List<Concept> codedValues, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator(SetComparator.IN);
+        cd.setValueList(codedValues);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
+    }
+
     public CohortDefinition getPatientsWithNumericObs(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -774,6 +809,19 @@ public class DataFactory {
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+    }
+
+    public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes,String olderThan, RangeComparator operator, Double value, RangeComparator operator2, Double value2, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator1(operator);
+        cd.setValue1(value);
+        cd.setOperator2(operator2);
+        cd.setValue2(value2);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate-"+olderThan));
     }
 
     public CohortDefinition getViralLoadDuringPeriod() {
@@ -954,6 +1002,16 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("value1=endDate"));
     }
 
+    public CohortDefinition getPatientsWhoseObsValueDateIsByEndDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier,String olderThan) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=endDate-" + olderThan));
+    }
+
     public CohortDefinition getPatientsWhoseObsValueAfterDate(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
         DateObsCohortDefinition cd = new DateObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -998,7 +1056,7 @@ public class DataFactory {
     }
 
     public CohortDefinition getLostClients() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(30);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -1018,7 +1076,7 @@ public class DataFactory {
 
 
     public CohortDefinition getLostToFollowUp() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(90);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
@@ -1026,17 +1084,31 @@ public class DataFactory {
 
     }
     public CohortDefinition getEverLost() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(90);
         return cd;
     }
 
     public CohortDefinition getLost() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
+    }
+
+    /**
+     * Cohort defines patients who have no had a appeared since their last
+     * missed appoinment date for minimum days passed to the method
+     * @param minimumDays
+     * @return
+     */
+    public CohortDefinition getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(int minimumDays){
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
+        cd.setMinimumDays(minimumDays);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
     public CohortDefinition EarlyWarningIndicatorDataAbstractionCohort(Concept dateConcept,List<EncounterType> types,BaseObsCohortDefinition.TimeModifier timeModifier)
     {
@@ -1054,14 +1126,14 @@ public class DataFactory {
     }
 
     public CohortDefinition getActiveInPeriodWithoutVisit() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMaximumDays(30);
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
 
     public CohortDefinition getMissedAppointment() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
@@ -1112,7 +1184,7 @@ public class DataFactory {
     }
 
     public CohortDefinition getLostDuringPeriod() {
-        LostPatientsCohortDefinition cd = new LostPatientsCohortDefinition();
+        PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(7);
         cd.setMaximumDays(89);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -1200,6 +1272,7 @@ public class DataFactory {
 
 
 
+
    /* public CohortDefinition getAtLeastOneMissedAfterArt() {
         return convert(Cohorts.getPatientsWithAtLeastOneMissedAppointmentAfterArtStartDate(), null);
 
@@ -1246,6 +1319,13 @@ public class DataFactory {
 
     public CohortDefinition getPatientsWithLongRefills(){
         LongRefillsCohortDefinition cd = new LongRefillsCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithNonSuppressedViralLoad(){
+        NonSuppresssedViralLoadsDataDefinition cd = new NonSuppresssedViralLoadsDataDefinition();
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));

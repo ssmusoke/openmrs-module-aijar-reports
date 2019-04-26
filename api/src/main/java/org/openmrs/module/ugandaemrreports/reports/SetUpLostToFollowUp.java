@@ -3,7 +3,6 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -11,6 +10,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +65,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
         @Override
         public String getDescription() {
-        return "Lost to Follow up";
+        return "List of  Clients Lost to Follow up";
         }
 
         @Override
@@ -95,7 +95,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "LostToFollowUp.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:7,dataset:LOST_TO_FOLLOW_UP");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:LOST_TO_FOLLOW_UP");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -124,9 +124,11 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), (String) null);
+        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
+        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen",hivPatientData.getCurrentRegimen());
@@ -140,6 +142,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-        return "0.4";
+        return "0.8.0";
         }
         }
