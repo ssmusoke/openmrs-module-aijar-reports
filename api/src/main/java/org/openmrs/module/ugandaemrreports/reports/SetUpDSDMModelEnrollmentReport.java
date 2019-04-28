@@ -13,6 +13,7 @@ import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelD
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +44,14 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVPatientDataLibrary hivPatientData;
+
+    @Autowired
+    private CommonCohortLibrary commonCohortLibrary;
+
+    @Autowired
+    private CommonDimensionLibrary commonDimensionLibrary;
+
+
 
     @Autowired
     private BasePatientDataLibrary basePatientData;
@@ -117,9 +126,8 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
 
-
+        CohortDefinition artcohortDefinition = df.getPatientCurrentDSDMModel();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(artcohortDefinition));
@@ -148,6 +156,6 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.13";
+        return "2.0.18";
     }
 }

@@ -1071,6 +1071,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
+    public CohortDefinition getPatientCurrentDSDMModel() {
+        CurrentPatientDSDMModelCohortDefinition cd = new CurrentPatientDSDMModelCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
     public CohortDefinition getLastVisitInTheQuarter(Concept question, TimeModifier timeModifier) {
         HavingVisitCohortDefinition cd = new HavingVisitCohortDefinition();
         cd.setTimeModifier(timeModifier);
