@@ -22,6 +22,7 @@ import org.openmrs.module.reporting.query.encounter.definition.EncounterQuery;
 import org.openmrs.module.reporting.query.encounter.definition.MappedParametersEncounterQuery;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.CD4;
+import org.openmrs.module.ugandaemrreports.common.DSDMModel;
 import org.openmrs.module.ugandaemrreports.common.DeathDate;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
@@ -156,6 +157,13 @@ public class DataFactory {
         return new PropertyConverter(DeathDate.class, "deathDate");
     }
 
+    public DataConverter getDateEnrolledConverter() {
+        return new PropertyConverter(DSDMModel.class, "dateOfEnrollment");
+    }
+
+    public DataConverter getDSDMProgramConverter() {
+        return new PropertyConverter(DSDMModel.class, "progId");
+    }
     public DataConverter getDeathCourseConverter() {
         return new PropertyConverter(DeathDate.class, "caseOfDeath");
     }
@@ -1063,6 +1071,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
+    public CohortDefinition getPatientCurrentDSDMModel() {
+        CurrentPatientDSDMModelCohortDefinition cd = new CurrentPatientDSDMModelCohortDefinition();
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
+    }
+
     public CohortDefinition getLastVisitInTheQuarter(Concept question, TimeModifier timeModifier) {
         HavingVisitCohortDefinition cd = new HavingVisitCohortDefinition();
         cd.setTimeModifier(timeModifier);
