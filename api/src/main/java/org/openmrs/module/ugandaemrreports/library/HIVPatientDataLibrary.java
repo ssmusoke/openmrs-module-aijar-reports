@@ -115,6 +115,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getValueDatetimeObsDuringPeriod(hivMetadata.getTransferredOutDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
+    public PatientDataDefinition getTransferredOutDateByEndDate() {
+        return df.getObsByEndDate(hivMetadata.getTransferredOutDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
     public PatientDataDefinition getToPlaceDuringPeriod() {
         return df.getValueDatetimeObsDuringPeriod(hivMetadata.getTransferredOutPlace(), null, TimeQualifier.LAST, df.getObsValueTextConverter());
     }
@@ -551,8 +555,16 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
+    public PatientDataDefinition getLastViralLoadDateByEndDatePlusMonths(String plusMonths) {
+        return df.getObsByEndDatePlusMonths(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST,plusMonths, df.getObsDatetimeConverter());
+    }
+
     public PatientDataDefinition getViralLoadByEndDate(){
         return   df.getObsByEndDate(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueNumericConverter());
+    }
+
+    public PatientDataDefinition getViralLoadByEndDatePlusMonths(String plusMonths){
+        return   df.getObsByEndDatePlusMonths(hivMetadata.getCurrentViralLoad(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST,plusMonths, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getVLQualitativeByEndDate(){
@@ -562,4 +574,9 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getLastEncounterByEndDate(){
         return df.getPatientEncounters(df.getEncounterDatetimeConverter());
     }
+
+    public PatientDataDefinition getDeathDateByEndDate() {
+        DeathDateDataDefinition cd =  new DeathDateDataDefinition();
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"),df.getDeathDateConverter()); }
 }

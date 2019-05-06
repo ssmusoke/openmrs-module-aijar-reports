@@ -411,6 +411,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsBack, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientsWithViralLoadDuringPeriodPlusMnths (String monthsadded) {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDatePlusMonths(hivMetadata.getViralLoadDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsadded, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod(String monthsBack){
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()),monthsBack,BaseObsCohortDefinition.TimeModifier.LAST

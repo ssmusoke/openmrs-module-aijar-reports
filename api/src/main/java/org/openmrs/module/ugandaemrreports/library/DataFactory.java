@@ -262,6 +262,11 @@ public class DataFactory {
         return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrBefore", "endDate", olderThan));
     }
 
+    public PatientDataDefinition getObsByEndDatePlusMonths(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String plusMonths, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.createParameterAfterDuration("onOrBefore", "endDate", plusMonths));
+    }
+
     public PatientDataDefinition getObsAfterDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
         ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrAfter", timeQualifier);
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
@@ -1040,6 +1045,18 @@ public class DataFactory {
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.addParameter(new Parameter("value2", "value2", Date.class));
         return convert(cd, ObjectUtil.toMap("value1=startDate-" + olderThan + ",value2=endDate-" + olderThan));
+    }
+
+    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDatePlusMonths(Concept dateConcept, List<EncounterType> types, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate+" + olderThan + ",value2=endDate+" + olderThan));
     }
 
 
