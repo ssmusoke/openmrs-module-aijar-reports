@@ -67,7 +67,8 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Active Patients in Care";
+        return "This report provides patients that are Active in Care" +
+                " in a facility in a particular period of time";
     }
 
     @Override
@@ -163,6 +164,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.2";
     }
 }

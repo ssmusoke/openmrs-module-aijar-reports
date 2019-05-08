@@ -69,7 +69,7 @@ public class SetupHMIS053PatientAppointmentBook extends UgandaEMRDataExportManag
 
     @Override
     public String getDescription() {
-        return "Appointments List";
+        return "HMIS 053 Patient Appointment Book ";
     }
 
     @Override
@@ -147,6 +147,6 @@ public class SetupHMIS053PatientAppointmentBook extends UgandaEMRDataExportManag
 
     @Override
     public String getVersion() {
-        return "0.56";
+        return "0.57";
     }
 }

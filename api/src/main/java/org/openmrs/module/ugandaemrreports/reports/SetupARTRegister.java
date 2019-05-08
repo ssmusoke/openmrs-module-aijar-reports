@@ -66,7 +66,7 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "ART Registers";
+        return "This the ART register";
     }
 
     @Override
@@ -126,6 +126,6 @@ public class SetupARTRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.8";
+        return "0.8.0";
     }
 }

@@ -67,7 +67,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
         @Override
         public String getDescription() {
-                return "LOST CLIENTS";
+                return "List of Lost Clients";
         }
 
         @Override
@@ -147,6 +147,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
         @Override
         public String getVersion() {
-                return "1.0.8";
+                return "1.0.9";
         }
 }

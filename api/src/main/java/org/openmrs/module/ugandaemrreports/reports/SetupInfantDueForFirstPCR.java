@@ -86,7 +86,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "Infants Due for 1st DNA PCR at 6 weeks of age";
+		return "Infants List Due for 1st DNA PCR at 6 weeks of age";
 	}
 	
 	@Override
@@ -104,7 +104,7 @@ public class SetupInfantDueForFirstPCR extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1.4";
+		return "0.1.5";
 	}
 	
 	@Override

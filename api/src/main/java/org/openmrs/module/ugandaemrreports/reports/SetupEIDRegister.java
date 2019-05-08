@@ -37,7 +37,7 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "EID Register";
+        return "HIV Exposed Infants  Register";
     }
 
     @Override
@@ -97,6 +97,6 @@ public class SetupEIDRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.3.0";
     }
 }

@@ -2,21 +2,18 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.DeathDateDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +25,7 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupDeathList extends UgandaEMRDataExportManager {
+public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -40,7 +37,21 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
     private BuiltInPatientDataLibrary builtInPatientData;
 
     @Autowired
+    HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+    @Autowired
+    SharedDataDefintion sdd;
+
+    @Autowired
     private HIVPatientDataLibrary hivPatientData;
+
+    @Autowired
+    private CommonCohortLibrary commonCohortLibrary;
+
+    @Autowired
+    private CommonDimensionLibrary commonDimensionLibrary;
+
+
 
     @Autowired
     private BasePatientDataLibrary basePatientData;
@@ -53,22 +64,22 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "f8e92026-8c00-415f-988c-43917181f02d";
+        return "f8e56326-8c00-415d-988c-43917181f02d";
     }
 
     @Override
     public String getUuid() {
-        return "9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a";
+        return "941d0567-4848-41b2-8713-305667c89d01";
     }
 
     @Override
     public String getName() {
-        return "Death List";
+        return "Patient DSDM Model Report";
     }
 
     @Override
     public String getDescription() {
-        return "Facility Dead patients List";
+        return "A Report Indicating all the Current Model Patient Model and the Date when they enrolled Into the Model";
     }
 
     @Override
@@ -96,9 +107,9 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "DeathList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ModelEnrollmentReport.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:DEATH_LIST");
+        props.put("repeatingSections", "sheet:1,row:7,dataset:PATIENTDSDMMODEL");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -116,31 +127,35 @@ public class SetupDeathList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-
-        CohortDefinition definition = df.getDeadPatientsDuringPeriod();
-
+        CohortDefinition artcohortDefinition = df.getPatientCurrentDSDMModel();
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
-        addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
-        dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
-        dsd.addColumn("Birth Date", new BirthdateDataDefinition(), "", new BirthDateConverter());
-        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
-        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
-        dsd.addColumn("Death Date", new DeathDateDataDefinition(), "", df.getDeathDateConverter());
-        dsd.addColumn("Age At Death", new DeathDateDataDefinition(), "", df.getAgeAtDeathConverter());
-        dsd.addColumn("Death Course", new DeathDateDataDefinition(), "", df.getDeathCourseConverter());
-
-        rd.addDataSetDefinition("DEATH_LIST", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+        dsd.addRowFilter(Mapped.mapStraightThrough(artcohortDefinition));
+        addColumn(dsd, "Clinic number", hivPatientData.getClinicNumber());
+        addColumn(dsd, "Middle Name", builtInPatientData.getPreferredMiddleName());
+        addColumn(dsd, "Surname", builtInPatientData.getPreferredFamilyName());
+        addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
+        addColumn(dsd, "Sex", builtInPatientData.getGender());
+        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
+        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
+        addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
+        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd,"Model", hivPatientData.getDSDMModel());
+        dsd.addColumn("Date Enrolled", new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter());
+        dsd.addColumn("Stable", sdd.definition("Stable", hivMetadata.getCurrentRegimen()), "onOrAfter=${startDate},onOrBefore=${endDate}", new RegimenLineConverter());
+        rd.addDataSetDefinition("PATIENTDSDMMODEL", Mapped.mapStraightThrough(dsd));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(artcohortDefinition));
 
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "1.2.4";
+        return "2.0.18";
     }
 }

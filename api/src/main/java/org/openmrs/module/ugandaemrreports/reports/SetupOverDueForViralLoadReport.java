@@ -86,7 +86,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Overdue For Viral Load";
+        return "List of Clients that are Overdue For Viral Load";
     }
 
     @Override
@@ -217,7 +217,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.8";
+        return "0.8.o";
     }
 }
 

@@ -86,7 +86,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Due For Viral Load";
+        return "Patients that are due for Viral load checkup";
     }
 
     @Override
@@ -218,7 +218,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.6";
+        return "2.0.7";
     }
 }
 
