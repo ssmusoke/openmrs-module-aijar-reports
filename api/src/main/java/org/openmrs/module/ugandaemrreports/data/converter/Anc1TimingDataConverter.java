@@ -29,7 +29,7 @@ public class Anc1TimingDataConverter implements DataConverter {
         Obs obs = ((Obs) obj);
 
         if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-            return "✔";
+            return "=UNICHAR(8730)";
         }
         else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "x";
