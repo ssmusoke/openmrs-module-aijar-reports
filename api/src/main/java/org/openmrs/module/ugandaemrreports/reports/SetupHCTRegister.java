@@ -5,7 +5,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TBDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,7 +41,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.5";
 	}
 	
 	/**
@@ -50,7 +49,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "2985a8c4-9623-4c7a-ab1f-7c14a7e74570";
+		return "52f87d1e-e15a-4d9d-b33a-a44d8319ad3d";
 	}
 	
 	@Override
@@ -65,6 +64,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
 		l.add(buildReportDesign(reportDefinition));
+		l.add(buildExcelReportDesign(reportDefinition));
 		return l;
 	}
 	
@@ -75,16 +75,22 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	 * @param reportDefinition
 	 * @return The report design
 	 */
-	@Override	
+	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HCTRegister.xls");
+		ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+		return rd;
+	}
+
+	public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
+		ReportDesign rd = createExcelTemplateDesign("79a2e2c2-d744-4a56-bcc4-8b6718f99f28", reportDefinition, "HCTRegister.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:4,dataset:HCT");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
 	}
-	
+
+
 	@Override
 	public ReportDefinition constructReportDefinition() {
 		
