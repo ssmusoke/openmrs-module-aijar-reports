@@ -69,7 +69,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Appointments List";
+        return "Lists Patients With Appointments in a particular period";
     }
 
     @Override
@@ -140,6 +140,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.6";
+        return "1.0.7";
     }
 }

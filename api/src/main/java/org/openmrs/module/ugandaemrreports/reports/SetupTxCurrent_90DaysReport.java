@@ -71,7 +71,7 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Tx Current_90Days Report";
+        return "MER Indicator Report For Tx Curr with Lost To Followup taken as 90 Days After last Missed Appointment";
     }
 
     @Override
@@ -142,6 +142,6 @@ public class SetupTxCurrent_90DaysReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.8";
+        return "0.1.9";
     }
 }

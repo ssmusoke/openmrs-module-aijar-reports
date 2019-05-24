@@ -1,26 +1,18 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.EncounterType;
-import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
-import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Date;
 
 /**
  */
@@ -234,6 +226,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusDiagnosed()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getScreenedForTBNegativeDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusNoSignsOrSymptoms()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getStartedTBRxBeforePeriod() {
         return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusRx()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -419,6 +415,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsBack, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientsWithViralLoadDuringPeriodPlusMnths (String monthsadded) {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDatePlusMonths(hivMetadata.getViralLoadDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsadded, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod(String monthsBack){
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()),monthsBack,BaseObsCohortDefinition.TimeModifier.LAST
@@ -440,4 +441,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, olderThan);
     }
 
+    public CohortDefinition getPatientsWhoTestedHIVPositiveDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)),BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsWhoTestedHIVNegativeDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.ANY);
+    }
 }

@@ -92,12 +92,12 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Stablity Assessment Report";
+        return "Stability Assessment Report";
     }
 
     @Override
     public String getDescription() {
-        return "Stablity Assessment Report";
+        return "This report shows Stability Assessment for patients having drugs";
     }
 
     @Override
@@ -158,7 +158,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.9";
+        return "3.1.0";
     }
 }
 

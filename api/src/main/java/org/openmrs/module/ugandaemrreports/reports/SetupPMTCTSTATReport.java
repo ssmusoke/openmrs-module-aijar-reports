@@ -77,7 +77,7 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "PMTCT STAT Report";
+        return "MER Indicator Report for PMTCT STAT";
     }
 
     @Override
@@ -157,6 +157,6 @@ public class SetupPMTCTSTATReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.0";
+        return "0.2.1";
     }
 }
