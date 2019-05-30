@@ -111,7 +111,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0";
+        return "2.0.4";
     }
 
     @Override
@@ -185,7 +185,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
 
         //start adding columns here
-        dsd.addColumn("DOA", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Visit Date", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Client No", sdd.definition("Client No",  getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
@@ -233,7 +233,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         return dsd;
     }
     private DataDefinition getEncounterDate() {
-        CalculationDataDefinition cd = new CalculationDataDefinition("DOA", new ANCEncounterDateCalculation());
+        CalculationDataDefinition cd = new CalculationDataDefinition("Visit Date", new ANCEncounterDateCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }
