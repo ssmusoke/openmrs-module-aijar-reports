@@ -18,32 +18,12 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.ARVsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.Anc1TimingDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.FpcDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.FreeLlinDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.IYCFDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.IptCtxDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MNCDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MUACDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MebendazoleDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.SyphilisTestDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.TetanusDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.WHODataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.BloodPressureCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.FolicAcidCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.IronGivenCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.ReferalCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.ANCEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +111,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.8";
+        return "2.0.4";
     }
 
     @Override
@@ -205,7 +185,7 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
 
 
         //start adding columns here
-
+        dsd.addColumn("Visit Date", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Client No", sdd.definition("Client No",  getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
@@ -251,5 +231,10 @@ public class SetupANCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("Risk Factor/Complications", sdd.definition("Risk Factor/Complications", getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
         return dsd;
+    }
+    private DataDefinition getEncounterDate() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Visit Date", new ANCEncounterDateCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
     }
 }
