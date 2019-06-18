@@ -201,6 +201,14 @@
         "order":100
       },
       {
+        "id": "HCT Card Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "HCT Card Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=76d3cbdb-7b81-423e-8a53-cc3773f2c456",
+        "order": 105
+      },
+      {
         "id": "OPD Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
