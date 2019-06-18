@@ -140,7 +140,7 @@ public class HCTDataExportDatasetEvaluator implements DataSetEvaluator {
                 if (counselledAsCouple != null) {
                     pdh.addCol(row, "counselingsessiontype", convert(counselledAsCouple.getValue()));
                 } else {
-                    pdh.addCol(row, "counselingsessiontype", "N");
+                    pdh.addCol(row, "counselingsessiontype", "");
                 }
 
                 if (counselingapproach != null) {
