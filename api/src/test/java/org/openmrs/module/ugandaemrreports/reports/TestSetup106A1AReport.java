@@ -6,11 +6,12 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.ugandaemrreports.StandaloneContextSensitiveTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertTrue;
 
-public class TestSetup106A1AReport {
+public class TestSetup106A1AReport extends StandaloneContextSensitiveTest {
 
     @Autowired
     protected ReportDefinitionService reportDefinitionService;

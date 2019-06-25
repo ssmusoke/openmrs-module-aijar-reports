@@ -46,6 +46,7 @@
         <metadatamappingVersion>1.0.2</metadatamappingVersion>
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <reportingVersion>1.13.0</reportingVersion>
+        <reportingCompatibilityVersion>2.0.3</reportingCompatibilityVersion>
         <serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
         <uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
         <webservices.restModuleVersion>2.17</webservices.restModuleVersion>
@@ -146,6 +147,14 @@
                 <version>${reportingVersion}</version>
                 <scope>provided</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.module</groupId>
+                <artifactId>reportingcompatibility-api</artifactId>
+                <version>${reportingCompatibilityVersion}</version>
+                <scope>provided</scope>
+            </dependency>
+
 
             <dependency>
                 <groupId>org.openmrs.module</groupId>

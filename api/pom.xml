@@ -22,6 +22,10 @@
 			<scope>compile</scope>
 		</dependency>
 		-->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+		</dependency>
 
 
 		<!-- Begin OpenMRS core -->
@@ -30,26 +34,17 @@
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.web</groupId>
 			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
-			<type>test-jar</type>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
@@ -105,8 +100,6 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>reportingcompatibility-api</artifactId>
-			<version>2.0.3</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
