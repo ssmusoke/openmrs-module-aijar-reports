@@ -22,15 +22,13 @@ public abstract class StandaloneContextSensitiveTest extends BaseModuleContextSe
 	 */
 	@Override
 	public Properties getRuntimeProperties() {
-		Properties p = super.getRuntimeProperties();
+		System.setProperty("databaseUrl", "jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&sessionVariables=storage_engine%3DInnoDB&useUnicode=true&characterEncoding=UTF-8");
+		System.setProperty("databaseUsername", "openmrs");
+		System.setProperty("databasePassword", "openmrs");
+		System.setProperty("databaseDriver", "com.mysql.jdbc.Driver");
+		System.setProperty("databaseDialect", "org.hibernate.dialect.MySQLDialect");
 
-		p.setProperty("connection.url", "jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&sessionVariables=storage_engine%3DInnoDB&useUnicode=true&characterEncoding=UTF-8");
-		p.setProperty("connection.username", "openmrs");
-		p.setProperty("connection.password", "openmrs");
-		p.setProperty("junit.username", "admin");
-		p.setProperty("junit.password", "Admin123");
-		
-		return p;
+		return super.getRuntimeProperties();
 	}
 	
 	@Before
