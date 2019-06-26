@@ -17,6 +17,8 @@ import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTData
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,151 +82,151 @@ public class HCTDataExportDatasetEvaluator implements DataSetEvaluator {
 
                 List<String> names = Splitter.on(" ").splitToList(Splitter.on(",").splitToList(data.getNames()).get(0));
 
-                pdh.addCol(row, "date", data.getEncounterDate());
+                pdh.addCol(row, "Date",formatDate(data.getEncounterDate()));
 
                 if (names.size() > 1) {
-                    pdh.addCol(row, "first_name", names.get(0));
-                    pdh.addCol(row, "last_name", names.get(1));
+                    pdh.addCol(row, "First Name", names.get(0));
+                    pdh.addCol(row, "Last Name", names.get(1));
                 } else if (names.size() == 1) {
-                    pdh.addCol(row, "first_name", names.get(0));
-                    pdh.addCol(row, "last_name", "");
+                    pdh.addCol(row, "First Name", names.get(0));
+                    pdh.addCol(row, "Last Name", "");
                 } else {
-                    pdh.addCol(row, "first_name", "");
-                    pdh.addCol(row, "last_name", "");
+                    pdh.addCol(row, "First Name", "");
+                    pdh.addCol(row, "Last Name", "");
                 }
 
 
                 if (registrationNo != null) {
-                    pdh.addCol(row, "reg", registrationNo.getValue());
+                    pdh.addCol(row, "Registration Number", registrationNo.getValue());
                 } else {
-                    pdh.addCol(row, "reg", "");
+                    pdh.addCol(row, "Registration Number", "");
                 }
 
                 Integer age = data.getAge();
 
                 if (age!= null) {
-                    pdh.addCol(row, "age", age);
+                    pdh.addCol(row, "Age", age);
                 } else {
-                    pdh.addCol(row, "age", "");
+                    pdh.addCol(row, "Age", "");
                 }
 
 
-                pdh.addCol(row, "sex", data.getGender());
+                pdh.addCol(row, "Sex", data.getGender());
 
                 if (maritalStatus1 != null) {
-                    pdh.addCol(row, "marital", convert(processString2(maritalStatus1).get(1)));
+                    pdh.addCol(row, "Marital Status", convert(processString2(maritalStatus1).get(1)));
                 } else if (maritalStatus != null) {
-                    pdh.addCol(row, "marital", maritalStatus);
+                    pdh.addCol(row, "Marital Status", maritalStatus);
                 } else {
-                    pdh.addCol(row, "marital", "");
+                    pdh.addCol(row, "Marital Status", "");
                 }
 
                 if (addresses.size() == 6) {
-                    pdh.addCol(row, "district", addresses.get(1));
-                    pdh.addCol(row, "sub-county", addresses.get(3) + " " + addresses.get(4));
-                    pdh.addCol(row, "village", addresses.get(5));
+                    pdh.addCol(row, "District", addresses.get(1));
+                    pdh.addCol(row, "Sub-County", addresses.get(3) + " " + addresses.get(4));
+                    pdh.addCol(row, "Village", addresses.get(5));
 
                 } else {
-                    pdh.addCol(row, "district", "");
-                    pdh.addCol(row, "sub-county", "");
-                    pdh.addCol(row, "village", "");
+                    pdh.addCol(row, "District", "");
+                    pdh.addCol(row, "Sub-County", "");
+                    pdh.addCol(row, "Village", "");
                 }
 
-                pdh.addCol(row, "telephone", telephone);
+                pdh.addCol(row, "Telephone", telephone);
 
                 if (counselled != null) {
-                    pdh.addCol(row, "pretest counseling", "Y");
+                    pdh.addCol(row, "Pretest Counseling", "Y");
                 } else {
-                    pdh.addCol(row, "pretest counseling", "N");
+                    pdh.addCol(row, "Pretest Counseling", "N");
                 }
                 if (counselledAsCouple != null) {
-                    pdh.addCol(row, "counselingsessiontype", convert(counselledAsCouple.getValue()));
+                    pdh.addCol(row, "Counseling Session Type", convert(counselledAsCouple.getValue()));
                 } else {
-                    pdh.addCol(row, "counselingsessiontype", "");
+                    pdh.addCol(row, "Counseling Session Type", "");
                 }
 
                 if (counselingapproach != null) {
-                    pdh.addCol(row, "counselingapproach", convert(counselingapproach.getValue()));
+                    pdh.addCol(row, "Counseling Approach", convert(counselingapproach.getValue()));
                 } else {
-                    pdh.addCol(row, "counselingapproach", "");
+                    pdh.addCol(row, "Counseling Approach", "");
                 }
 
                 if (hctEntry != null) {
-                    pdh.addCol(row, "entry", convert(hctEntry.getValue()));
+                    pdh.addCol(row, "Entry Point", convert(hctEntry.getValue()));
                 } else {
-                    pdh.addCol(row, "entry", "");
+                    pdh.addCol(row, "Entry Point", "");
                 }
 
                 if (testBe4 != null) {
-                    pdh.addCol(row, "first time testing", "N");
+                    pdh.addCol(row, "First Time Testing", "N");
                 } else {
-                    pdh.addCol(row, "first time testing", "Y");
+                    pdh.addCol(row, "First Time Testing", "Y");
                 }
 
                 if (numberoftimestested != null) {
-                    pdh.addCol(row, "numberoftimestested", numberoftimestested.getValue());
+                    pdh.addCol(row, "Number of Times Tested", numberoftimestested.getValue());
                 } else {
-                    pdh.addCol(row, "numberoftimestested", "");
+                    pdh.addCol(row, "Number of Times Tested", "");
                 }
                 if (numberofsexualpartners != null) {
-                    pdh.addCol(row, "numberofsexualpartners", numberofsexualpartners.getValue());
+                    pdh.addCol(row, "Number of Sexual Partners", numberofsexualpartners.getValue());
                 } else {
-                    pdh.addCol(row, "numberofsexualpartners", "");
+                    pdh.addCol(row, "Number of Sexual Partners", "");
                 }
                 if (spousetested != null) {
-                    pdh.addCol(row, "spousetested", "Y");
+                    pdh.addCol(row, "Spouse Tested", "Y");
                 } else {
-                    pdh.addCol(row, "spousetested", "N");
+                    pdh.addCol(row, "Spouse Tested", "N");
                 }
                 if (spousehivtestresults != null) {
-                    pdh.addCol(row, "spousehivtestresults", convert(spousehivtestresults.getValue()));
+                    pdh.addCol(row, "Spouse HIV Results", convert(spousehivtestresults.getValue()));
                 } else {
-                    pdh.addCol(row, "spousehivtestresults", "");
+                    pdh.addCol(row, "Spouse HIV Results", "");
                 }
                 if (hivResults != null) {
-                    pdh.addCol(row, "hivfinalresults", convert(hivResults.getValue()));
+                    pdh.addCol(row, "HIV Final Results", convert(hivResults.getValue()));
                 } else {
-                    pdh.addCol(row, "hivfinalresults", "");
+                    pdh.addCol(row, "HIV Final Results", "");
                 }
                 if (receivedResults != null) {
-                    pdh.addCol(row, "received", "Y");
+                    pdh.addCol(row, "Recieved Final Results", "Y");
                 } else {
-                    pdh.addCol(row, "received", "N");
+                    pdh.addCol(row, "Recieved Final Results", "N");
                 }
                 if (resultAsCouple != null) {
-                    pdh.addCol(row, "recievedresultsascouple", "Y");
+                    pdh.addCol(row, "Recieved Results As a Couple", "Y");
                 } else {
-                    pdh.addCol(row, "recievedresultsascouple", "N");
+                    pdh.addCol(row, "Recieved Results As a Couple", "N");
                 }
                 if (discordantResults != null) {
-                    pdh.addCol(row, "coupleresults", discordantResults.getValue());
+                    pdh.addCol(row, "Couple Results", discordantResults.getValue());
                 } else {
-                    pdh.addCol(row, "coupleresults", "N");
+                    pdh.addCol(row, "Couple Results ", "N");
                 }
 
                 if (presumptiveTB != null) {
-                    pdh.addCol(row, "tb", "Y");
+                    pdh.addCol(row, "Presumptive TB", "Y");
                 } else {
-                    pdh.addCol(row, "tb", "N");
+                    pdh.addCol(row, "Presumptive TB", "N");
                 }
 
                 if (cotrimgiven != null) {
-                    pdh.addCol(row, "cotrimgiven", "Y");
+                    pdh.addCol(row, "Cotrim Given", "Y");
                 } else {
-                    pdh.addCol(row, "cotrimgiven", "N");
+                    pdh.addCol(row, "Cotrim Given", "N");
                 }
                 if (linkedToCare != null) {
-                    pdh.addCol(row, "linked", "Y");
+                    pdh.addCol(row, "Linked To Care", "Y");
                 } else {
-                    pdh.addCol(row, "linked", "N");
+                    pdh.addCol(row, "Linked To Care", "N");
                 }
                 if(entrypointintocare!=null)
                 {
-                    pdh.addCol(row,"entrypointintocare",convert(entrypointintocare.getValue()));
+                    pdh.addCol(row,"Entry Point To Care",convert(entrypointintocare.getValue()));
                 }
                 else
                 {
-                    pdh.addCol(row, "entrypointintocare", "");
+                    pdh.addCol(row, "Entry Point To Care", "");
 
                 }
 
@@ -232,9 +234,9 @@ public class HCTDataExportDatasetEvaluator implements DataSetEvaluator {
 //                pdh.addCol(row, "tested", "-");
 
                 if (cd4 != null) {
-                    pdh.addCol(row, "cd4", cd4.getValue());
+                    pdh.addCol(row, "CD4", cd4.getValue());
                 } else {
-                    pdh.addCol(row, "cd4", "");
+                    pdh.addCol(row, "CD4", "");
                 }
 
 
@@ -316,6 +318,10 @@ public class HCTDataExportDatasetEvaluator implements DataSetEvaluator {
 
 
         return conceptsNames.get(value);
+    }
+    private String formatDate(Date date) {
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
+        return dateFormatter.format(date);
     }
 
 }
