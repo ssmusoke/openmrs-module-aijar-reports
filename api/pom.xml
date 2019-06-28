@@ -22,10 +22,6 @@
 			<scope>compile</scope>
 		</dependency>
 		-->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
 
 
 		<!-- Begin OpenMRS core -->
@@ -33,12 +29,6 @@
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
-			<type>jar</type>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.web</groupId>
-			<artifactId>openmrs-web</artifactId>
 			<type>jar</type>
 		</dependency>
 
@@ -57,9 +47,10 @@
 		</dependency>
 
 		<!-- End OpenMRS core -->
+
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
-			<artifactId>appframework-omod</artifactId>
+			<artifactId>appframework-api</artifactId>
 		</dependency>
 
 		<dependency>
@@ -90,11 +81,6 @@
 		<dependency>
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>serialization.xstream-api</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>webservices.rest-omod-common</artifactId>
 		</dependency>
 
 		<dependency>
