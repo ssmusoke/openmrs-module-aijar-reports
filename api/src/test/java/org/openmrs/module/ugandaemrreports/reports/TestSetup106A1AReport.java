@@ -7,14 +7,16 @@ import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.ugandaemrreports.StandaloneContextSensitiveTest;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertTrue;
 
+@SkipBaseSetup
 public class TestSetup106A1AReport extends StandaloneContextSensitiveTest {
 
     @Autowired
-    protected ReportDefinitionService reportDefinitionService;
+    protected ReportDefinitionService reportingReportDefinitionService;
 
     @Autowired
     private Setup106A1AReport reportManager;
@@ -23,11 +25,13 @@ public class TestSetup106A1AReport extends StandaloneContextSensitiveTest {
     public void test106AExport() throws Exception {
 
         EvaluationContext context = new EvaluationContext();
+        System.out.println("Setting Parameters");
         context.addParameterValue("startDate", DateUtil.parseDate("2018-01-01", "yyyy-MM-dd"));
         context.addParameterValue("endDate", DateUtil.parseDate("2018-03-31", "yyyy-MM-dd"));
 
         ReportDefinition reportDefinition = reportManager.constructReportDefinition();
-        ReportData reportData = reportDefinitionService.evaluate(reportDefinition, context);
+        ReportData reportData = reportingReportDefinitionService.evaluate(reportDefinition, context);
+        System.out.println("Running the report");
 
         System.out.println(reportData.toString());
 
