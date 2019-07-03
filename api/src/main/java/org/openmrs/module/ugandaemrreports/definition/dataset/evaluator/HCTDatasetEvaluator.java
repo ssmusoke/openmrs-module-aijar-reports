@@ -1,10 +1,7 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Splitter;
-import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
-import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -12,14 +9,11 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Observation;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.common.PatientEncounterObs;
-import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TBDatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
@@ -30,7 +24,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
-import static org.openmrs.module.ugandaemrreports.reports.Helper.processString2;
 
 @Handler(supports = {HCTDatasetDefinition.class})
 public class HCTDatasetEvaluator implements DataSetEvaluator {
@@ -61,7 +54,7 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
                 String telephone = attributes.get("14d4f066-15f5-102d-96e4-000c29c2a5d7");
                 String maritalStatus = attributes.get("8d871f2a-c2cc-11de-8d13-0010c6dffd0f");
 
-                Observation registrationNo = searchObservations(observations, concept(164984));
+                Observation registrationNo = searchObservations(observations, concept(164985));
                 Observation testBe4 = searchObservations(observations, conceptValue(99464, "1065"));
                 Observation testLast12Months = searchObservations(observations, concept(162965));
                 Observation counselled = searchObservations(observations, conceptValue(162918, "90003"));

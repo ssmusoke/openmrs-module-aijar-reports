@@ -4,7 +4,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDataExportDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.util.Properties;
  * */
 
 @Component
-public class SetupHCTRegister extends UgandaEMRDataExportManager {
+public class SetUpHTCDataExportReport extends UgandaEMRDataExportManager {
 	
 	
 	@Autowired
@@ -26,22 +26,22 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "HIV COUNSELLING and Testing (HCT) Register" ;
+		return "HIV COUNSELLING and Testing (HCT) Data Export" ;
 	}
 	
 	@Override
 	public String getName() {
-		return "HIV COUNSELLING and Testing (HCT) Register";
+		return "HIV COUNSELLING and Testing (HCT) Data Export";
 	}
 	
 	@Override
 	public String getUuid() {
-		return "aa758901-000b-42b7-afee-bbb88854282b";
+		return "76d3cbdb-7b81-423e-8a53-cc3773f2c456";
 	}
 	
 	@Override
 	public String getVersion() {
-		return "0.7";
+		return "2.3";
 	}
 	
 	/**
@@ -49,7 +49,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "52f87d1e-e15a-4d9d-b33a-a44d8319ad3d";
+		return "7cfd0c6b-9112-45e9-9a3e-cfc7c213944f";
 	}
 	
 	@Override
@@ -64,7 +64,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
 		l.add(buildReportDesign(reportDefinition));
-		l.add(buildExcelReportDesign(reportDefinition));
+//		l.add(buildExcelReportDesign(reportDefinition));
 		return l;
 	}
 	
@@ -82,9 +82,9 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	}
 
 	public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign("79a2e2c2-d744-4a56-bcc4-8b6718f99f28", reportDefinition, "HCTRegister.xls");
+		ReportDesign rd = createExcelTemplateDesign("435a7170-142c-44b4-a3b3-a4da5a5fa7fb", reportDefinition, "HCTDataExportReport.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:4,dataset:HCT");
+		props.put("repeatingSections", "sheet:1,row:3,dataset:HCTDATAEXPORT");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -100,10 +100,10 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		HCTDatasetDefinition dsd = new HCTDatasetDefinition();
+		HCTDataExportDatasetDefinition dsd = new HCTDataExportDatasetDefinition();
 		dsd.setName(getName());
 		dsd.setParameters(getParameters());
-		rd.addDataSetDefinition("HCT", Mapped.mapStraightThrough(dsd));
+		rd.addDataSetDefinition("HCTDATAEXPORT", Mapped.mapStraightThrough(dsd));
 		return rd;
 	}
 }
