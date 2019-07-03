@@ -28,6 +28,26 @@
         "id": "org.openmrs.module.ugandaemr.integrationdataexports",
         "description": "Data Exports for Integrations",
         "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.quarterly2019",
+        "description": "Links to available Quarterly Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "description": "Links to available Registers 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "description": "Links to available Monthly Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer",
+        "description": "Links to available MER Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -39,6 +59,14 @@
         "url": "ugandaemrreports/reports.page",
         "icon": "icon-book",
         "order": 110
+      },{
+        "id": "ugandaemrreports2019.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "UgandaEMR Reports 2019",
+        "url": "ugandaemrreports/reports_2019.page",
+        "icon": "icon-book",
+        "order": 115
       },
       {
         "id": "HMIS 106a Section 1A",
@@ -476,6 +504,14 @@
         "label": "HMIS 106a With DSDM Aggregations",
         "url": "reportingui/runReport.page?reportDefinition=c05879b8-77db-4a91-90a9-34631cd0ca3b",
         "order":99
+      },
+      {
+        "id": "HMIS 055-HCT Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 055 : HCT Register",
+        "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
+        "order": 20
       }
 
     ]
