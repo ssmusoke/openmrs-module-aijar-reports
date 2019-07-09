@@ -284,7 +284,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getChildrenOnFirstLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getChildrenOnFirstLineRegimen() {
@@ -292,7 +292,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getChildrenOnSecondLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsChildren(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getChildrenOnSecondLineRegimen() {
@@ -300,7 +300,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getAdultsOnFirstLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getAdultsOnFirstLineRegimen() {
@@ -308,7 +308,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getAdultsOnSecondLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getSecondLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getAdultsOnSecondLineRegimen() {
@@ -316,7 +316,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getPatientsOnThirdLineRegimenDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getThirdLineDrugs(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getThirdLineDrugs(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsOnThirdLineRegimen() {
