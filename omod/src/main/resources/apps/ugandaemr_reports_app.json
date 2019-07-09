@@ -510,7 +510,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
         "type": "link",
         "label": "HMIS 055 : HCT Register",
-        "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
+        "url": "reportingui/runReport.page?reportDefinition=9021b6b4-da42-4bd5-a4a9-ad92523d7bf5",
         "order": 20
       }
 
