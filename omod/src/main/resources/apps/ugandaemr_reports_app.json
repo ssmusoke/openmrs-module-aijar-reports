@@ -55,7 +55,7 @@
         "id": "ugandaemrreports.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "label": "UgandaEMR Reports",
+        "label": "UgandaEMR Reports - 2014 HMIS Tools",
         "url": "ugandaemrreports/reports.page",
         "icon": "icon-book",
         "order": 110
@@ -63,10 +63,10 @@
         "id": "ugandaemrreports2019.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "label": "UgandaEMR Reports 2019",
+        "label": "UgandaEMR Reports - 2019 HMIS Tools",
         "url": "ugandaemrreports/reports_2019.page",
         "icon": "icon-book",
-        "order": 115
+        "order": 111
       },
       {
         "id": "HMIS 106a Section 1A",

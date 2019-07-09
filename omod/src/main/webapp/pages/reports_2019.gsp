@@ -28,7 +28,7 @@
     width: 30%;
 }
 </style>
-<h2>UgandaEMR Reports - HMIS 2019 Version</h2>
+<h2>UgandaEMR Reports - HMIS Tools 2019 Version</h2>
 <div class="dashboard clear">
     <div class="info-container column">
         <% if (overview) { %>
