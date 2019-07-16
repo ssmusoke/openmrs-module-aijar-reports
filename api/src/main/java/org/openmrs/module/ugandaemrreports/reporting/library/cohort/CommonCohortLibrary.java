@@ -7,21 +7,18 @@ import java.util.List;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Program;
-import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.DurationUnit;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.CurrentlyInProgramCohortDefinition;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -29,6 +26,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class CommonCohortLibrary {
+
+    @Autowired
+    private DataFactory df;
 
     /**
      * Patients who are female
@@ -145,6 +145,15 @@ public class CommonCohortLibrary {
             cd.setPrograms(Arrays.asList(programs));
         }
         return cd;
+    }
+
+    public CohortDefinition getPatientsInProgramDuringPeriod(Program program) {
+        CurrentlyInProgramCohortDefinition cd = new CurrentlyInProgramCohortDefinition();
+        cd.setName("in program during period");
+        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
+        cd.setPrograms(Arrays.asList(program));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
     }
     
     /**
