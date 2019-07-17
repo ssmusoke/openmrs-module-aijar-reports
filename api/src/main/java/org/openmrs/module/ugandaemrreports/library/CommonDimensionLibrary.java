@@ -345,11 +345,11 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         CohortDefinition above15Female = df.getPatientsInAll(above15Years, females);
 
 //        getting cohort definitions for programs
-        CohortDefinition fbim_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition ftr_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition fbg_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition cddp_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition cclad_patients = commonCohortLibrary.enrolled(getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition fbim_patients = commonCohortLibrary.getPatientsInProgramDuringPeriod(getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition ftr_patients = commonCohortLibrary.getPatientsInProgramDuringPeriod(getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition fbg_patients = commonCohortLibrary.getPatientsInProgramDuringPeriod(getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition cddp_patients = commonCohortLibrary.getPatientsInProgramDuringPeriod(getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition cclad_patients = commonCohortLibrary.getPatientsInProgramDuringPeriod(getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
 
         programDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
         programDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
