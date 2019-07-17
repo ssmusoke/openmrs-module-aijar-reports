@@ -161,7 +161,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "6.0.3";
+        return "3.2.0";
     }
 }
 
