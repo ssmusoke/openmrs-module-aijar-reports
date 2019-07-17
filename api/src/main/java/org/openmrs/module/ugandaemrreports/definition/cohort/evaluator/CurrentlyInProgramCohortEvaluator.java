@@ -17,13 +17,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * This class was copied from the the InProgramCohortEvaluator in the openmrs-reporting module
- * The main modification made in this class is
- * when we checking for patients currently in a program
- * we consider the patients who have a date_completed as null
- * or date_completed is greater than our passed end date.
- * This evaluator excludes the patients who have
- * date_completed equal to the end date
+ *  The implementation in this class was copied from the the InProgramCohortEvaluator,
+ *  to cater for DSDM where the patients complete a program on the same day that they start a new one,
+ *  therefore during the changeover date they are in actually in 2 programs on the same day.
+ *
+ * The change is in the last filter from whereGreaterEqualOrNull to whereGreaterOrNull
+ * so that the last program the patient was enrolled in is ignored
  */
 @Handler(supports={CurrentlyInProgramCohortDefinition.class},order = 1)
 public class CurrentlyInProgramCohortEvaluator implements CohortDefinitionEvaluator {
