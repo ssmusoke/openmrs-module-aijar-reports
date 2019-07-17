@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.definition.data.evaluator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.annotation.Handler;
+import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.evaluator.PatientDataEvaluator;
@@ -48,13 +49,16 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
         DSDMModelDataDefinition def = (DSDMModelDataDefinition) definition;
 
         EvaluatedPatientData c = new EvaluatedPatientData(def, context);
+        if (context.getBaseCohort() != null && context.getBaseCohort().isEmpty()) {
+            return c;
+        }
 
+        String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
-        String query = String.format("Select pg.patient_id, p.name,pg.date_enrolled \n" +
-                "from patient_program as pg\n" +
-                "Inner join program p on p.program_id=pg.program_id\n" +
-                "where p.uuid IN ('de5d54ae-c304-11e8-9ad0-529269fb1459','de5d5b34-c304-11e8-9ad0-529269fb1459','de5d5896-c304-11e8-9ad0-529269fb1459',\n" +
-                "'de5d5da0-c304-11e8-9ad0-529269fb1459','de5d6034-c304-11e8-9ad0-529269fb1459')");
+        String query = "Select pg.patient_id, p.name,pg.date_enrolled,pg.date_completed\n" +
+                "             from patient_program as pg\n" +
+                "             Inner join program p on p.program_id=pg.program_id\n" +
+                "where ((pg.date_completed > '"+endDate+"') OR date_completed IS NULL)  group by pg.patient_id";
 
 
         SqlQueryBuilder q = new SqlQueryBuilder(query);
