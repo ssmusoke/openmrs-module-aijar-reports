@@ -16,6 +16,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * This class was copied from the the InProgramCohortEvaluator in the openmrs-reporting module
+ * The main modification made in this class is
+ * when we checking for patients currently in a program
+ * we consider the patients who have a date_completed as null
+ * or date_completed is greater than our passed end date.
+ * This evaluator excludes the patients who have
+ * date_completed equal to the end date
+ */
 @Handler(supports={CurrentlyInProgramCohortDefinition.class},order = 1)
 public class CurrentlyInProgramCohortEvaluator implements CohortDefinitionEvaluator {
 
