@@ -53,10 +53,8 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
             return c;
         }
 
-       System.out.println(def.getEndDate());
         String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
-       System.out.println(endDate);
         String query = "Select pg.patient_id, p.name,pg.date_enrolled,pg.date_completed\n" +
                 "             from patient_program as pg\n" +
                 "             Inner join program p on p.program_id=pg.program_id\n" +
