@@ -139,16 +139,17 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 
 		//start constructing of the dataset
 		PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
-		PersonAttributeType maritalStatus = Context.getPersonService().getPersonAttributeTypeByUuid("8d871f2a-c2cc-11de-8d13-0010c6dffd0f");
-		PatientIdentifierType NIN = Context.getPatientService().getPatientIdentifierTypeByUuid("f0c16a6d-dc5f-4118-a803-616d0075d282");
+		PersonAttributeType maritalStatus = Context.getPersonService().getPersonAttributeTypeByUuid("dce0c134-30ab-102d-86b0-7a5022ba4115");
+		PatientIdentifierType NIN = MetadataUtils.existing(PatientIdentifierType.class,"f0c16a6d-dc5f-4118-a803-616d0075d282");
 
 		//identifier
-		PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
 		DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-		DataDefinition identifierDef = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
+		DataDefinition identifierDefNIN = new ConvertedPatientDataDefinition("identifier",
+				new PatientIdentifierDataDefinition(NIN.getName(), NIN), identifierFormatter);
 
 
-		dsd.addColumn("NIN", new PatientIdentifierDataDefinition("NIN",NIN), "", new PatientIdentifierConverter());
+
+		dsd.addColumn("NIN",identifierDefNIN,"");
 		dsd.addColumn("serialNo", sdd.definition("serialNo",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("surName", builtInPatientData.getPreferredFamilyName(),(String)null);
 		dsd.addColumn("givenName", builtInPatientData.getPreferredGivenName(),(String)null);
@@ -160,85 +161,41 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("parish",df.getPreferredAddress("address4") ,(String)null);
 		dsd.addColumn("village",df.getPreferredAddress("address5") ,(String)null);
 		dsd.addColumn("phoneNumber", new PersonAttributeDataDefinition("phoneNumber", phoneNumber), "", new PersonAttributeDataConverter());
-		dsd.addColumn("htsModel", sdd.definition("htsModel",  getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("htsModel", sdd.definition("htsModel",  getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("htsApproach", sdd.definition("htsApproach",  getConcept("ff820a28-1adf-4530-bf27-537bfa9ce0b2")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("entrypoint", sdd.definition("entrypoint",  getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("testingPoints", sdd.definition("testingPoints",  getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("reason", sdd.definition("reason",  getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("special", sdd.definition("special",  getConcept("927563c5-cb91-4536-b23c-563a72d3f829")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("firstTime",sdd.definition("firstTime",  getConcept("d6522d62-093d-4157-a9d3-9359d1a33480")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FirstTimeHIVTESTConverter());
+		dsd.addColumn("firstTime",sdd.definition("firstTime",  getConcept("2766c090-c057-44f2-98f0-691b6d0336dc")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("morethan12months", sdd.definition("morethan12months",  getConcept("8037192e-8f0c-4af3-ad8d-ccd1dd6880ba")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TestedForMoreThanOnceInLast12MonthsConverter());
 		dsd.addColumn("pre-testConseling",sdd.definition("pre-testConseling",  getConcept("193039f1-c378-4d81-bb72-653b66c69914")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("tested", sdd.definition("tested",  getConcept("3d292447-d7df-417f-8a71-e53e869ec89d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TestedForHIVDataConverter());
-		dsd.addColumn("receivedTestresults", sdd.definition("receivedTestresults",  getConcept("ad2884a2-830f-4ca8-bc1e-1e1fd2df0f81")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("receivedTestresults", sdd.definition("receivedTestresults",  getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("HIVresults", sdd.definition("HIVresults",  getConcept("3d292447-d7df-417f-8a71-e53e869ec89d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("finalResults",sdd.definition("finalResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("refLabResults", sdd.definition("refLabResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("infectionResults", sdd.definition("infectionResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("alreadyKnownHIV+", sdd.definition("alreadyKnownHIV+",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("coupletesting", sdd.definition("coupletesting",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("infectionResults", sdd.definition("infectionResults",  getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("alreadyKnownHIV+", sdd.definition("alreadyKnownHIV+",  getConcept("49ba801d-b6ff-47cd-8d29-e0ac8649cb7d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new AlreadyKnownHIVPositiveConverter());
+		dsd.addColumn("coupletesting", sdd.definition("coupletesting",  getConcept("b92b1777-4356-49b2-9c83-a799680dc7d4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new CounseledAsCoupleConverter());
 		dsd.addColumn("coupleResultsReceived", sdd.definition("coupleResultsReceived",  getConcept("2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("discordantResults",sdd.definition("discordantResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("corcodantPostive", sdd.definition("corcodantPostive",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("TBCase", sdd.definition("TBCase",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("referedForTBServices", sdd.definition("referedForTBServices",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("refferedTonrollment", sdd.definition("refferedTonrollment",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("discordantResults",sdd.definition("discordantResults",  getConcept("94a5bd0a-b79d-421e-ab71-8e382eed100f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DiscordantCoupleResultsConverter());
+		dsd.addColumn("corcodantPostive", sdd.definition("corcodantPostive",  getConcept("94a5bd0a-b79d-421e-ab71-8e382eed100f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ConcordantCoupleResultsConverter());
+		dsd.addColumn("TBCase", sdd.definition("TBCase",  getConcept("b80f04a4-1559-42fd-8923-f8a6d2456a04")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("referedForTBServices", sdd.definition("referedForTBServices",  getConcept("c5da115d-f6a3-4d13-b182-c2e982a3a796")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("refferedTonrollment", sdd.definition("refferedTonrollment",  getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("RegNo", sdd.definition("RegNo",  getConcept("164985AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
 
 
 
 
-//
-//		//start adding columns here
-//		dsd.addColumn("Client No", sdd.definition("Client No",  getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
-//		dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-//		dsd.addColumn("Age-10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Age-20-24yrs", age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Age-25+yrs", age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("ANC Visit", sdd.definition("ANC Visit",  getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Gravida", sdd.definition("Gravida",  getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Parity", sdd.definition("Parity",  getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Gestational Age", sdd.definition("Gestational Age",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("ANC1 Timing", sdd.definition("ANC1 Timing",  getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
-//		dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Weight", sdd.definition("Weight",  getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Height", sdd.definition("Height",  getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("MUAC", sdd.definition("MUAC",  getConcept("5f86d19d-9546-4466-89c0-6f80c101191b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MUACDataConverter());
-//		dsd.addColumn("INR NO", sdd.definition("INR NO",  getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("BP", bloodPressure(), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
-//		dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
-//		dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("WHO", sdd.definition("WHO", getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
-//		dsd.addColumn("CD4", whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("VL", whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
-//		dsd.addColumn("Pre-ART No", identifierDef, "");
-//		dsd.addColumn("IYCF", sdd.definition("IYCF", getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFDataConverter());
-//		dsd.addColumn("MNC", sdd.definition("MNC", getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
-//		dsd.addColumn("TB Status", sdd.definition("TB Status", getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Haemoglobin", sdd.definition("Haemoglobin", getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Syphilis testW", sdd.definition("Syphilis testW", getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
-//		dsd.addColumn("Syphilis testP", sdd.definition("Syphilis testP", getConcept("d8bc9915-ed4b-4df9-9458-72ca1bc2cd06")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
-//		dsd.addColumn("FPC", sdd.definition("FPC", getConcept("0815c786-5994-49e4-aa07-28b662b0e428")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FpcDataConverter());
-//		dsd.addColumn("TT", sdd.definition("TT", getConcept("39217e3d-6a39-4679-bf56-f0954a7ffdb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TetanusDataConverter());
-//		dsd.addColumn("IPT/CTX", sdd.definition("IPT/CTX", getConcept("1da3cb98-59d8-4bfd-b0bb-c9c1bcd058c6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IptCtxDataConverter());
-//		dsd.addColumn("Free LLIN", sdd.definition("Free LLIN", getConcept("3e7bb52c-e6ae-4a0b-bce0-3b36286e8658")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FreeLlinDataConverter());
-//		dsd.addColumn("Mebendazole", sdd.definition("Mebendazole", getConcept("9d6abbc4-707a-4ec7-a32a-4090b1c3af87")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MebendazoleDataConverter());
-//		dsd.addColumn("Iron given", ironGiven(), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Folic acid given", folicAcidGiven(), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Other treatments", sdd.definition("Other treatments", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("Referal In/Out", referal(), "onDate=${endDate}", new CalculationResultDataConverter());
-//		dsd.addColumn("Risk Factor/Complications", sdd.definition("Risk Factor/Complications", getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
 		return dsd;
 	}
 
 	@Override
 	public String getVersion() {
-		return "0.2.0.5";
+		return "0.2.1.1";
 	}
 }

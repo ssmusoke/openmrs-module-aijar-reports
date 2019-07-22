@@ -10,7 +10,7 @@ public class TestedForMoreThanOnceInLast12MonthsConverter implements DataConvert
     public Object convert(Object obj) {
 
         if (obj == null) {
-            return "";
+            return "NO";
         }
         Double value  = ((Obs)obj).getValueNumeric();
         if(value != null && value > 1 ) {
