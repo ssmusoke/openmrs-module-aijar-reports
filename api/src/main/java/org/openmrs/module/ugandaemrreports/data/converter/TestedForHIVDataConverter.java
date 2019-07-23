@@ -32,9 +32,9 @@ public class TestedForHIVDataConverter implements DataConverter {
         Obs obs = ((Obs) obj);
 
         if (obs.getValueCoded() != null) {
-            return "Yes";
+            return "YES";
         }else {
-            return "No";
+            return "NO";
         }
     }
 

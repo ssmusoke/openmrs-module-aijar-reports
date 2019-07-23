@@ -31,9 +31,9 @@ public class DiscordantCoupleResultsConverter implements DataConverter {
         if (obs.getValueCoded() != null) {
 
             if(obs.getValueCoded().equals(obs.getValueCoded().equals(Dictionary.getConcept("dcd6774e-30ab-102d-86b0-7a5022ba4115")))){
-                return "Yes";
+                return "YES";
             }else{
-                return "No";
+                return "NO";
             }
         }
 

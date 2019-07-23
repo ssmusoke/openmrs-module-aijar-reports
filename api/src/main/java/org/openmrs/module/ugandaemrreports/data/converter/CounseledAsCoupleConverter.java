@@ -35,9 +35,9 @@ public class CounseledAsCoupleConverter implements DataConverter {
         if (obs.getValueCoded() != null) {
 
             if(obs.getValueCoded().equals(obs.getValueCoded().equals(Dictionary.getConcept("6ef3d796-7940-44fe-b0d9-06ab1b824e5b")))){
-                return "Yes";
+                return "YES";
             }else{
-                return "No";
+                return "NO";
             }
         }
 

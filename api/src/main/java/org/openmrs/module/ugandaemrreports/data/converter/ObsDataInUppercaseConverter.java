@@ -15,11 +15,14 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  */
-public class ConcordantCoupleResultsConverter implements DataConverter {
+public class ObsDataInUppercaseConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
         if (obj == null) {
@@ -29,12 +32,23 @@ public class ConcordantCoupleResultsConverter implements DataConverter {
         Obs obs = ((Obs) obj);
 
         if (obs.getValueCoded() != null) {
+            return obs.getValueCoded().getName().getName().toUpperCase();
+        }
 
-            if(obs.getValueCoded().equals(obs.getValueCoded().equals(Dictionary.getConcept("799fe713-c665-463a-ae6f-3c9d539eff15")))){
-                return "YES";
-            }else{
-                return "NO";
-            }
+        else if (obs.getValueDate() != null) {
+            return formatDate(obs.getValueDate());
+        }
+
+        else if (obs.getValueDatetime() != null) {
+            return formatDate(obs.getValueDatetime());
+        }
+
+        else if (obs.getValueNumeric() != null) {
+            return obs.getValueNumeric();
+        }
+
+        else if (obs.getValueText() != null) {
+            return obs.getValueText().toUpperCase();
         }
 
         return null;
@@ -48,5 +62,10 @@ public class ConcordantCoupleResultsConverter implements DataConverter {
     @Override
     public Class<?> getDataType() {
         return String.class;
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
+        return dateFormatter.format(date);
     }
 }

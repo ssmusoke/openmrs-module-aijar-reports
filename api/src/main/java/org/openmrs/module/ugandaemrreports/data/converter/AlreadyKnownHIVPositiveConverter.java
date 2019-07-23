@@ -23,7 +23,7 @@ public class AlreadyKnownHIVPositiveConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
         if (obj == null) {
-            return "No";
+            return "NO";
         }
 
         Obs obs = ((Obs) obj);
@@ -31,9 +31,9 @@ public class AlreadyKnownHIVPositiveConverter implements DataConverter {
         if (obs.getValueCoded() != null) {
 
             if(obs.getValueCoded().equals(obs.getValueCoded().equals(Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115")))){
-                return "Yes";
+                return "YES";
             }else{
-                return "No";
+                return "NO";
             }
         }
 
