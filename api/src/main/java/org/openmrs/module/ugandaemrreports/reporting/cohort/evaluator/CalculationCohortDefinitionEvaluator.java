@@ -79,7 +79,7 @@ public class CalculationCohortDefinitionEvaluator implements CohortDefinitionEva
 
 		Cohort cohort = context.getBaseCohort();
 		if (cohort == null) {
-			cohort = Context.getService(ReportService.class).getAllPatients();
+			return pcs.evaluate(Context.getService(ReportService.class).getAllPatients().getMemberIds(), cd.getCalculation(), cd.getCalculationParameters(), calcContext);
 		}
 
 		return pcs.evaluate(cohort.getMemberIds(), cd.getCalculation(), cd.getCalculationParameters(), calcContext);
