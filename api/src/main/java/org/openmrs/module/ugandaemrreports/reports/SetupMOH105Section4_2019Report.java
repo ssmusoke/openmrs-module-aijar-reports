@@ -130,13 +130,18 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     protected DataSetDefinition eid() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.htcAgeGroups(), "effectiveDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.HTCAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
         //start building the columns for the report
+        addRowWithColumns(dsd, "4.HT8","HT8-Number of individuals with ANC as  HTC Entry Point", indicatorLibrary.individualsWithANCareEntryPoint());
+        addRowWithColumns(dsd, "4.HT9","HT9-Number of individuals with Maternity as  HTC Entry Point", indicatorLibrary.individualsWithMaternityDeptAsHCTEntryPoint());
+        addRowWithColumns(dsd, "4.HT11","HT11-Number of individuals with Family Planning as  HTC Entry Point", indicatorLibrary.individualsWithFamilyPlanningDeptAsHCTEntryPoint());
+
+
         addRowWithColumns(dsd, "4.H1","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
         addRowWithColumns(dsd, "4.H2","H2-Number of Individuals tested", indicatorLibrary.individualsTested());
         addRowWithColumns(dsd, "4.H3","H3-Number of Individuals who received HIV test results", indicatorLibrary.individualsWhoReceivedHIVTestResults());
@@ -150,7 +155,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.H11","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
         addRowWithColumns(dsd, "4.H12","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
         addRowWithColumns(dsd, "4.H13","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
-        addRowWithColumns(dsd, "4.H14","H14-Number of individuals tested as MARPS", indicatorLibrary.individualsCounselledAndTestedMarps());
         addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500µ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
         addRowWithColumns(dsd, "4.H16","H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare());
 
@@ -159,19 +163,41 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "aM", label + " (Between 18 Months and 4 Years) Male", cohortIndicator, "gender=M|age=Between18MonthsAnd4Years");
-        addIndicator(dsd, key + "aF", label + " (Between 18 Months and 4 Years) Female", cohortIndicator, "gender=F|age=Between18MonthsAnd4Years");
-        addIndicator(dsd, key + "bM", label + " (Between 5 and 9 Years) Male", cohortIndicator, "gender=M|age=Between5And9Yrs");
-        addIndicator(dsd, key + "bF", label + " (Between 5 and 9 Years) Female", cohortIndicator, "gender=F|age=Between5And9Yrs");
-        addIndicator(dsd, key + "cM", label + " (Between 10 and 14 Years) Male", cohortIndicator, "gender=M|age=Between10And14Yrs");
-        addIndicator(dsd, key + "cF", label + " (Between 10 and 14 Years) Female", cohortIndicator, "gender=F|age=Between10And14Yrs");
-        addIndicator(dsd, key + "dM", label + " (Between 15 and 18 Years) Male", cohortIndicator, "gender=M|age=Between15And18Yrs");
-        addIndicator(dsd, key + "dF", label + " (Between 15 and 18 Years) Female", cohortIndicator, "gender=F|age=Between15And18Yrs");
-        addIndicator(dsd, key + "eM", label + " (Between 19 and 49 Years) Male", cohortIndicator, "gender=M|age=Between19And49Yrs");
-        addIndicator(dsd, key + "eF", label + " (Between 19 and 49 Years) Female", cohortIndicator, "gender=F|age=Between19And49Yrs");
-        addIndicator(dsd, key + "fM", label + " (>49) Male", cohortIndicator, "gender=M|age=GreaterThan49Yrs");
-        addIndicator(dsd, key + "fF", label + " (>49) Female", cohortIndicator, "gender=F|age=GreaterThan49Yrs");
-        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");
+        addIndicator(dsd, key + "aM", label + " (Below 1 year) Male", cohortIndicator, "gender=M|age=Below1yr");
+        addIndicator(dsd, key + "aF", label + " (Below 1 year) Female", cohortIndicator, "gender=F|age=Below1yr");
+        addIndicator(dsd, key + "bM", label + " (Between 1 and 4 Years) Male", cohortIndicator, "gender=M|age=Between1And4yrs");
+        addIndicator(dsd, key + "bF", label + " (Between  1 and 4 Years) Female", cohortIndicator, "gender=F|age=Between1And4yrs");
+        addIndicator(dsd, key + "lM", label + " (Between 5 and 9 Years) Male", cohortIndicator, "gender=M|age=Between5And9yrs");
+        addIndicator(dsd, key + "lF", label + " (Between 5 and 9 Years) Female", cohortIndicator, "gender=F|age=Between5And9yrs");
+        addIndicator(dsd, key + "cM", label + " (Between 10 and 14 Years) Male", cohortIndicator, "gender=M|age=Between10And14yrs");
+        addIndicator(dsd, key + "cF", label + " (Between 10 and 14 Years) Female", cohortIndicator, "gender=F|age=Between10And14yrs");
+        addIndicator(dsd, key + "dM", label + " (Between 15 and 19 Years) Male", cohortIndicator, "gender=M|age=Between15And19yrs");
+        addIndicator(dsd, key + "dF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
+        addIndicator(dsd, key + "eM", label + " (Between 20 and 24 Years) Male", cohortIndicator, "gender=M|age=Between20And24yrs");
+        addIndicator(dsd, key + "eF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "gender=F|age=Between20And24yrs");
+        addIndicator(dsd, key + "mM", label + " (Between 25 and 29 Years) Male", cohortIndicator, "gender=M|age=Between25And29yrs");
+        addIndicator(dsd, key + "mF", label + " (Between 25 and 29 Years) Female", cohortIndicator, "gender=F|age=Between25And29yrs");
+        addIndicator(dsd, key + "fM", label + " (Between 30 and 34 Years) Male", cohortIndicator, "gender=M|age=Between30And34yrs");
+        addIndicator(dsd, key + "fF", label + " (Between 30 and 34 Years) Female", cohortIndicator, "gender=F|age=Between30And34yrs");
+        addIndicator(dsd, key + "gM", label + " (Between 35 and 39 Years) Male", cohortIndicator, "gender=M|age=Between35And39yrs");
+        addIndicator(dsd, key + "gF", label + " (Between 35 and 39 Years) Female", cohortIndicator, "gender=F|age=Between35And39yrs");
+        addIndicator(dsd, key + "hM", label + " (Between 40 and 44 Years) Male", cohortIndicator, "gender=F|age=Between40And44yrs");
+        addIndicator(dsd, key + "hF", label + " (Between 40 and 44 Years) Female", cohortIndicator, "gender=F|age=Between40And44yrs");
+        addIndicator(dsd, key + "jM", label + " (Between 45 and 49 Years) Male", cohortIndicator, "gender=M|age=Between45And49yrs");
+        addIndicator(dsd, key + "jF", label + " (Between 45 and 49 Years) Female", cohortIndicator, "gender=F|age=Between45And49yrs");
+        addIndicator(dsd, key + "kM", label + " (>50) Male", cohortIndicator, "gender=M|age=GreaterThan50yrs");
+        addIndicator(dsd, key + "kF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
+        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");     
+
+
+
+
+
+
+
+
+
+
 
     }
 
@@ -182,6 +208,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0";
+        return "2.0.2.3.6.1";
     }
 }

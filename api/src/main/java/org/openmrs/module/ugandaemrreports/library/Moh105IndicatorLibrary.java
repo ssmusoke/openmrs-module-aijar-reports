@@ -14,9 +14,6 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 
-import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
-import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
@@ -26,6 +23,9 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
+import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
 /**
  *
@@ -800,6 +800,27 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator individualsCounselledAndTestedMarps() {
         return cohortIndicator("Individuals counseled and tested as MARPS", map(cohortLibrary.individualsCounseledAndTestedAsMarps(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
+    /**
+     * HCT Entry Points
+     * @return CohortIndicator
+     */
+
+    public CohortIndicator individualsWithANCareEntryPoint() {
+        return cohortIndicator("Individuals With ANC as Entry Point and Tested Positive", map(cohortLibrary.clientsWithANCEntryPoint(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithFamilyPlanningDeptAsHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithFamilyPlanningDepartmentasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithMaternityDepartmentasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithWorkPlaceAsHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**

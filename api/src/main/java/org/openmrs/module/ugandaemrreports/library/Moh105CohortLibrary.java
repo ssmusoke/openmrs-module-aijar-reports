@@ -13,19 +13,11 @@
  */
 package org.openmrs.module.ugandaemrreports.library;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.NumericObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -39,6 +31,10 @@ import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -727,8 +723,18 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("testedForPep AND counseledAsIndividuals");
         return cd;
 	}
-	
-	/**
+    public CohortDefinition individualsWithANCandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals with ANC as the HCT Entry Point");
+        cd.addSearch("ANCHCTEntryPoint", ReportUtils.map(clientsWithANCEntryPoint(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedHIVPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("ANC Entry Point and tested Positive");
+        return cd;
+    }
+
+    /**
 	 * Tested for PEP
 	 * @return CohortDefiniton
 	 */
@@ -736,6 +742,27 @@ public class Moh105CohortLibrary {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
 	}
 
+    /**
+     * HCT Entry Points
+     * @return CohortDefiniton
+     */
+
+    public CohortDefinition clientsWithANCEntryPoint() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+
+    public CohortDefinition clientsWithFamilyPlanningDepartmentasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("164984AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+    public CohortDefinition clientsWithMaternityDepartmentasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("160456AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+    public CohortDefinition clientsWithWorkPlaceasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e"));
+    }
+    public CohortDefinition clientsWithHBHCTasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("ccb72ac4-7fdb-4695-be5e-68815dda90c4"));
+    }
 	/**
 	 * Number of individuals tested as MARPS
 	 * @return CohortDefiniton
