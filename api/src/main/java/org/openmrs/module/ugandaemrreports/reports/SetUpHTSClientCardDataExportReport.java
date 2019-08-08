@@ -24,7 +24,6 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -69,7 +68,7 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 	
 	@Override
 	public String getVersion() {
-		return "0.1.6";
+		return "3.0.0";
 	}
 	
 	/**
@@ -92,7 +91,6 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
 		l.add(buildReportDesign(reportDefinition));
-//		l.add(buildExcelReportDesign(reportDefinition));
 		return l;
 	}
 	
@@ -140,7 +138,6 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 		PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
 		PersonAttributeType maritalStatus = Context.getPersonService().getPersonAttributeTypeByUuid("dce0c134-30ab-102d-86b0-7a5022ba4115");
 		PatientIdentifierType NIN = MetadataUtils.existing(PatientIdentifierType.class,"f0c16a6d-dc5f-4118-a803-616d0075d282");
-		PatientIdentifierType HealthUnit = MetadataUtils.existing(PatientIdentifierType.class,"f0c16a6d-dc5f-4118-a803-616d0075d282");
 
 		//identifier
 		DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
@@ -151,7 +148,6 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 
 		
 		dsd.addColumn("Visit Date", df.getHTSVisitDate(), (String)null);
-//		dsd.addColumn("Health Unit Name", sdd.definition("visitDate",  df.getEncounter), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("NIN", identifierDefNIN, "");
 		dsd.addColumn("Serial No.", sdd.definition("serialNo",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("District",df.getPreferredAddress("countyDistrict") ,(String)null);
@@ -190,8 +186,6 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 		dsd.addColumn("Prevention Services Received", sdd.definition("preventionServices",  getConcept("73686a14-b55c-4b10-916d-fda2046b803f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Client referred to HIV care", sdd.definition("refferedTonrollment",  getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Place of referral", sdd.definition("referralPlace",  getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-
-
 
 		return dsd;
 	}
