@@ -21,7 +21,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -173,8 +172,6 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("tested", sdd.definition("tested",  getConcept("3d292447-d7df-417f-8a71-e53e869ec89d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TestedForHIVDataConverter());
 		dsd.addColumn("receivedTestresults", sdd.definition("receivedTestresults",  getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataInUppercaseConverter());
 		dsd.addColumn("HIVresults", sdd.definition("HIVresults",  getConcept("3d292447-d7df-417f-8a71-e53e869ec89d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("finalResults",sdd.definition("finalResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-//		dsd.addColumn("refLabResults", sdd.definition("refLabResults",  getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("infectionResults", sdd.definition("infectionResults",  getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("alreadyKnownHIV+", sdd.definition("alreadyKnownHIV+",  getConcept("49ba801d-b6ff-47cd-8d29-e0ac8649cb7d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new AlreadyKnownHIVPositiveConverter());
 		dsd.addColumn("coupletesting", sdd.definition("coupletesting",  getConcept("b92b1777-4356-49b2-9c83-a799680dc7d4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new CounseledAsCoupleConverter());
@@ -184,8 +181,6 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("TBCase", sdd.definition("TBCase",  getConcept("b80f04a4-1559-42fd-8923-f8a6d2456a04")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataInUppercaseConverter());
 		dsd.addColumn("referedForTBServices", sdd.definition("referedForTBServices",  getConcept("c5da115d-f6a3-4d13-b182-c2e982a3a796")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("refferedToEnrollment", sdd.definition("refferedTonrollment",  getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataInUppercaseConverter());
-//		dsd.addColumn("RegNo", sdd.definition("RegNo",  getConcept("164985AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-
 
 
 
@@ -196,6 +191,6 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.2.1.4";
+		return "3.0.0";
 	}
 }
