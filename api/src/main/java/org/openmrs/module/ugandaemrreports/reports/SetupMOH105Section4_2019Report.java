@@ -137,9 +137,20 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
         //start building the columns for the report
+        addRowWithColumns(dsd, "4.HT1A","HT1A-Number of individuals with Facility Based as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWardHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT1B","HT1B-Number of individuals with Facility Based as  HTC Entry Point and tested Positive", indicatorLibrary.individualsWithWardHCTEntryPointandTestedPostive());
+        addRowWithColumns(dsd, "4.HT1C","HT1C-Number of individuals with Facility Based as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWardHCTEntryPointandLinkedToCare());
+
+
         addRowWithColumns(dsd, "4.HT8","HT8-Number of individuals with ANC as  HTC Entry Point", indicatorLibrary.individualsWithANCareEntryPoint());
         addRowWithColumns(dsd, "4.HT9","HT9-Number of individuals with Maternity as  HTC Entry Point", indicatorLibrary.individualsWithMaternityDeptAsHCTEntryPoint());
         addRowWithColumns(dsd, "4.HT11","HT11-Number of individuals with Family Planning as  HTC Entry Point", indicatorLibrary.individualsWithFamilyPlanningDeptAsHCTEntryPoint());
+        addRowWithColumns(dsd, "4.HT13","HT13-Number of individuals with EID as  HTC Entry Point", indicatorLibrary.individualsWithEIDAsHCTEntryPoint());
+        addRowWithColumns(dsd, "4.HT16","HT16-Number of individuals with Work Place as  HTC Entry Point", indicatorLibrary.individualsWithWorkPlaceAsHCTEntryPoint());
+        addRowWithColumns(dsd, "4.HT17","HT17-Number of individuals with HBCT as  HTC Entry Point", indicatorLibrary.individualsWithHBCTAsHCTEntryPoint());
+
+
+
 
 
         addRowWithColumns(dsd, "4.H1","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
@@ -191,14 +202,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
 
 
-
-
-
-
-
-
-
-
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
@@ -208,6 +211,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.6.4";
+        return "2.0.2.3.6.5.8";
     }
 }

@@ -803,6 +803,8 @@ public class Moh105IndicatorLibrary {
     }
 
 
+
+
     /**
      * HCT Entry Points
      * @return CohortIndicator
@@ -821,6 +823,26 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator individualsWithWorkPlaceAsHCTEntryPoint() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithHBCTAsHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithHBHCTasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithEIDAsHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithEIDasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithWardHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsAtWardEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithWardHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point  And tested Postive", map(cohortLibrary.individualsAtWardEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithWardHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point  And linked to care", map(cohortLibrary.individualsAWardEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithWardHCTEntryPoint() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point  And linked to care", map(cohortLibrary.clientsWithWardasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
