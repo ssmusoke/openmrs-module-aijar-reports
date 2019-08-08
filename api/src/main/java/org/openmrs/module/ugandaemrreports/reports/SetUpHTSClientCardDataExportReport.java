@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Health Unit TB Register Report
+ * HTS Client card export Report
  * */
 
 @Component
@@ -53,7 +53,7 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 	
 	@Override
 	public String getDescription() {
-		return "HTS Client Card Data Export" ;
+		return "Data Export for 2019 Version of the HTS Client Card" ;
 	}
 	
 	@Override
@@ -178,6 +178,7 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 		dsd.addColumn("Counseled As", sdd.definition("counseled as",  getConcept("b92b1777-4356-49b2-9c83-a799680dc7d4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("HIV Test Results", sdd.definition("HIVresults",  getConcept("3d292447-d7df-417f-8a71-e53e869ec89d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Syphillis Duo Results",sdd.definition("syphillis duo results",  getConcept("16091701-69b8-4bc7-82b3-b1726cf5a5df")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Consented For Recency Testing", sdd.definition("consent",  getConcept("0698a45b-771c-4d11-84ff-095598c8883c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Recency Results", sdd.definition("recency Results",  getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Results Received As Individual", sdd.definition("individualResultsRecived",  getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Results Received as Couple", sdd.definition("coupleResultsReceived",  getConcept("2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
