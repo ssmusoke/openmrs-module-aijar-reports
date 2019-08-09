@@ -51,6 +51,14 @@ public class Metadata {
         public static final String TB_SUSPECT = "b80f04a4-1559-42fd-8923-f8a6d2456a04";
         public static final String POST_EXPOSURE_PROPHYLAXIS = "966db6f2-a9f2-4e47-bba2-051467c77c17";
         public static final String HCT_ENTRY_POINT = "720a1e85-ea1c-4f7b-a31e-cb896978df79";
+        public static final String OPD = "160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String ART = "165047AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String TB_CLINIC ="165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String NUTRITION_UNIT = "11c12455-2f54-4bb5-b051-0ecfd4a5fe96";
+        public static final String STI_UNIT = "dcd98f72-30ab-102d-86b0-7a5022ba4115";
+        public static final String YCC_UNIT = "e9469d61-b0c3-4785-81c6-057c7bc099fc";
+        public static final String ANC = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String MATERNITY = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String MARPS = "b2706f7a-c4b8-4cd4-ad97-59396cf5bb3d";
         public static final String LINKED_TO_CARE = "3d620422-0641-412e-ab31-5e45b98bc459";
         public static final String CD4_COUNT = "dcbcba2c-30ab-102d-86b0-7a5022ba4115";

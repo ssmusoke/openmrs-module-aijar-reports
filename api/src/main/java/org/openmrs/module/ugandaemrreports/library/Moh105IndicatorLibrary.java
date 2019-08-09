@@ -818,9 +818,7 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithFamilyPlanningDepartmentasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPoint() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithMaternityDepartmentasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
+
     public CohortIndicator individualsWithWorkPlaceAsHCTEntryPoint() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -841,9 +839,122 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator individualsWithWardHCTEntryPointandLinkedToCare() {
         return cohortIndicator("Individuals With Family Planning as Entry Point  And linked to care", map(cohortLibrary.individualsAWardEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-    public CohortIndicator individualsWithWardHCTEntryPoint() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point  And linked to care", map(cohortLibrary.clientsWithWardasEntryinHTC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithOPDHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With OPD as Entry Point  And linked to care", map(cohortLibrary.individualsWithOPDEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
+
+    public CohortIndicator individualsWithOPDHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With OPD as Entry Point  And linked to care", map(cohortLibrary.individualsWithOPDEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithOPDHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With OPD as Entry Point  And linked to care", map(cohortLibrary.individualsWithOPDEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+    public CohortIndicator individualsWithART_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With ART_CLINIC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithART_CLINICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithART_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With ART_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithART_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithART_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With ART_CLINIC as Entry Point  And linked to care", map(cohortLibrary.individualsWithART_CLINICEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithTB_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With TB_CLINIC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithTB_CLINICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithTB_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With TB_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithTB_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithTB_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With TB_CLINIC as Entry Point  And linked to care", map(cohortLibrary.individualsWithTB_CLINICEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+
+    public CohortIndicator individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With NUTRITION_UNIT_CLINIC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithNUTRITION_UNIT_CLINICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With NUTRITION_UNIT_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithNUTRITION_UNIT_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With NUTRITION_UNIT_CLINIC as Entry Point  And linked to care", map(cohortLibrary.individualsWithNUTRITION_UNIT_CLINICEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithSTI_UNIT_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With STI_UNIT_CLINIC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithSTI_UNIT_CLINICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithSTI_UNIT_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With STI_UNIT_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithSTI_UNIT_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithSTI_UNIT_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With STI_UNIT_CLINIC as Entry Point  And linked to care", map(cohortLibrary.individualsWithSTI_UNIT_CLINICEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithYCC_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With YCC_CLINIC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithYCC_CLINICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithYCC_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With YCC_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithYCC_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithYCC_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With YCC_CLINIC as Entry Point  And linked to care", map(cohortLibrary.individualsWithYCC_CLINICEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithANC_CLINICHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With ANC as Entry Point  And tested for HIV", map(cohortLibrary.individualsWithANCEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithANC_CLINICHCTEntryPointandTestedPostive() {
+        return cohortIndicator("Individuals With ANC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithANCEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithANC_CLINICHCTEntryPointandLinkedToCare() {
+        return cohortIndicator("Individuals With ANC as Entry Point  And linked to care", map(cohortLibrary.individualsWithANCEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
 
     /**
      * H15-Number of positive individuals who tested at an early stage (CD4>500μ)
@@ -2711,6 +2822,8 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator smcFollowUps(int visit){
         return cohortIndicator("follow up visits", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }    
-	
+    }
+
+
+
 }
