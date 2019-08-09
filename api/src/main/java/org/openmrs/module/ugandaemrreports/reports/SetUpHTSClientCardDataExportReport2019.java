@@ -39,7 +39,7 @@ import java.util.List;
  * */
 
 @Component
-public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManager {
+public class SetUpHTSClientCardDataExportReport2019 extends UgandaEMRDataExportManager {
 
 
 	@Autowired
@@ -58,7 +58,7 @@ public class SetUpHTSClientCardDataExportReport extends UgandaEMRDataExportManag
 	
 	@Override
 	public String getName() {
-		return " HTS Client Card Data Export";
+		return "HTS Client Card Data Export 2019";
 	}
 	
 	@Override
