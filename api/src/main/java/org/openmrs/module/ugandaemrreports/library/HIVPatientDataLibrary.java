@@ -194,6 +194,8 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getDSDMModel() {
         DSDMModelDataDefinition def = new DSDMModelDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(def, df.getDSDMProgramConverter());
     }
 

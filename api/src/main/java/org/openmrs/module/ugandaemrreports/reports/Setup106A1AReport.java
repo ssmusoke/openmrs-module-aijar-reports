@@ -163,7 +163,8 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
 
         CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
+        CohortDefinition longRefillPatients = df.getPatientsWithLongRefills();
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter,longRefillPatients);
 
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledOnOrBeforeQuarter, enrolledInTheQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
@@ -290,6 +291,6 @@ public class Setup106A1AReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.1";
+        return "0.2.2";
     }
 }

@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -139,6 +140,8 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd,"Model", hivPatientData.getDSDMModel());
+        dsd.addColumn("Date Enrolled", new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd,"1",hivPatientData.getAdherence(0));
         addColumn(dsd,"2",hivPatientData.getAdherence(1));
@@ -158,7 +161,7 @@ public class SetUpStabilityAssessmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.1.0";
+        return "3.2.0";
     }
 }
 
