@@ -59,6 +59,10 @@ public class Metadata {
         public static final String YCC_UNIT = "e9469d61-b0c3-4785-81c6-057c7bc099fc";
         public static final String ANC = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String MATERNITY = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String PNC = "165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String SMC = "409eae6b-9457-4896-b5fa-2667ad5ceffc";
+        public static final String EID = "164981AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String OTHERS = "dcd68a88-30ab-102d-86b0-7a5022ba4115";
         public static final String MARPS = "b2706f7a-c4b8-4cd4-ad97-59396cf5bb3d";
         public static final String LINKED_TO_CARE = "3d620422-0641-412e-ab31-5e45b98bc459";
         public static final String CD4_COUNT = "dcbcba2c-30ab-102d-86b0-7a5022ba4115";
