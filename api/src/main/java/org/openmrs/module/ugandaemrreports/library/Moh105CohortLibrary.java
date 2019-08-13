@@ -760,9 +760,7 @@ public class Moh105CohortLibrary {
     public CohortDefinition clientsWithPNCDepartmentasEntryinHTC() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.PNC));
     }
-    public CohortDefinition clientsWithWorkPlaceasEntryinHTC() {
-        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e"));
-    }
+
     public CohortDefinition clientsWithHBHCTasEntryinHTC() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept("ccb72ac4-7fdb-4695-be5e-68815dda90c4"));
     }
@@ -799,7 +797,23 @@ public class Moh105CohortLibrary {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.OTHERS));
     }
 
-	/**
+//    COMMUNITY TESTING POINTS
+
+    public CohortDefinition clientsWithWorkPlaceasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.WORK_PLACE));
+    }
+    public CohortDefinition clientsWithHBCTasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.HBCT));
+    }
+
+    public CohortDefinition clientsWithDICasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.DIC));
+    }
+    public CohortDefinition clientsWithHotSpotasEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.HOT_SPOT));
+    }
+
+    /**
 	 * Number of individuals tested as MARPS
 	 * @return CohortDefiniton
 	 */
@@ -1263,6 +1277,136 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    /**
+     * Community Testing Points
+     */
+    public CohortDefinition individualsWithWorkPlaceEntryandTestedForHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Work Place  HCT Entry point and Tested for HIV");
+        cd.addSearch("WorkPlacePoints", ReportUtils.map(clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("WorkPlacePoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithWorkPlaceEntryandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Work Place  HCT Entry point and Tested Positive");
+        cd.addSearch("WorkPlacePoints", ReportUtils.map(clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("WorkPlacePoints AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithWorkPlaceEntryandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Work Place  HCT Entry point and are linked to care");
+        cd.addSearch("WorkPlacePoints", ReportUtils.map(clientsWithWorkPlaceasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("WorkPlacePoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithHBCTEntryandTestedForHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HBCT HCT Entry point and Tested for HIV");
+        cd.addSearch("HBCTPoints", ReportUtils.map(clientsWithHBCTasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HBCTPoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithHBCTEntryandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HBCT HCT Entry point and Tested Positive");
+        cd.addSearch("HBCTPoints", ReportUtils.map(clientsWithHBCTasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HBCTPoints AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithHBCTEntryandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HBCT HCT Entry point and are linked to care");
+        cd.addSearch("HBCTPoints", ReportUtils.map(clientsWithHBCTasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HBCTPoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithDICEntryandTestedForHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with DIC HCT Entry point and Tested for HIV");
+        cd.addSearch("DICPoints", ReportUtils.map(clientsWithDICasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("DICPoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithDICEntryandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with DIC HCT Entry point and Tested Positive");
+        cd.addSearch("DICPoints", ReportUtils.map(clientsWithDICasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("DICPoints AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithDICEntryandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with DIC HCT Entry point and are linked to care");
+        cd.addSearch("DICPoints", ReportUtils.map(clientsWithDICasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("DICPoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithHotSpotEntryandTestedForHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HotSpot HCT Entry point and Tested for HIV");
+        cd.addSearch("HotSpotPoints", ReportUtils.map(clientsWithHotSpotasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HotSpotPoints AND linkedtoCare");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithHotSpotEntryandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HotSpot HCT Entry point and Tested Positive");
+        cd.addSearch("HotSpotPoints", ReportUtils.map(clientsWithHotSpotasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HotSpotPoints AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithHotSpotEntryandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with HotSpot HCT Entry point and are linked to care");
+        cd.addSearch("HotSpotPoints", ReportUtils.map(clientsWithHotSpotasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HotSpotPoints AND linkedtoCare");
+        return cd;
+    }
 
     /**
 	 * Tested as MARPS

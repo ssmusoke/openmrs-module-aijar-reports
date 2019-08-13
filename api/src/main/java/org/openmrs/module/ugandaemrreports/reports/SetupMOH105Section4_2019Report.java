@@ -136,7 +136,9 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
-        //start building the columns for the report
+        /**
+         * Health Facility Testing Points
+         */
         addRowWithColumns(dsd, "4.HT1A","HT1A-Number of individuals with Ward as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWardHCTEntryPointandTestedForHIV());
         addRowWithColumns(dsd, "4.HT1B","HT1B-Number of individuals with Ward as  HTC Entry Point and tested Positive", indicatorLibrary.individualsWithWardHCTEntryPointandTestedPostive());
         addRowWithColumns(dsd, "4.HT1C","HT1C-Number of individuals with Ward as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWardHCTEntryPointandLinkedToCare());
@@ -192,6 +194,30 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.HT14A","HT14A-Number of individuals with Other Facility Based Entry Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandTestedForHIV());
         addRowWithColumns(dsd, "4.HT14B","HT14B-Number of individuals with Other Facility Based Entry Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandTestedPositive());
         addRowWithColumns(dsd, "4.HT14C","HT14C-Number of individuals with Other Facility Based Entry Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandLinkedtoCare());
+
+        /**
+         * Community testing Points for HCT
+
+         */
+        addRowWithColumns(dsd, "4.HT15A","HT15A-Number of individuals with Work Place  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT15B","HT15B-Number of individuals with Work Place  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedPositive());
+        addRowWithColumns(dsd, "4.HT15C","HT15C-Number of individuals with Work Place  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT16A","HT16A-Number of individuals with HBCT  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT16B","HT16B-Number of individuals with HBCT  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandTestedPositive());
+        addRowWithColumns(dsd, "4.HT16C","HT16C-Number of individuals with HBCT  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT17A","HT17A-Number of individuals with DIC  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT17B","HT17B-Number of individuals with DIC  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandTestedPositive());
+        addRowWithColumns(dsd, "4.HT17C","HT17C-Number of individuals with DIC  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT18A","HT18A-Number of individuals with HotSpots  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT18B","HT18B-Number of individuals with HotSpots  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedPositive());
+        addRowWithColumns(dsd, "4.HT18C","HT18C-Number of individuals with HotSpots  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT19A","HT19A-Number of individuals with Other Community testing Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT19B","HT19B-Number of individuals with Other Community testing Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedPositive());
+        addRowWithColumns(dsd, "4.HT19C","HT19C-Number of individuals with Other Community testing Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare());
 
 
 
@@ -262,6 +288,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.6.7.5";
+        return "2.0.2.3.6.7.9";
     }
 }

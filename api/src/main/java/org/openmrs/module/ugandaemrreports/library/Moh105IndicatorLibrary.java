@@ -1007,6 +1007,62 @@ public class Moh105IndicatorLibrary {
     }
 
     /**
+     * Community Entry and Testing Points
+     */
+
+    public CohortIndicator individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithWorkPlaceEntryPointsAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithDICEntryPointsAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With DIC Based Points as Entry Point ", map(cohortLibrary.individualsWithDICEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithDICEntryPointsAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With DIC Based Points as Entry Point ", map(cohortLibrary.individualsWithDICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithDICEntryPointsAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With DIC Based Points as Entry Point ", map(cohortLibrary.individualsWithDICEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
+
+
+
+
+
+
+
+    /**
      * H15-Number of positive individuals who tested at an early stage (CD4>500μ)
      * @return CohortIndicator
      */

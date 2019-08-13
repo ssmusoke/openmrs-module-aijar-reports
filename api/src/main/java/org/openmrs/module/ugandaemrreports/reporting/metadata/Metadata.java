@@ -51,6 +51,12 @@ public class Metadata {
         public static final String TB_SUSPECT = "b80f04a4-1559-42fd-8923-f8a6d2456a04";
         public static final String POST_EXPOSURE_PROPHYLAXIS = "966db6f2-a9f2-4e47-bba2-051467c77c17";
         public static final String HCT_ENTRY_POINT = "720a1e85-ea1c-4f7b-a31e-cb896978df79";
+        public static final String COMMUNITY_TESTING_POINT = "4f4e6d1d-4343-42cc-ba47-2319b8a84369";
+        public static final String WORK_PLACE = "6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e";
+        public static final String HBCT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
+        public static final String DIC = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
+        public static final String HOT_SPOT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
+
         public static final String OPD = "160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String ART = "165047AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String TB_CLINIC ="165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
