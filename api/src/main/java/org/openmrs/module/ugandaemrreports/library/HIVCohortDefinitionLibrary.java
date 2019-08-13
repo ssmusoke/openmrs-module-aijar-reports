@@ -170,6 +170,14 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientWithRecentHIVInfectionDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("141518BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientWhoTestedForRecencyHIVInfectionDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
     public CohortDefinition getPatientsHavingRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
