@@ -62,12 +62,12 @@ public class SetupHTSRecency2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "MER HTS Recency Report";
+        return "HTS_RECENT Report";
     }
 
     @Override
     public String getDescription() {
-        return "MER HTS Recency Report 2019 Version";
+        return "MER Indicator Report for HTS_RECENT";
     }
 
     @Override
