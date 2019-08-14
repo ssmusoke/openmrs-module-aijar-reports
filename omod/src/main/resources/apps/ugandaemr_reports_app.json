@@ -10,6 +10,11 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
+        "id": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "description": "Links to available Facility level Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
         "id": "org.openmrs.module.ugandaemr.reports.monthly",
         "description": "Links to available Monthly Reports",
         "supportedExtensionTypes": [ "link" ]
@@ -28,6 +33,26 @@
         "id": "org.openmrs.module.ugandaemr.integrationdataexports",
         "description": "Data Exports for Integrations",
         "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.quarterly2019",
+        "description": "Links to available Quarterly Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "description": "Links to available Registers 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "description": "Links to available Monthly Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer",
+        "description": "Links to available MER Reports 2019",
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -35,10 +60,18 @@
         "id": "ugandaemrreports.homepageLink",
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
-        "label": "UgandaEMR Reports",
+        "label": "UgandaEMR Reports - 2014 HMIS Tools",
         "url": "ugandaemrreports/reports.page",
         "icon": "icon-book",
         "order": 110
+      },{
+        "id": "ugandaemrreports2019.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "UgandaEMR Reports - 2019 HMIS Tools",
+        "url": "ugandaemrreports/reports_2019.page",
+        "icon": "icon-book",
+        "order": 111
       },
       {
         "id": "HMIS 106a Section 1A",
@@ -207,6 +240,21 @@
         "label": "HCT Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=76d3cbdb-7b81-423e-8a53-cc3773f2c456",
         "order": 105
+      },{
+        "id": "DSDM:Stablity Assessment Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Stablity Assessment Report",
+        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
+        "order": 120
+      },
+      {
+        "id": "Patient DSDM Model Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patient DSDM Model Report",
+        "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
+        "order": 125
       },
       {
         "id": "OPD Register",
@@ -453,21 +501,6 @@
         "label": "Viral Load Supression",
         "url": "reportingui/runReport.page?reportDefinition=01f91ef5-9e52-4bf1-af5c-16438c7794f0",
         "order":89
-      },{
-        "id": "DSDM:Stablity Assessment Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Stablity Assessment Report",
-        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
-        "order": 120
-      },
-      {
-        "id": "Patient DSDM Model Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
-        "type": "link",
-        "label": "Patient DSDM Model Report",
-        "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
-        "order": 125
       },
       {
         "id": "HMIS 106a With DSDM Aggregations",
@@ -476,6 +509,165 @@
         "label": "HMIS 106a With DSDM Aggregations",
         "url": "reportingui/runReport.page?reportDefinition=c05879b8-77db-4a91-90a9-34631cd0ca3b",
         "order":99
+      },
+      {
+        "id": "HMIS 055-HCT Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 055 : HCT Register",
+        "url": "reportingui/runReport.page?reportDefinition=9021b6b4-da42-4bd5-a4a9-ad92523d7bf5",
+        "order": 20
+      },
+      {
+        "id": "Appointments List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Appointments List",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
+        "order": 5
+      },{
+        "id": "Missed Appointments List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Missed Appointments List",
+        "url": "reportingui/runReport.page?reportDefinition=654c7276-75f8-11e6-8b77-86f30ca893d3",
+        "order": 6
+      },
+      {
+        "id": "ART Patient Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "ART Patient Export",
+        "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
+        "order": 25
+      },{
+        "id": "Facility Death List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Facility Death List",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
+        "order": 30
+      },{
+        "id": "Exposed Infants Due for 1st PCR",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Exposed Infants Due for 1st PCR",
+        "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
+        "order": 35
+      },{
+        "id": "Exposed Infants Due for 2nd PCR",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Exposed Infants Due for 2nd PCR",
+        "url": "reportingui/runReport.page?reportDefinition=cd8b4a66-f4e6-43b6-a4fd-061e57823cc4",
+        "order": 40
+      },{
+        "id": "Exposed Infants Due for Rapid Test",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Exposed Infants Due for Rapid Test",
+        "url": "reportingui/runReport.page?reportDefinition=1ff3e32c-5526-11e7-b407-15be7a295d59",
+        "order": 45
+      },{
+        "id": "Exposed Infants Due for Appointment",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Exposed Infants Due for Appointment",
+        "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
+        "order": 50
+      },{
+        "id": "OptionB+ Weekly SMS Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "OptionB+ Weekly SMS Report",
+        "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
+        "order": 55
+      },{
+        "id": "Transfer Out List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Transfer Out List",
+        "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
+        "order": 60
+      },
+
+
+      {
+        "id": "Transfer In List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Transfer In List",
+        "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
+        "order": 65
+      },
+
+      {
+        "id": "Lost Clients",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Lost Clients",
+        "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
+        "order": 75
+      },
+      {
+        "id": "Lost To Follow Up",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Lost To Follow Up",
+        "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
+        "order": 80
+      },{
+        "id": "Active Patients in Care",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Active Patients in Care",
+        "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
+        "order": 85
+      },{
+        "id": "Due For Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Due For Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
+        "order": 90
+      },{
+        "id": "Overdue for Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Overdue for Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=41814bf8-dfa9-4d67-a197-bd4b6e40db63",
+        "order":95
+      },
+      {
+        "id": "Non Suppressed Viral Load",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Non Suppressed Viral Load",
+        "url": "reportingui/runReport.page?reportDefinition=8067d0cf-9925-4377-9b16-31e4c8500fe1",
+        "order":100
+      },
+      {
+        "id": "HTS Client Card Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "HTS Client Card Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=96e0926d-1606-4de6-943f-cb036bdc15ad",
+        "order": 105
+      },{
+        "id": "DSDM:Stablity Assessment Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Stablity Assessment Report",
+        "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
+        "order": 120
+      },
+      {
+        "id": "Patient DSDM Model Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "Patient DSDM Model Report",
+        "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
+        "order": 125
       }
 
     ]
