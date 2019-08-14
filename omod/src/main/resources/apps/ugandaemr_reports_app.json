@@ -401,6 +401,14 @@
         "order": 35
       },
       {
+        "id": "HMIS 105  4",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 SECTION 4:  HCT",
+        "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
+        "order": 36
+      },
+      {
         "id": "HMIS 105 Section 5",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",

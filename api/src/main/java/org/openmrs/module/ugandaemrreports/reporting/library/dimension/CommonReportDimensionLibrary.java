@@ -14,16 +14,16 @@
 
 package org.openmrs.module.ugandaemrreports.reporting.library.dimension;
 
-import static org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils.map;
-
-import java.util.Date;
-
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.ugandaemrreports.library.Moh105CohortLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+
+import static org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils.map;
 
 
 /**
@@ -139,6 +139,25 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("GreaterThan49Yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
         return dim;
 	}
+
+    public CohortDefinitionDimension HTCAgeGroups() {
+        CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.setName("age groups (Below 1 Yrs,1-4yrs,5-9yrs, 10-14yrs, 15-19yrs,20-24yrs,25-29yrs,30-34yrs,35-39yrs,40-44yrs,45-49yrs,>50yrs)");
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        dim.addCohortDefinition("Below1yr", map(commonCohortLibrary.agedAtLeastMonthsAgedAtMostYears(0,1), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between1And4yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(1,4), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between5And9yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(5,9), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between10And14yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(10, 14), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between15And19yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 19), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between20And24yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(20, 24), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between25And29yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(25, 29), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between30And34yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(30, 34), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between35And39yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(35, 39), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between40And44yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(40, 44), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("Between45And49yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(45, 49), "effectiveDate=${endDate}"));
+        dim.addCohortDefinition("GreaterThan50yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
+        return dim;
+    }
 	
 	/**
      * Dimension for age using 5 age group for smc
