@@ -453,8 +453,10 @@ public class DataFactory {
 
     public PatientDataDefinition getHTSVisitDate() {
         EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(Dictionary.getEncounterType("264daIZd-f80e-48fe-nba9-P37f2W1905Pv")), "onOrBefore");
-        def.setWhich(TimeQualifier.FIRST);
-        return createPatientDataDefinition(def, getEncounterDatetimeConverter(), Parameters.ON_OR_BEFORE_END_DATE);
+        def.setWhich(TimeQualifier.LAST);
+        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return createPatientDataDefinition(def, getEncounterDatetimeConverter(), "onOrAfter=startDate, onOrBefore=endDate");
     }
 
     public PatientDataDefinition getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, DataConverter converter) {
