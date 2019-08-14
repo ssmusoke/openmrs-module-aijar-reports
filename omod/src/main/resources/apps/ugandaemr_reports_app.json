@@ -524,10 +524,10 @@
         "order": 20
       },
       {
-        "id": "HTS Recency Report ",
+        "id": "HTS Recent Report ",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
-        "label": "HTS Recency Report ",
+        "label": "HTS Recent Report ",
         "url": "reportingui/runReport.page?reportDefinition=43636326-36c5-4104-b358-b912a038ee9d",
         "order": 5
       },
