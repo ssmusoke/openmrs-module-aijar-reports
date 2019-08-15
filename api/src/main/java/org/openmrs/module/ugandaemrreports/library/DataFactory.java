@@ -29,6 +29,7 @@ import org.openmrs.module.ugandaemrreports.definition.cohort.definition.*;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.PatientIdentifierConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -448,6 +449,14 @@ public class DataFactory {
         def.setPregnancyNo(pregnancyNo);
         def.addParameter(new Parameter("onDate", "On Date", Date.class));
         return convert(def, ObjectUtil.toMap("onDate=startDate"), converter);
+    }
+
+    public PatientDataDefinition getHTSVisitDate() {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(Dictionary.getEncounterType("264daIZd-f80e-48fe-nba9-P37f2W1905Pv")), "onOrBefore");
+        def.setWhich(TimeQualifier.LAST);
+        def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return createPatientDataDefinition(def, getEncounterDatetimeConverter(), "onOrAfter=startDate, onOrBefore=endDate");
     }
 
     public PatientDataDefinition getPatientsOnArtWithBaseCD4DuringPeriod(Enums.Period period, Enums.PeriodInterval periodInterval, Integer periodDifference, DataConverter converter) {
