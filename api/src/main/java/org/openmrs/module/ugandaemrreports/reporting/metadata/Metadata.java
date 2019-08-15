@@ -51,12 +51,21 @@ public class Metadata {
         public static final String TB_SUSPECT = "b80f04a4-1559-42fd-8923-f8a6d2456a04";
         public static final String POST_EXPOSURE_PROPHYLAXIS = "966db6f2-a9f2-4e47-bba2-051467c77c17";
         public static final String HCT_ENTRY_POINT = "720a1e85-ea1c-4f7b-a31e-cb896978df79";
+        public static final String FACILITY_BASED = "ecb88326-0a3f-44a5-9bbf-df4bfc3239e1";
         public static final String COMMUNITY_TESTING_POINT = "4f4e6d1d-4343-42cc-ba47-2319b8a84369";
         public static final String WORK_PLACE = "6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e";
         public static final String HBCT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
         public static final String DIC = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
         public static final String HOT_SPOT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
-
+        public static final String OTHER_COMMUNITY_TESTING_POINTS = "16820069-b4bf-4c47-9efc-408746e1636b";
+        public static final String COUNSELLING_APPROACH = "ff820a28-1adf-4530-bf27-537bfa9ce0b2";
+        public static final String HTC_DELIVERY_MODEL = "46648b1d-b099-433b-8f9c-3815ff1e0a0f";
+        public static final String PITC = "74120d00-5483-4148-acc3-00647dc13add";
+        public static final String CICT = "a0857c20-9dc3-410f-9fda-d8fde202b727";
+        public static final String SPECIAL_CATEGORIES = "927563c5-cb91-4536-b23c-563a72d3f829";
+        public static final String PRISONERS = "927563c5-cb91-4536-b23c-563a72d3f829";
+        public static final String PWIDs = "160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String UNIFORMED_MEN = "165125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String OPD = "160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String ART = "165047AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String TB_CLINIC ="165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

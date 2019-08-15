@@ -220,13 +220,57 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.HT19C","HT19C-Number of individuals with Other Community testing Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare());
 
 
+        /**
+         * Number of Individuals Tested, New HIV Positive, Linked to Care
+         */
+//        addRowWithColumns(dsd, "4.HT20A","HT20A-Number of individuals with Other Community testing Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedForHIV());
+//        addRowWithColumns(dsd, "4.HT20B","HT20B-Number of individuals with Other Community testing Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedPositive());
+//        addRowWithColumns(dsd, "4.HT20","HT20C-Number of individuals with Other Community testing Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare());
+//
 
+        /**
+         * Number of individuals by PITC Facility Approach
+         */
+        addRowWithColumns(dsd, "4.HT21A","HT21A-Number of individuals by  PITC Health Facility Testing Approach ", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndTestedForHIV());
+        addRowWithColumns(dsd, "4.HT21B","HT21B-Number of individuals  by PITC Health Facility Testing Approach ", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndTestedPositive());
+        addRowWithColumns(dsd, "4.HT21C","HT21C-Number of individuals by PITC Health Facility Testing Approach", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndLinkedToCare());
 
-        addRowWithColumns(dsd, "4.HT11","HT11-Number of individuals with Family Planning as  HTC Entry Point", indicatorLibrary.individualsWithFamilyPlanningDeptAsHCTEntryPoint());
-        addRowWithColumns(dsd, "4.HT16","HT16-Number of individuals with Work Place as  HTC Entry Point", indicatorLibrary.individualsWithWorkPlaceAsHCTEntryPoint());
-        addRowWithColumns(dsd, "4.HT17","HT17-Number of individuals with HBCT as  HTC Entry Point", indicatorLibrary.individualsWithHBCTAsHCTEntryPoint());
+            /**
+             * Number of Individuals by PITC Community Approach
+             */
+        addRowWithColumns(dsd, "4.HT22A","HT22A-Number of individuals by  PITC Community  Testing Approach ", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndTestedForHIV());
+        addRowWithColumns(dsd, "4.HT22B","HT22B-Number of individuals  by PITC Community  Testing Approach ", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndTestedPositive());
+        addRowWithColumns(dsd, "4.HT22C","HT22C-Number of individuals by PITC Community  Testing Approach", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndLinkedToCare());
 
+        /**
+         * Number of Individuals by CICT/VICT Approach
+         */
+        addRowWithColumns(dsd, "4.HT23A","HT23A-Number of individuals by  CICT/VCT Facility Based  Testing Approach ", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndTestedForHIV());
+        addRowWithColumns(dsd, "4.HT23B","HT23B-Number of individuals  by CICT/VCT Facility Based  Testing Approach ", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndTestedPositive());
+        addRowWithColumns(dsd, "4.HT23C","HT23C-Number of individuals by CICT/VCT Facility Based  Testing Approach", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndLinkedToCare());
 
+        addRowWithColumns(dsd, "4.HT24A","HT24A-Number of individuals by  CICT/VCT  Community  Testing Approach ", indicatorLibrary.individualswithCommunityCICTTestingApproachAndTestedForHIV());
+        addRowWithColumns(dsd, "4.HT24B","HT24B-Number of individuals  by CICT/VCT  Community  Testing Approach ", indicatorLibrary.individualswithCommunityCICTTestingApproachAndTestedPositive());
+        addRowWithColumns(dsd, "4.HT24C","HT24C-Number of individuals by CICT/VCT  Community  Testing Approach", indicatorLibrary.individualswithCommunityCICTTestingApproachAndLinkedToCare());
+
+        /**
+         * NUmber of Individuals by special Category
+         */
+        addRowWithColumns(dsd, "4.HT25A","HT25A-Number of Prisoners", indicatorLibrary.indivudualsCategorisedAsPrisonersandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT25B","HT25B-Number of Prisoners ", indicatorLibrary.indivudualsCategorisedAsPrisonersandTestedPositive());
+        addRowWithColumns(dsd, "4.HT25C","HT25C-Number of Prisoners", indicatorLibrary.indivudualsCategorisedAsPrisonersandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT26A","HT25A-Number of PWIDs", indicatorLibrary.indivudualsCategorisedAsPWIDsandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT26B","HT25B-Number of PWIDs ", indicatorLibrary.indivudualsCategorisedAsPWIDsandTestedPositive());
+        addRowWithColumns(dsd, "4.HT26C","HT25C-Number of PWIDs", indicatorLibrary.indivudualsCategorisedAsPWIDsandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT27A","HT27A-Number of Uniformed Men", indicatorLibrary.indivudualsCategorisedAsUniformedMenandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT27B","HT27B-Number of Uniformed Men ", indicatorLibrary.indivudualsCategorisedAsUniformedMenandTestedPositive());
+        addRowWithColumns(dsd, "4.HT27C","HT27C-Number of Uniformed Men", indicatorLibrary.indivudualsCategorisedAsUniformedMensandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT28A","HT28A-Number of Migrant Workers", indicatorLibrary.indivudualsCategorisedAsMigrantWorkersandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT28B","HT28B-Number of Migrant Workers ", indicatorLibrary.indivudualsCategorisedAsMigrantWorkersandTestedPositive());
+        addRowWithColumns(dsd, "4.HT28C","HT28C-Number of Migrant Workers", indicatorLibrary.indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare());
 
 
 
@@ -288,6 +332,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.6.7.9";
+        return "2.0.2.3.6.8.7";
     }
 }

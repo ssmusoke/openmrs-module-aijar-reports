@@ -812,6 +812,38 @@ public class Moh105CohortLibrary {
     public CohortDefinition clientsWithHotSpotasEntryinHTC() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.HOT_SPOT));
     }
+    public CohortDefinition clientsWithOtherCommunityTestingAsEntryinHTC() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT), Dictionary.getConcept(Metadata.Concept.OTHER_COMMUNITY_TESTING_POINTS));
+    }
+
+    public CohortDefinition clientsWithPITCTestingApproach() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELLING_APPROACH), Dictionary.getConcept(Metadata.Concept.PITC));
+    }
+    public CohortDefinition clientsWithFaciltyBasedDeliveryModel() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HTC_DELIVERY_MODEL), Dictionary.getConcept(Metadata.Concept.FACILITY_BASED));
+    }
+    public CohortDefinition clientsWithCommunityBasedDeliveryModel() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HTC_DELIVERY_MODEL), Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT));
+    }
+    public CohortDefinition clientsWithCICTTestingApproach() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUNSELLING_APPROACH), Dictionary.getConcept(Metadata.Concept.CICT));
+    }
+
+
+    /**
+     * SPECIAL CATEGORIES CONCEPT ANSWERA
+     */
+    public CohortDefinition clientsCategorisedAsPrisoners() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPECIAL_CATEGORIES), Dictionary.getConcept(Metadata.Concept.PRISONERS));
+    }
+
+    public CohortDefinition clientsCategorisedAsPWIDS() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPECIAL_CATEGORIES), Dictionary.getConcept(Metadata.Concept.PWIDs));
+    }
+    public CohortDefinition clientsCategorisedAsUniformedMen() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPECIAL_CATEGORIES), Dictionary.getConcept(Metadata.Concept.UNIFORMED_MEN));
+    }
+
 
     /**
 	 * Number of individuals tested as MARPS
@@ -1350,8 +1382,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Number of individuals with DIC HCT Entry point and Tested for HIV");
         cd.addSearch("DICPoints", ReportUtils.map(clientsWithDICasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("DICPoints AND linkedtoCare");
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("DICPoints AND testedforHIV");
         return cd;
     }
 
@@ -1382,8 +1414,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Number of individuals with HotSpot HCT Entry point and Tested for HIV");
         cd.addSearch("HotSpotPoints", ReportUtils.map(clientsWithHotSpotasEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("linkedtoCare", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("HotSpotPoints AND linkedtoCare");
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("HotSpotPoints AND testedforHIV");
         return cd;
     }
 
@@ -1407,6 +1439,306 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("HotSpotPoints AND linkedtoCare");
         return cd;
     }
+
+    public CohortDefinition individualsWithOtherCommunityTestingPOintsEntryandTestedForHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested for HIV");
+        cd.addSearch("OtherCommunityTestingPoints", ReportUtils.map(clientsWithOtherCommunityTestingAsEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("OtherCommunityTestingPoints AND testedforHIV");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithOtherCommunityTestingPOintsEntryandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested Positive");
+        cd.addSearch("OtherCommunityTestingPoints", ReportUtils.map(clientsWithOtherCommunityTestingAsEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("OtherCommunityTestingPoints AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithOtherCommunityTestingPOintsEntryandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing HCT Entry point and are linked to care");
+        cd.addSearch("OtherCommunityTestingPoints", ReportUtils.map(clientsWithOtherCommunityTestingAsEntryinHTC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("OtherCommunityTestingPoints AND linkedtoCare");
+        return cd;
+    }
+    /**
+     * PITC Testing Appraoches
+     */
+    public CohortDefinition individualsWithHealthFacilityTestingAppraochandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested for HIV");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND testedforHIV AND FacilityBasedApproach ");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithHealthFacilityTestingAppraochandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested Positive");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND FacilityBasedApproach AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithHealthFacilityTestingAppraochandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing HCT Entry point and are linked to care");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND FacilityBasedApproach AND linkedtoCare ");
+        return cd;
+    }
+    public CohortDefinition individualsWithCommunityPITCApproachandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested for HIV");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND testedforHIV AND CommunityBasedApproach ");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithCommunityPITCApproachandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested Positive");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND CommunityBasedApproach AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithCommunityPITCApproachandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing HCT Entry point and are linked to care");
+        cd.addSearch("PITCTestingAppraoch", ReportUtils.map(clientsWithPITCTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PITCTestingAppraoch AND CommunityBasedApproach AND linkedtoCare ");
+        return cd;
+    }
+
+    /**
+     * CICT  Testing Appraoches
+     */
+    public CohortDefinition individualsWithFacilityBasedCICTTestingAppraochandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested for HIV");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND testedforHIV AND FacilityBasedApproach ");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithFacilityBasedCICTTestingAppraochandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested Positive");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND FacilityBasedApproach AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithFacilityBasedCICTTestingAppraochandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing HCT Entry point and are linked to care");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("FacilityBasedApproach", ReportUtils.map(clientsWithFaciltyBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND FacilityBasedApproach AND linkedtoCare ");
+        return cd;
+    }
+    public CohortDefinition individualsWithCommunityCICTApproachandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested for HIV");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND testedforHIV AND CommunityBasedApproach ");
+        return cd;
+    }
+
+    public CohortDefinition individualsWithCommunityCICTApproachandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing Points HCT Entry point and Tested Positive");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND CommunityBasedApproach AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsWithCommunityCICTApproachandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals with Other Community Testing HCT Entry point and are linked to care");
+        cd.addSearch("CICTTestingApproach", ReportUtils.map(clientsWithCICTTestingApproach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("CommunityBasedApproach", ReportUtils.map(clientsWithCommunityBasedDeliveryModel(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("CICTTestingApproach AND CommunityBasedApproach AND linkedtoCare ");
+        return cd;
+    }
+
+    /**
+     * Special Categories
+     */
+    public CohortDefinition individualsCategorisedAsPrisonersandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Prisoners and Tested for HIV");
+        cd.addSearch("Prisoners", ReportUtils.map(clientsCategorisedAsPrisoners(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("Prisoners AND testedforHIV ");
+        return cd;
+    }
+
+    public CohortDefinition individualsCategorisedAsPrisonersandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Prisoners and Tested Positive");
+        cd.addSearch("Prisoners", ReportUtils.map(clientsCategorisedAsPrisoners(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("Prisoners  AND testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsCategorisedAsPrisonersandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Prisoners and are linked to care");
+        cd.addSearch("Prisoners", ReportUtils.map(clientsCategorisedAsPrisoners(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("Prisoners AND linkedtoCare ");
+        return cd;
+    }
+
+     //PWIDs
+     public CohortDefinition individualsCategorisedAsPWIDsandTestedforHIV() {
+         CompositionCohortDefinition cd = new CompositionCohortDefinition();
+         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+         cd.setName("Number of individuals Categorised as PWIDs and Tested for HIV");
+         cd.addSearch("PWIDs", ReportUtils.map(clientsCategorisedAsPWIDS(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+         cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+         cd.setCompositionString("PWIDs AND testedforHIV ");
+         return cd;
+     }
+
+    public CohortDefinition individualsCategorisedAsPWIDsandPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as PWIDs and Tested Positive");
+        cd.addSearch("PWIDs", ReportUtils.map(clientsCategorisedAsPWIDS(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PWIDs AND  testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsCategorisedAsPWIDsandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as PWIDs and are linked to care");
+        cd.addSearch("PWIDs", ReportUtils.map(clientsCategorisedAsPWIDS(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("PWIDs AND linkedtoCare ");
+        return cd;
+    }
+
+    //Uniformed Men
+    public CohortDefinition individualsCategorisedAsUniformedMenandTestedforHIV() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Uniformed Men and Tested for HIV");
+        cd.addSearch("UniformedMen", ReportUtils.map(clientsCategorisedAsUniformedMen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedforHIV", ReportUtils.map(individualsTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("UniformedMen AND testedforHIV ");
+        return cd;
+    }
+
+    public CohortDefinition individualsCategorisedAsUniformedMenandTestedPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Uniformed Men and Tested Positive");
+        cd.addSearch("UniformedMen", ReportUtils.map(clientsCategorisedAsUniformedMen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("UniformedMen AND  testedPositive");
+        return cd;
+    }
+    public CohortDefinition individualsCategorisedAsUniformedMenandLinkedtoCare() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals Categorised as Uniformed Men and are linked to care");
+        cd.addSearch("UniformedMen", ReportUtils.map(clientsCategorisedAsUniformedMen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("linkedtoCare", ReportUtils.map(clientsLinkedToCare(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("UniformedMen AND linkedtoCare ");
+        return cd;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /**
 	 * Tested as MARPS

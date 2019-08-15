@@ -1053,7 +1053,111 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedForHIV() {
+        return cohortIndicator("Individuals With Other Community Testing Points as Entry Point ", map(cohortLibrary.individualsWithOtherCommunityTestingPOintsEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
+    public CohortIndicator individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedPositive() {
+        return cohortIndicator("Individuals With Other Community Testing Points as Entry Point ", map(cohortLibrary.individualsWithOtherCommunityTestingPOintsEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare() {
+        return cohortIndicator("Individuals With Other Community Testing Points as Entry Point ", map(cohortLibrary.individualsWithOtherCommunityTestingPOintsEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * PITC Health Facility Testing Appraoches
+     */
+    public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndTestedForHIV() {
+        return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndTestedPositive() {
+        return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndLinkedToCare() {
+        return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithCommunityAsPITCTestingApproachAndTestedForHIV() {
+        return cohortIndicator("Individuals With Community  PITC Testing Appraoch ", map(cohortLibrary.individualsWithCommunityPITCApproachandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithCommunityAsPITCTestingApproachAndTestedPositive() {
+        return cohortIndicator("Individuals With Community  PITC Testing Appraoch ", map(cohortLibrary.individualsWithCommunityPITCApproachandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualswithCommunityAsPITCTestingApproachAndLinkedToCare() {
+        return cohortIndicator("Individuals With Community  PITC Testing Appraoch ", map(cohortLibrary.individualsWithCommunityPITCApproachandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    /**
+     * CICT/VICT Testing Approaches
+     */
+    public CohortIndicator individualswithFacilityBasedCICTTestingApproachAndTestedForHIV() {
+        return cohortIndicator("Individuals With Health Facility CICT/VICT Testing Appraoch ", map(cohortLibrary.individualsWithFacilityBasedCICTTestingAppraochandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithFacilityBasedCICTTestingApproachAndTestedPositive() {
+        return cohortIndicator("Individuals With Health Facility CICT/VICT Testing Appraoch ", map(cohortLibrary.individualsWithFacilityBasedCICTTestingAppraochandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualswithFacilityBasedCICTTestingApproachAndLinkedToCare() {
+        return cohortIndicator("Individuals With Health Facility CICT/VICT Testing Appraoch ", map(cohortLibrary.individualsWithFacilityBasedCICTTestingAppraochandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithCommunityCICTTestingApproachAndTestedForHIV() {
+        return cohortIndicator("Individuals With Community  CICT Testing Appraoch ", map(cohortLibrary.individualsWithCommunityCICTApproachandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualswithCommunityCICTTestingApproachAndTestedPositive() {
+        return cohortIndicator("Individuals With Community  CICT Testing Appraoch ", map(cohortLibrary.individualsWithCommunityCICTApproachandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualswithCommunityCICTTestingApproachAndLinkedToCare() {
+        return cohortIndicator("Individuals With Community  CICT Testing Appraoch ", map(cohortLibrary.individualsWithCommunityCICTApproachandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    /**
+     * Individuals by Special Categories
+     */
+    public CohortIndicator indivudualsCategorisedAsPrisonersandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsPrisonersandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPrisonersandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPWIDsandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsPWIDsandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPWIDsandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsUniformedMenandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsUniformedMenandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsUniformedMensandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 
