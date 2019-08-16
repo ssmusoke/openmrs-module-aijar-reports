@@ -1149,16 +1149,99 @@ public class Moh105IndicatorLibrary {
     }
 
     public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedForHIV() {
-        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare() {
-        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsTruckerDriversandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    public CohortIndicator indivudualsCategorisedAsTruckerDriversandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsTruckerDriverssandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsFisherFolksandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Fisher Folks ", map(cohortLibrary.individualsCategorisedAsFisherFolksandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsFisherFolksandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Fisher Folks ", map(cohortLibrary.individualsCategorisedAsFisherFolksandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsFisherFolkssandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Fisher Folks ", map(cohortLibrary.individualsCategorisedAsFisherFolksandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsRefugeesandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Refugees ", map(cohortLibrary.individualsCategorisedAsRefugeesandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsRefugeesandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Refugees ", map(cohortLibrary.individualsCategorisedAsRefugeesandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsRefugeessandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Refugees ", map(cohortLibrary.individualsCategorisedAsRefugeesandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPregnantWomenandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Pregnant Women ", map(cohortLibrary.individualsCategorisedAsPregnantWomenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsPregnantWomenandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Pregnant Women ", map(cohortLibrary.individualsCategorisedAsPregnantWomenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPregnantWomenandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Pregnant Women ", map(cohortLibrary.individualsCategorisedAsPregnantWomenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsBreastFeedingWomenandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Breast Feeding Women ", map(cohortLibrary.individualsCategorisedAsBreastFeedingWomenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsBreastFeedingWomenandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Breast Feeding Women ", map(cohortLibrary.individualsCategorisedAsBreastFeedingWomenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsBreastFeedingWomenandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Breast Feeding Women ", map(cohortLibrary.individualsCategorisedAsBreastFeedingWomenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsAGYWandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As AGYW ", map(cohortLibrary.individualsCategorisedAsAGYWandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsAGYWandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As AGYW ", map(cohortLibrary.individualsCategorisedAsAGYWandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsAGYWandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As AGYW ", map(cohortLibrary.individualsCategorisedAsAGYWandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsPWDsandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As PWDs ", map(cohortLibrary.individualsCategorisedAsPWDsandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsPWDsandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As PWDs ", map(cohortLibrary.individualsCategorisedAsPWDsandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsPWDsandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As PWDs ", map(cohortLibrary.individualsCategorisedAsPWDsandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsOthersandTestedForHIV() {
+        return cohortIndicator("Individuals Categorised As Others ", map(cohortLibrary.individualsCategorisedAsOthersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator indivudualsCategorisedAsOthersandTestedPositive() {
+        return cohortIndicator("Individuals Categorised As Others ", map(cohortLibrary.individualsCategorisedAsOthersandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator indivudualsCategorisedAsOthersandLinkedtoCare() {
+        return cohortIndicator("Individuals Categorised As Others ", map(cohortLibrary.individualsCategorisedAsOthersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 

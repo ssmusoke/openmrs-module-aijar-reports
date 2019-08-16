@@ -66,6 +66,15 @@ public class Metadata {
         public static final String PRISONERS = "927563c5-cb91-4536-b23c-563a72d3f829";
         public static final String PWIDs = "160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String UNIFORMED_MEN = "165125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String MIGRANT_WORKERS = "165126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String TRUCKER_DRIVERS = "162198AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String FISHER_FOLKS = "159674AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String REFUGEES = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String PREGNANT_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String BREAST_FEEDING_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String AGYW = "165132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String PWDs = "162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
         public static final String OPD = "160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String ART = "165047AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String TB_CLINIC ="165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

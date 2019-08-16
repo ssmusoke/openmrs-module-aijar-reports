@@ -272,6 +272,38 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.HT28B","HT28B-Number of Migrant Workers ", indicatorLibrary.indivudualsCategorisedAsMigrantWorkersandTestedPositive());
         addRowWithColumns(dsd, "4.HT28C","HT28C-Number of Migrant Workers", indicatorLibrary.indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare());
 
+        addRowWithColumns(dsd, "4.HT29A","HT29A-Number of Truckers", indicatorLibrary.indivudualsCategorisedAsTruckerDriversandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT29B","HT29B-Number of Truckers ", indicatorLibrary.indivudualsCategorisedAsTruckerDriversandTestedPositive());
+        addRowWithColumns(dsd, "4.HT29C","HT29C-Number of Truckers", indicatorLibrary.indivudualsCategorisedAsTruckerDriverssandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT30A","HT30A-Number of Fisher Forks", indicatorLibrary.indivudualsCategorisedAsFisherFolksandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT30B","HT30B-Number of Fisher Forks ", indicatorLibrary.indivudualsCategorisedAsFisherFolksandTestedPositive());
+        addRowWithColumns(dsd, "4.HT30C","HT30C-Number of Fisher Forks", indicatorLibrary.indivudualsCategorisedAsFisherFolkssandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT31A","HT31A-Number of Refugees", indicatorLibrary.indivudualsCategorisedAsRefugeesandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT31B","HT31B-Number of Refugees ", indicatorLibrary.indivudualsCategorisedAsRefugeesandTestedPositive());
+        addRowWithColumns(dsd, "4.HT31C","HT31C-Number of Refugees", indicatorLibrary.indivudualsCategorisedAsRefugeessandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT32A","HT32A-Number of Pregnant Women", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT32B","HT32B-Number of Pregnant Women ", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandTestedPositive());
+        addRowWithColumns(dsd, "4.HT32C","HT32C-Number of Pregnant Women", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT33A","HT33A-Number of BreastFeeding Women", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT33B","HT33B-Number of BreastFeeding Women ", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandTestedPositive());
+        addRowWithColumns(dsd, "4.HT33C","HT33C-Number of BreastFeeding Women", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT34A","HT34A-Number of AGYW", indicatorLibrary.indivudualsCategorisedAsAGYWandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT34B","HT34B-Number of AGYW ", indicatorLibrary.indivudualsCategorisedAsAGYWandTestedPositive());
+        addRowWithColumns(dsd, "4.HT34C","HT34C-Number of AGYW", indicatorLibrary.indivudualsCategorisedAsAGYWandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT35A","HT35A-Number of PWDs", indicatorLibrary.indivudualsCategorisedAsPWDsandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT35B","HT35B-Number of PWDs ", indicatorLibrary.indivudualsCategorisedAsPWDsandTestedPositive());
+        addRowWithColumns(dsd, "4.HT35C","HT35C-Number of PWDs", indicatorLibrary.indivudualsCategorisedAsPWDsandLinkedtoCare());
+
+        addRowWithColumns(dsd, "4.HT36A","HT36A-Number of Others", indicatorLibrary.indivudualsCategorisedAsOthersandTestedForHIV());
+        addRowWithColumns(dsd, "4.HT36B","HT36B-Number of Others ", indicatorLibrary.indivudualsCategorisedAsOthersandTestedPositive());
+        addRowWithColumns(dsd, "4.HT36C","HT36C-Number of Others", indicatorLibrary.indivudualsCategorisedAsOthersandLinkedtoCare());
+
 
 
         addRowWithColumns(dsd, "4.H1","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
@@ -332,6 +364,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.6.8.7";
+        return "2.0.2.3.7.1";
     }
 }
