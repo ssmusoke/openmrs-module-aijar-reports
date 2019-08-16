@@ -39,10 +39,10 @@ public class EmctCodesDataConverter implements DataConverter {
         else if(value != null && value.equals(Dictionary.getConcept("05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7"))) {
             return "T";
         }
-        else if(value != null && value.equals(Dictionary.getConcept("12d878f9-899c-4b3c-bf57-c6226c307a53"))) {
+        else if(value != null && value.equals(Dictionary.getConcept("48723c9c-c931-4fde-81cd-6178c9a9a70b"))) {
             return "=CONCATENATE(\"TR\",UNICHAR(8730))";
         }
-        else if(value != null && value.equals(Dictionary.getConcept("60155e4d-1d49-4e97-9689-758315967e0f"))) {
+        else if(value != null && value.equals(Dictionary.getConcept("4d301db0-c517-4556-9f7c-d837bac90144"))) {
             return "=CONCATENATE(\"TRR\",UNICHAR(8730))";
         }
         else if(value != null && value.equals(Dictionary.getConcept("81bd3e58-9389-41e7-be1a-c6723f899e56"))) {

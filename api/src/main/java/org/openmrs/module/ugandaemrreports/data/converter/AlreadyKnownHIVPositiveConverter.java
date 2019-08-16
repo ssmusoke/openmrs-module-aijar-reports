@@ -19,24 +19,24 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class Anc1TimingDataConverter implements DataConverter {
+public class AlreadyKnownHIVPositiveConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-
         if (obj == null) {
-            return "";
+            return "NO";
         }
+
         Obs obs = ((Obs) obj);
 
-        if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-            return "=UNICHAR(8730)";
+        if (obs.getValueCoded() != null) {
+
+            if(obs.getValueCoded().equals(obs.getValueCoded().equals(Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115")))){
+                return "YES";
+            }else{
+                return "NO";
+            }
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-            return "x";
-        }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))) {
-            return "NA";
-        }
+
         return null;
     }
 

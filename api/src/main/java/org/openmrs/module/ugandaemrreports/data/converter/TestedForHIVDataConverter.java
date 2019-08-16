@@ -15,29 +15,27 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  */
-public class Anc1TimingDataConverter implements DataConverter {
+public class TestedForHIVDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-
         if (obj == null) {
             return "";
         }
+
         Obs obs = ((Obs) obj);
 
-        if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-            return "=UNICHAR(8730)";
+        if (obs.getValueCoded() != null) {
+            return "YES";
+        }else {
+            return "NO";
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-            return "x";
-        }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))) {
-            return "NA";
-        }
-        return null;
     }
 
     @Override

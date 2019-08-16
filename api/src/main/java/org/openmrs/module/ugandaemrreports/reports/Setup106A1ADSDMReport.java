@@ -143,7 +143,8 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
         CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
 
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter, havingBaseRegimenDuringQuarter);
+        CohortDefinition longRefillPatients = df.getPatientsWithLongRefills();
+        CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter,longRefillPatients);
 
         CohortDefinition startedTBDuringQuarter = df.getPatientsNotIn(onTBRxDuringQuarter, onTBRxBeforeQuarter);
 
@@ -198,14 +199,14 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
         CohortDefinition onArtFor12MonthsAbove = df.getPatientsOnArtForMoreThansMonths(12);
         CohortDefinition stablePatients = df.getPatientsInAll(virallySupressedForLast12Months,onClinicalStage1or2,
                 df.getPatientsInAny(onFirstLineRegimen,onSecondLineRegimen),goodAdherenceForLast6Months,onArtFor12MonthsAbove);
-
+        CohortDefinition activeAndStable = df.getPatientsInAll(stablePatients,beenOnArtDuringQuarter);
         CohortDefinition unsupressedVL = df.getUnsupressedVLPatients();
-        CohortDefinition unstablePatients = df.getPatientsNotIn(onArtDuringQuarter,stablePatients);
+        CohortDefinition unstablePatients = df.getPatientsNotIn(beenOnArtDuringQuarter,stablePatients);
 
 
         addIndicator(dsd,"CUM","total on art before quater", havingArtStartDateBeforeQuarter,"");
 
-        addIndicator(dsd,"STABLE","total of stable patients",stablePatients,"");
+        addIndicator(dsd,"STABLE","total of stable patients",activeAndStable,"");
 //        addIndicator(dsd,"UNSTABLE","total of unstable patients",unstablePatients,"");
 
         addProgram(dsd,"1","fbim","new cleints on ART ",havingArtStartDateDuringQuarter);
@@ -356,7 +357,7 @@ public class Setup106A1ADSDMReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.44.0";
+        return "0.44.4";
     }
 
 }

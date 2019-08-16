@@ -15,28 +15,42 @@ package org.openmrs.module.ugandaemrreports.data.converter;
 
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  */
-public class Anc1TimingDataConverter implements DataConverter {
+public class ObsDataInUppercaseConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-
         if (obj == null) {
             return "";
         }
+
         Obs obs = ((Obs) obj);
 
-        if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept(Dictionary.YES_CIEL))) {
-            return "=UNICHAR(8730)";
+        if (obs.getValueCoded() != null) {
+            return obs.getValueCoded().getName().getName().toUpperCase();
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
-            return "x";
+
+        else if (obs.getValueDate() != null) {
+            return formatDate(obs.getValueDate());
         }
-        else if (obs.getValueCoded() != null && obs.getValueCoded().equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))) {
-            return "NA";
+
+        else if (obs.getValueDatetime() != null) {
+            return formatDate(obs.getValueDatetime());
         }
+
+        else if (obs.getValueNumeric() != null) {
+            return obs.getValueNumeric();
+        }
+
+        else if (obs.getValueText() != null) {
+            return obs.getValueText().toUpperCase();
+        }
+
         return null;
     }
 
@@ -48,5 +62,10 @@ public class Anc1TimingDataConverter implements DataConverter {
     @Override
     public Class<?> getDataType() {
         return String.class;
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
+        return dateFormatter.format(date);
     }
 }
