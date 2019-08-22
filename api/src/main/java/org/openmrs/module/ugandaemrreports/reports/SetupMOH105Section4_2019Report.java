@@ -319,8 +319,12 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.H11","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
         addRowWithColumns(dsd, "4.H12","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
         addRowWithColumns(dsd, "4.H13","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
-        addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500µ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
-        addRowWithColumns(dsd, "4.H16","H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare());
+        addRowWithColumns(dsd, "4.H14","H14-Individuals With Long Term test Results", indicatorLibrary.individualswithLongTermTestsResults());
+        addRowWithColumns(dsd, "4.H15","H15-Individuals With Recent  test Results", indicatorLibrary.individualswithRecentTestsResults());
+
+
+//        addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500µ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
+//        addRowWithColumns(dsd, "4.H16","H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare());
 
         return dsd;
     }
@@ -364,6 +368,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.7.1";
+        return "2.0.2.3.7.5.1";
     }
 }

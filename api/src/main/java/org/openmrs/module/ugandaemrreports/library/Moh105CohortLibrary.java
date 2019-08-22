@@ -872,6 +872,12 @@ public class Moh105CohortLibrary {
     public CohortDefinition clientsCategorisedAsOthers() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPECIAL_CATEGORIES), Dictionary.getConcept(Metadata.Concept.OTHERS));
     }
+    public CohortDefinition clientsWithRecentTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_RECENCY_RESULT), Dictionary.getConcept(Metadata.Concept.RECENT));
+    }
+    public CohortDefinition clientsWithLongTermTestResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_RECENCY_RESULT), Dictionary.getConcept(Metadata.Concept.LONG_TERM));
+    }
 
     /**
 	 * Number of individuals tested as MARPS

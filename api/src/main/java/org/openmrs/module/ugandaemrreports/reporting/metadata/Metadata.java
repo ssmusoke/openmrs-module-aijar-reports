@@ -62,6 +62,9 @@ public class Metadata {
         public static final String HTC_DELIVERY_MODEL = "46648b1d-b099-433b-8f9c-3815ff1e0a0f";
         public static final String PITC = "74120d00-5483-4148-acc3-00647dc13add";
         public static final String CICT = "a0857c20-9dc3-410f-9fda-d8fde202b727";
+        public static final String HIV_RECENCY_RESULT = "141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+        public static final String RECENT = "141518BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+        public static final String LONG_TERM = "141519BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
         public static final String SPECIAL_CATEGORIES = "927563c5-cb91-4536-b23c-563a72d3f829";
         public static final String PRISONERS = "927563c5-cb91-4536-b23c-563a72d3f829";
         public static final String PWIDs = "160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

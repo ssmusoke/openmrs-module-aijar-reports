@@ -1242,8 +1242,13 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator indivudualsCategorisedAsOthersandLinkedtoCare() {
         return cohortIndicator("Individuals Categorised As Others ", map(cohortLibrary.individualsCategorisedAsOthersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator individualswithRecentTestsResults() {
+        return cohortIndicator("Individuals With Recent Test Results", map(cohortLibrary.clientsWithRecentTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
-
+    public CohortIndicator individualswithLongTermTestsResults() {
+        return cohortIndicator("Individuals With Long Term Test Results", map(cohortLibrary.clientsWithLongTermTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 
