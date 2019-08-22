@@ -532,6 +532,14 @@
         "order": 5
       },
       {
+        "id": "HCT_TST_Facility Report ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "HCT_TST_Facility Report",
+        "url": "reportingui/runReport.page?reportDefinition=5688b030-d2b7-43b5-affd-9e94a07a1a8a",
+        "order": 10
+      },
+      {
         "id": "Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
         "type": "link",
