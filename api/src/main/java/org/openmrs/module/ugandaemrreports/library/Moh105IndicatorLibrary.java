@@ -1269,6 +1269,12 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator clientsLinkedToCare() {
         return cohortIndicator("Number of clients who have been linked to care", map(cohortLibrary.clientsLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator clientsTestedForHIV() {
+        return cohortIndicator("Number of clients who have tested for HIV", map(cohortLibrary.individualsTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator clientsTestedPositive() {
+        return cohortIndicator("Number of clients who have tested positivee", map(cohortLibrary.testedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     //End HIV/AIDS counseling and testing (HCT)        
     
     //Begin Outpatient attendance

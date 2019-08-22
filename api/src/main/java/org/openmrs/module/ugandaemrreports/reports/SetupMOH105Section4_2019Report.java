@@ -223,10 +223,9 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         /**
          * Number of Individuals Tested, New HIV Positive, Linked to Care
          */
-//        addRowWithColumns(dsd, "4.HT20A","HT20A-Number of individuals with Other Community testing Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedForHIV());
-//        addRowWithColumns(dsd, "4.HT20B","HT20B-Number of individuals with Other Community testing Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedPositive());
-//        addRowWithColumns(dsd, "4.HT20","HT20C-Number of individuals with Other Community testing Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare());
-//
+        addRowWithColumns(dsd, "4.HT20A","HT20A-Total Number of Individual  who tested for HIV", indicatorLibrary.clientsTestedForHIV());
+        addRowWithColumns(dsd, "4.HT20B","HT20B-Total Number of Individual  tested  positive ", indicatorLibrary.clientsTestedPositive());
+        addRowWithColumns(dsd, "4.HT20C","HT20C-Total Number of Individual linked to care  ", indicatorLibrary.clientsLinkedToCare());
 
         /**
          * Number of individuals by PITC Facility Approach
@@ -306,6 +305,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
 
 
+
         addRowWithColumns(dsd, "4.H1","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
         addRowWithColumns(dsd, "4.H2","H2-Number of Individuals tested", indicatorLibrary.individualsTested());
         addRowWithColumns(dsd, "4.H3","H3-Number of Individuals who received HIV test results", indicatorLibrary.individualsWhoReceivedHIVTestResults());
@@ -368,6 +368,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.7.5.1";
+        return "2.0.2.3.7.5.2";
     }
 }
