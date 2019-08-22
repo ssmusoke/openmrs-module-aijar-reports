@@ -51,6 +51,11 @@
       },
       {
         "id": "org.openmrs.module.ugandaemr.mer",
+        "description": "Links to available MER Reports",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer2019",
         "description": "Links to available MER Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       }
@@ -517,6 +522,14 @@
         "label": "HMIS 055 : HCT Register",
         "url": "reportingui/runReport.page?reportDefinition=9021b6b4-da42-4bd5-a4a9-ad92523d7bf5",
         "order": 20
+      },
+      {
+        "id": "HTS_RECENT Report ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "HTS_RECENT Report",
+        "url": "reportingui/runReport.page?reportDefinition=43636326-36c5-4104-b358-b912a038ee9d",
+        "order": 5
       },
       {
         "id": "Appointments List",
