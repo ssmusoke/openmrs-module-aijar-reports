@@ -1249,7 +1249,12 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator individualswithLongTermTestsResults() {
         return cohortIndicator("Individuals With Long Term Test Results", map(cohortLibrary.clientsWithLongTermTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-
+    public CohortIndicator totalNumberofPartnersTested() {
+        return cohortIndicator("Partners who tested", map(cohortLibrary.totalNumberofPartnersTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator partnersTestedHIVPositive() {
+        return cohortIndicator("Partners who tested positive", map(cohortLibrary.partnerTestedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 

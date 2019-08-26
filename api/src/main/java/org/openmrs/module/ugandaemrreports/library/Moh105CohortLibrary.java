@@ -878,6 +878,9 @@ public class Moh105CohortLibrary {
     public CohortDefinition clientsWithLongTermTestResults() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_RECENCY_RESULT), Dictionary.getConcept(Metadata.Concept.LONG_TERM));
     }
+    public CohortDefinition totalNumberofPartnersTested() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPOUSE_TESTED_HIV), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+    }
 
     /**
 	 * Number of individuals tested as MARPS
@@ -2129,7 +2132,7 @@ public class Moh105CohortLibrary {
 	 * Partner Tested HIV Positive
 	 * @return
 	 */
-	private CohortDefinition partnerTestedHivPositive() {
+	public CohortDefinition partnerTestedHivPositive() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PARTNER_HIV_TEST_RESULT), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
 	}
 

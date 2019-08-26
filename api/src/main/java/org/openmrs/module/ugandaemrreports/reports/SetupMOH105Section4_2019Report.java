@@ -305,6 +305,11 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
 
 
+        addRowWithColumns(dsd, "4.HT38A","HT38A-Total Number of Partners tested", indicatorLibrary.totalNumberofPartnersTested());
+        addRowWithColumns(dsd, "4.HT38B","HT38B-Total Number of Partners tested Positive ", indicatorLibrary.partnersTestedHIVPositive());
+
+
+
 
         addRowWithColumns(dsd, "4.H1","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
         addRowWithColumns(dsd, "4.H2","H2-Number of Individuals tested", indicatorLibrary.individualsTested());
@@ -368,6 +373,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2.3.7.5.2";
+        return "2.0.2.3.7.5.3";
     }
 }
