@@ -668,8 +668,14 @@
         "label": "Patient DSDM Model Report",
         "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
         "order": 125
+      },{
+        "id": "Recency HTS Client Card Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "type": "link",
+        "label": "HTS Client Card Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=9376f7d6-f60d-4807-abd8-36f92368b1f4",
+        "order": 130
       }
-
     ]
   }
 ]
