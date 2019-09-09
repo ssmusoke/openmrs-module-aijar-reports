@@ -672,8 +672,8 @@
         "id": "Recency HTS Client Card Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
         "type": "link",
-        "label": "HTS Client Card Data Export",
-        "url": "reportingui/runReport.page?reportDefinition=9376f7d6-f60d-4807-abd8-36f92368b1f4",
+        "label": "Recency HTS Client Card Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
         "order": 130
       }
     ]

@@ -7,11 +7,10 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.*;
-import org.openmrs.module.reporting.data.encounter.definition.EncounterProviderDataDefinition;
+import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
@@ -21,18 +20,19 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * HTS Client card export Report
@@ -63,7 +63,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
 	@Override
 	public String getUuid() {
-		return "fca24a48-c72d-4508-ad29-5c1fbd2271c1";
+		return "662d4c00-d6bb-4494-8180-48776f415802";
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "dc766b50-eb86-425a-b42e-cb5fc3f3a76d";
+		return "152a4845-37e1-40c0-8fa8-5ef343e65ba5";
 	}
 
 	@Override
@@ -135,11 +135,6 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
 		//start constructing of the dataset
 		PersonAttributeType maritalStatus = Context.getPersonService().getPersonAttributeTypeByUuid("dce0c134-30ab-102d-86b0-7a5022ba4115");
-		PatientIdentifierType NIN = MetadataUtils.existing(PatientIdentifierType.class,"f0c16a6d-dc5f-4118-a803-616d0075d282");
-
-		//identifier
-		DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-
 
 		dsd.addColumn("serial_number", sdd.definition("serialNo",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("visit_date", df.getHTSVisitDate(), (String)null, new DateConverter("yyyy-MM-dd"));
@@ -181,8 +176,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 		dsd.addColumn("referred_to_tb_services", sdd.definition("referedForTBServices",  getConcept("c5da115d-f6a3-4d13-b182-c2e982a3a796")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("referred_to_hiv_care", sdd.definition("refferedTonrollment",  getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("referred_location", sdd.definition("referralPlace",  getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("counselor_name", builtInPatientData.getPreferredFamilyName(), (String) null);//TODO: Get the service provider
-
+//		dsd.addColumn("counselor_name", builtInPatientData.getPreferredFamilyName(), (String) null);//TODO: Get the service provider
 		return dsd;
 	}
 }
