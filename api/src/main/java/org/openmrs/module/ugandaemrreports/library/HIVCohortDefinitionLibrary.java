@@ -450,10 +450,34 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getPatientsWhoTestedHIVPositiveDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)),BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsWhoTestedHIVNegativeDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    /**
+     * HTS report cohorts
+     * @return
+     */
+    public CohortDefinition getPatientsTestedForHIV(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsWhoReceivedHIVResultsAsIndividuals(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467"), hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsWhoReceivedHIVResultsAsCouple(){
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d"), hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsWhoReceivedHIVResults(){
+        return df.getPatientsInAny(getPatientsWhoReceivedHIVResultsAsCouple(),getPatientsWhoReceivedHIVResultsAsIndividuals());
+    }
+
+    public CohortDefinition getPatientsTestedForHIVAndReceivedResults() {
+        return df.getPatientsInAll(getPatientsTestedForHIV(),getPatientsWhoReceivedHIVResults());
     }
 }
