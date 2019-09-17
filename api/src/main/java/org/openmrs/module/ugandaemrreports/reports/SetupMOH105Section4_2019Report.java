@@ -23,7 +23,7 @@ import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.p
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
 /**
- * Daily Appointments List report
+ * HTS Section 4 Report report
  */
 @Component
 
