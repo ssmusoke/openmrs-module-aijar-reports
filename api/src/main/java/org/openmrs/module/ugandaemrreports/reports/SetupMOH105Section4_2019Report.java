@@ -23,7 +23,7 @@ import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.p
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
 /**
- * HTS Section 4 Report report
+ * Daily Appointments List report
  */
 @Component
 
@@ -362,17 +362,14 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addIndicator(dsd, key + "kF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
         addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");     
 
-
-
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
         dsd.addColumn(key, label, ReportUtils.map(cohortIndicator, PARAMS), dimensionOptions);
     }
 
-
     @Override
     public String getVersion() {
-        return "2.0.2.3.7.5.3";
+        return "3.0";
     }
 }
