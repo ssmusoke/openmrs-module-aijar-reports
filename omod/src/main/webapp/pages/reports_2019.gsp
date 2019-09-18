@@ -7,7 +7,7 @@
     def monthly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.monthly2019")
     def registers = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.registers2019")
     def quarterly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.quarterly2019")
-    def integration = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.integrationdataexports")
+    def integration = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.integrationdataexports2019")
     def mer = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.mer2019")
     def ewi = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.ewi")
     def contextModel = [:]

@@ -48,6 +48,10 @@
         "id": "org.openmrs.module.ugandaemr.reports.monthly2019",
         "description": "Links to available Monthly Reports 2019",
         "supportedExtensionTypes": [ "link" ]
+      },{
+        "id": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "description": "Links to available Integration Data Exports 2019",
+        "supportedExtensionTypes": [ "link" ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.mer",
@@ -691,11 +695,18 @@
         "order": 125
       },{
         "id": "Recency HTS Client Card Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
         "type": "link",
         "label": "Recency HTS Client Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
-        "order": 130
+        "order":10
+      },{
+        "id": "Family Connect EMTCT Module Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "Family Connect EMTCT Module Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
+        "order": 5
       }
     ]
   }
