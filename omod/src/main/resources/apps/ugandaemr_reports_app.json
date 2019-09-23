@@ -724,7 +724,7 @@
         "type": "link",
         "label": "HMIS 105 Section 4: HTS",
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
-        "order": 36
+        "order": 5
       }
     ]
   }
