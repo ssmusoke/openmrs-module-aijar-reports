@@ -48,9 +48,18 @@
         "id": "org.openmrs.module.ugandaemr.reports.monthly2019",
         "description": "Links to available Monthly Reports 2019",
         "supportedExtensionTypes": [ "link" ]
+      },{
+        "id": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "description": "Links to available Integration Data Exports 2019",
+        "supportedExtensionTypes": [ "link" ]
       },
       {
         "id": "org.openmrs.module.ugandaemr.mer",
+        "description": "Links to available MER Reports",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer2019",
         "description": "Links to available MER Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       }
@@ -519,6 +528,22 @@
         "order": 20
       },
       {
+        "id": "HTS_RECENT Report ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "HTS_RECENT Report",
+        "url": "reportingui/runReport.page?reportDefinition=43636326-36c5-4104-b358-b912a038ee9d",
+        "order": 5
+      },
+      {
+        "id": "HCT_TST_Facility Report ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "HCT_TST_Facility Report",
+        "url": "reportingui/runReport.page?reportDefinition=5688b030-d2b7-43b5-affd-9e94a07a1a8a",
+        "order": 10
+      },
+      {
         "id": "Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
         "type": "link",
@@ -668,8 +693,21 @@
         "label": "Patient DSDM Model Report",
         "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
         "order": 125
+      },{
+        "id": "Family Connect EMTCT Module Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "Family Connect EMTCT Module Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
+        "order": 5
+      },{
+        "id": "Recency HTS Client Card Data Export",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "Recency HTS Client Card Data Export",
+        "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
+        "order":10
       }
-
     ]
   }
 ]
