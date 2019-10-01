@@ -409,6 +409,7 @@
         "url": "reportingui/runReport.page?reportDefinition=fe02c34a-5c67-453b-93e9-4946e7bd8c59",
         "order": 35
       },
+
       {
         "id": "HMIS 105 Section 5",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
@@ -707,6 +708,23 @@
         "label": "Recency HTS Client Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
         "order":10
+
+      },
+      {
+        "id": "HMIS 105  4",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 SECTION 4:  HCT",
+        "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
+        "order": 36
+      },
+      {
+        "id": "HMIS 105 Section 4",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "type": "link",
+        "label": "HMIS 105 Section 4: HTS",
+        "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
+        "order": 5
       }
     ]
   }
