@@ -107,11 +107,11 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("PMTCT_STAT", Mapped.mapStraightThrough(dsd));
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        setupPMTCTSTATReport.addGender(dsd,"a","Total  Pregnant With known HIV- status at entry (TRK)", ReportUtils.map(indicatorLibrary.pregnantTrkAt1stANC(),params),"female"); ;
-        setupPMTCTSTATReport.addGender(dsd,"b","Total  Pregnant Known HIV positives at entry(TRRK)",ReportUtils.map(indicatorLibrary.pregnantTrrkAt1stANC(),params),"female");
+        setupPMTCTSTATReport.addGender(dsd,"a","Total  Pregnant Known HIV positives at entry(TRRK)",ReportUtils.map(indicatorLibrary.pregnantTrrkAt1stANC(),params),"female");
+        setupPMTCTSTATReport.addGender(dsd,"b","Total  Pregnant With known HIV- status at entry (TRK)", ReportUtils.map(indicatorLibrary.pregnantTrkAt1stANC(),params),"female"); ;
+        setupPMTCTSTATReport.addGender(dsd,"c","Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at 1st visit ",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRRAt1stVisit(),params),"female");
+        setupPMTCTSTATReport.addGender(dsd,"d","Pregnant Women tested HIV- for 1st time this pregnancy (TR) at 1st visit",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedNegativeForHivThisPregnancyTRAt1stVisit(),params),"female");
         setupPMTCTSTATReport.addGender(dsd,"e","Total  Number of NEW ANC Clients",ReportUtils.map(indicatorLibrary.anc1stVisit(),params),"female");
-        setupPMTCTSTATReport.addGender(dsd,"d","Pregnant Women tested HIV+ for 1st time this pregnancy (TRR) at any visit ",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRRAt1stVisit(),params),"female");
-        setupPMTCTSTATReport.addGender(dsd,"c","Pregnant Women tested HIV- for 1st time this pregnancy (TRR) at 1st visit",ReportUtils.map(indicatorLibrary.pregnantWomenNewlyTestedNegativeForHivThisPregnancyTRAt1stVisit(),params),"female");
 
         return rd;
     }
@@ -119,6 +119,6 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.5";
+        return "0.3";
     }
 }
