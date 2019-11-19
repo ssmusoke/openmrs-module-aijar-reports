@@ -98,6 +98,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition enrolledOnOrBeforeQuarter = hivCohortDefinitionLibrary.getEnrolledInCareByEndOfPreviousDate();
         CohortDefinition enrolledInTheQuarter = hivCohortDefinitionLibrary.getEnrolledInCareBetweenDates();
 
+
+
         // CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
 
         CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
@@ -216,8 +218,14 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition startedArtWhenPregnant = df.getPatientsInAll(pregnantOrLactating, havingArtStartDateDuringQuarter);
 
+        // 2019 Report Cohorts
+        CohortDefinition enrolledInTheQuarterAndScreenedForTB = df.getPatientsInAll(enrolledInTheQuarter, assessedForTBDuringQuarter);
+        CohortDefinition enrolledInTheQuarterAndDiagnosedWithTB = df.getPatientsInAll(enrolledInTheQuarter, diagnosedWithTBDuringQuarter);
+
         addAgeGender(dsd, "1", "Patients ever enrolled in care by the end of the previous quarter", everEnrolledByEndQuarter);
-        addAgeGender(dsd, "2", "New patients enrolled during quarter", enrolledDuringTheQuarter);
+        addAgeGender(dsd, "2", "Pregnant and lactating enrolled in care", enrolledWhenPregnantOrLactating);
+        addAgeGender(dsd, "3a", "No. of clients newly enrolled into Care - Screened for TB", enrolledInTheQuarterAndScreenedForTB);
+        addAgeGender(dsd, "3b", "No. of clients newly enrolled into Care - Diagnosed with TB", enrolledInTheQuarterAndDiagnosedWithTB);
         /* addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", enrolledWhenPregnantOrLactating);
         addIndicator(dsd, "4i", "INH During Quarter", startedINHDuringQuarter, "");
         addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
