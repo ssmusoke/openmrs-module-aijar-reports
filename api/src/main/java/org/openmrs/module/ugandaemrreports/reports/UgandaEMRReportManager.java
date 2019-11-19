@@ -89,6 +89,7 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 		return UgandaEMRReportUtil.createCSVDesign(reportDesignUuid, reportDefinition);
 	}
 
+
 	protected ReportRequest createMonthlyScheduledReportRequest(String requestUuid, String reportDesignUuid,
 	                                                            Map<String, Object> parameters,
 	                                                            ReportDefinition reportDefinition) {
@@ -117,5 +118,8 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 			mappings = ""; // probably not necessary, just to be safe
 		}
 		return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
+	}
+	protected ReportDesign createXmlDesign( ReportDefinition reportDefinition) {
+		return UgandaEMRReportUtil.createXmlReportDesign( reportDefinition);
 	}
 }

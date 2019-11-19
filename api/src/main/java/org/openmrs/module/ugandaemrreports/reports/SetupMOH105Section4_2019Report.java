@@ -91,6 +91,9 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildXmlReportDesign(reportDefinition));
+        l.add(buildCSVReportDesign(reportDefinition));
+
         return l;
     }
 
@@ -104,7 +107,16 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS105Section4_2019.xls");
+        ReportDesign rd = createExcelTemplateDesign("04c3d0f2-fd33-4b48-ada7-fc78346917b3", reportDefinition, "HMIS105Section4_2019.xls");
+        return rd;
+    }
+    public ReportDesign buildXmlReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createXmlDesign(reportDefinition);
+        return rd;
+    }
+
+    public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
         return rd;
     }
 
@@ -370,6 +382,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0";
+        return "3.2";
     }
 }
