@@ -1,0 +1,226 @@
+{
+  "dataSet": "VDhwrW9DiC1",
+  "completeDate": "2019-11-08",
+  "period": "#P.period#",
+  "orgUnit": "#S.dhis_uuid#",
+  "attributeOptionCombo": "Lf2Axb9E6B4",
+  "storedBy": "mets.mkaye",
+  "x-emr-version": "3.0.0",
+  "x-emr-name": "UgandaEMR",
+  "dataValues": [
+    {
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "10-14Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryOptionCombouid": "nuMYxrh0R2i",
+      "value": "#E.4.HT1AcF#"
+    },
+    {
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "10-14Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryOptionCombouid": "qMHtANd83kh",
+      "value": "#E.4.HT1AcM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "1-4Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "EwFHO5G420a",
+      "value": "#E.4.HT1AaF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "1-4Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "Os9njqZEjOb",
+      "value": "#E.4.HT1AaM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "15-19Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "tDRDjpo0YoL",
+      "value": "#E.4.HT1AdF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "15-19Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "kBpgzphXpAR",
+      "value": "#E.4.HT1AdM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "<1Yr, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "rDIYMMteqBO",
+      "value": "#E.4.HT1AaF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "<1Yr, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "NuGCerWN58O",
+      "value": "#E.4.HT1AaM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "5-9Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "PXZxiZcVelu",
+      "value": "#E.4.HT1AlM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "5-9Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "suw2uRYvps1",
+      "value": "#E.4.HT1AlF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "20-24Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "hQErX90w0QX",
+      "value": "#E.4.HT1AeF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "20-24Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "aQ1xl7PpEBR",
+      "value": "#E.4.HT1AeM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "25-29Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "kAIFR5chGAF",
+      "value": "#E.4.HT1AmF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "25-29Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "uTEkUkUPGlT",
+      "value": "#E.4.HT1AmM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "30-34Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "kE2hYoEOdKZ",
+      "value": "#E.4.HT1AfF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "30-34Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "Q6BZZU5OqUz",
+      "value": "#E.4.HT1AfM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "35-39Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "hzxRKJVw1qz",
+      "value": "#E.4.HT1AgF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "35-39Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "YvuAd9YbUW1",
+      "value": "#E.4.HT1AgM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "40-44Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "IINRfWBo1HP",
+      "value": "#E.4.HT1AhF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "40-44Yrs, Male",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "TNRCya9Zcnm",
+      "value": "#E.4.HT1AhM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a1. Tested for HIV (IPD) - Total",
+      "x-code": "105-HT01A1",
+      "x-categoryoptioncombo": "45-49Yrs, Female",
+      "dataElement": "J0aWnRgmQY3",
+      "categoryoptioncombouid": "wwyAx7XFJxl",
+      "value": "#E.4.HT1AjF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a2. Newly tested HIV+ (IPD)",
+      "x-code": "105-HT01A2",
+      "x-categoryoptioncombo": "45-49Yrs, Male",
+      "dataElement": "PKtfgXkmC16",
+      "categoryoptioncombouid": "zHIgRxojTnV",
+      "value": "#E.4.HT1AjM#"
+    },
+    {
+
+      "x-shortname": "105-HT01a2. Newly tested HIV+ (IPD)",
+      "x-code": "105-HT01A2",
+      "x-categoryoptioncombo": "50+Yrs, Female",
+      "dataElement": "PKtfgXkmC16",
+      "categoryoptioncombouid": "f0IY8VORiY9",
+      "value": "#E.4.HT1AkF#"
+    },
+    {
+
+      "x-shortname": "105-HT01a2. Newly tested HIV+ (IPD)",
+      "x-code": "105-HT01A2",
+      "x-categoryoptioncombo": "50+Yrs, Male",
+      "dataElement": "PKtfgXkmC16",
+      "categoryoptioncombouid": "KQym92Lq7PP",
+      "value": "#E.4.HT1AkM#"
+    }
+  ]
+}

@@ -18,7 +18,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.encounter.definition.EncounterDataDefinition;
 import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
@@ -40,6 +39,7 @@ import org.openmrs.module.reporting.report.manager.ReportManagerUtil;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.renderer.XlsReportRenderer;
 import org.openmrs.module.reporting.report.util.ReportUtil;
+import org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil;
 
 /**
  * Base implementation of ReportManager that provides some common method implementations
@@ -74,19 +74,28 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 
 	protected ReportDesign createExcelTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition,
 	                                                 String templatePath) {
-		log.debug("Template path for report design " + reportDesignUuid + " with report definition " + reportDefinition + " is " + templatePath + " with report package as path " + ReportUtil.getPackageAsPath(getClass()));
+		log.debug("Template path for Excel report design " + reportDesignUuid + " with report definition " + reportDefinition + " is " + templatePath + " with report package as path " + ReportUtil.getPackageAsPath(getClass()));
 		// TODO: Update this function below to use the class from the Report definition
 		String resourcePath = ReportUtil.getPackageAsPath(getClass()) + "/" + templatePath;
 		log.debug("Resource path for " + templatePath + " is " + resourcePath);
 		return ReportManagerUtil.createExcelTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
 	}
 
+	protected ReportDesign createJSONTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition,
+													 String templatePath) {
+		log.debug("Template path for JSON report design " + reportDesignUuid + " with report definition " + reportDefinition + " is " + templatePath + " with report package as path " + ReportUtil.getPackageAsPath(getClass()));
+		// TODO: Update this function below to use the class from the Report definition
+		String resourcePath = ReportUtil.getPackageAsPath(getClass()) + "/" + templatePath;
+		log.debug("Resource path for " + templatePath + " is " + resourcePath);
+		return ReportManagerUtil.createJSONTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
+	}
+
 	protected ReportDesign createExcelDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
-		return UgandaEMRReportUtil.createExcelDesign(reportDesignUuid, reportDefinition);
+		return ReportManagerUtil.createExcelDesign(reportDesignUuid, reportDefinition);
 	}
 
 	protected ReportDesign createCSVDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
-		return UgandaEMRReportUtil.createCSVDesign(reportDesignUuid, reportDefinition);
+		return ReportManagerUtil.createCsvReportDesign(reportDesignUuid, reportDefinition);
 	}
 
 
@@ -122,4 +131,8 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 	protected ReportDesign createXmlDesign( ReportDefinition reportDefinition) {
 		return UgandaEMRReportUtil.createXmlReportDesign( reportDefinition);
 	}
+	protected ReportDesign createJSONDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
+		return UgandaEMRReportUtil.createJSONReportDesign(reportDesignUuid, reportDefinition);
+	}
+
 }

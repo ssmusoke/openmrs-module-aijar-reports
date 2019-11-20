@@ -11,29 +11,11 @@ import org.openmrs.module.reporting.report.renderer.XmlReportRenderer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Utility classes that can be used for convenience
  */
 public class UgandaEMRReportUtil {
-
-    /**
-     * @return a new ReportDesign for a standard Excel output
-     */
-    public static ReportDesign createExcelDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
-        ReportDesign design = ReportManagerUtil.createExcelDesign(reportDesignUuid, reportDefinition);
-        return design;
-    }
-
-    /**
-     * @return a new ReportDesign for a standard Excel output
-     */
-    public static ReportDesign createExcelDesignWithProperties(String reportDesignUuid, ReportDefinition reportDefinition, Properties props) {
-        ReportDesign design = ReportManagerUtil.createExcelDesign(reportDesignUuid, reportDefinition);
-        design.setProperties(props);
-        return design;
-    }
 
     /**
      * Maps a parameterizable item with no parameters
@@ -103,5 +85,10 @@ public class UgandaEMRReportUtil {
         design.setRendererType(XmlReportRenderer.class);
         return design;
     }
+    public static ReportDesign createJSONReportDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
+        ReportDesign design = ReportManagerUtil.createJSONReportDesign(reportDesignUuid, reportDefinition);
+        return design;
+    }
+
 
 }

@@ -61,7 +61,10 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "ae528aaa-fddc-444b-a0e3-c466cbbc5a3c ";
+        return "ae528aaa-fddc-444b-a0e3-c466cbbc5a3c";
+    }
+    public String getJSONDesignUuid() {
+        return "fecd3eaf-4417-4ede-8e69-b9b91bfe69cc";
     }
 
     @Override
@@ -91,6 +94,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
         l.add(buildXmlReportDesign(reportDefinition));
         l.add(buildCSVReportDesign(reportDefinition));
 
@@ -114,11 +118,25 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         ReportDesign rd = createXmlDesign(reportDefinition);
         return rd;
     }
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "HMIS105Section4_2019.json");
+        return rd;
+    }
 
     public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
         return rd;
     }
+
+    /**
+     * Build the report design for the specified report, this allows a user to override the report design by adding
+     * properties and other metadata to the report design
+     *
+     * @param reportDefinition
+     * @return The report design
+     */
+
+
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -129,8 +147,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-
-
 
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
@@ -382,6 +398,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2";
+        return "3.3";
     }
 }
