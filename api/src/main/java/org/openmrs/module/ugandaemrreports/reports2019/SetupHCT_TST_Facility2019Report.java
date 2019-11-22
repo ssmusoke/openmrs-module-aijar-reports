@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reports;
+package org.openmrs.module.ugandaemrreports.reports2019;
 
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.ReportingConstants;
@@ -15,6 +15,8 @@ import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reports.SetupTxNewReport;
+import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -259,6 +261,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.1.7";
+        return "0.1.8";
     }
 }
