@@ -584,7 +584,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
         "label": "PMTCT STAT  Report",
-        "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
+        "url": "reportingui/runReport.page?reportDefinition=de1f5094-10eb-4f3d-af0c-30c286f50f64",
         "order": 40
       }, {
         "id": "MER_TX_TB",
