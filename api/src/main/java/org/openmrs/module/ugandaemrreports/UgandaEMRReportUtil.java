@@ -78,13 +78,7 @@ public class UgandaEMRReportUtil {
         ReportDesign design = ReportManagerUtil.createCsvReportDesign(reportDesignUuid, reportDefinition);
         return design;
     }
-    public static ReportDesign createXmlReportDesign( ReportDefinition reportDefinition) {
-        ReportDesign design = new ReportDesign();
-        design.setName("XML");
-        design.setReportDefinition(reportDefinition);
-        design.setRendererType(XmlReportRenderer.class);
-        return design;
-    }
+
     public static ReportDesign createJSONReportDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
         ReportDesign design = ReportManagerUtil.createJSONReportDesign(reportDesignUuid, reportDefinition);
         return design;

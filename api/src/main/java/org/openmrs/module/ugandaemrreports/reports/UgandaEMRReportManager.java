@@ -128,9 +128,7 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 		}
 		return new Mapped<T>(parameterizable, ParameterizableUtil.createParameterMappings(mappings));
 	}
-	protected ReportDesign createXmlDesign( ReportDefinition reportDefinition) {
-		return UgandaEMRReportUtil.createXmlReportDesign( reportDefinition);
-	}
+
 	protected ReportDesign createJSONDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
 		return UgandaEMRReportUtil.createJSONReportDesign(reportDesignUuid, reportDefinition);
 	}
