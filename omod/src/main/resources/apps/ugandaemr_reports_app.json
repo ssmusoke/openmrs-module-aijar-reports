@@ -622,7 +622,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
         "label": "Tx New Report",
-        "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
+        "url": "reportingui/runReport.page?reportDefinition=65fec0844-1970-43c5-bf77-b296415daa34",
         "order": 25,
         "requiredPrivilege": "App: ugandaemrreports.MERTxNewReport"
       },{
