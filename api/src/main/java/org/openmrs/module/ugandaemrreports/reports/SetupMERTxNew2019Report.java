@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -11,7 +12,9 @@ import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimensio
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +37,16 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
-    private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
+    private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
 
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
 
     @Autowired
     private ARTCohortLibrary artCohortLibrary;
+
+    @Autowired
+    private HIVMetadata hivMetadata;
 
 
     /**
@@ -110,6 +116,8 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.getTxNewAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
+        CohortDefinition males = cohortDefinitionLibrary.males();
+        CohortDefinition females = cohortDefinitionLibrary.females();
 
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
         CohortDefinition lactating = addParameters(artCohortLibrary.lactatingAtARTStart());
@@ -117,11 +125,24 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition lactatingAtStartOfArt = df.getPatientsInAll(lactating, havingArtStartDateDuringQuarter);
 
+        CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
+                Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition PIPS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
+                Arrays.asList(Dictionary.getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+
         addGender(dsd, "a", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
         addGender(dsd, "b", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
 
 
         addIndicator(dsd, "LAC", "Lactating At start on Art", lactatingAtStartOfArt, "");
+
+        addIndicator(dsd,"PWIDSf","PWIDs TX Curr on ART female",df.getPatientsInAll(females,PWIDS,havingArtStartDateDuringQuarter),"");
+        addIndicator(dsd,"PWIDSm","PWIDs TX Curr on ART male",df.getPatientsInAll(males,PWIDS,havingArtStartDateDuringQuarter),"");
+
+       addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,havingArtStartDateDuringQuarter),"");
+       addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,havingArtStartDateDuringQuarter),"");
+
         return rd;
     }
 
@@ -172,6 +193,6 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.1";
+        return "0.1.3";
     }
 }
