@@ -514,4 +514,8 @@ public class HIVMetadata extends Metadata {
 	public Concept getBreastFeedingStatusNoLongerBreastFeeding() {
         return getConcept("0f46cbdc-54cb-40bd-8f75-72abcf6fc852");
     }
+
+    public Concept getNumberOfDaysDispensed(){
+        return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
+    }
 }

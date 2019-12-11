@@ -602,11 +602,11 @@
         "requiredPrivilege": "App: ugandaemrreports.MERHCTTSTFacilityReport"
       },
       {
-        "id": "Tx Current_30Days Report",
+        "id": "Tx Current_28Days Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
-        "label": "Tx Current_30Days Report",
-        "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
+        "label": "Tx Current_28Days Report",
+        "url": "reportingui/runReport.page?reportDefinition=8dafdc32-97b7-4f49-828e-475cd4f09669",
         "order": 15,
         "requiredPrivilege": "App: ugandaemrreports.MERHCTTSTFacilityReport"
       },{
@@ -614,7 +614,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
         "label": "Tx Current_90Days Report",
-        "url": "reportingui/runReport.page?reportDefinition=660bdb55-36ea-4e57-8c62-136300035ce3",
+        "url": "reportingui/runReport.page?reportDefinition=214fb8ef-6219-43f3-b20b-023261c0dec6",
         "order": 20,
         "requiredPrivilege": "App: ugandaemrreports.MERTxCurrent_90DaysReport"
       },{
