@@ -727,7 +727,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsTestedForTheFirstTime() {
-        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestedFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestingFortheFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -735,7 +735,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsWhoTestedHivPositive() {
-        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.individualsWhoTestedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.testedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -751,7 +751,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsTestedMoreThanTwiceInLast12Months() {
-        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.individualsTestedMoreThanTwiceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.testedMoreThanOnceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**

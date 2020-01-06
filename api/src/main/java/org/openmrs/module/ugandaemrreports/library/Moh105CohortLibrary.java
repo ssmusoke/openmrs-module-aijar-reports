@@ -505,8 +505,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Individuals Tested");
         cd.addSearch("withHivTestResults", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("withHivTestResults AND counseledAsIndividuals");
+//        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("withHivTestResults");
         return cd;
     }
 
@@ -555,8 +555,8 @@ public class Moh105CohortLibrary {
      * Ever Tested for HIV Before
      * @return CohortDefinition
      */
-    public CohortDefinition everTestedForHivBefore() {
-        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+    public CohortDefinition individualsTestingFortheFirstTime() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FIRST_HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
     }    
     
     /**
@@ -571,10 +571,12 @@ public class Moh105CohortLibrary {
      * Tested more than twice in the last 12 Months
      * @return CohortDefinition
      */    
-	public CohortDefinition testedMoreThanTwiceInLast12Months() {
-    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 2);
-    }    
-    
+	public CohortDefinition testedMoreThanOnceInLast12Months() {
+    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 1);
+    }
+    public CohortDefinition testedForPEP() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.REASON_FOR_TESTING), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
+    }
     /**
      * Individuals who received HIV Test Results
      * @return CohortDefinition
@@ -614,16 +616,16 @@ public class Moh105CohortLibrary {
      * Individuals Tested for the first time
      * @return CohortDefinition
      */
-    public CohortDefinition individualsTestedFirstTime() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Individuals Tested First Time");
-        cd.addSearch("testedFirstTime", ReportUtils.map(everTestedForHivBefore(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("testedFirstTime AND counseledAsIndividuals");
-        return cd;
-    }
+//    public CohortDefinition individualsTestedFirstTime() {
+//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+//        cd.setName("Individuals Tested First Time");
+//        cd.addSearch("testedFirstTime", ReportUtils.map(individualsTestingFortheFirstTime(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.setCompositionString("testedFirstTime AND counseledAsIndividuals");
+//        return cd;
+//    }
 
     /**
      * Individuals who Tested HIV Positive
@@ -668,16 +670,16 @@ public class Moh105CohortLibrary {
 	 * Individuals tested more than twice in the last 12 months
 	 * @return CohortDefinition
 	 */			
-	public CohortDefinition individualsTestedMoreThanTwiceInLast12Months() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Individuals tested more than twice in the last 12 months");
-        cd.addSearch("testedMoreThanTwiceInlast12Months", ReportUtils.map(testedMoreThanTwiceInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("testedMoreThanTwiceInlast12Months AND counseledAsIndividuals");
-        return cd;		
-	}
+//	public CohortDefinition individualsTestedMoreThanTwiceInLast12Months() {
+//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+//        cd.setName("Individuals tested more than twice in the last 12 months");
+//        cd.addSearch("testedMoreThanTwiceInlast12Months", ReportUtils.map(testedMoreThanOnInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.setCompositionString("testedMoreThanTwiceInlast12Months AND counseledAsIndividuals");
+//        return cd;
+//	}
 
 	/**
 	 * Individuals who were Counseled and Tested together as a Couple
@@ -703,7 +705,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Individuals who were Tested and Received results together as a Couple");
-        cd.addSearch("testedAsACouple", ReportUtils.map(individualsCounseledAndTestedAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("testedAsACouple", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ReceivedResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("testedAsACouple AND ReceivedResults");
         return cd;
@@ -717,8 +719,8 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Individuals tested more than twice in the last 12 months");
-        cd.addSearch("testedForPep", ReportUtils.map(testedForPep(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setName("Individuals counselled and tested for PEP");
+        cd.addSearch("testedForPep", ReportUtils.map(testedForPEP(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("testedForPep AND counseledAsIndividuals");
         return cd;
@@ -738,9 +740,10 @@ public class Moh105CohortLibrary {
 	 * Tested for PEP
 	 * @return CohortDefiniton
 	 */
-	public CohortDefinition testedForPep() {
-        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
-	}
+//	public CohortDefinition testedForPep() {
+//        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
+//	}
+
 
     /**
      * HCT Entry Points
@@ -2046,32 +2049,6 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
 	 * Tested as MARPS
 	 * @return
@@ -2123,8 +2100,8 @@ public class Moh105CohortLibrary {
         cd.setName("Couples with concordant Positive results");
         cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
         cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("CounseledAsACouple AND testedHivPositive AND partnerTestedHivPositive");
+//        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedHivPositive AND partnerTestedHivPositive");
         return cd;
 	}
 
@@ -2148,19 +2125,21 @@ public class Moh105CohortLibrary {
 	 * Couples with discordant results
 	 * @return
 	 */
-	public CohortDefinition couplesWithDiscordantResults() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Couples with concordant Positive results");
-        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
-        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("partnerTestedHivNegative", ReportUtils.map(partnerTestedHiVNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
-        cd.addSearch("testedHivNegative", ReportUtils.map(testedHivNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("CounseledAsACouple AND ((testedHivPositive AND NOT partnerTestedHivPositive) OR (testedHivNegative AND NOT partnerTestedHivNegative))");
-        return cd;
-	}
+//	public CohortDefinition couplesWithDiscordantResults() {
+//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+//        cd.setName("Couples with concordant Positive results");
+//        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("partnerTestedHivNegative", ReportUtils.map(partnerTestedHiVNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("testedHivNegative", ReportUtils.map(testedHivNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.setCompositionString("((testedHivPositive AND NOT partnerTestedHivPositive) OR (testedHivNegative AND NOT partnerTestedHivNegative))");
+//        return cd;
+//	}
+    public CohortDefinition couplesWithDiscordantResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUPLE_RESULTS), Dictionary.getConcept(Metadata.Concept.DISCORDANT_COUPLE));
+    }
 	//End HCT Section    
 
 	/**

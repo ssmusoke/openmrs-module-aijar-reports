@@ -61,7 +61,10 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "ae528aaa-fddc-444b-a0e3-c466cbbc5a3c ";
+        return "ae528aaa-fddc-444b-a0e3-c466cbbc5a3c";
+    }
+    public String getJSONDesignUuid() {
+        return "fecd3eaf-4417-4ede-8e69-b9b91bfe69cc";
     }
 
     @Override
@@ -91,6 +94,8 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+
         return l;
     }
 
@@ -104,9 +109,25 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HMIS105Section4_2019.xls");
+        ReportDesign rd = createExcelTemplateDesign("04c3d0f2-fd33-4b48-ada7-fc78346917b3", reportDefinition, "HMIS105Section4_2019.xls");
         return rd;
     }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "HMIS105Section4_2019.json");
+        return rd;
+    }
+
+
+    /**
+     * Build the report design for the specified report, this allows a user to override the report design by adding
+     * properties and other metadata to the report design
+     *
+     * @param reportDefinition
+     * @return The report design
+     */
+
+
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -117,8 +138,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-
-
 
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("E", Mapped.mapStraightThrough(eid()));
@@ -319,7 +338,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "4.H6","H6-Number of Individuals who tested HIV positive", indicatorLibrary.individualsWhoTestedHivPositive());
         addRowWithColumns(dsd, "4.H7","H7-HIV positive individuals with presumptive TB", indicatorLibrary.individualsWhoTestedHivPositiveAndWithPresumptiveTb());
         addRowWithColumns(dsd, "4.H8","H8-Number of Individuals tested more than twice in the last 12 months", indicatorLibrary.individualsTestedMoreThanTwiceInLast12Months());
-        addRowWithColumns(dsd, "4.H9","H9-Number of individuals who were Counseled and Tested together as a Couple", indicatorLibrary.individualsTestedAndReceivedResultsAsACouple());
+        addRowWithColumns(dsd, "4.H9","H9-Number of individuals who were Counseled and Tested together as a Couple", indicatorLibrary.individualsCounseledAndTestedAsCouple());
         addRowWithColumns(dsd, "4.H10","H10-Number of individuals who were Tested and Received results together as a Couple", indicatorLibrary.individualsTestedAndReceivedResultsAsACouple());
         addRowWithColumns(dsd, "4.H11","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
         addRowWithColumns(dsd, "4.H12","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
@@ -370,6 +389,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0";
+        return "3.8.2";
     }
 }
