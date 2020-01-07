@@ -484,4 +484,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsTestedForHIVAndReceivedResults() {
         return df.getPatientsInAll(getPatientsTestedForHIV(),getPatientsWhoReceivedHIVResults());
     }
+
+    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(Double noOfDrugs, RangeComparator rangeComparator){
+        return df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator, noOfDrugs, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(Double value1, RangeComparator rangeComparator1, Double value2, RangeComparator rangeComparator2){
+        return df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator1,value1,rangeComparator2,value2, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
 }
