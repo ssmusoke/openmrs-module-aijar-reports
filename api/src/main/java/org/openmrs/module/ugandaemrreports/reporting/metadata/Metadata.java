@@ -6,7 +6,7 @@ package org.openmrs.module.ugandaemrreports.reporting.metadata;
 public class Metadata {
 
     public static class Concept {
-        public final static String PREGNANT = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
+//        public final static String PREGNANT = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
         public final static String YES_CIEL = "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public final static String YES_WHO = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
         public final static String TRANSFER_IN = "ea730d69-7eec-486a-aaf2-54f8bab5a44c";
@@ -48,6 +48,9 @@ public class Metadata {
         public static final String HIV_TEST = "d6522d62-093d-4157-a9d3-9359d1a33480";
         public static final String FIRST_HIV_TEST = "2766c090-c057-44f2-98f0-691b6d0336dc";
         public static final String RECEIVED_HIV_TEST_RESULTS = "3437ae80-bcc5-41e2-887e-d56999a1b467";
+        public static final String RECEIVED_HIV_TEST_RESULTS_AS_COUPLE = "2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d";
+        public static final String COUPLE_RESULTS = "94a5bd0a-b79d-421e-ab71-8e382eed100f";
+        public static final String CONCORDANT_POSITIVE = "799fe713-c665-463a-ae6f-3c9d539eff15";
         public static final String HIV_POSITIVE = "dcdf4241-30ab-102d-86b0-7a5022ba4115";
         public static final String TB_SUSPECT = "b80f04a4-1559-42fd-8923-f8a6d2456a04";
         public static final String POST_EXPOSURE_PROPHYLAXIS = "966db6f2-a9f2-4e47-bba2-051467c77c17";
@@ -90,8 +93,7 @@ public class Metadata {
         public static final String MATERNITY = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PNC = "165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String SMC = "409eae6b-9457-4896-b5fa-2667ad5ceffc";
-        public static final String COUPLE_RESULTS = "94a5bd0a-b79d-421e-ab71-8e382eed100f";
-        public static final String DISCORDANT_COUPLE = "94a5bd0a-b79d-421e-ab71-8e382eed100f";
+        public static final String DISCORDANT_COUPLE = "dcd6774e-30ab-102d-86b0-7a5022ba4115";
         public static final String REASON_FOR_TESTING = "2afe1128-c3f6-4b35-b119-d17b9b9958ed";
         public static final String EID = "164981AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String OTHERS = "dcd68a88-30ab-102d-86b0-7a5022ba4115";

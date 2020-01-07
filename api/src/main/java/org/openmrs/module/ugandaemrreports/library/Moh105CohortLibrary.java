@@ -534,7 +534,9 @@ public class Moh105CohortLibrary {
     public CohortDefinition receivedHivTestResults() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.RECEIVED_HIV_TEST_RESULTS),Dictionary.getConceptList(Metadata.Concept.YES_CIEL));
     }
-
+    public CohortDefinition receivedHivTestResultsAsaCouple() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.RECEIVED_HIV_TEST_RESULTS_AS_COUPLE),Dictionary.getConceptList(Metadata.Concept.YES_CIEL));
+    }
     /**
      * Tested HIV Positive
      * @return CohortDefinition
@@ -556,7 +558,7 @@ public class Moh105CohortLibrary {
      * @return CohortDefinition
      */
     public CohortDefinition individualsTestingFortheFirstTime() {
-        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FIRST_HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FIRST_HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_WHO));
     }    
     
     /**
@@ -653,8 +655,7 @@ public class Moh105CohortLibrary {
         cd.setName("Individuals who Tested HIV Positive And With Presumptive TB");
         cd.addSearch("tbSuspect", ReportUtils.map(tbSuspect(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("testedHivPositive AND counseledAsIndividuals AND tbSuspect");
+        cd.setCompositionString("testedHivPositive AND tbSuspect");
         return cd;
 	}
 
@@ -706,8 +707,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Individuals who were Tested and Received results together as a Couple");
         cd.addSearch("testedAsACouple", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("ReceivedResults", ReportUtils.map(receivedHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("testedAsACouple AND ReceivedResults");
+        cd.addSearch("ReceivedResultsAsCouple", ReportUtils.map(receivedHivTestResultsAsaCouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedAsACouple AND ReceivedResultsAsCouple");
         return cd;
 	}
 
@@ -2093,17 +2094,16 @@ public class Moh105CohortLibrary {
 	 * Couples with concordant Positive results
 	 * @return CohortDefinition
 	 */
-	public CohortDefinition couplesWithConcordantPostiveResults() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Couples with concordant Positive results");
-        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));        
-        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("CounseledAsACouple", ReportUtils.map(counseledAsACouple(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("testedHivPositive AND partnerTestedHivPositive");
-        return cd;
-	}
+//	public CohortDefinition couplesWithConcordantPostiveResults() {
+//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+//        cd.setName("Couples with concordant Positive results");
+//        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(haveHivTestResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.addSearch("concordantPositive", ReportUtils.map(couplesWithConcordantPositiveResults(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+//        cd.setCompositionString("concordantPositive AND partnerTestedHivPositive");
+//        return cd;
+//	}
 
 	/**
 	 * Partner Tested HIV Positive
@@ -2125,20 +2125,13 @@ public class Moh105CohortLibrary {
 	 * Couples with discordant results
 	 * @return
 	 */
-//	public CohortDefinition couplesWithDiscordantResults() {
-//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-//        cd.setName("Couples with concordant Positive results");
-//        cd.addSearch("partnerTestedHivPositive", ReportUtils.map(partnerTestedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("testedHivPositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("partnerTestedHivNegative", ReportUtils.map(partnerTestedHiVNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("testedHivNegative", ReportUtils.map(testedHivNegative(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.setCompositionString("((testedHivPositive AND NOT partnerTestedHivPositive) OR (testedHivNegative AND NOT partnerTestedHivNegative))");
-//        return cd;
-//	}
+
     public CohortDefinition couplesWithDiscordantResults() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUPLE_RESULTS), Dictionary.getConcept(Metadata.Concept.DISCORDANT_COUPLE));
+    }
+
+    public CohortDefinition couplesWithConcordantPositiveResults() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.COUPLE_RESULTS), Dictionary.getConcept(Metadata.Concept.CONCORDANT_POSITIVE));
     }
 	//End HCT Section    
 

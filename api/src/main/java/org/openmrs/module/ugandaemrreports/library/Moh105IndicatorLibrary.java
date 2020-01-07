@@ -711,7 +711,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsWhoReceivedHIVTestResults() {
-        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.individualsWhoReceivedHIVTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.receivedHivTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -775,7 +775,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator couplesWithConcordantPositiveResults() {
-        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPostiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPositiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }    
 
     /**
