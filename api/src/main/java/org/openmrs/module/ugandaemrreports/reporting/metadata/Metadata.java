@@ -78,7 +78,7 @@ public class Metadata {
         public static final String TRUCKER_DRIVERS = "162198AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String FISHER_FOLKS = "159674AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String REFUGEES = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        public static final String PREGNANT_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String PREGNANT_WOMEN = "dcda5179-30ab-102d-86b0-7a5022ba4115";
         public static final String BREAST_FEEDING_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String AGYW = "165132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PWDs = "162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -90,7 +90,7 @@ public class Metadata {
         public static final String STI_UNIT = "dcd98f72-30ab-102d-86b0-7a5022ba4115";
         public static final String YCC_UNIT = "e9469d61-b0c3-4785-81c6-057c7bc099fc";
         public static final String ANC = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        public static final String MATERNITY = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String MATERNITY = "160456AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PNC = "165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String SMC = "409eae6b-9457-4896-b5fa-2667ad5ceffc";
         public static final String DISCORDANT_COUPLE = "dcd6774e-30ab-102d-86b0-7a5022ba4115";

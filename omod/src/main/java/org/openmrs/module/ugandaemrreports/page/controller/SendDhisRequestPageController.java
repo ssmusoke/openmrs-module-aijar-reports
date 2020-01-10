@@ -105,7 +105,6 @@ public class SendDhisRequestPageController {
 
     /**
      * This function disables the SSLCertificate - need to activate SSL at the endpoint
-     * @Jmpango
      */
     private void disableSSLCertificates () throws Exception {
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
