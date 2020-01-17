@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.page;
+package org.openmrs.module.ugandaemrreports.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -24,7 +24,7 @@ import java.util.Map;
 /**
  *
  */
-public class RunReportPageController {
+public class UgandaEMRReportsController {
 
     public void get(@SpringBean ReportDefinitionService reportDefinitionService,
                     @SpringBean ReportService reportService,
@@ -42,11 +42,11 @@ public class RunReportPageController {
     }
 
     public String post(@SpringBean ReportDefinitionService reportDefinitionService,
-                     @SpringBean ReportService reportService,
-                     UiUtils ui,
-                     HttpServletRequest request,
-                     @RequestParam("reportDefinition") ReportDefinition reportDefinition,
-                     @RequestParam("renderingMode") String renderingModeDescriptor) {
+                       @SpringBean ReportService reportService,
+                       UiUtils ui,
+                       HttpServletRequest request,
+                       @RequestParam("reportDefinition") ReportDefinition reportDefinition,
+                       @RequestParam("renderingMode") String renderingModeDescriptor) {
 
         RenderingMode renderingMode = null;
         for (RenderingMode candidate : reportService.getRenderingModes(reportDefinition)) {
@@ -83,7 +83,7 @@ public class RunReportPageController {
         reportRequest.setReportDefinition(new Mapped<ReportDefinition>(reportDefinition, parameterValues));
         reportRequest.setRenderingMode(renderingMode);
         //rr.setBaseCohort(command.getBaseCohort());
-	    //rr.setSchedule(command.getSchedule());
+        //rr.setSchedule(command.getSchedule());
 
         // TODO: We might want to check here if this exact same report request is already queued and just re-direct if so
 
