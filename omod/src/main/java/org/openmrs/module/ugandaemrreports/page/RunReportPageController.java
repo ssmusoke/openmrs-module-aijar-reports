@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.page.controller;
+package org.openmrs.module.ugandaemrreports.page;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
