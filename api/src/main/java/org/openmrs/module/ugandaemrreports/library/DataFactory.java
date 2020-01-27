@@ -351,7 +351,7 @@ public class DataFactory {
 
     public PatientDataDefinition getLastEncounterOfTypeByEndDate(List<EncounterType> types, DataConverter converter) {
         EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(types, "onOrBefore");
-        def.setWhich(TimeQualifier.FIRST);
+        def.setWhich(TimeQualifier.LAST);
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
@@ -363,7 +363,7 @@ public class DataFactory {
 
     public PatientDataDefinition getLastEncounterOfTypeAfterDate(List<EncounterType> types, DataConverter converter) {
         EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(types, "onOrAfter");
-        def.setWhich(TimeQualifier.FIRST);
+        def.setWhich(TimeQualifier.LAST);
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
     }
 

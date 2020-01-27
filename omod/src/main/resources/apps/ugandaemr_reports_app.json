@@ -862,6 +862,14 @@
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "HMIS 105 Section 4",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "type": "link",
+        "label": "HMIS 105 Section 4: HTS",
+        "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
+        "order": 5
       }
     ]
   }
