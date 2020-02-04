@@ -53,7 +53,8 @@
                 dataType: 'text',
                 type: 'POST'
             }).success(function (data) {
-                alert(data);
+                var responsedata =data.toString();
+                console.log(JSON.stringify(data))
             })
         }
     }
@@ -177,7 +178,7 @@ ${ui.includeFragment("appui", "messages", [codes: [
                                 ${ui.message("reportingui.reportRequest.save.action")}
                             </a>
                             <br/>
-                            <a id="{{ request.uuid }}" onclick="sendDataToDHIS2(this.id)">
+                            <a id="{{ request.uuid }}" onclick="previewReport(this.id)">
                                 <span ng-hide="request.renderingMode.interactive">
                                     <i class="icon-upload small"></i>
                                     To DHIS2
