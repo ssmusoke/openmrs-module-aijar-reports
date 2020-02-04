@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports;
+package org.openmrs.module.ugandaemrreports.page;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

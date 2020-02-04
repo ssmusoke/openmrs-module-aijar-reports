@@ -32,20 +32,29 @@
 
     if (jQuery) {
         function sendDataToDHIS2(reportuuid) {
-            var respnseMessage="";
             jQuery.ajax({
                 url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "post", {request: reportuuid}),
                 dataType: 'text',
-                type: 'POST'
+                type: 'POST',
             }).success(function (data) {
                 var responseData = JSON.parse(data.replace("message=", "\"message\":").trim());
-               respnseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
-                jq().toastmessage("showSuccessToast", respnseMessage);
+               responseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
+                jq().toastmessage("showSuccessToast", responseMessage);
             }).complete(function (data) {
 
             }).error(function (data) {
 
             });
+        }
+
+        function previewReport(reportuuid) {
+            jQuery.ajax({
+                url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "previewReport", {request: reportuuid}),
+                dataType: 'text',
+                type: 'POST'
+            }).success(function (data) {
+                alert(data);
+            })
         }
     }
 
@@ -246,6 +255,25 @@ ${ui.includeFragment("appui", "messages", [codes: [
                 </button>
             </form>
         </fieldset>
+    </div>
+
+    <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg" style="">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 style="color: #FFFFFF">${ui.message("Preview Report")}</h3>
+                </div>
+
+                <div class="modal-body">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="cancel" data-dismiss="modal" id="">Cancel</button>
+                    <span class="button confirm right">Send To DHIS2</span>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
