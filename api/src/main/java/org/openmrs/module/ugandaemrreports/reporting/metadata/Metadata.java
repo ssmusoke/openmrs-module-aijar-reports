@@ -79,7 +79,7 @@ public class Metadata {
         public static final String FISHER_FOLKS = "159674AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String REFUGEES = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PREGNANT_WOMEN = "dcda5179-30ab-102d-86b0-7a5022ba4115";
-        public static final String BREAST_FEEDING_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String BREAST_FEEDING_WOMEN = "9e5ac0a8-6041-4feb-8c07-fe522ef5f9ab";
         public static final String AGYW = "165132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PWDs = "162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
