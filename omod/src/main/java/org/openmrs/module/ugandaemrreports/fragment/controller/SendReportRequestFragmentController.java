@@ -74,6 +74,30 @@ public class SendReportRequestFragmentController {
         }
     }
 
+    public SimpleObject previewReport(@SpringBean ReportService reportService,
+                             @RequestParam("request") String requestUuid) throws IOException {
+        ReportRequest req = reportService.getReportRequestByUuid(requestUuid);
+        if (req == null) {
+            throw new IllegalArgumentException("ReportRequest not found");
+        }
+        byte[] data=null;
+        RenderingMode renderingMode = req.getRenderingMode();
+        String linkUrl = "/module/reporting/reports/reportHistoryOpen";
+
+        if (renderingMode.getRenderer() instanceof WebReportRenderer) {
+
+            throw new IllegalStateException("Web Renderers not yet implemented");
+        } else {
+            String filename = renderingMode.getRenderer().getFilename(req).replace(" ", "_");
+            String contentType = renderingMode.getRenderer().getRenderedContentType(req);
+            data = reportService.loadRenderedOutput(req);
+        }
+
+       return SimpleObject.create("data",data);
+    }
+
+
+
     private SimpleObject sendData(byte[] data) throws IOException {
         Map map = new HashMap();
         SimpleObject simpleObject=new SimpleObject();
