@@ -711,7 +711,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsWhoReceivedHIVTestResults() {
-        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.individualsWhoReceivedHIVTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals who received HIV test results", map(cohortLibrary.receivedHivTestResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -727,7 +727,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsTestedForTheFirstTime() {
-        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestedFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of individuals tested for the first time", map(cohortLibrary.individualsTestingFortheFirstTime(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
@@ -735,7 +735,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsWhoTestedHivPositive() {
-        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.individualsWhoTestedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals who tested HIV positive", map(cohortLibrary.testedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -751,7 +751,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator individualsTestedMoreThanTwiceInLast12Months() {
-        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.individualsTestedMoreThanTwiceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of Individuals tested more than twice in the last 12 months", map(cohortLibrary.testedMoreThanOnceInLast12Months(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -775,7 +775,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator couplesWithConcordantPositiveResults() {
-        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPostiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of couples with Concordant positive results", map(cohortLibrary.couplesWithConcordantPositiveResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }    
 
     /**
@@ -830,8 +830,8 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator individualsWithWardHCTEntryPointandTestedForHIV() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsAtWardEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-    public CohortIndicator individualsWithWardHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point  And tested Postive", map(cohortLibrary.individualsAtWardEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithWardHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With Ward as Entry Point  And tested Postive", map(cohortLibrary.individualsAtWardEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithWardHCTEntryPointandLinkedToCare() {
         return cohortIndicator("Individuals With Family Planning as Entry Point  And linked to care", map(cohortLibrary.individualsAWardEntryandLinkedToCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -841,8 +841,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithOPDHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With OPD as Entry Point  And linked to care", map(cohortLibrary.individualsWithOPDEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithOPDHCTEntryPointandnewlyPostive() {
+        return cohortIndicator("Individuals With OPD as Entry Point  And Newly Positive", map(cohortLibrary.individualsWithOPDEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -855,8 +855,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithART_CLINICHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With ART_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithART_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithART_CLINICHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With ART_CLINIC as Entry Point  And Newly Positive", map(cohortLibrary.individualsWithART_CLINICEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -870,8 +870,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithTB_CLINICHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With TB_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithTB_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithTB_CLINICHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With TB_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithTB_CLINICEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -901,8 +901,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithSTI_UNIT_CLINICHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With STI_UNIT_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithSTI_UNIT_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithSTI_UNIT_CLINICHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With STI_UNIT_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithSTI_UNIT_CLINICEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -916,8 +916,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithYCC_CLINICHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With YCC_CLINIC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithYCC_CLINICEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithYCC_CLINICHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With YCC_CLINIC as Entry Point  And Newly Positive", map(cohortLibrary.individualsWithYCC_CLINICEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -931,8 +931,8 @@ public class Moh105IndicatorLibrary {
 
     }
 
-    public CohortIndicator individualsWithANC_CLINICHCTEntryPointandTestedPostive() {
-        return cohortIndicator("Individuals With ANC as Entry Point  And tested Positive", map(cohortLibrary.individualsWithANCEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithANC_CLINICHCTEntryPointandNewlyPostive() {
+        return cohortIndicator("Individuals With ANC as Entry Point  And Newly Positive", map(cohortLibrary.individualsWithANCEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 
     }
 
@@ -945,44 +945,44 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals With Maternity as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With Maternity as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandNewlyPositive() {
+        return cohortIndicator("Individuals With Maternity as Entry Point and Newly Positive ", map(cohortLibrary.individualsWithMaternityEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithMaternityDeptAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With Maternity as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator individualsWithPNCAsHCTEntryPointandTestedForHIV() {
-        return cohortIndicator("Individuals With PNC as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With PNC as Entry Point ", map(cohortLibrary.individualsWithPNCEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator individualsWithPNCAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With PNC as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With PNC as Entry Point and Newly Positive", map(cohortLibrary.individualsWithPNCEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithPNCAsHCTEntryPointandLinkedtoCare() {
-        return cohortIndicator("Individuals With PNC as Entry Point ", map(cohortLibrary.individualsWithMaternityEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With PNC as Entry Point and Linked To Care", map(cohortLibrary.individualsWithMaternityEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator individualsWithFamilyPlanningAsHCTEntryPointandTestedForHIV() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithFamilyPlanningEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualsWithFamilyPlanningAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithFamilyPlanningEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithFamilyPlanningAsHCTEntryPointandNewlyPositive() {
+        return cohortIndicator("Individuals With Family Planning as Entry Point and Newly Positive ", map(cohortLibrary.individualsWithFamilyPlanningEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithFamilyPlanningAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithFamilyPlanningEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator individualsWithSMCAsHCTEntryPointandTestedForHIV() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With SMC as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualsWithSMCAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithSMCAsHCTEntryPointandNewlyPositive() {
+        return cohortIndicator("Individuals With SMC as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithSMCAsHCTEntryPointandLinkedtoCare() {
-        return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With SMC as Entry Point ", map(cohortLibrary.individualsWithSMCEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithEIDAsHCTEntryPointandTestedForHIV() {
         return cohortIndicator("Individuals With Family Planning as Entry Point ", map(cohortLibrary.individualsWithEIDEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1015,7 +1015,7 @@ public class Moh105IndicatorLibrary {
     }
 
     public CohortIndicator individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithWorkPlaceEntryPointsAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With Work Place Based Points as Entry Point ", map(cohortLibrary.individualsWithWorkPlaceEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1025,8 +1025,8 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandTestedForHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandNewlyPositive() {
+        return cohortIndicator("Individuals With HBCT Based Points as Entry Point and Newly Positive ", map(cohortLibrary.individualsWithHBCTEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithHBCTEntryPointsAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With HBCT Based Points as Entry Point ", map(cohortLibrary.individualsWithHBCTEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1048,7 +1048,7 @@ public class Moh105IndicatorLibrary {
     }
 
     public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedPositive() {
-        return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualsWithHotSpotsEntryPointsAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With HotSpots Based Points as Entry Point ", map(cohortLibrary.individualsWithHotSpotEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1071,8 +1071,8 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndTestedPositive() {
-        return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndNewlyPositive() {
+        return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator individualswithHealthFacilityAsPITCTestingApproachAndLinkedToCare() {
         return cohortIndicator("Individuals With Health Facility PITC Testing Appraoch ", map(cohortLibrary.individualsWithHealthFacilityTestingAppraochandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1120,8 +1120,8 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator indivudualsCategorisedAsPrisonersandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator indivudualsCategorisedAsPrisonersandNewlyPositive() {
+        return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsPrisonersandLinkedtoCare() {
         return cohortIndicator("Individuals Categorised As Prisoners ", map(cohortLibrary.individualsCategorisedAsPrisonersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1130,8 +1130,8 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator indivudualsCategorisedAsPWIDsandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator indivudualsCategorisedAsPWIDsandNewlyPositive() {
+        return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsPWIDsandLinkedtoCare() {
         return cohortIndicator("Individuals Categorised As PWIDs ", map(cohortLibrary.individualsCategorisedAsPWIDsandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1141,29 +1141,29 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
-    public CohortIndicator indivudualsCategorisedAsUniformedMenandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator indivudualsCategorisedAsUniformedMenandNewlyPositive() {
+        return cohortIndicator("Individuals Categorised As Uniformed Men And Newly Positive ", map(cohortLibrary.individualsCategorisedAsUniformedMenandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsUniformedMensandLinkedtoCare() {
-        return cohortIndicator("Individuals Categorised As Uniformed Men ", map(cohortLibrary.individualsCategorisedAsUniformedMenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Uniformed Men and Linked to Care ", map(cohortLibrary.individualsCategorisedAsUniformedMenandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedForHIV() {
-        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers and tested For HIV ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator indivudualsCategorisedAsMigrantWorkersandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers and Newly Positive ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare() {
-        return cohortIndicator("Individuals Categorised As Migrant Workers ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Migrant Workers and Linked to Care ", map(cohortLibrary.individualsCategorisedAsMigrantWorkersandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsTruckerDriversandTestedForHIV() {
         return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandTestedforHIV(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator indivudualsCategorisedAsTruckerDriversandTestedPositive() {
-        return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandTestedPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandNewlyPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator indivudualsCategorisedAsTruckerDriverssandLinkedtoCare() {
         return cohortIndicator("Individuals Categorised As Trucker Drivers ", map(cohortLibrary.individualsCategorisedAsTruckerDriversandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -1277,8 +1277,8 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator clientsTestedForHIV() {
         return cohortIndicator("Number of clients who have tested for HIV", map(cohortLibrary.individualsTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-    public CohortIndicator clientsTestedPositive() {
-        return cohortIndicator("Number of clients who have tested positivee", map(cohortLibrary.testedHivPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator clientsNewlyPositive() {
+        return cohortIndicator("Number of clients who have tested Newly positive", map(cohortLibrary.totalNumberofInidividualsNewlyTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     //End HIV/AIDS counseling and testing (HCT)        
     
