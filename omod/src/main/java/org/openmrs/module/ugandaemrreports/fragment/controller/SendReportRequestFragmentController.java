@@ -92,8 +92,9 @@ public class SendReportRequestFragmentController {
             String contentType = renderingMode.getRenderer().getRenderedContentType(req);
             data = reportService.loadRenderedOutput(req);
         }
+        String jsonData=new String(data).replace("x-","x");
 
-       return SimpleObject.create("data",data);
+       return SimpleObject.create("data",jsonData);
     }
 
 

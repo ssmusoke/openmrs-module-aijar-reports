@@ -53,8 +53,52 @@
                 dataType: 'text',
                 type: 'POST'
             }).success(function (data) {
-                var responsedata =data.toString();
+
+                var responsedata =JSON.parse(data.replace("data=", "\"data\":").replace("x-","x"));
+                displayReport(responsedata);
+                jq('#edit-preview-report-form').modal('show');
                 console.log(JSON.stringify(data))
+            })
+        }
+
+        function displayReport(report) {
+            var reportDataString="";
+            var tableHeader = "<table><thead><tr><th>Categor</th><th>Data Element</th><th>Value</th></thead><tbody>";
+            var tableFooter = "</tbody></table>";
+            var indicators={};
+            jq.each(report.data.dataValues, function (index, dataValue) {
+                var dataValueToDisplay = "";
+                dataValueToDisplay += "<tr>";
+                dataValueToDisplay += "<td>" + dataValue.xshortname + "</td>";
+                dataValueToDisplay += "<td>" + dataValue.xcategoryoptioncombo + "</td>";
+                dataValueToDisplay += "<td>" + dataValue.value + "</td>";
+                dataValueToDisplay += "</tr>";
+                if(indicators.toString().search(dataValue.xcategoryoptioncombo)<1){
+                    indicators.push(dataValue.xcategoryoptioncombo);
+                }
+                reportDataString += dataValueToDisplay;
+            });
+            jq("#display-report").append(tableHeader + reportDataString + tableFooter);
+        }
+
+        function transpose() {
+            jq("table").each(function() {
+                var tableToTranspose = jq(this);
+                var newrows = [];
+                tableToTranspose.find("tr").each(function () {
+                    var i = 0;
+                    jq(this).find("td").each(function () {
+                        i++;
+                        if (newrows[i] === undefined) {
+                            newrows[i] = jq("<tr></tr>");
+                        }
+                        newrows[i].append(jq(this));
+                    });
+                });
+                tableToTranspose.find("tr").remove();
+                jq.each(newrows, function () {
+                    tableToTranspose.append(this);
+                });
             })
         }
     }
@@ -266,7 +310,7 @@ ${ui.includeFragment("appui", "messages", [codes: [
                 </div>
 
                 <div class="modal-body">
-
+                    <div id="display-report"></div>
                 </div>
 
                 <div class="modal-footer">
