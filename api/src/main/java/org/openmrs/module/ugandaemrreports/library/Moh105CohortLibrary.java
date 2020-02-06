@@ -26,7 +26,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptySiteType;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SmcReturnFollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.*;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -53,10 +53,21 @@
                 dataType: 'text',
                 type: 'POST'
             }).success(function (data) {
-                var responsedata =data.toString();
-                console.log(JSON.stringify(data))
+                var divToPreview = document.getElementById("previewReport");
+                var newWin = window.open('', 'Preview-Window');
+                var responsedata =JSON.parse(data.replace("data=", "\"data\":"));
+                var  datasetArray=[];
+                datasetArray=responsedata.data.dataValues
+                jq.each(datasetArray, function (index, datatoPreview) {
+                      var rowToAppendToTable="<tr><td width='30%' style='text-align: center;'>"+datatoPreview["x-shortname"]+"</td><td width='30%' style='text-align: center;'>"+datatoPreview["x-categoryoptioncombo"]+"</td><td width='30%' style='text-align: center;'>"+datatoPreview["value"]+"</td></tr>";
+                    jq("#containerToAppendRefferedOutPrescriptions").append(rowToAppendToTable);
+                });
+                newWin.document.open();
+                newWin.document.write('<html><body onload="window.alert()">' + divToPreview.innerHTML + '</body></html>');
+                newWin.document.close();
+
             })
-        }
+            }
     }
 
 </script>
@@ -258,16 +269,27 @@ ${ui.includeFragment("appui", "messages", [codes: [
         </fieldset>
     </div>
 
-    <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg" style="">
+    <div id="previewReport" title="preview-report" class="modal fade bd-order-modal-lg" style="">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 style="color: #FFFFFF">${ui.message("Preview Report")}</h3>
                 </div>
 
-                <div class="modal-body">
+                <div id="prescription_receipt" align="left">
+                    <table>
+                        <thead>
+                        <th width="30%" style="text-align: center;">DataSetName</th>
+                        <th width="30%" style="text-align: center;">AgeCategory </th>
+                        <th width="30%" style="text-align: center;">Data Value</th>
 
+                        </thead>
+                        <tbody id="containerToAppendRefferedOutPrescriptions">
+
+                        </tbody>
+                    </table>
                 </div>
+
 
                 <div class="modal-footer">
                     <button class="cancel" data-dismiss="modal" id="">Cancel</button>

@@ -20,7 +20,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -80,7 +80,7 @@ public class SendReportRequestFragmentController {
         if (req == null) {
             throw new IllegalArgumentException("ReportRequest not found");
         }
-        byte[] data=null;
+//        byte[] data=null;
         RenderingMode renderingMode = req.getRenderingMode();
         String linkUrl = "/module/reporting/reports/reportHistoryOpen";
 
@@ -90,10 +90,16 @@ public class SendReportRequestFragmentController {
         } else {
             String filename = renderingMode.getRenderer().getFilename(req).replace(" ", "_");
             String contentType = renderingMode.getRenderer().getRenderedContentType(req);
-            data = reportService.loadRenderedOutput(req);
+            byte[] data = reportService.loadRenderedOutput(req);
+            if(data==null)
+            {
+                throw new IllegalStateException("Error displaying the report");
+            }
+            else{
+                return SimpleObject.create("data",new String(data));
+            }
         }
 
-       return SimpleObject.create("data",data);
     }
 
 
