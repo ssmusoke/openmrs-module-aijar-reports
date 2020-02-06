@@ -37,10 +37,14 @@
                 dataType: 'text',
                 type: 'POST',
             }).success(function (data) {
-                var responseData = JSON.parse(data.replace("message=", "\"message\":").trim());
-               responseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
+                var responseData = JSON.parse(data.replace("message=", "\"message\":").replace("responseCode=","\"responseCode\":").trim());
                 jq('#edit-preview-report-form').modal('hide');
-               jq().toastmessage("showSuccessToast", responseMessage);
+                if ((responseData.responseCode === 200 || responseData.responseCode === 201)) {
+                    responseMessage = "Data Sent Succesfully " + " Imported: " + responseData.message.importCount.imported + " Updated: " + responseData.message.importCount.updated + " Ignored: " + responseData.message.importCount.ignored + " Deleted: " + responseData.message.importCount.deleted;
+                    jq().toastmessage("showSuccessToast", responseMessage);
+                }else {
+                    jq().toastmessage("showErrorToast", "Error occurred during sending report");
+                }
             }).complete(function (data) {
 
             }).error(function (data) {

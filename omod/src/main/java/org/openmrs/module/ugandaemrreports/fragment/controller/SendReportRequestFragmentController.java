@@ -102,6 +102,7 @@ public class SendReportRequestFragmentController {
     private SimpleObject sendData(byte[] data) throws IOException {
         Map map = new HashMap();
         SimpleObject simpleObject=new SimpleObject();
+        int responseCode = 0;
         try {
             URL url = new URL("https://ugisl.mets.or.ug:5000/ehmis");
             String encoding = Base64.getEncoder().encodeToString(("mets.mkaye:METS4321!").getBytes("UTF-8"));
@@ -122,7 +123,7 @@ public class SendReportRequestFragmentController {
             }
             os.close();
 
-            int responseCode = ((HttpsURLConnection) httpsCon).getResponseCode();
+            responseCode = ((HttpsURLConnection) httpsCon).getResponseCode();
             //reading the response
             if ((responseCode == 200 || responseCode == 201)) {
                 InputStream inputStreamReader = httpsCon.getInputStream();
@@ -134,7 +135,9 @@ public class SendReportRequestFragmentController {
 
 
             simpleObject=SimpleObject.create("message",response.toString());
+            simpleObject.put("responseCode",responseCode);
         } catch (Exception e) {
+            simpleObject.put("responseCode",responseCode);
             e.printStackTrace();
         }
         return simpleObject;
