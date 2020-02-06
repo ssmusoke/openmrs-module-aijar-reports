@@ -39,7 +39,8 @@
             }).success(function (data) {
                 var responseData = JSON.parse(data.replace("message=", "\"message\":").trim());
                responseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
-                jq().toastmessage("showSuccessToast", responseMessage);
+                jq('#edit-preview-report-form').modal('hide');
+               jq().toastmessage("showSuccessToast", responseMessage);
             }).complete(function (data) {
 
             }).error(function (data) {
@@ -55,13 +56,12 @@
             }).success(function (data) {
 
                 var responsedata =JSON.parse(data.replace("data=", "\"data\":").replace("x-","x"));
-                displayReport(responsedata);
+                displayReport(responsedata,reportuuid);
                 jq('#edit-preview-report-form').modal('show');
-                console.log(JSON.stringify(data))
             })
         }
 
-        function displayReport(report) {
+        function displayReport(report,reportuuid) {
             var reportDataString="";
             var tableHeader = "<table><thead><tr><th>Indicator</th><th>Data Element</th><th>Value</th></thead><tbody>";
             var tableFooter = "</tbody></table>";
@@ -77,7 +77,7 @@
                     reportDataString = reportDataString.replace("rowspan=\"1\"",rowspanAttribute);
                     rowspanCount=1;
                     rowspan=dataValue.xshortname;
-                    dataValueToDisplay += "<th rowspan=\"1\">" + dataValue.xshortname + "</th>";
+                    dataValueToDisplay += "<th rowspan=\"1\" width=\"20%\">" + dataValue.xshortname + "</th>";
                 }
                 dataValueToDisplay += "<td>" + dataValue.xcategoryoptioncombo + "</td>";
                 dataValueToDisplay += "<td>" + dataValue.value + "</td>";
@@ -87,6 +87,7 @@
             var lastRowspanAttribute="rowspan=\""+rowspanCount+"\"";
             reportDataString = reportDataString.replace("rowspan=\"1\"",lastRowspanAttribute);
             jq("#display-report").append(tableHeader + reportDataString + tableFooter);
+            jq("#sendreporttodhis2").attr("onclick", "sendDataToDHIS2(\""+reportuuid+"\")");
         }
 
         function transpose() {
@@ -323,7 +324,7 @@ ${ui.includeFragment("appui", "messages", [codes: [
 
                 <div class="modal-footer">
                     <button class="cancel" data-dismiss="modal" id="">Cancel</button>
-                    <span class="button confirm right">Send To DHIS2</span>
+                    <span id="sendreporttodhis2" onclick="sendDataToDHIS2(this.id)" class="button confirm right">Send To DHIS2</span>
                 </div>
             </div>
         </div>
