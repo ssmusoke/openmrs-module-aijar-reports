@@ -63,21 +63,29 @@
 
         function displayReport(report) {
             var reportDataString="";
-            var tableHeader = "<table><thead><tr><th>Categor</th><th>Data Element</th><th>Value</th></thead><tbody>";
+            var tableHeader = "<table><thead><tr><th>Indicator</th><th>Data Element</th><th>Value</th></thead><tbody>";
             var tableFooter = "</tbody></table>";
-            var indicators={};
+            var rowspan="";
+            var rowspanCount=0;
             jq.each(report.data.dataValues, function (index, dataValue) {
                 var dataValueToDisplay = "";
                 dataValueToDisplay += "<tr>";
-                dataValueToDisplay += "<td>" + dataValue.xshortname + "</td>";
+                if(rowspan===dataValue.xshortname){
+                    rowspanCount+=1;
+                }else {
+                    var rowspanAttribute="rowspan=\""+rowspanCount+"\"";
+                    reportDataString = reportDataString.replace("rowspan=\"1\"",rowspanAttribute);
+                    rowspanCount=1;
+                    rowspan=dataValue.xshortname;
+                    dataValueToDisplay += "<th rowspan=\"1\">" + dataValue.xshortname + "</th>";
+                }
                 dataValueToDisplay += "<td>" + dataValue.xcategoryoptioncombo + "</td>";
                 dataValueToDisplay += "<td>" + dataValue.value + "</td>";
                 dataValueToDisplay += "</tr>";
-                if(indicators.toString().search(dataValue.xcategoryoptioncombo)<1){
-                    indicators.push(dataValue.xcategoryoptioncombo);
-                }
                 reportDataString += dataValueToDisplay;
             });
+            var lastRowspanAttribute="rowspan=\""+rowspanCount+"\"";
+            reportDataString = reportDataString.replace("rowspan=\"1\"",lastRowspanAttribute);
             jq("#display-report").append(tableHeader + reportDataString + tableFooter);
         }
 
