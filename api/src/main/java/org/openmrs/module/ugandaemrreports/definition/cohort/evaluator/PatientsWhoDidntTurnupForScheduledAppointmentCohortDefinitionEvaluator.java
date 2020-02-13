@@ -108,7 +108,7 @@ public class PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinitionEvalua
         //remove the early comers
         if(earlyBirdPatientsResults.size()>0 && !earlyBirdPatientsResults.isEmpty()){
             for (Integer patientId:earlyBirdPatientsResults) {
-                ret.removeMember(patientId);
+//                ret.removeMember(patientId);
             }
         }
         return ret;

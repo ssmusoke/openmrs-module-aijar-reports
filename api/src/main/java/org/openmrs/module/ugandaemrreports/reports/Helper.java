@@ -754,6 +754,8 @@ public class Helper {
         ci.setType(CohortIndicator.IndicatorType.COUNT);
         ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
+
+
     }
 
 }

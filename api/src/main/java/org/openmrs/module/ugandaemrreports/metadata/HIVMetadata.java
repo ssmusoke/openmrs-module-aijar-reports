@@ -7,6 +7,7 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -241,6 +242,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("dce02eca-30ab-102d-86b0-7a5022ba4115");
     }
 
+    public Concept getFluconazoleStartDate() {
+        return getConcept("539a716b-4e1b-4a99-ad1d-f4e3a09a75ae");
+    }
+
     public Concept getTBStopDate() {
         return getConcept("dd2adde2-30ab-102d-86b0-7a5022ba4115");
     }
@@ -319,6 +324,9 @@ public class HIVMetadata extends Metadata {
 
     public Concept getMalnutrition() {
         return getConcept("dc655734-30ab-102d-86b0-7a5022ba4115");
+    }
+    public Concept getNutritionStatus() {
+        return getConcept("165050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     public Concept getMUAC() {
@@ -517,5 +525,31 @@ public class HIVMetadata extends Metadata {
 
     public Concept getNumberOfDaysDispensed(){
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
+    }
+
+    public Concept getAdvancedDiseaseStatus(){
+        return getConcept("17def5f6-d6b4-444b-99ed-40eb05d2c4f8");
+    }
+
+    public List<Concept> getConfirmedAdvancedDiseaseConcepts(){
+        return Arrays.asList(getConfirmedAdvancedDiseaseCDLessThan200(),getConfirmedAdvancedDiseaseChildLessThan5Yrs(),getConfirmedAdvancedDiseasePosTB(),getConfirmedAdvancedDiseasePosCrag(),getConfirmedAdvancedDiseaseWHOStage3OR4());
+    }
+     public Concept getConfirmedAdvancedDiseaseCDLessThan200(){
+         return getConcept("1615507f-54c6-4c18-b1ce-46a3d6d23154");
+     }
+
+    public Concept getConfirmedAdvancedDiseasePosCrag(){
+        return getConcept("e48dcbe9-9c13-4526-95db-97223f3bf757");
+    }
+
+    public Concept getConfirmedAdvancedDiseasePosTB(){
+        return getConcept("1f6fe5aa-29ba-4e84-8074-a7ea06eb8440");
+    }
+    public Concept getConfirmedAdvancedDiseaseWHOStage3OR4(){
+        return getConcept("2050efe0-6a18-4028-a26e-16b90dfd853d");
+    }
+
+    public Concept getConfirmedAdvancedDiseaseChildLessThan5Yrs(){
+        return getConcept("7cc40cbc-984f-40e0-aae3-50339dff8f4a");
     }
 }

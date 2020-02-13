@@ -136,7 +136,7 @@ public class CommonCohortLibrary {
      * @param programs the programs
      * @return the cohort definition
      */
-    public CohortDefinition enrolled(Program... programs) {
+    public CohortDefinition enrolledDuringPeriod(Program... programs) {
         ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
         cd.setName("enrolled in program between dates");
         cd.addParameter(new Parameter("enrolledOnOrAfter", "After Date", Date.class));
@@ -144,7 +144,7 @@ public class CommonCohortLibrary {
         if (programs.length > 0) {
             cd.setPrograms(Arrays.asList(programs));
         }
-        return cd;
+        return df.convert(cd, ObjectUtil.toMap("enrolledOnOrAfter=startDate,enrolledOnOrBefore=endDate"));
     }
 
     public CohortDefinition getPatientsInProgramDuringPeriod(Program program) {

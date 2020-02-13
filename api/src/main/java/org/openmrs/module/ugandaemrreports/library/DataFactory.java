@@ -514,7 +514,7 @@ public class DataFactory {
         EncounterCohortDefinition cd = new EncounterCohortDefinition();
         cd.setEncounterTypeList(types);
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate"));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
     public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
@@ -923,6 +923,17 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrBefore=startDate-1d"));
     }
 
+    public CohortDefinition getPatientsWithNumericObsByEndDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator1(operator);
+        cd.setValue1(value);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
+    }
+
     public CohortDefinition getPatientsWithNumericObsByEndOfPreviousDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);
@@ -1148,7 +1159,7 @@ public class DataFactory {
         PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition cd = new PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition();
         cd.setMinimumDays(minimumDays);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
-        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
     }
     public CohortDefinition EarlyWarningIndicatorDataAbstractionCohort(Concept dateConcept,List<EncounterType> types,BaseObsCohortDefinition.TimeModifier timeModifier)
@@ -1406,5 +1417,29 @@ public class DataFactory {
         cd.setEncounterTypeList( Arrays.asList(hivMetadata.getARTEncounterEncounterType()));
         return convert(cd, ObjectUtil.toMap( ",onOrBefore=endDate" ));
 
+    }
+
+    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenPastPeriodFromEndDate(Concept dateConcept, List<EncounterType> types,String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        DateObsCohortDefinition cd = new DateObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=endDate-"+olderThan +",value2=endDate"));
+    }
+
+    public CohortDefinition getPatientsWithNumericObsFromPastEndPeriodToEndDate(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value,String olderThan, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator1(operator);
+        cd.setValue1(value);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + olderThan +",onOrBefore=endDate"));
     }
 }
