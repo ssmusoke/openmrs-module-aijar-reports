@@ -33,7 +33,7 @@
     if (jQuery) {
         function sendDataToDHIS2(reportuuid) {
             jQuery.ajax({
-                url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "sendData", {request: reportuuid}),
+                url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "post", {request: reportuuid}),
                 dataType: 'text',
                 type: 'POST',
             }).success(function (data) {

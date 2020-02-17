@@ -15,7 +15,6 @@
 package org.openmrs.module.ugandaemrreports.fragment.controller;
 
 
-import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.reporting.report.ReportRequest;
