@@ -1,16 +1,22 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.Location;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
@@ -20,6 +26,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.openmrs.module.reporting.report.manager.ReportManagerUtil.createJSONTemplateDesign;
 
 /**
  *  TX Current Report
@@ -56,9 +64,13 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         return "a06b7310-2565-45bd-89af-514b724a1db0";
     }
 
+    public String getJSONDesignUuid() {
+        return "13cf6468-07c2-40f5-a388-6fdc8fa8341e";
+    }
+
     @Override
     public String getUuid() {
-        return "16a5243f-d0c2-4a15-bc25-411437efb5f3";
+        return "dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a";
     }
 
     @Override
@@ -82,7 +94,10 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -94,7 +109,12 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "METRICS.xls");
+        return createExcelTemplateDesign("351284d3-a0da-4632-81e0-23e2d4777504", reportDefinition, "METRICS.xls");
+    }
+
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "METRICS.json");
     }
 
     @Override
@@ -106,11 +126,12 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
 
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("METRIC", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getAijarVersion()));
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
 
         Location reception = commonDimensionLibrary.getLocationByUuid("4501e132-07a2-4201-9dc8-2f6769b6d412");
         Location triage = commonDimensionLibrary.getLocationByUuid("ff01eaab-561e-40c6-bf24-539206b521ce");
@@ -122,7 +143,7 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
         CohortDefinition ARTEncounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes());
         CohortDefinition HTSEncounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getHCTEncounterType());
-        CohortDefinition EIDCounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getHCTEncounterType());
+        CohortDefinition EIDCounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getEIDEncounterPageEncounterType());
 
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
 
@@ -134,30 +155,42 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
         CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
 
-        CohortDefinition patientsThroughReception = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(), Arrays.asList(reception));
-        CohortDefinition patientsThroughTriage = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(),Arrays.asList(triage));
-        CohortDefinition patientsThroughCounselor = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(),Arrays.asList(counselor));
-        CohortDefinition patientsThroughLab = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(),Arrays.asList(Lab));
-        CohortDefinition patientsThroughPharmacy = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(),Arrays.asList(Pharmacy));
-        CohortDefinition patientsThroughARTClinician = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getArtEncounterTypes(),Arrays.asList(ART_Clinician));
+        CohortDefinition patientsThroughReception = df.getAnyEncounterOfTypesByEndOfDate(null, Arrays.asList(reception));
+        CohortDefinition patientsThroughTriage = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(triage));
+        CohortDefinition patientsThroughCounselor = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(counselor));
+        CohortDefinition patientsThroughLab = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(Lab));
+        CohortDefinition patientsThroughPharmacy = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(Pharmacy));
+        CohortDefinition patientsThroughARTClinician = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(ART_Clinician));
 
+        CohortDefinition transferredOutPatients = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition deadPatientsByEndDate = df.getPatientsInAll(everEnrolledByEndQuarter,df.getDeadPatientsByEndDate());
+        CohortDefinition lost_to_followup = df.getLostToFollowUp();
 
+        CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition longRefillPatients = df.getPatientsWithLongRefills();
 
+        CohortDefinition patientsWithReturnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
 
+        CohortDefinition activePatients= df.getPatientsInAny(hadEncounterInQuarter,longRefillPatients,patientsWithReturnVisitDuringPeriod);
+        CohortDefinition activePatientsInCareDuringPeriod = df.getPatientsNotIn(activePatients,df.getPatientsInAny(transferredOutPatients,deadPatientsByEndDate,lost_to_followup));
 
+        CohortDefinition nonSuppressedClientsByEndDate = df.getPatientsWithNumericObsByEndOfPreviousDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.GREATER_EQUAL,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition suppressedClientsByEndDate = df. getPatientsWithNumericObsByEndOfPreviousDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.LESS_THAN,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
 
-
-        addIndicator(dsd, "", "ART Encounter", ARTEncounter, "");
-        addIndicator(dsd, "", "HTS Encounters", HTSEncounter, "");
-        addIndicator(dsd, "", "EID Encounters",EIDCounter, "");
-        addIndicator(dsd, "", "Active patients In Care", , "");
-        addIndicator(dsd, "", "Patients Ever enrolled ", cumulativeEverEnrolled, "");
-        addIndicator(dsd, "", "Patients Served At Reception",patientsThroughReception, "");
-        addIndicator(dsd, "", "Patients Served At Triage", patientsThroughTriage, "");
-        addIndicator(dsd, "", "Patients Served At Counselor", patientsThroughCounselor, "");
-        addIndicator(dsd, "", "Patients Served At Clinicians", patientsThroughARTClinician, "");
-        addIndicator(dsd, "", "Patients Served At Lab ", patientsThroughLab, "");
-        addIndicator(dsd, "", "Patients Served At Pharmacy", patientsThroughPharmacy, "");
+        addIndicator(dsd, "a", "ART Encounter", ARTEncounter, "");
+        addIndicator(dsd, "b", "HTS Encounters", HTSEncounter, "");
+        addIndicator(dsd, "c", "EID Encounters",EIDCounter, "");
+        addIndicator(dsd, "d", "Active patients In Care",activePatientsInCareDuringPeriod , "");
+        addIndicator(dsd, "e", "Patients Ever enrolled ", cumulativeEverEnrolled, "");
+        addIndicator(dsd, "f", "Patients Served At Reception",patientsThroughReception, "");
+        addIndicator(dsd, "g", "Patients Served At Triage", patientsThroughTriage, "");
+        addIndicator(dsd, "h", "Patients Served At Counselor", patientsThroughCounselor, "");
+        addIndicator(dsd, "i", "Patients Served At Clinicians", patientsThroughARTClinician, "");
+        addIndicator(dsd, "j", "Patients Served At Lab ", patientsThroughLab, "");
+        addIndicator(dsd, "k", "Patients Served At Pharmacy", patientsThroughPharmacy, "");
+        addIndicator(dsd, "l", "suppressed patients ", suppressedClientsByEndDate, "");
+        addIndicator(dsd, "m", "non suppressed ", nonSuppressedClientsByEndDate, "");
         return rd;
     }
 
@@ -172,13 +205,13 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
-
-    public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
-        return df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    public DataSetDefinition getAijarVersion(){
+        EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
+        return dsd;
     }
 
     @Override
     public String getVersion() {
-        return "0.0.1";
+        return "0.0.2.5.4";
     }
 }

@@ -81,6 +81,15 @@ public abstract class UgandaEMRReportManager extends BaseReportManager {
 		return ReportManagerUtil.createExcelTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
 	}
 
+	protected ReportDesign createJSONTemplateDesign(String reportDesignUuid, ReportDefinition reportDefinition,
+													String templatePath) {
+		log.debug("Template path for JSON report design " + reportDesignUuid + " with report definition " + reportDefinition + " is " + templatePath + " with report package as path " + ReportUtil.getPackageAsPath(getClass()));
+		// TODO: Update this function below to use the class from the Report definition
+		String resourcePath = ReportUtil.getPackageAsPath(getClass()) + "/" + templatePath;
+		log.debug("Resource path for " + templatePath + " is " + resourcePath);
+		return ReportManagerUtil.createJSONTemplateDesign(reportDesignUuid, reportDefinition, resourcePath);
+	}
+
 	protected ReportDesign createExcelDesign(String reportDesignUuid, ReportDefinition reportDefinition) {
 		return UgandaEMRReportUtil.createExcelDesign(reportDesignUuid, reportDefinition);
 	}
