@@ -33,13 +33,18 @@
     if (jQuery) {
         function sendDataToDHIS2(reportuuid) {
             jQuery.ajax({
-                url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "post", {request: reportuuid}),
+                url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "sendData", {request: reportuuid}),
                 dataType: 'text',
                 type: 'POST',
             }).success(function (data) {
-                var responseData = JSON.parse(data.replace("message=", "\"message\":").trim());
-               responseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
-                jq().toastmessage("showSuccessToast", responseMessage);
+                var responseData = JSON.parse(data.replace("message=", "\"message\":").replace("responseCode=","\"responseCode\":").trim());
+                jq('#edit-preview-report-form').modal('hide');
+                if ((responseData.responseCode === 200 || responseData.responseCode === 201)) {
+                    responseMessage = "Data Sent Succesfully " + " Imported: " + responseData.message.importCount.imported + " Updated: " + responseData.message.importCount.updated + " Ignored: " + responseData.message.importCount.ignored + " Deleted: " + responseData.message.importCount.deleted;
+                    jq().toastmessage("showSuccessToast", responseMessage);
+                }else {
+                    jq().toastmessage("showErrorToast",responseCode);
+                }
             }).complete(function (data) {
 
             }).error(function (data) {
@@ -53,21 +58,62 @@
                 dataType: 'text',
                 type: 'POST'
             }).success(function (data) {
-                var divToPreview = document.getElementById("previewReport");
-                var newWin = window.open('', 'Preview-Window');
-                var responsedata =JSON.parse(data.replace("data=", "\"data\":"));
-                var  datasetArray=[];
-                datasetArray=responsedata.data.dataValues
-                jq.each(datasetArray, function (index, datatoPreview) {
-                      var rowToAppendToTable="<tr><td width='30%' style='text-align: center;'>"+datatoPreview["x-shortname"]+"</td><td width='30%' style='text-align: center;'>"+datatoPreview["x-categoryoptioncombo"]+"</td><td width='30%' style='text-align: center;'>"+datatoPreview["value"]+"</td></tr>";
-                    jq("#containerToAppendRefferedOutPrescriptions").append(rowToAppendToTable);
-                });
-                newWin.document.open();
-                newWin.document.write('<html><body onload="window.alert()">' + divToPreview.innerHTML + '</body></html>');
-                newWin.document.close();
 
+                var responsedata =JSON.parse(data.replace("data=", "\"data\":").replace("x-","x"));
+                displayReport(responsedata,reportuuid);
+                jq('#edit-preview-report-form').modal('show');
             })
-            }
+        }
+
+        function displayReport(report,reportuuid) {
+            var reportDataString="";
+            var tableHeader = "<table><thead><tr><th>Indicator</th><th>Data Element</th><th>Value</th></thead><tbody>";
+            var tableFooter = "</tbody></table>";
+            var rowspan="";
+            var rowspanCount=0;
+            jq.each(report.data.dataValues, function (index, dataValue) {
+                var dataValueToDisplay = "";
+                dataValueToDisplay += "<tr>";
+                if(rowspan===dataValue.xshortname){
+                    rowspanCount+=1;
+                }else {
+                    var rowspanAttribute="rowspan=\""+rowspanCount+"\"";
+                    reportDataString = reportDataString.replace("rowspan=\"1\"",rowspanAttribute);
+                    rowspanCount=1;
+                    rowspan=dataValue.xshortname;
+                    dataValueToDisplay += "<th rowspan=\"1\" width=\"20%\">" + dataValue.xshortname + "</th>";
+                }
+                dataValueToDisplay += "<td>" + dataValue.xcategoryoptioncombo + "</td>";
+                dataValueToDisplay += "<td>" + dataValue.value + "</td>";
+                dataValueToDisplay += "</tr>";
+                reportDataString += dataValueToDisplay;
+            });
+            var lastRowspanAttribute="rowspan=\""+rowspanCount+"\"";
+            reportDataString = reportDataString.replace("rowspan=\"1\"",lastRowspanAttribute);
+            jq("#display-report").append(tableHeader + reportDataString + tableFooter);
+            jq("#sendreporttodhis2").attr("onclick", "sendDataToDHIS2(\""+reportuuid+"\")");
+        }
+
+        function transpose() {
+            jq("table").each(function() {
+                var tableToTranspose = jq(this);
+                var newrows = [];
+                tableToTranspose.find("tr").each(function () {
+                    var i = 0;
+                    jq(this).find("td").each(function () {
+                        i++;
+                        if (newrows[i] === undefined) {
+                            newrows[i] = jq("<tr></tr>");
+                        }
+                        newrows[i].append(jq(this));
+                    });
+                });
+                tableToTranspose.find("tr").remove();
+                jq.each(newrows, function () {
+                    tableToTranspose.append(this);
+                });
+            })
+        }
     }
 
 </script>
@@ -269,31 +315,20 @@ ${ui.includeFragment("appui", "messages", [codes: [
         </fieldset>
     </div>
 
-    <div id="previewReport" title="preview-report" class="modal fade bd-order-modal-lg" style="">
+    <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg" style="">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h3 style="color: #FFFFFF">${ui.message("Preview Report")}</h3>
                 </div>
 
-                <div id="prescription_receipt" align="left">
-                    <table>
-                        <thead>
-                        <th width="30%" style="text-align: center;">DataSetName</th>
-                        <th width="30%" style="text-align: center;">AgeCategory </th>
-                        <th width="30%" style="text-align: center;">Data Value</th>
-
-                        </thead>
-                        <tbody id="containerToAppendRefferedOutPrescriptions">
-
-                        </tbody>
-                    </table>
+                <div class="modal-body">
+                    <div id="display-report"></div>
                 </div>
-
 
                 <div class="modal-footer">
                     <button class="cancel" data-dismiss="modal" id="">Cancel</button>
-                    <span class="button confirm right">Send To DHIS2</span>
+                    <span id="sendreporttodhis2" onclick="sendDataToDHIS2(this.id)" class="button confirm right">Send To DHIS2</span>
                 </div>
             </div>
         </div>

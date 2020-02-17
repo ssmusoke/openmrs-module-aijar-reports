@@ -14,9 +14,10 @@
 
 package org.openmrs.module.ugandaemrreports.fragment.controller;
 
+
+import okhttp3.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.service.ReportService;
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.SecureRandom;
 import java.security.Security;
@@ -80,7 +80,7 @@ public class SendReportRequestFragmentController {
         if (req == null) {
             throw new IllegalArgumentException("ReportRequest not found");
         }
-//        byte[] data=null;
+        byte[] data=null;
         RenderingMode renderingMode = req.getRenderingMode();
         String linkUrl = "/module/reporting/reports/reportHistoryOpen";
 
@@ -90,16 +90,11 @@ public class SendReportRequestFragmentController {
         } else {
             String filename = renderingMode.getRenderer().getFilename(req).replace(" ", "_");
             String contentType = renderingMode.getRenderer().getRenderedContentType(req);
-            byte[] data = reportService.loadRenderedOutput(req);
-            if(data==null)
-            {
-                throw new IllegalStateException("Error displaying the report");
-            }
-            else{
-                return SimpleObject.create("data",new String(data));
-            }
+            data = reportService.loadRenderedOutput(req);
         }
+        String jsonData=new String(data).replace("x-","x");
 
+       return SimpleObject.create("data",jsonData);
     }
 
 
@@ -107,8 +102,10 @@ public class SendReportRequestFragmentController {
     private SimpleObject sendData(byte[] data) throws IOException {
         Map map = new HashMap();
         SimpleObject simpleObject=new SimpleObject();
+        int responseCode = 0;
         try {
             URL url = new URL("https://ugisl.mets.or.ug:5000/ehmis");
+
             String encoding = Base64.getEncoder().encodeToString(("mets.mkaye:METS4321!").getBytes("UTF-8"));
 
             HttpsURLConnection httpsCon = (HttpsURLConnection) url.openConnection();
@@ -127,7 +124,7 @@ public class SendReportRequestFragmentController {
             }
             os.close();
 
-            int responseCode = ((HttpsURLConnection) httpsCon).getResponseCode();
+            responseCode = ((HttpsURLConnection) httpsCon).getResponseCode();
             //reading the response
             if ((responseCode == 200 || responseCode == 201)) {
                 InputStream inputStreamReader = httpsCon.getInputStream();
@@ -139,7 +136,9 @@ public class SendReportRequestFragmentController {
 
 
             simpleObject=SimpleObject.create("message",response.toString());
+            simpleObject.put("responseCode",responseCode);
         } catch (Exception e) {
+            simpleObject.put("responseCode",responseCode);
             e.printStackTrace();
         }
         return simpleObject;
@@ -150,41 +149,41 @@ public class SendReportRequestFragmentController {
      *
      * @Jmpango
      */
-//    private void disableSSLCertificates() throws Exception {
-//        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-//        final TrustManager[] trustAllCerts = new TrustManager[]{
-//                new X509TrustManager() {
-//                    @Override
-//                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-//
-//                    }
-//
-//                    @Override
-//                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-//
-//                    }
-//
-//                    @Override
-//                    public X509Certificate[] getAcceptedIssuers() {
-//                        return null;
-//                    }
-//                }
-//        };
-//
-//        SSLContext sslContext = SSLContext.getInstance("SSL");
-//        sslContext.init(null, trustAllCerts, new SecureRandom());
-//        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-//            @Override
-//            public boolean verify(String urlHostName, SSLSession sslSession) {
-//                if (!urlHostName.equalsIgnoreCase(sslSession.getPeerHost())) {
-//                    log.info("Warning: URL host '" + urlHostName + "' is different to SSLSession host '" + sslSession.getPeerHost() + "'.");
-//                }
-//                return true;
-//            }
-//        };
-//
-//        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
-//    }
+    private void disableSSLCertificates() throws Exception {
+        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+        final TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                }
+        };
+
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null, trustAllCerts, new SecureRandom());
+        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
+            @Override
+            public boolean verify(String urlHostName, SSLSession sslSession) {
+                if (!urlHostName.equalsIgnoreCase(sslSession.getPeerHost())) {
+                    log.info("Warning: URL host '" + urlHostName + "' is different to SSLSession host '" + sslSession.getPeerHost() + "'.");
+                }
+                return true;
+            }
+        };
+
+        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
+    }
 
 
 }
