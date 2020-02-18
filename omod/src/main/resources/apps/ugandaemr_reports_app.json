@@ -659,6 +659,14 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTX_TB"
       },
       {
+        "id": "PMTCT ART  Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "PMTCT ART  Report",
+        "url": "reportingui/runReport.page?reportDefinition=47246504-69df-4060-b202-e2903305c456",
+        "order": 50
+      },
+      {
         "id": "Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
         "type": "link",
