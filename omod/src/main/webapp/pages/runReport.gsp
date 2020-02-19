@@ -59,7 +59,7 @@
                 type: 'POST'
             }).success(function (data) {
 
-                var responsedata =JSON.parse(data.replace("data=", "\"data\":").replace("x-","x"));
+                var responsedata =JSON.parse(data.replace("data=", "\"data\":").replace("-",""));
                 displayReport(responsedata,reportuuid);
                 jq('#edit-preview-report-form').modal('show');
             })
@@ -83,7 +83,7 @@
                     rowspan=dataValue.xshortname;
                     dataValueToDisplay += "<th rowspan=\"1\" width=\"20%\">" + dataValue.xshortname + "</th>";
                 }
-                dataValueToDisplay += "<td>" + dataValue.xcategoryoptioncombo + "</td>";
+                dataValueToDisplay += "<td>" + dataValue.xadxagegroupdescription +" "+ dataValue.xadxsexdescription+ "</td>";
                 dataValueToDisplay += "<td>" + dataValue.value + "</td>";
                 dataValueToDisplay += "</tr>";
                 reportDataString += dataValueToDisplay;
@@ -323,7 +323,7 @@ ${ui.includeFragment("appui", "messages", [codes: [
                 </div>
 
                 <div class="modal-body">
-                    <div id="display-report"></div>
+                    <div id="display-report" style="height:500px;overflow-y:scroll;"></div>
                 </div>
 
                 <div class="modal-footer">

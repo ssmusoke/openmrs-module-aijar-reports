@@ -21,6 +21,8 @@ import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.service.ReportService;
 import org.openmrs.module.reporting.web.renderers.WebReportRenderer;
+import org.openmrs.module.ugandaemrsync.server.UgandaEMRHttpURLConnection;
+import org.openmrs.module.ugandaemrsync.tasks.SendDHIS2DataToCentralServerTask;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,7 +45,7 @@ public class SendReportRequestFragmentController {
 
     protected Log log = LogFactory.getLog(getClass());
 
-
+    UgandaEMRHttpURLConnection ugandaEMRHttpURLConnection = new UgandaEMRHttpURLConnection();
     public SimpleObject post(@SpringBean ReportService reportService,
                              @RequestParam("request") String requestUuid) throws IOException {
         ReportRequest req = reportService.getReportRequestByUuid(requestUuid);
@@ -58,7 +60,7 @@ public class SendReportRequestFragmentController {
 
             throw new IllegalStateException("Web Renderers not yet implemented");
         } else {
-            String filename = renderingMode.getRenderer().getFilename(req).replace(" ", "_");
+            String filename = renderingMode.getRenderer().getFilename(req).replaceAll("-", "");
             String contentType = renderingMode.getRenderer().getRenderedContentType(req);
             byte[] data = reportService.loadRenderedOutput(req);
 
@@ -74,7 +76,7 @@ public class SendReportRequestFragmentController {
     }
 
     public SimpleObject previewReport(@SpringBean ReportService reportService,
-                             @RequestParam("request") String requestUuid) throws IOException {
+                                      @RequestParam("request") String requestUuid) throws IOException {
         ReportRequest req = reportService.getReportRequestByUuid(requestUuid);
         if (req == null) {
             throw new IllegalArgumentException("ReportRequest not found");
@@ -87,13 +89,13 @@ public class SendReportRequestFragmentController {
 
             throw new IllegalStateException("Web Renderers not yet implemented");
         } else {
-            String filename = renderingMode.getRenderer().getFilename(req).replace(" ", "_");
+            String filename = renderingMode.getRenderer().getFilename(req).replace("-", "");
             String contentType = renderingMode.getRenderer().getRenderedContentType(req);
             data = reportService.loadRenderedOutput(req);
         }
-        String jsonData=new String(data).replace("x-","x");
+        String jsonData=new String(data).replaceAll("-","");
 
-       return SimpleObject.create("data",jsonData);
+        return SimpleObject.create("data",jsonData);
     }
 
 
@@ -101,88 +103,12 @@ public class SendReportRequestFragmentController {
     private SimpleObject sendData(byte[] data) throws IOException {
         Map map = new HashMap();
         SimpleObject simpleObject=new SimpleObject();
-        int responseCode = 0;
         try {
-            URL url = new URL("https://ugisl.mets.or.ug:5000/ehmis");
-
-            String encoding = Base64.getEncoder().encodeToString(("mets.mkaye:METS4321!").getBytes("UTF-8"));
-
-            HttpsURLConnection httpsCon = (HttpsURLConnection) url.openConnection();
-            httpsCon.setDoOutput(true);
-            httpsCon.setRequestMethod("POST");
-            httpsCon.setRequestProperty("Authorization", "Basic " + encoding);
-            httpsCon.setRequestProperty("content-type", "application/json");
-            OutputStream os = httpsCon.getOutputStream();
-            os.write(data);
-            httpsCon.connect();
-            BufferedReader br = new BufferedReader(new InputStreamReader(httpsCon.getInputStream(), "utf-8"));
-            StringBuilder response = new StringBuilder();
-            String responseLine = null;
-            while ((responseLine = br.readLine()) != null) {
-                response.append(responseLine.trim());
-            }
-            os.close();
-
-            responseCode = ((HttpsURLConnection) httpsCon).getResponseCode();
-            //reading the response
-            if ((responseCode == 200 || responseCode == 201)) {
-                InputStream inputStreamReader = httpsCon.getInputStream();
-                String output1 = httpsCon.getResponseMessage();
-                map.put("responseCode", output1);
-            } else {
-                map.put("responseCode", responseCode);
-            }
-
-
-            simpleObject=SimpleObject.create("message",response.toString());
-            simpleObject.put("responseCode",responseCode);
+           SendDHIS2DataToCentralServerTask task = new SendDHIS2DataToCentralServerTask(data,simpleObject);
+           task.execute();
         } catch (Exception e) {
-            simpleObject.put("responseCode",responseCode);
             e.printStackTrace();
         }
         return simpleObject;
     }
-
-    /**
-     * This function disables the SSLCertificate - need to activate SSL at the endpoint
-     *
-     * @Jmpango
-     */
-    private void disableSSLCertificates() throws Exception {
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-        final TrustManager[] trustAllCerts = new TrustManager[]{
-                new X509TrustManager() {
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-
-                    }
-
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-
-                    }
-
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
-                }
-        };
-
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, trustAllCerts, new SecureRandom());
-        HostnameVerifier hostnameVerifier = new HostnameVerifier() {
-            @Override
-            public boolean verify(String urlHostName, SSLSession sslSession) {
-                if (!urlHostName.equalsIgnoreCase(sslSession.getPeerHost())) {
-                    log.info("Warning: URL host '" + urlHostName + "' is different to SSLSession host '" + sslSession.getPeerHost() + "'.");
-                }
-                return true;
-            }
-        };
-
-        HttpsURLConnection.setDefaultHostnameVerifier(hostnameVerifier);
-    }
-
-
 }

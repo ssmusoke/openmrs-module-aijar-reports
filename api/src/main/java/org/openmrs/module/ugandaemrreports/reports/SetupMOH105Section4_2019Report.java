@@ -340,15 +340,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "HT14","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
         addRowWithColumns(dsd, "HT15","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
         addRowWithColumns(dsd, "HT16","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
-
-//        addRowWithColumns(dsd, "HT10","H4- Number of individuals who received HIV results in the last 12months", indicatorLibrary.individualsWhoReceivedHIVTestResultsInLast12Months());
-//        addRowWithColumns(dsd, "HT11","H1-Number of Individuals counseled", indicatorLibrary.individualsCounselled());
-//        addRowWithColumns(dsd, "HT12","H2-Number of Individuals tested", indicatorLibrary.individualsTested());
-//
-
-//        addRowWithColumns(dsd, "4.H15","H15-Number of positive individuals who tested at an early stage (CD4>500µ)", indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
-//        addRowWithColumns(dsd, "4.H16","H16-Number of clients who have been linked to care", indicatorLibrary.clientsLinkedToCare());
-
         return dsd;
     }
 
@@ -378,8 +369,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addIndicator(dsd, key + "jF", label + " (Between 45 and 49 Years) Female", cohortIndicator, "gender=F|age=Between45And49yrs");
         addIndicator(dsd, key + "kM", label + " (>50) Male", cohortIndicator, "gender=M|age=GreaterThan50yrs");
         addIndicator(dsd, key + "kF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
-        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");     
-
+        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
@@ -389,6 +379,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "4.0.4.7";
+        return "4.0.5";
     }
 }
