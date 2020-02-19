@@ -212,6 +212,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.2.5.4";
+        return "0.1";
     }
 }
