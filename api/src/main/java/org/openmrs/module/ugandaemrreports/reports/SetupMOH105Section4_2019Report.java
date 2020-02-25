@@ -340,6 +340,8 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "HT14","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
         addRowWithColumns(dsd, "HT15","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
         addRowWithColumns(dsd, "HT16","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
+        addRowWithColumns(dsd, "HT17","H13-Individuals counseled and tested As Special Category", indicatorLibrary.testedAsSpecialCategory());
+
         return dsd;
     }
 
@@ -379,6 +381,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "4.0.5";
+        return "5.0";
     }
 }

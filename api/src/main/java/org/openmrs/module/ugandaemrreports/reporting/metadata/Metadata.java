@@ -39,6 +39,7 @@ public class Metadata {
         public static final String TB_TREATMENT_START_DATE = "dce02eca-30ab-102d-86b0-7a5022ba4115";
         public static final String ON_TB_TREATMENT = "dcdaa6b4-30ab-102d-86b0-7a5022ba4115";
         public static final String ASSESSED_FOR_MALNUTRITION = "dc655734-30ab-102d-86b0-7a5022ba4115";
+        public static final String PREVIOUS_HIV_TEST_RESULTS = "49ba801d-b6ff-47cd-8d29-e0ac8649cb7d";
 
         public static final String FAMILY_PLANNING_METHOD = "dc7620b3-30ab-102d-86b0-7a5022ba4115";
         public static final String COUNSELING_SESSION_TYPE = "b92b1777-4356-49b2-9c83-a799680dc7d4";

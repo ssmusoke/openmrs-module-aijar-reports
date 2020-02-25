@@ -794,6 +794,10 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Individuals counseled and tested for PEP", map(cohortLibrary.individualsCounseledAndTestedForPep(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    public CohortIndicator testedAsSpecialCategory() {
+        return cohortIndicator("Individuals counseled and tested as Special Cateogries", map(cohortLibrary.individualsCounseledAndTestedAsSpecial(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
     /**
      * H14-Number of individuals tested as MARPS
      * @return CohortIndicator
@@ -1278,7 +1282,7 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Number of clients who have tested for HIV", map(cohortLibrary.individualsTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator clientsNewlyPositive() {
-        return cohortIndicator("Number of clients who have tested Newly positive", map(cohortLibrary.totalNumberofInidividualsNewlyTested(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Number of clients who have tested Newly positive", map(cohortLibrary.newHIVpositiveClients(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     //End HIV/AIDS counseling and testing (HCT)        
     

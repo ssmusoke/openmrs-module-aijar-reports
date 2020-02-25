@@ -542,8 +542,11 @@ public class Moh105CohortLibrary {
      */    
     public CohortDefinition testedHivPositive() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE));
-	}    
+	}
 
+    public CohortDefinition previousHIVtestResult() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.PREVIOUS_HIV_TEST_RESULTS), Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE));
+    }
     /**
      * Tested HIV Negative
      * @return CohortDefinition
@@ -592,6 +595,27 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("receivedHivTestResults AND counseledAsIndividuals");
         return cd;
 	}
+    public CohortDefinition individualsWhoPreviouslyareNegativeAndCurrentlyPositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results");
+        cd.addSearch("currentlyHIVpositive", ReportUtils.map(testedHivPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("previouslyHIVnegative", ReportUtils.map(previousHIVtestResult(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("currentlyHIVpositive AND previouslyHIVnegative");
+        return cd;
+    }
+
+    public CohortDefinition newHIVpositiveClients() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals who received HIV Test Results");
+        cd.addSearch("currentlyHIVpositive", ReportUtils.map(individualsWhoPreviouslyareNegativeAndCurrentlyPositive(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("newlyTested", ReportUtils.map(totalNumberofInidividualsNewlyTested(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("currentlyHIVpositive OR newlyTested");
+        return cd;
+    }
     public CohortDefinition totalNumberofInidividualsNewlyTested() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
@@ -842,6 +866,12 @@ public class Moh105CohortLibrary {
     }
 
 
+    /** All special categories people
+     * **/
+    public CohortDefinition clientsCategorisedAsSpecialCategories() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.SPECIAL_CATEGORIES));
+    }
+
     /**
      * SPECIAL CATEGORIES CONCEPT ANSWERA
      */
@@ -908,6 +938,17 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("testedAsMarps AND counseledAsIndividuals");
         return cd;
 	}
+
+    public CohortDefinition individualsCounseledAndTestedAsSpecial() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Number of individuals tested as Special Category");
+        cd.addSearch("testedAsSpecialCategories", ReportUtils.map(clientsCategorisedAsSpecialCategories(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedAsSpecialCategories AND counseledAsIndividuals");
+        return cd;
+    }
 
     /**
      * Number with Facility Based Entry Point and tested for HIV

@@ -36,14 +36,16 @@
                 url: emr.fragmentActionLink("ugandaemrreports", "sendReportRequest", "post", {request: reportuuid}),
                 dataType: 'text',
                 type: 'POST',
-            }).success(function (data) {
-                var responseData = JSON.parse(data.replace("message=", "\"message\":").replace("responseCode=","\"responseCode\":").trim());
+            }).success(function (responsedata) {
+                var responseMessages = JSON.stringify(responsedata);
+                console.log(responseMessages)
+                console.log(responseMessages.message)
                 jq('#edit-preview-report-form').modal('hide');
-                if ((responseData.responseCode === 200 || responseData.responseCode === 201)) {
-                    responseMessage = "Data Sent Succesfully " + " Imported: " + responseData.message.importCount.imported + " Updated: " + responseData.message.importCount.updated + " Ignored: " + responseData.message.importCount.ignored + " Deleted: " + responseData.message.importCount.deleted;
-                    jq().toastmessage("showSuccessToast", responseMessage);
+                if ((responsedata.responseCode === 200 || responsedata.responseCode === 201)) {
+                    responseMessage = "Data Sent Succesfully  to DHIS2";
+                    jq().toastmessage("showSuccessToast", responseMessages.message);
                 }else {
-                    jq().toastmessage("showErrorToast",responseCode);
+                    jq().toastmessage("showErrorToast",(responsedata));
                 }
             }).complete(function (data) {
 
@@ -83,7 +85,7 @@
                     rowspan=dataValue.xshortname;
                     dataValueToDisplay += "<th rowspan=\"1\" width=\"20%\">" + dataValue.xshortname + "</th>";
                 }
-                dataValueToDisplay += "<td>" + dataValue.xadxagegroupdescription +" "+ dataValue.xadxsexdescription+ "</td>";
+                dataValueToDisplay += "<td>" +(dataValue.xadxagegroupdescription).substring(0,2)+"-"+(dataValue.xadxagegroupdescription).substring(2,6) +" "+ (dataValue.xadxsexdescription)+"</td>";
                 dataValueToDisplay += "<td>" + dataValue.value + "</td>";
                 dataValueToDisplay += "</tr>";
                 reportDataString += dataValueToDisplay;
@@ -238,7 +240,7 @@ ${ui.includeFragment("appui", "messages", [codes: [
                             <a id="{{ request.uuid }}" onclick="previewReport(this.id)">
                                 <span ng-hide="request.renderingMode.interactive">
                                     <i class="icon-upload small"></i>
-                                    To DHIS2
+                                    Send To DHIS2
                                 </span>
                             </a>
                         </span>
@@ -315,11 +317,11 @@ ${ui.includeFragment("appui", "messages", [codes: [
         </fieldset>
     </div>
 
-    <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg" style="">
-        <div class="modal-dialog modal-lg" role="document">
+    <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg">
+        <div class="modal-dialog modal-lg" role="document" style="width:1250px;">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 style="color: #FFFFFF">${ui.message("Preview Report")}</h3>
+                    <h3 style="text-align:center">Preview the HTS REPORT</h3>
                 </div>
 
                 <div class="modal-body">

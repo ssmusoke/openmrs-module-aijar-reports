@@ -106,6 +106,8 @@ public class SendReportRequestFragmentController {
         try {
            SendDHIS2DataToCentralServerTask task = new SendDHIS2DataToCentralServerTask(data,simpleObject);
            task.execute();
+            simpleObject=task.getServerResponseObject();
+           System.out.println(simpleObject.toJson());
         } catch (Exception e) {
             e.printStackTrace();
         }
