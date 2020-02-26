@@ -1,17 +1,24 @@
 {
-  "facilityid": "#S.dhis_uuid#",
-  "emrversion": "#aijar.version#",
-  "artencounters": #METRIC.a#,
-  "htsencounters":#METRIC.b#,
-  "eidencounters":#METRIC.c#,
-  "patientsactiveincare":#METRIC.d#,
-  "patientseverenrolled":#METRIC.e#,
-  "patientsservedatreception":#METRIC.f#,
-  "patientsservedattriage":#METRIC.g#,
-  "patientsservedatcounselor":#METRIC.h#,
-  "patientsservedatclinician":#METRIC.i#,
-  "patientsservedatlab":#METRIC.j#,
-  "patientsservedatpharmacy":#METRIC.k#,
-  "patientsvirallysuppressed":#METRIC.l#,
-  "patientsnonsuppressed":#METRIC.m#
+  "facility_id": "#S.dhis_uuid#",
+  "emr_version": "#aijar.version#",
+  "start_date": #parameter.startDate#,
+  "end_date": #parameter.endDate#,
+  "date_posted": #date.today#,
+  "encounters": {
+    "art_summary": #METRIC.l#,
+    "art_encounter": #METRIC.a#,
+    "art_health_education": #METRIC.m#,
+    "hts": #METRIC.b#,
+    "eid_summary": #METRIC.c#,
+    "eid_encounter": #METRIC.d#,
+    "missed_appointment": #METRIC.e#
+  },
+  "poc_service_metrics": {
+    "reception":#METRIC.f#,
+    "triage":#METRIC.g#,
+    "counselor":#METRIC.h#,
+    "clinician":#METRIC.i#,
+    "lab":#METRIC.j#,
+    "pharmacy":#METRIC.k#
+  }
 }
