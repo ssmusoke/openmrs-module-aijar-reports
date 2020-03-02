@@ -37,16 +37,9 @@
                 dataType: 'text',
                 type: 'POST',
             }).success(function (responsedata) {
-                var responseMessages = JSON.stringify(responsedata);
-                console.log(responseMessages)
-                console.log(responseMessages.message)
                 jq('#edit-preview-report-form').modal('hide');
-                if ((responsedata.responseCode === 200 || responsedata.responseCode === 201)) {
-                    responseMessage = "Data Sent Succesfully  to DHIS2";
-                    jq().toastmessage("showSuccessToast", responseMessages.message);
-                }else {
-                    jq().toastmessage("showErrorToast",(responsedata));
-                }
+                jq().toastmessage("showSuccessToast", "Report Sent Successfully");
+
             }).complete(function (data) {
 
             }).error(function (data) {
@@ -318,8 +311,8 @@ ${ui.includeFragment("appui", "messages", [codes: [
     </div>
 
     <div id="edit-preview-report-form" title="preview-report" class="modal fade bd-order-modal-lg">
-        <div class="modal-dialog modal-lg" role="document" style="width:1250px;">
-            <div class="modal-content">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="width:1000px;">
                 <div class="modal-header">
                     <h3 style="text-align:center">Preview the HTS REPORT</h3>
                 </div>
