@@ -135,20 +135,20 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         Location Pharmacy = commonDimensionLibrary.getLocationByUuid("3ec8ff90-3ec1-408e-bf8c-22e4553d6e17");
 
 
-        CohortDefinition ARTEncounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTEncounterPageEncounterType());
-        CohortDefinition ARTSummary=  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition eidSummary=  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getEIDSummaryPageEncounterType() );
-        CohortDefinition missedAppointment=  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getMissedAppointmentRegisterEncounterType());
-        CohortDefinition healthEducation=  df.getAnyEncounterOfTypesByEndOfDate(Arrays.asList(artCohortLibrary.ARTHealthEducationEncounterType()));
-        CohortDefinition HTSEncounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getHCTEncounterType());
-        CohortDefinition EIDCounter =  df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getEIDEncounterPageEncounterType());
+        CohortDefinition ARTEncounter =  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getARTEncounterPageEncounterType());
+        CohortDefinition ARTSummary=  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getARTSummaryPageEncounterType());
+        CohortDefinition eidSummary=  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getEIDSummaryPageEncounterType() );
+        CohortDefinition missedAppointment=  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getMissedAppointmentRegisterEncounterType());
+        CohortDefinition healthEducation=  df.getAnyEncounterOfTypesBetweenDates(Arrays.asList(artCohortLibrary.ARTHealthEducationEncounterType()));
+        CohortDefinition HTSEncounter =  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getHCTEncounterType());
+        CohortDefinition EIDCounter =  df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getEIDEncounterPageEncounterType());
 
-        CohortDefinition patientsThroughReception = df.getAnyEncounterOfTypesByEndOfDate(null, Arrays.asList(reception));
-        CohortDefinition patientsThroughTriage = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(triage));
-        CohortDefinition patientsThroughCounselor = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(counselor));
-        CohortDefinition patientsThroughLab = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(Lab));
-        CohortDefinition patientsThroughPharmacy = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(Pharmacy));
-        CohortDefinition patientsThroughARTClinician = df.getAnyEncounterOfTypesByEndOfDate(null,Arrays.asList(ART_Clinician));
+        CohortDefinition patientsThroughReception = df.getAnyEncounterOfTypesBetweenDates(null, Arrays.asList(reception));
+        CohortDefinition patientsThroughTriage = df.getAnyEncounterOfTypesBetweenDates(null,Arrays.asList(triage));
+        CohortDefinition patientsThroughCounselor = df.getAnyEncounterOfTypesBetweenDates(null,Arrays.asList(counselor));
+        CohortDefinition patientsThroughLab = df.getAnyEncounterOfTypesBetweenDates(null,Arrays.asList(Lab));
+        CohortDefinition patientsThroughPharmacy = df.getAnyEncounterOfTypesBetweenDates(null,Arrays.asList(Pharmacy));
+        CohortDefinition patientsThroughARTClinician = df.getAnyEncounterOfTypesBetweenDates(null,Arrays.asList(ART_Clinician));
 
         addIndicator(dsd, "a", "ART Encounter", ARTEncounter, "");
         addIndicator(dsd, "b", "HTS Encounters", HTSEncounter, "");
@@ -189,6 +189,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.4.2";
+        return "0.1.6.4.2";
     }
 }
