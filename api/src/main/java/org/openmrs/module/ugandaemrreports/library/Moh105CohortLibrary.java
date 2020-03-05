@@ -26,7 +26,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptySiteType;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SmcReturnFollowUpCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.cohort.definition.CalculationCohortDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.*;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -559,10 +559,14 @@ public class Moh105CohortLibrary {
      * Ever Tested for HIV Before
      * @return CohortDefinition
      */
+    public CohortDefinition everTestedForHivBefore() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_CIEL));
+    }
+
     public CohortDefinition individualsTestingFortheFirstTime() {
         return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.FIRST_HIV_TEST), Dictionary.getConcept(Metadata.Concept.YES_WHO));
-    }    
-    
+    }
+
     /**
      * Tested in last 12 Months
      * @return CohortDefinition
@@ -575,7 +579,11 @@ public class Moh105CohortLibrary {
      * Tested more than twice in the last 12 Months
      * @return CohortDefinition
      */    
-	public CohortDefinition testedMoreThanOnceInLast12Months() {
+	public CohortDefinition testedMoreThanTwiceInLast12Months() {
+    	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 2);
+    }
+
+    public CohortDefinition testedMoreThanOnceInLast12Months() {
     	return definitionLibrary.hasNumericObs(Dictionary.getConcept(Metadata.Concept.TIMES_TESTED_IN_LAST_12_MONTHS),RangeComparator.GREATER_THAN,(double) 1);
     }
     public CohortDefinition testedForPEP() {
@@ -650,16 +658,16 @@ public class Moh105CohortLibrary {
      * Individuals Tested for the first time
      * @return CohortDefinition
      */
-//    public CohortDefinition individualsTestedFirstTime() {
-//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-//        cd.setName("Individuals Tested First Time");
-//        cd.addSearch("testedFirstTime", ReportUtils.map(individualsTestingFortheFirstTime(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.setCompositionString("testedFirstTime AND counseledAsIndividuals");
-//        return cd;
-//    }
+    public CohortDefinition individualsTestedFirstTime() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals Tested First Time");
+        cd.addSearch("testedFirstTime", ReportUtils.map(everTestedForHivBefore(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedFirstTime AND counseledAsIndividuals");
+        return cd;
+    }
 
     /**
      * Individuals who Tested HIV Positive
@@ -703,16 +711,16 @@ public class Moh105CohortLibrary {
 	 * Individuals tested more than twice in the last 12 months
 	 * @return CohortDefinition
 	 */			
-//	public CohortDefinition individualsTestedMoreThanTwiceInLast12Months() {
-//        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-//        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-//        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-//        cd.setName("Individuals tested more than twice in the last 12 months");
-//        cd.addSearch("testedMoreThanTwiceInlast12Months", ReportUtils.map(testedMoreThanOnInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-//        cd.setCompositionString("testedMoreThanTwiceInlast12Months AND counseledAsIndividuals");
-//        return cd;
-//	}
+	public CohortDefinition individualsTestedMoreThanTwiceInLast12Months() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Individuals tested more than twice in the last 12 months");
+        cd.addSearch("testedMoreThanTwiceInlast12Months", ReportUtils.map(testedMoreThanTwiceInLast12Months(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("counseledAsIndividuals", ReportUtils.map(counseledAsIndividuals(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("testedMoreThanTwiceInlast12Months AND counseledAsIndividuals");
+        return cd;
+	}
 
 	/**
 	 * Individuals who were Counseled and Tested together as a Couple
@@ -773,10 +781,9 @@ public class Moh105CohortLibrary {
 	 * Tested for PEP
 	 * @return CohortDefiniton
 	 */
-//	public CohortDefinition testedForPep() {
-//        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
-//	}
-
+	public CohortDefinition testedForPep() {
+        return definitionLibrary.hasObs(Dictionary.getConcept(Metadata.Concept.HCT_ENTRY_POINT), Dictionary.getConcept(Metadata.Concept.POST_EXPOSURE_PROPHYLAXIS));
+	}
 
     /**
      * HCT Entry Points
