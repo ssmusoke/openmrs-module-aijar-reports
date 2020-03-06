@@ -561,6 +561,16 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return cd;
     }
 
+    public CohortDefinition getMedianCD4AtARTInitiation(){
+        String query ="select p.value_numeric from obs p  inner join  encounter e on p.encounter_id = e.encounter_id  inner join encounter_type t on e.encounter_type = t.encounter_type_id"+
+        "where p.obs_datetime between :startDate and :endDate and  t.uuid= '8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' and p.concept_id= 99071 and p.person_id in (select person_id from obs o  where o.voided = 0 and o.concept_id = 99161 and  o.value_datetime between :startDate and :endDate)";
+
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cd;
+    }
+
    public CohortDefinition getPatientsWhoHadAViralLoadTestDuringThePastPeriodFromEndDate(String pastPeriods){
        return df.getPatientsWhoseObsValueDateIsBetweenPastPeriodFromEndDate(hivMetadata.getViralLoadDate(),hivMetadata.getARTEncounterPageEncounterType(),pastPeriods, BaseObsCohortDefinition.TimeModifier.LAST);
    }

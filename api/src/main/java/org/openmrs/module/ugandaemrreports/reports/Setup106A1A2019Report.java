@@ -109,12 +109,11 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
 
 
-        // CohortDefinition activeWithNoEncounterInQuarter = hivCohortDefinitionLibrary.getActiveWithNoEncounterInQuarter();
-
         CohortDefinition hadEncounterInQuarter = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
 
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
         CohortDefinition transferredInBeforeQuarter = hivCohortDefinitionLibrary.getTransferredInToCareBeforePeriod();
+        CohortDefinition transferredInPatients= df.getPatientsInAny(transferredInTheQuarter,transferredInBeforeQuarter);
 
         CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
         CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
@@ -349,6 +348,7 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "11", "new clients started on ART in the same quarter", havingArtStartDateDuringQuarter);
         addAgeGender(dsd, "12", "pregnant and lactating clients started on ART in the same quarter", pregnantOrLactatingAndNewOnARTDuringQuarter);
         addAgeGender(dsd, "13", "new clients started on ART with Baseline CD4", patientsStartedArtDuringQuarterWithBaselineCD4 );
+        addAgeGender(dsd, "14", "median cd4 count at ART initiation",  df.getPatientsNotIn(hivCohortDefinitionLibrary.getMedianCD4AtARTInitiation(),transferredInPatients));
         addAgeGender(dsd, "15", "new clients started on ART with Baseline CD4 less equal to 200", newClientsWithBaselineCd4LessEqual200 );
         addAgeGender(dsd, "16a-", "new clients accessed TB LAM", newClientsWithBaselineCd4LessEqual200AndAccessedTBLAM );
         addAgeGender(dsd, "16b-", "new clients positive for TB LAM", newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAM);
