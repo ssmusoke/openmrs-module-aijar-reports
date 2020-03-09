@@ -1,0 +1,27 @@
+{
+  "facility_id": "#S.dhis_uuid#",
+  "emr_software": "UgandaEMR",
+  "emr_version": "#aijar.version#",
+  "start_date": "#parameter.startDate|YYYY-MM-dd#",
+  "end_date": "#parameter.endDate|YYYY-MM-dd#",
+  "date_run": "#date.today|YYYY-MM-dd#",
+  "encounters": {
+    "hiv": {
+        "art_summary": #METRIC.l#,
+        "art_encounter": #METRIC.a#,
+        "art_health_education": #METRIC.m#,
+        "hts": #METRIC.b#,
+        "eid_summary": #METRIC.c#,
+        "eid_encounter": #METRIC.d#,
+        "missed_appointment_followup": #METRIC.e#
+      }
+  },
+  "poc_service_metrics": {
+    "reception":#METRIC.f#,
+    "triage":#METRIC.g#,
+    "counselor":#METRIC.h#,
+    "clinician":#METRIC.i#,
+    "lab":#METRIC.j#,
+    "pharmacy":#METRIC.k#
+  }
+}

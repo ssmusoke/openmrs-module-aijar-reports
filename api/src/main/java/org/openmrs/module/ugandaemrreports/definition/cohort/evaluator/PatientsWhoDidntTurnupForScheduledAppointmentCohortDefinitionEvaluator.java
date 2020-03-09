@@ -89,28 +89,28 @@ public class PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinitionEvalua
 
         for (Map.Entry<Integer, Date> entry : obsResults.entrySet()) {
             Integer patientId = entry.getKey();
-            Date encounterDate = encounterResults.get(patientId);
-            if (encounterDate != null) {
-                Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(), encounterDate);
-                if (cd.getMaximumDays() != null && cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays() && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
-                    ret.addMember(patientId);
-                } else if (cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays()) {
-                    ret.addMember(patientId);
-                } else if (cd.getMaximumDays() != null && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
+            //remove the early comers
+            if(earlyBirdPatientsResults.contains(patientId)){
+                continue;
+            }
+            else {
+                Date encounterDate = encounterResults.get(patientId);
+                if (encounterDate != null) {
+                    Integer daysBetweenLastAppointmentAndCurrentDate = DateUtil.getDaysBetween(entry.getValue(), encounterDate);
+                    if (cd.getMaximumDays() != null && cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays() && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
+                        ret.addMember(patientId);
+                    } else if (cd.getMinimumDays() != null && daysBetweenLastAppointmentAndCurrentDate >= cd.getMinimumDays()) {
+                        ret.addMember(patientId);
+                    } else if (cd.getMaximumDays() != null && daysBetweenLastAppointmentAndCurrentDate <= cd.getMaximumDays()) {
+                        ret.addMember(patientId);
+                    }
+                } else {
+                    // All members who didn't have any encounter after visit date will be considered lost,missed appointment or lost to followup
                     ret.addMember(patientId);
                 }
-            } else {
-                // All members who didn't have any encounter after visit date will be considered lost,missed appointment or lost to followup
-                ret.addMember(patientId);
             }
         }
 
-        //remove the early comers
-        if(earlyBirdPatientsResults.size()>0 && !earlyBirdPatientsResults.isEmpty()){
-            for (Integer patientId:earlyBirdPatientsResults) {
-                ret.removeMember(patientId);
-            }
-        }
         return ret;
     }
 }

@@ -870,6 +870,15 @@
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "UgandaEMR Metrics Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "UgandaEMR Metrics Report",
+        "url": "reportingui/runReport.page?reportDefinition=dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       }
     ]
   }
