@@ -118,7 +118,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
         CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
 
-        CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
         CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod();
 
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
@@ -126,7 +125,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getEnrolledInCareToCareWhenPregnantOrLactating();
 
-        CohortDefinition pregnantAtFirstEncounter = hivCohortDefinitionLibrary.getPatientsPregnantAtFirstEncounter();
 
         CohortDefinition onINHDuringQuarter = hivCohortDefinitionLibrary.getOnINHDuringPeriod();
         CohortDefinition onINHBeforeQuarter = hivCohortDefinitionLibrary.getOnINHDuringBeforePeriod();
@@ -164,7 +162,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition oedemaWasYesDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoseOedemaWasYesDuringPeriod();
 
-        CohortDefinition onArtBasedOnCD4 = hivCohortDefinitionLibrary.getPatientsStartedArtBasedOnCD4();
         CohortDefinition patientsWithBaselineCD4 = hivCohortDefinitionLibrary.getPatientsWithBaselineCD4();
         CohortDefinition baseCD4L200 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(),RangeComparator.LESS_EQUAL, 200.0, BaseObsCohortDefinition.TimeModifier.FIRST);
 
@@ -195,7 +192,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition activePatients= df.getPatientsInAny(hadEncounterInQuarter,longRefillPatients,patientsWithReturnVisitDuringPeriod);
         CohortDefinition activePatientsInCareDuringPeriod = df.getPatientsNotIn(activePatients,df.getPatientsInAny(transferredOutPatients,deadPatientsByEndDate,lost_to_followup));
-        CohortDefinition startedINHDuringQuarter = df.getPatientsNotIn(onINHDuringQuarter, onINHBeforeQuarter);
         CohortDefinition patientsWhoHadAViralLoadTest6MonthsAfterArtInitiation = addStartDateAndEndDateParameters(hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate("6"));
         CohortDefinition patientsWhoHadAViralLoadTest12MonthsAfterArtInitiation = addStartDateAndEndDateParameters( hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate("12"));
         CohortDefinition patientsWhoHadAViralLoadTest6MonthsAfterArtInitiationAndAreVirallySupressed = addStartDateAndEndDateParameters( hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationAndAreSuppressedByEndDate("6"));
@@ -263,7 +259,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition positiveForTBLAMAndInitiatedOnTBTreatmentDuringPeriod = df.getPatientsInAll(positiveForTBLAM, patientsInitiatedOnTBTreatmentDuringPeriod);
         CohortDefinition positiveForCRAGAndInitiatedOnFluconazoleTreatmentDuringPeriod = df.getPatientsInAll(positiveForCRAG, patientsInitiatedOnFluconazoleTreatmentDuringPeriod);
         CohortDefinition onFluconazoleTreatment = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("7dea17d4-17eb-43b6-8029-785aeb6aa453"), hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_THAN, 0.0, BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition positiveForCRAGAndOnFluconazoleTreatment = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("7dea17d4-17eb-43b6-8029-785aeb6aa453"), hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_THAN, 0.0, BaseObsCohortDefinition.TimeModifier.ANY);
 
 
         CohortDefinition activePatientsOnPreArt = df.getPatientsInAll(activePatientsInCareDuringPeriod,onPreArt);
@@ -291,7 +286,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition inProgramCDDPDuringPeriod = commonCohortLibrary.getPatientsInProgramDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition inProgramCCLADDuringPeriod = commonCohortLibrary.getPatientsInProgramDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
 
-        CohortDefinition newlyEnrolledOnDSDDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"),commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"),commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"),commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"),commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition enrolledInFBIMDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition enrolledInFTDRDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition enrolledInFBGDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"));
@@ -410,43 +404,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "51e-", "patients newly enrolled in DSD CCLAD",enrolledInCCLADDuringPeriod);
 
 
-//        addAgeGender(dsd, "27a-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "27b-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "27c-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "27d-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "27e-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "27f-", "clients with no clinical contact ", patientsWithNoClinicalContactSinceLastExpectedContact);
-
-        /* addAgeGenderFemale(dsd, "3", "Pregnant and lactating enrolled in care ", enrolledWhenPregnantOrLactating);
-        addIndicator(dsd, "4i", "INH During Quarter", startedINHDuringQuarter, "");
-        addAgeGender(dsd, "5", "All who have ever enrolled up to quarter", cumulativeEverEnrolled);
-        addIndicator(dsd, "6i", "Transfer In", transferredInTheQuarter, "");
-        addAge(dsd, "7", "On Pre-ART", onPreArt);
-        addAge(dsd, "8", "On Pre-ART CPT", onPreArtWhoReceivedCPT);
-        addIndicator(dsd, "9i", "On Pre-ART Assessed for TB", onPreArtAssessedForTB, "");
-        addIndicator(dsd, "10i", " Pre-ART Diagnosed with TB", onPreArtDiagnosedWithTB, "");
-        addIndicator(dsd, "11i", "On Pre-ART started TB Rx", onPreArtStartedTBRx, "");
-        addIndicator(dsd, "12i", "On Pre-ART Assessed for Malnutrition", onPreArtAssessedForMalnutrition, "");
-        addIndicator(dsd, "13i", "On Pre-ART those who are Malnourished", onPreArtWhoAreMalnourished, "");
-        addIndicator(dsd, "14i", "Eligible but not started on art", eligibleButNotStartedByQuarter, "");
-        addAgeGender(dsd, "15", "Patients ever enrolled in art by the end of the previous quarter", havingArtStartDateBeforeQuarter);
-        addAgeGender(dsd, "16", "Started Art during the quarter", havingArtStartDateDuringQuarter);
-        addIndicator(dsd, "17i", "Started Art based on CD4", startedBasedOnCD4, "");
-        addAgeGenderFemale(dsd, "18", "Started ART when pregnant or lactating", startedArtWhenPregnant);
-        addAgeGender(dsd, "19", "Ever enrolled", cumulativeOnArt);
-        addAgeGender(dsd, "20", "First Line Regimen", onFirstLineRegimen);
-        addAgeGender(dsd, "21", "Second Line Regimen", onSecondLineRegimen);
-        addAgeGender(dsd, "22", "Third Line Regimen", onThirdLineRegimenDuringQuarter);
-        addAgeGender(dsd, "23", "On Art Received CPT", activeOnArtOnCPT);
-
-        addIndicator(dsd, "24i", "On Art assessed for TB", activeOnArtAssessedForTB, "");
-        addIndicator(dsd, "25i", "On Art diagnosed with TB", activeOnArtDiagnosedWithTB, "");
-        addIndicator(dsd, "26i", "On Art started TB Rx this quarter", activeOnArtStartedTBRx, "");
-        addIndicator(dsd, "27i", "On Art and TB treatment", activeOnArtOnTBRx, "");
-        addIndicator(dsd, "28i", "On Art good adherence", activeOnArtWithGoodAdherence, "");
-        addIndicator(dsd, "29i", "On Art assessed for malnutrition", activeOnArtAssessedForMalnutrition, "");
-        addIndicator(dsd, "30i", "On Art malnourished", activeOnArtWhoAreMalnourished, "");*/
-
         return rd;
     }
 
@@ -497,6 +454,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.2.4";
+        return "0.0.3";
     }
 }
