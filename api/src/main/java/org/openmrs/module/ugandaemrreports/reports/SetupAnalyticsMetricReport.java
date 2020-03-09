@@ -8,11 +8,9 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
-import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TodayDateDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -22,7 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 
@@ -88,7 +85,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
-        l.add(buildReportDesign(reportDefinition));
         l.add(buildJSONReportDesign(reportDefinition));
         return l;
     }
@@ -189,6 +185,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.6.4.2";
+        return "0.3";
     }
 }
