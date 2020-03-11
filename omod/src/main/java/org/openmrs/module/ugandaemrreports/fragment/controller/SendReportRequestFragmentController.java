@@ -26,15 +26,7 @@ import org.openmrs.module.ugandaemrsync.tasks.SendDHIS2DataToCentralServerTask;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import javax.net.ssl.*;
-import java.io.*;
-import java.net.URL;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.Base64;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
