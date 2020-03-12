@@ -21,7 +21,6 @@ import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.service.ReportService;
 import org.openmrs.module.reporting.web.renderers.WebReportRenderer;
-import org.openmrs.module.ugandaemrsync.server.UgandaEMRHttpURLConnection;
 import org.openmrs.module.ugandaemrsync.tasks.SendDHIS2DataToCentralServerTask;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.annotation.SpringBean;
@@ -37,7 +36,6 @@ public class SendReportRequestFragmentController {
 
     protected Log log = LogFactory.getLog(getClass());
 
-    UgandaEMRHttpURLConnection ugandaEMRHttpURLConnection = new UgandaEMRHttpURLConnection();
     public SimpleObject post(@SpringBean ReportService reportService,
                              @RequestParam("request") String requestUuid) throws IOException {
         ReportRequest req = reportService.getReportRequestByUuid(requestUuid);
