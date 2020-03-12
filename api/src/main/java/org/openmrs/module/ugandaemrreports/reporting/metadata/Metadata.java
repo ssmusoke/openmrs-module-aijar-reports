@@ -6,7 +6,7 @@ package org.openmrs.module.ugandaemrreports.reporting.metadata;
 public class Metadata {
 
     public static class Concept {
-        public final static String PREGNANT = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
+//        public final static String PREGNANT = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
         public final static String YES_CIEL = "1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public final static String YES_WHO = "dcd695dc-30ab-102d-86b0-7a5022ba4115";
         public final static String TRANSFER_IN = "ea730d69-7eec-486a-aaf2-54f8bab5a44c";
@@ -39,6 +39,7 @@ public class Metadata {
         public static final String TB_TREATMENT_START_DATE = "dce02eca-30ab-102d-86b0-7a5022ba4115";
         public static final String ON_TB_TREATMENT = "dcdaa6b4-30ab-102d-86b0-7a5022ba4115";
         public static final String ASSESSED_FOR_MALNUTRITION = "dc655734-30ab-102d-86b0-7a5022ba4115";
+        public static final String PREVIOUS_HIV_TEST_RESULTS = "49ba801d-b6ff-47cd-8d29-e0ac8649cb7d";
 
         public static final String FAMILY_PLANNING_METHOD = "dc7620b3-30ab-102d-86b0-7a5022ba4115";
         public static final String COUNSELING_SESSION_TYPE = "b92b1777-4356-49b2-9c83-a799680dc7d4";
@@ -46,7 +47,11 @@ public class Metadata {
         public static final String CURRENT_HIV_TEST_RESULTS = "3d292447-d7df-417f-8a71-e53e869ec89d";
         public static final String TIMES_TESTED_IN_LAST_12_MONTHS = "8037192e-8f0c-4af3-ad8d-ccd1dd6880ba";
         public static final String HIV_TEST = "d6522d62-093d-4157-a9d3-9359d1a33480";
-        public static final String RECEIVED_HIV_TEST_RESULTS = "ad2884a2-830f-4ca8-bc1e-1e1fd2df0f81";
+        public static final String FIRST_HIV_TEST = "2766c090-c057-44f2-98f0-691b6d0336dc";
+        public static final String RECEIVED_HIV_TEST_RESULTS = "3437ae80-bcc5-41e2-887e-d56999a1b467";
+        public static final String RECEIVED_HIV_TEST_RESULTS_AS_COUPLE = "2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d";
+        public static final String COUPLE_RESULTS = "94a5bd0a-b79d-421e-ab71-8e382eed100f";
+        public static final String CONCORDANT_POSITIVE = "799fe713-c665-463a-ae6f-3c9d539eff15";
         public static final String HIV_POSITIVE = "dcdf4241-30ab-102d-86b0-7a5022ba4115";
         public static final String TB_SUSPECT = "b80f04a4-1559-42fd-8923-f8a6d2456a04";
         public static final String POST_EXPOSURE_PROPHYLAXIS = "966db6f2-a9f2-4e47-bba2-051467c77c17";
@@ -55,8 +60,8 @@ public class Metadata {
         public static final String COMMUNITY_TESTING_POINT = "4f4e6d1d-4343-42cc-ba47-2319b8a84369";
         public static final String WORK_PLACE = "6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e";
         public static final String HBCT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
-        public static final String DIC = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
-        public static final String HOT_SPOT = "e8dd38d8-28a2-4c09-8cb4-f93f112279ea";
+        public static final String DIC = "b928b2e7-3ab4-4924-b730-5a13d8305408";
+        public static final String HOT_SPOT = "29d1a223-4ce4-43df-96fc-6d53c0e022b1";
         public static final String OTHER_COMMUNITY_TESTING_POINTS = "16820069-b4bf-4c47-9efc-408746e1636b";
         public static final String COUNSELLING_APPROACH = "ff820a28-1adf-4530-bf27-537bfa9ce0b2";
         public static final String HTC_DELIVERY_MODEL = "46648b1d-b099-433b-8f9c-3815ff1e0a0f";
@@ -67,15 +72,15 @@ public class Metadata {
         public static final String RECENT = "141518BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
         public static final String LONG_TERM = "141519BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
         public static final String SPECIAL_CATEGORIES = "927563c5-cb91-4536-b23c-563a72d3f829";
-        public static final String PRISONERS = "927563c5-cb91-4536-b23c-563a72d3f829";
+        public static final String PRISONERS = "162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PWIDs = "160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String UNIFORMED_MEN = "165125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String MIGRANT_WORKERS = "165126AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String TRUCKER_DRIVERS = "162198AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String FISHER_FOLKS = "159674AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String REFUGEES = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        public static final String PREGNANT_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        public static final String BREAST_FEEDING_WOMEN = "165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String PREGNANT_WOMEN = "dcda5179-30ab-102d-86b0-7a5022ba4115";
+        public static final String BREAST_FEEDING_WOMEN = "9e5ac0a8-6041-4feb-8c07-fe522ef5f9ab";
         public static final String AGYW = "165132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PWDs = "162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
@@ -86,9 +91,11 @@ public class Metadata {
         public static final String STI_UNIT = "dcd98f72-30ab-102d-86b0-7a5022ba4115";
         public static final String YCC_UNIT = "e9469d61-b0c3-4785-81c6-057c7bc099fc";
         public static final String ANC = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-        public static final String MATERNITY = "164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String MATERNITY = "160456AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String PNC = "165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String SMC = "409eae6b-9457-4896-b5fa-2667ad5ceffc";
+        public static final String DISCORDANT_COUPLE = "dcd6774e-30ab-102d-86b0-7a5022ba4115";
+        public static final String REASON_FOR_TESTING = "2afe1128-c3f6-4b35-b119-d17b9b9958ed";
         public static final String EID = "164981AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String OTHERS = "dcd68a88-30ab-102d-86b0-7a5022ba4115";
         public static final String MARPS = "b2706f7a-c4b8-4cd4-ad97-59396cf5bb3d";
