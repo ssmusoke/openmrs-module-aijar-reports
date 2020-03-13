@@ -12,6 +12,7 @@ import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
+import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,12 +75,12 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Section 4 HCT";
+        return "HMIS 105 Section 4: HTS";
     }
 
     @Override
     public String getDescription() {
-        return "Section 4 HCT";
+        return "HMIS 105 Section 4: HTS 2019";
     }
 
     @Override
@@ -381,6 +382,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "6.0";
+        return "6.0.2";
     }
 }
