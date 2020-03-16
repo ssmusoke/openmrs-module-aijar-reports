@@ -844,6 +844,14 @@
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
         "order":10,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },{
+        "id": "Dispensing Log Report ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "Dispensing Log Report",
+        "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
+        "order":15,
+        "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },
       {
         "id": "HMIS 105  4",
