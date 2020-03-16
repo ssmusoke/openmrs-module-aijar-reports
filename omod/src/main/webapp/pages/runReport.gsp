@@ -37,10 +37,14 @@
                 dataType: 'text',
                 type: 'POST',
             }).success(function (responsedata) {
-               // var responsedata =JSON.stringify(responsedata.to);
+                var responseData = JSON.parse(responsedata.replace("message=", "\"message\":").replace("responseCode=", "\"responseCode\":").trim());
                 console.log(responsedata)
-                jq('#edit-preview-report-form').modal('hide');
-                jq().toastmessage("showSuccessToast", "The Report Has Been Sent Successfully");
+                if(responseData.message.responseCode===200 || responseData.message.responseCode===201){
+                    responseMessage = "Data Sent Succesfully "+ " Imported: "+responseData.message.importCount.imported +" Updated: "+responseData.message.importCount.updated+" Ignored: "+responseData.message.importCount.ignored+" Deleted: "+responseData.message.importCount.deleted;
+                    jq().toastmessage("showSuccessToast",responseMessage);
+                }else {
+                    jq().toastmessage("showErrorToast",responseData.message.responseMessage);
+                }
 
             }).complete(function (data) {
 
@@ -232,12 +236,14 @@ ${ui.includeFragment("appui", "messages", [codes: [
                                 ${ui.message("reportingui.reportRequest.save.action")}
                             </a>
                             <br/>
+                            <% if (reportDefinition.uuid=='27f4804f-ec6f-466e-b4ea-21f9ca584880') { %>
                             <a id="{{ request.uuid }}" onclick="previewReport(this.id)">
                                 <span ng-hide="request.renderingMode.interactive">
                                     <i class="icon-upload small"></i>
                                     Send To DHIS2
                                 </span>
                             </a>
+                            <% }%>
                         </span>
                     </td>
                 </tr>
