@@ -845,10 +845,10 @@
         "order":10,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },{
-        "id": "Dispensing Log Report ",
+        "id": "Dispensing Log",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
         "type": "link",
-        "label": "Dispensing Log Report",
+        "label": "Dispensing Log",
         "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
         "order":15,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"

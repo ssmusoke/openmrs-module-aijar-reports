@@ -1,9 +1,6 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 import com.google.common.base.Joiner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.joda.time.LocalDate;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
@@ -14,26 +11,30 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
-import org.openmrs.module.ugandaemrreports.common.*;
-import org.openmrs.module.ugandaemrreports.definition.data.evaluator.ArtPatientDataEvaluator;
+import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
+import org.openmrs.module.ugandaemrreports.common.PersonDemographics;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.DispensingDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
+import static org.openmrs.module.ugandaemrreports.reports.Helper.getPatientDemographics;
+import static org.openmrs.module.ugandaemrreports.reports.Helper.sqlConnection;
+import static org.openmrs.module.ugandaemrreports.reports.Helper.processString;
+
 
 /**
  */
 @Handler(supports = {DispensingDatasetDefinition.class})
 public class DispensingDatasetDefinitionEvaluator implements DataSetEvaluator {
-    @Autowired
-    private HIVMetadata hivMetadata;
 
     @Autowired
     EvaluationService evaluationService;
@@ -44,9 +45,6 @@ public class DispensingDatasetDefinitionEvaluator implements DataSetEvaluator {
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 
         DispensingDatasetDefinition definition = (DispensingDatasetDefinition) dataSetDefinition;
-
-        Integer currentMonth = Integer.valueOf(getObsPeriod(new Date(), Enums.Period.MONTHLY));
-        LocalDate localDate = StubDate.dateOf(definition.getStartDate());
 
 
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
@@ -108,7 +106,6 @@ public class DispensingDatasetDefinitionEvaluator implements DataSetEvaluator {
                         PersonDemographics personDemos = personDemographics != null && personDemographics.size() > 0 ? personDemographics.get(0) : new PersonDemographics();
 
                         int question = (int) o[2];
-                        String drug = String.valueOf(o[4]);
 
                         if (question == 1282) {
                             pdh.addCol(row, "drug", drugNames.get((int) o[4]));
