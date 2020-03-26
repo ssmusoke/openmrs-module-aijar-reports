@@ -1,17 +1,13 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.data.encounter.definition.PatientToEncounterDataDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.DispensingDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,26 +19,13 @@ import java.util.Properties;
  * Daily Appointments List report
  */
 @Component
-public class SetupDispensingLogReport2019 extends UgandaEMRDataExportManager {
+public class SetupHMISPHAR003DispensingLogReport2019 extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-
-    @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
-
-    @Autowired
-    private HIVPatientDataLibrary hivPatientData;
-
-    @Autowired
-    private BasePatientDataLibrary basePatientData;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
-
 
 
     /**
