@@ -147,6 +147,20 @@ public class CommonCohortLibrary {
         return df.convert(cd, ObjectUtil.toMap("enrolledOnOrAfter=startDate,enrolledOnOrBefore=endDate"));
     }
 
+    /**
+     * Patients who were enrolled on the given programs between ${enrolledOnOrAfter} and ${enrolledOnOrBefore}
+     * and still in those programs ${completedOnOrAfter} and ${completedOnOrBefore} =null
+     * @param programs the programs
+     * @return the cohort definition
+     */
+    public CohortDefinition newlyEnrolledDuringPeriod(Program program) {
+        String query = String.format("SELECT distinct patient_id FROM patient_program pp join program on pp.program_id = program.program_id  WHERE program.uuid='%s' and date_enrolled between :startDate and :endDate and date_completed is null;",program.getUuid());
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cd;
+         }
+
     public CohortDefinition getPatientsInProgramDuringPeriod(Program program) {
         CurrentlyInProgramCohortDefinition cd = new CurrentlyInProgramCohortDefinition();
         cd.setName("in program during period");

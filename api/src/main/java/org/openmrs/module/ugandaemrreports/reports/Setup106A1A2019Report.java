@@ -14,7 +14,6 @@ import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimensio
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.MedianBaselineCD4DatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
@@ -290,12 +289,12 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition inProgramCDDPDuringPeriod = commonCohortLibrary.getPatientsInProgramDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition inProgramCCLADDuringPeriod = commonCohortLibrary.getPatientsInProgramDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
 
-        CohortDefinition enrolledInFBIMDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition enrolledInFTDRDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition enrolledInFBGDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition enrolledInCDDPDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition enrolledInCCLADDuringPeriod = commonCohortLibrary.enrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
-        CohortDefinition patientsSuppressedByEndDate = df.getPatientsWithNumericObsByEndDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.LESS_THAN,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
+         CohortDefinition patientsSuppressedByEndDate = df.getPatientsWithNumericObsByEndDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.LESS_THAN,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition newlyEnrolledInFBIMDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition newlyEnrolledInFTDRDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition newlyEnrolledInFBGDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition newlyEnrolledInCDDPDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
+        CohortDefinition newlyEnrolledInCCLADDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
 
 
 
@@ -336,82 +335,81 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "2", "Pregnant and lactating enrolled in care", newlyEnrolledPregnantOrLactatingDuringPeriod);
         addAgeGender(dsd, "3a-", "No. of clients newly enrolled into Care - Screened for TB", enrolledInTheQuarterAndScreenedForTB);
         addAgeGender(dsd, "3b-", "No. of clients newly enrolled into Care - Diagnosed with TB", enrolledInTheQuarterAndDiagnosedWithTB);
-//        addAgeGender(dsd, "4", "No. of active clients on Pre-ART by end of quarter", activePatientsOnPreArt);
-//        addAgeGender(dsd, "5", "No. of active clients on Pre-ART with confirmed Adv Disease", activePatientsOnPreARTWithConfirmedAdvancedDisease);
-//        addAgeGender(dsd, "6", "No. of CRAG positive clients identified during period", positiveForCRAG);
-//        addAgeGender(dsd, "7", "No. of TB LAM positive clients initiated on TB Treatment", positiveForTBLAMAndInitiatedOnTBTreatmentDuringPeriod);
-//        addAgeGender(dsd, "8", "No. of CRAG positive clients initiated on Fluconazole pre-emptive Therapy", positiveForCRAGAndInitiatedOnFluconazoleTreatmentDuringPeriod);
-//        addAgeGender(dsd, "9", "Cumulative ever enrolled on ART by end of previous quarter", havingArtStartDateBeforeQuarter);
-//        addAgeGender(dsd, "10", "new positives initiated on ART in the same quarter", newPositivesStartedOnArtInSameQuarter);
-//        addAgeGender(dsd, "11", "new clients started on ART in the same quarter", havingArtStartDateDuringQuarter);
-//        addAgeGender(dsd, "12", "pregnant and lactating clients started on ART in the same quarter", pregnantOrLactatingAndNewOnARTDuringQuarter);
-//        addAgeGender(dsd, "13", "new clients started on ART with Baseline CD4", patientsStartedArtDuringQuarterWithBaselineCD4 );
-////        addAgeGender(dsd, "14", "median cd4 count at ART initiation",  df.getPatientsNotIn(hivCohortDefinitionLibrary.getMedianCD4AtARTInitiation(),transferredInPatients));
-//        addAgeGender(dsd, "15", "new clients started on ART with Baseline CD4 less equal to 200", newClientsWithBaselineCd4LessEqual200 );
-//        addAgeGender(dsd, "16a-", "new clients accessed TB LAM", newClientsWithBaselineCd4LessEqual200AndAccessedTBLAM );
-//        addAgeGender(dsd, "16b-", "new clients positive for TB LAM", newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAM);
-//        addAgeGender(dsd, "16c-", "new clients positive for TB LAM treated foe TB LAM", newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAMAndTreatedForTB);
-//        addAgeGender(dsd, "16d-", "new clients accesses CRAG", newClientsWithBaselineCd4LessEqual200AndAccessedCRAG);
-//        addAgeGender(dsd, "16e-", "new clients positive for CRAG", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAG);
-//        addAgeGender(dsd, "16f-", "new clients positive for CRAG treated with fluconazole", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAGTreatedWithFluconazole );
-//        addAgeGender(dsd, "17", "cumulative no of individuals ever started on ART", cumulativeOnArt);
-//        addAgeGender(dsd, "21", "No. of active clients with confirmed Advanced Disease By end of quarter",activeClientsWithConfirmedAdvancedDiseaseByEndOfReportingPeriod);
-//        addAgeGender(dsd, "22", "no of ART Clients transferred in during quarter", transferredInTheQuarter);
-//        addAgeGender(dsd, "23", "no of ART Clients that died in the quarter", deadPatientsDuringPeriod);
-//        addAgeGender(dsd, "24", "no of ART Clients that were lost to follow up",lost_to_followup);
-//        addAgeGender(dsd, "25", "no of ART Clients that were transferred out during period", transferredOutPatients);
-//        addAgeGender(dsd, "26", "clients with no clinical contact since last expected contact by the end of quarter", patientsWithNoClinicalContactSinceLastExpectedContact);
-//        addAgeGender(dsd, "31", "active ART clients screened for TB at last visit in the quarter", activePatientsScreenedForTB);
-//        addAgeGender(dsd, "32", "active ART clients with presumptive TB during quarter", activePatientsPresumptiveTBDuringQuarter);
-//        addAgeGender(dsd, "33", "active ART clients diagnosed with TB during quarter", activePatientsDiagnosedWithTBDuringQuarter );
-//        addAgeGender(dsd, "34a-", "active ART clients and on TB treatment newly started on TB treatment during quarter", activeOnArtStartedTBRxDuringPeriod);
-//        addAgeGender(dsd, "34b-", "active ART clients and on TB treatment previously on TB treatment",activeOnArtPreviouslyOnTBRx);
-//        addAgeGender(dsd, "35a-", "started TPT during period and newly started on ART",startedTPTDuringQuarterAndNewlyStartedOnART);
-//        addAgeGender(dsd, "35b-", "started TPT during period and previously on ART",startedTPTDuringQuarterAndPreviouslyOnART);
-//        addAgeGender(dsd, "36", "started TPT 6 months ago",startedTPTSixMonthsAgo);
-//        addAgeGender(dsd, "37", "completed TPT successfully during quarter",completedTPTDuringPeriod);
-//        addAgeGender(dsd, "38", "activeOnARTAssessedForMalnutrition",activePatientsAssessedForNutritionDuringQuarter);
-//        addAgeGender(dsd, "39", "activeOnART who are Malnourished",activePatientsThatAreMalnourishedDuringQuarter);
-//        addAgeGender(dsd, "40", "active Patients That Are Malnourished Who Received Therapeutic/Supplementary Foods",activePatientsThatAreMalnourishedWhoReceivedTherapeuticFoods);
-//        addAgeGender(dsd, "41a-", "activeOnART patients who had a viral load test at 6 months after art initiation total tested",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiation);
-//        addAgeGender(dsd, "41b-", "activeOnART patients who had a viral load test at 6 months after art initiation with suppressed VL",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiationVirallySupressed);
-//        addAgeGender(dsd, "42a-", "clients Who Had Viral Load Taken During The Past 12Months total ",clientsWhoHadViralLoadTakenDuringThePast12Months);
-//        addAgeGender(dsd, "42b-", "clients Who Had Viral Load Taken During The Past 12Months virally suppressed ",clientsWhoHadViralLoadTakenDuringThePast12MonthsAndVirallySupressed );
-//        addAgeGender(dsd, "43a-", "activeOnART patients who had a viral load test at 12 months after art initiation total tested",activeOnARTAndHadAViralLoadTest12MonthsAfterArtInitiation);
-//        addAgeGender(dsd, "43b-", "activeOnART patients who had a viral load test at 12 months after art initiation who are suppressed",patientsWhoHadAViralLoadTest12MonthsAfterArtInitiationAndAreVirallySupressed);
-//        addAgeGender(dsd, "44a-", "patients who had a repeat VL tht remained non suppressed during reporting period",nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL);
-//        addAgeGender(dsd, "44b-", "patients who had a repeat VL tht remained non suppressed & switched from 1st to 2nd line ",nonSuppressedARTClientsWhoSwitchedFrom1stTo2nd);
-//        addAgeGender(dsd, "44c-", "patients who had a repeat VL tht remained non suppressed & switched from 2nd to 3rd line",nonSuppressedARTClientsWhoSwitchedFrom2ndTo3rd);
-//        addAgeGender(dsd, "46", "patients who are non suppressed & tested for CD4",patientsNonSuppressedAndTestedWithCD4);
-//        addAgeGender(dsd, "47a-", "non suppressed & tested for CD4 and accessed TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndAccessedTBLAM);
-//        addAgeGender(dsd, "47b-", "non suppressed & tested for CD4 and positive 4 TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForTBLAM);
-//        addAgeGender(dsd, "47c-", "non suppressed & tested for CD4 and positive & treated",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForTBLAMAndTreatedForTB);
-//        addAgeGender(dsd, "48a-", "non suppressed & tested for CD4 and accessed CRAG",patientsNonSuppressedCd4DuringPeriodLessThan200AndAccessedCRAG);
-//        addAgeGender(dsd, "48b-", "non suppressed & tested for CD4 and positive 4 CRAG",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForCRAG);
-//        addAgeGender(dsd, "48c-", "non suppressed & tested for CD4 and treated with fluconazole",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForCRAGTreatedWithFluconazole);
-//        addAgeGender(dsd, "49a-", "activeOnART patients on DSD FBIM",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFBIMDuringPeriod));
-//        addAgeGender(dsd, "49b-", "activeOnART patients on DSD FBG",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFBGDuringPeriod));
-//        addAgeGender(dsd, "49c-", "activeOnART patients on DSD FTDR",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFTDRDuringPeriod));
-//        addAgeGender(dsd, "49d-", "activeOnART patients on DSD CDDP",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramCDDPDuringPeriod));
-//        addAgeGender(dsd, "49e-", "activeOnART patients on DSD CCLAD",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramCCLADDuringPeriod));
-//
-//        addAgeGender(dsd, "50a-", "activeOnART patients on DSD FBIM",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFBIMDuringPeriod));
-//        addAgeGender(dsd, "50b-", "activeOnART patients on DSD FBG",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFBGDuringPeriod));
-//        addAgeGender(dsd, "50c-", "activeOnART patients on DSD FTDR",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFTDRDuringPeriod));
-//        addAgeGender(dsd, "50d-", "activeOnART patients on DSD CDDP",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramCDDPDuringPeriod));
-//        addAgeGender(dsd, "50e-", "activeOnART patients on DSD CCLAD",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramCCLADDuringPeriod));
-//
-//        addAgeGender(dsd, "51a-", "patients newly enrolled in DSD FBIM",enrolledInFBIMDuringPeriod);
-//        addAgeGender(dsd, "51b-", "patients newly enrolled in DSD FBG",enrolledInFBGDuringPeriod);
-//        addAgeGender(dsd, "51c-", "patients newly enrolled in DSD FTDR",enrolledInFTDRDuringPeriod);
-//        addAgeGender(dsd, "51d-", "patients newly enrolled in DSD CDDP",enrolledInCDDPDuringPeriod);
-//        addAgeGender(dsd, "51e-", "patients newly enrolled in DSD CCLAD",enrolledInCCLADDuringPeriod);
-//
-//        addAgeGender(dsd, "52a-", "patients newly enrolled in DSD FBIM",enrolledInFBIMDuringPeriod);
-//        addAgeGender(dsd, "52b-", "patients newly enrolled in DSD FBG",enrolledInFBGDuringPeriod);
-//        addAgeGender(dsd, "52c-", "patients newly enrolled in DSD FTDR",enrolledInFTDRDuringPeriod);
-//        addAgeGender(dsd, "52d-", "patients newly enrolled in DSD CDDP",enrolledInCDDPDuringPeriod);
-//        addAgeGender(dsd, "52e-", "patients newly enrolled in DSD CCLAD",enrolledInCCLADDuringPeriod);
+        addAgeGender(dsd, "4", "No. of active clients on Pre-ART by end of quarter", activePatientsOnPreArt);
+        addAgeGender(dsd, "5", "No. of active clients on Pre-ART with confirmed Adv Disease", activePatientsOnPreARTWithConfirmedAdvancedDisease);
+        addAgeGender(dsd, "6", "No. of CRAG positive clients identified during period", positiveForCRAG);
+        addAgeGender(dsd, "7", "No. of TB LAM positive clients initiated on TB Treatment", positiveForTBLAMAndInitiatedOnTBTreatmentDuringPeriod);
+        addAgeGender(dsd, "8", "No. of CRAG positive clients initiated on Fluconazole pre-emptive Therapy", positiveForCRAGAndInitiatedOnFluconazoleTreatmentDuringPeriod);
+        addAgeGender(dsd, "9", "Cumulative ever enrolled on ART by end of previous quarter", havingArtStartDateBeforeQuarter);
+        addAgeGender(dsd, "10", "new positives initiated on ART in the same quarter", newPositivesStartedOnArtInSameQuarter);
+        addAgeGender(dsd, "11", "new clients started on ART in the same quarter", havingArtStartDateDuringQuarter);
+        addAgeGender(dsd, "12", "pregnant and lactating clients started on ART in the same quarter", pregnantOrLactatingAndNewOnARTDuringQuarter);
+        addAgeGender(dsd, "13", "new clients started on ART with Baseline CD4", patientsStartedArtDuringQuarterWithBaselineCD4 );
+        addAgeGender(dsd, "15", "new clients started on ART with Baseline CD4 less equal to 200", newClientsWithBaselineCd4LessEqual200 );
+        addAgeGender(dsd, "16a-", "new clients accessed TB LAM", newClientsWithBaselineCd4LessEqual200AndAccessedTBLAM );
+        addAgeGender(dsd, "16b-", "new clients positive for TB LAM", newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAM);
+        addAgeGender(dsd, "16c-", "new clients positive for TB LAM treated foe TB LAM", newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAMAndTreatedForTB);
+        addAgeGender(dsd, "16d-", "new clients accesses CRAG", newClientsWithBaselineCd4LessEqual200AndAccessedCRAG);
+        addAgeGender(dsd, "16e-", "new clients positive for CRAG", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAG);
+        addAgeGender(dsd, "16f-", "new clients positive for CRAG treated with fluconazole", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAGTreatedWithFluconazole );
+        addAgeGender(dsd, "17", "cumulative no of individuals ever started on ART", cumulativeOnArt);
+        addAgeGender(dsd, "21", "No. of active clients with confirmed Advanced Disease By end of quarter",activeClientsWithConfirmedAdvancedDiseaseByEndOfReportingPeriod);
+        addAgeGender(dsd, "22", "no of ART Clients transferred in during quarter", transferredInTheQuarter);
+        addAgeGender(dsd, "23", "no of ART Clients that died in the quarter", deadPatientsDuringPeriod);
+        addAgeGender(dsd, "24", "no of ART Clients that were lost to follow up",lost_to_followup);
+        addAgeGender(dsd, "25", "no of ART Clients that were transferred out during period", transferredOutPatients);
+        addAgeGender(dsd, "26", "clients with no clinical contact since last expected contact by the end of quarter", patientsWithNoClinicalContactSinceLastExpectedContact);
+        addAgeGender(dsd, "31", "active ART clients screened for TB at last visit in the quarter", activePatientsScreenedForTB);
+        addAgeGender(dsd, "32", "active ART clients with presumptive TB during quarter", activePatientsPresumptiveTBDuringQuarter);
+        addAgeGender(dsd, "33", "active ART clients diagnosed with TB during quarter", activePatientsDiagnosedWithTBDuringQuarter );
+        addAgeGender(dsd, "34a-", "active ART clients and on TB treatment newly started on TB treatment during quarter", activeOnArtStartedTBRxDuringPeriod);
+        addAgeGender(dsd, "34b-", "active ART clients and on TB treatment previously on TB treatment",activeOnArtPreviouslyOnTBRx);
+        addAgeGender(dsd, "35a-", "started TPT during period and newly started on ART",startedTPTDuringQuarterAndNewlyStartedOnART);
+        addAgeGender(dsd, "35b-", "started TPT during period and previously on ART",startedTPTDuringQuarterAndPreviouslyOnART);
+        addAgeGender(dsd, "36", "started TPT 6 months ago",startedTPTSixMonthsAgo);
+        addAgeGender(dsd, "37", "completed TPT successfully during quarter",completedTPTDuringPeriod);
+        addAgeGender(dsd, "38", "activeOnARTAssessedForMalnutrition",activePatientsAssessedForNutritionDuringQuarter);
+        addAgeGender(dsd, "39", "activeOnART who are Malnourished",activePatientsThatAreMalnourishedDuringQuarter);
+        addAgeGender(dsd, "40", "active Patients That Are Malnourished Who Received Therapeutic/Supplementary Foods",activePatientsThatAreMalnourishedWhoReceivedTherapeuticFoods);
+        addAgeGender(dsd, "41a-", "activeOnART patients who had a viral load test at 6 months after art initiation total tested",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiation);
+        addAgeGender(dsd, "41b-", "activeOnART patients who had a viral load test at 6 months after art initiation with suppressed VL",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiationVirallySupressed);
+        addAgeGender(dsd, "42a-", "clients Who Had Viral Load Taken During The Past 12Months total ",clientsWhoHadViralLoadTakenDuringThePast12Months);
+        addAgeGender(dsd, "42b-", "clients Who Had Viral Load Taken During The Past 12Months virally suppressed ",clientsWhoHadViralLoadTakenDuringThePast12MonthsAndVirallySupressed );
+        addAgeGender(dsd, "43a-", "activeOnART patients who had a viral load test at 12 months after art initiation total tested",activeOnARTAndHadAViralLoadTest12MonthsAfterArtInitiation);
+        addAgeGender(dsd, "43b-", "activeOnART patients who had a viral load test at 12 months after art initiation who are suppressed",patientsWhoHadAViralLoadTest12MonthsAfterArtInitiationAndAreVirallySupressed);
+        addAgeGender(dsd, "44a-", "patients who had a repeat VL tht remained non suppressed during reporting period",nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL);
+        addAgeGender(dsd, "44b-", "patients who had a repeat VL tht remained non suppressed & switched from 1st to 2nd line ",nonSuppressedARTClientsWhoSwitchedFrom1stTo2nd);
+        addAgeGender(dsd, "44c-", "patients who had a repeat VL tht remained non suppressed & switched from 2nd to 3rd line",nonSuppressedARTClientsWhoSwitchedFrom2ndTo3rd);
+        addAgeGender(dsd, "46", "patients who are non suppressed & tested for CD4",patientsNonSuppressedAndTestedWithCD4);
+        addAgeGender(dsd, "47a-", "non suppressed & tested for CD4 and accessed TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndAccessedTBLAM);
+        addAgeGender(dsd, "47b-", "non suppressed & tested for CD4 and positive 4 TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForTBLAM);
+        addAgeGender(dsd, "47c-", "non suppressed & tested for CD4 and positive & treated",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForTBLAMAndTreatedForTB);
+        addAgeGender(dsd, "48a-", "non suppressed & tested for CD4 and accessed CRAG",patientsNonSuppressedCd4DuringPeriodLessThan200AndAccessedCRAG);
+        addAgeGender(dsd, "48b-", "non suppressed & tested for CD4 and positive 4 CRAG",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForCRAG);
+        addAgeGender(dsd, "48c-", "non suppressed & tested for CD4 and treated with fluconazole",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForCRAGTreatedWithFluconazole);
+        addAgeGender(dsd, "49a-", "activeOnART patients on DSD FBIM",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFBIMDuringPeriod));
+        addAgeGender(dsd, "49b-", "activeOnART patients on DSD FBG",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFBGDuringPeriod));
+        addAgeGender(dsd, "49c-", "activeOnART patients on DSD FTDR",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramFTDRDuringPeriod));
+        addAgeGender(dsd, "49d-", "activeOnART patients on DSD CDDP",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramCDDPDuringPeriod));
+        addAgeGender(dsd, "49e-", "activeOnART patients on DSD CCLAD",df.getPatientsInAll(activePatientsInCareDuringPeriod,inProgramCCLADDuringPeriod));
+
+        addAgeGender(dsd, "50a-", "activeOnART achieving viral load patients on DSD FBIM",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFBIMDuringPeriod));
+        addAgeGender(dsd, "50b-", "activeOnART achieving viral load patients on DSD FBG",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFBGDuringPeriod));
+        addAgeGender(dsd, "50c-", "activeOnART achieving viral load patients on DSD FTDR",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramFTDRDuringPeriod));
+        addAgeGender(dsd, "50d-", "activeOnART achieving viral load patients on DSD CDDP",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramCDDPDuringPeriod));
+        addAgeGender(dsd, "50e-", "activeOnART achieving viral load patients on DSD CCLAD",df.getPatientsInAll(patientsSuppressedByEndDate,inProgramCCLADDuringPeriod));
+
+        addAgeGender(dsd, "51a-", "patients newly enrolled in DSD FBIM",newlyEnrolledInFBIMDuringPeriod);
+        addAgeGender(dsd, "51b-", "patients newly enrolled in DSD FBG",newlyEnrolledInFBGDuringPeriod);
+        addAgeGender(dsd, "51c-", "patients newly enrolled in DSD FTDR",newlyEnrolledInFTDRDuringPeriod);
+        addAgeGender(dsd, "51d-", "patients newly enrolled in DSD CDDP",newlyEnrolledInCDDPDuringPeriod);
+        addAgeGender(dsd, "51e-", "patients newly enrolled in DSD CCLAD",newlyEnrolledInCCLADDuringPeriod);
+
+        addAgeGender(dsd, "52a-", "patients receiving their TB drug refills in  DSD FBIM",df.getPatientsInAll(onTBRxDuringQuarter,inProgramFBIMDuringPeriod));
+        addAgeGender(dsd, "52b-", "patients receiving their TB drug refills in DSD FBG",df.getPatientsInAll(onTBRxDuringQuarter,inProgramFBGDuringPeriod));
+        addAgeGender(dsd, "52c-", "patients receiving their TB drug refills in DSD FTDR",df.getPatientsInAll(onTBRxDuringQuarter,inProgramFTDRDuringPeriod));
+        addAgeGender(dsd, "52d-", "patients receiving their TB drug refills in DSD CDDP",df.getPatientsInAll(onTBRxDuringQuarter,inProgramCDDPDuringPeriod));
+        addAgeGender(dsd, "52e-", "patients receiving their TB drug refills in DSD CCLAD",df.getPatientsInAll(onTBRxDuringQuarter,inProgramCCLADDuringPeriod));
 //
 
         return rd;
@@ -470,6 +468,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.3.7";
+        return "0.0.4.1.4";
     }
 }

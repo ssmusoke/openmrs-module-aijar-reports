@@ -38,17 +38,22 @@ public class MedianBaselineCD4DatasetDefinitionEvaluator implements DataSetEvalu
 
         PatientDataHelper pdh = new PatientDataHelper();
 
-        String dataQuery = String.format("select p.value_numeric from obs p  inner join  encounter e on p.encounter_id = e.encounter_id  inner join encounter_type t on  t.encounter_type_id =e.encounter_type \n" +
-                "where p.obs_datetime between '%s' and '%s' and  t.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' and p.concept_id= 99071 and p.person_id in (select person_id from obs o  where o.voided = 0 and o.concept_id = 99161 and  o.value_datetime between '%s' and '%s')",startDate,endDate,startDate,endDate);
+        String dataQuery = String.format("SELECT AVG(dd.value_numeric) as median_val from\n" +
+                "(select p.value_numeric, @rownum:=@rownum+1 as `row_number`, @total_rows:=@rownum from (SELECT @rownum:=0) r, obs p inner join  encounter e on p.encounter_id = e.encounter_id  inner join encounter_type t on  t.encounter_type_id =e.encounter_type\n" +
+                "where p.obs_datetime between '%s' and '%s' and  t.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f' and p.concept_id= 99071 and p.person_id in (select person_id from obs o  where o.voided = 0 and o.concept_id = 99161 and  o.value_datetime between '%s' and '%s')  order by p.value_numeric)  as dd\n" +
+                "where dd.row_number IN ( FLOOR((@total_rows+1)/2), FLOOR((@total_rows+2)/2) );",startDate,endDate,startDate,endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();
         q.append(dataQuery);
-        List<Integer> results = evaluationService.evaluateToList(q, Integer.class, context);
+//        List<Integer> results = evaluationService.evaluateToList(q, Integer.class, context);
+        List<Object[]> results = evaluationService.evaluateToList(q, context);
+
         if(results.size()>0 && !results.isEmpty()){
-            Integer[] flattened = new Integer[results.size()];
-            results.toArray(flattened);
-            pdh.addCol(row, "14y",getmedian(flattened));
+            pdh.addCol(row, "14y",String.valueOf(results.get(0)[0]));
+        }else{
+            pdh.addCol(row, "14y","");
         }
+
         dataSet.addRow(row);
         return dataSet;
     }
