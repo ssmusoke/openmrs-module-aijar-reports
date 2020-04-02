@@ -1424,7 +1424,7 @@ public class DataFactory {
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setOperator1(RangeComparator.GREATER_THAN);
         cd.addParameter(new Parameter("value1", "value1", Date.class));
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.addParameter(new Parameter("value2", "value2", Date.class));

@@ -178,6 +178,16 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getMissedAppointmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "791faefd-36b8-482f-ab78-20c297b03851"));
+        return l;
+    }
+
+    public List<Concept> getNoClinicalContactOutcomes(){
+        return getConceptList("dca26b47-30ab-102d-86b0-7a5022ba4115,160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f57b1500-7ff2-46b4-b183-fed5bce479a9,8b386488-9494-4bb6-9537-dcad6030fab0,1a467610-b640-4d9b-bc13-d2631fa57a45,b192a41c-f7e8-47a9-89c5-62e7a4bffddd,e063241f-5a50-4fea-9bce-d1bf8332f081");
+    }
+
     public List<EncounterType> getArtEncounterTypes() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));

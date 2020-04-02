@@ -123,15 +123,18 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition havingBaseRegimenBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenBeforePeriod();
 
         CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
+        CohortDefinition clientsStartedOnARTAtThisFacilityDuringPeriod = df.getPatientsNotIn(havingArtStartDateDuringQuarter,transferredInTheQuarter);
         CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod();
 
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getEnrolledInCareToCareWhenPregnantOrLactating();
+        CohortDefinition startedARTWhenPregnantOrLactating = hivCohortDefinitionLibrary.getStartedOnARTWhenPregnantOrLactating();
 
 
         CohortDefinition onINHDuringQuarter = hivCohortDefinitionLibrary.getOnINHDuringPeriod();
         CohortDefinition onINHBeforeQuarter = hivCohortDefinitionLibrary.getOnINHDuringBeforePeriod();
 
         CohortDefinition onCPTDuringQuarter = hivCohortDefinitionLibrary.getOnCPTDuringPeriod();
+        CohortDefinition eligibleForCPTDuringQuarter = hivCohortDefinitionLibrary.getEligibleOnCPTDuringPeriod();
 
         CohortDefinition assessedForTBDuringQuarter = hivCohortDefinitionLibrary.getAssessedForTBDuringPeriod();
         CohortDefinition presumptiveTBDuringQuarter = hivCohortDefinitionLibrary.getPresumptiveTBDuringPeriod();
@@ -148,7 +151,7 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition assessedForMalnutritionDuringQuarter = hivCohortDefinitionLibrary.getPatientsAssessedForMalnutrition();
         CohortDefinition patientsAssessedForNutritionDuringQuarter = hivCohortDefinitionLibrary.getPatientsAssessedForNutrition();
         CohortDefinition patientMalnourishedDuringPeriod = df.getPatientsInAny(hivCohortDefinitionLibrary.getPatientsWithModeratelyAcuteMalnutritionDuringPeriod(),
-                hivCohortDefinitionLibrary.getPatientsWithSevereAcuteMalnutritionDuringPeriod());
+                hivCohortDefinitionLibrary.getPatientsWithSevereAcuteMalnutritionDuringPeriod(),hivCohortDefinitionLibrary.getPatientsWithSevereAcuteMalnutritionWithOedemaDuringPeriod());
         CohortDefinition patientsWhoReceivedTherapeuticFoods = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("8531d1a7-9793-4c62-adab-f6716cf9fabb"),hivMetadata.getARTEncounterPageEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("598dba00-b878-474c-9a10-9998f1748228"),hivMetadata.getConcept("76d127ee-7e5b-467a-b1d4-eab8ebcf2c37")), BaseObsCohortDefinition.TimeModifier.LAST);
 
@@ -224,7 +227,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition onPreArtWhoAreMalnourished = df.getPatientsInAll(onPreArt, whoAreMalnourished);
 
 
-        CohortDefinition cumulativeOnArt = df.getPatientsInAny(havingArtStartDateBeforeQuarter, havingArtStartDateDuringQuarter);
 
         CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
         CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
@@ -239,10 +241,9 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition activeOnArtWhoAreMalnourished = df.getPatientsInAll(beenOnArtDuringQuarter, whoAreMalnourished);
 
-        CohortDefinition eligibleButNotStartedByQuarter = df.getPatientsNotIn(eligibleByEndOfQuarter, cumulativeOnArt);
 
-
-        CohortDefinition newHIVPositivesDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition clientsStartedOnARTAtThisFacilityBeforePeriod = df.getPatientsNotIn(havingArtStartDateBeforeQuarter,transferredInBeforeQuarter);
+        CohortDefinition newHIVVerificationsDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("dce12b4f-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getARTSummaryPageEncounterType(),BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition accessedTBLAM = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.TB_LAM_RESULTS),hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition accessedCRAG = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CRAG_RESULTS),hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition startedTPTDuringQuarter = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7"),hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -252,7 +253,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition positiveForTBLAM = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.TB_LAM_RESULTS),hivMetadata.getARTEncounterPageEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.POSITIVE)), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition positiveForCRAG = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CRAG_RESULTS),hivMetadata.getARTEncounterPageEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.POSITIVE)), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition patientsPositiveForTBLAMAndTreatedForTB= df.getPatientsInAll(positiveForTBLAM,onTBRxDuringQuarter);
-        CohortDefinition patientsWithNoClinicalContactSinceLastExpectedContact=hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactSinceLastExpectedContactByEndDate();
+        CohortDefinition patientsWithNoClinicalContactSinceLastExpectedContact=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                hivMetadata.getNoClinicalContactOutcomes(), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition activePatientsOnTBTreatment =df.getPatientsInAll(onTBRxDuringQuarter,activePatientsInCareDuringPeriod);
         CohortDefinition activeOnArtStartedTBRxDuringPeriod = df.getPatientsInAll( activePatientsOnTBTreatment, startedTBDuringQuarter);
         CohortDefinition activeOnArtPreviouslyOnTBRx = df.getPatientsInAll(activePatientsOnTBTreatment,onTBRxBeforeQuarter);
@@ -262,14 +264,15 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition positiveForCRAGAndInitiatedOnFluconazoleTreatmentDuringPeriod = df.getPatientsInAll(positiveForCRAG, patientsInitiatedOnFluconazoleTreatmentDuringPeriod);
         CohortDefinition onFluconazoleTreatment = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("7dea17d4-17eb-43b6-8029-785aeb6aa453"), hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_THAN, 0.0, BaseObsCohortDefinition.TimeModifier.ANY);
 
+        CohortDefinition cumulativeOnArt = df.getPatientsInAny( clientsStartedOnARTAtThisFacilityBeforePeriod,clientsStartedOnARTAtThisFacilityDuringPeriod);
 
         CohortDefinition activePatientsOnPreArt = df.getPatientsInAll(activePatientsInCareDuringPeriod,onPreArt);
         CohortDefinition patientWithConfirmedAdvancedDisease = hivCohortDefinitionLibrary.getPatientsWithConfirmedAdvancedDiseaseDuringPeriod();
         CohortDefinition patientWithConfirmedAdvancedDiseaseByEndDate = hivCohortDefinitionLibrary.getPatientsWithConfirmedAdvancedDiseaseByEndDate();
-        CohortDefinition newClientsWithBaselineCd4LessEqual200 = df.getPatientsInAll(havingArtStartDateDuringQuarter,baseCD4L200);
+        CohortDefinition newClientsWithBaselineCd4LessEqual200 = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,baseCD4L200);
         CohortDefinition clientsWhoHadViralLoadTakenDuringThePast12Months = hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestDuringThePastPeriodFromEndDate("12m");
         CohortDefinition clientsWhoHadViralLoadTakenDuringThePast12MonthsAndVirallySupressed =df.getPatientsInAll(clientsWhoHadViralLoadTakenDuringThePast12Months, df.getPatientsWithNumericObsFromPastEndPeriodToEndDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),
-                RangeComparator.LESS_THAN,1000.0,"12m", BaseObsCohortDefinition.TimeModifier.LAST));
+                RangeComparator.LESS_THAN,1000.0,"12m", BaseObsCohortDefinition.TimeModifier.ANY));
         CohortDefinition nonSuppressedClientsDuringPeriod = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_EQUAL,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition patientsNonSuppressedByEndOfLastPeriod = df.getPatientsWithNumericObsByEndOfPreviousDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_EQUAL,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition patientsNonSuppressedByEndDate = df.getPatientsWithNumericObsByEndDate(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.GREATER_EQUAL,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
@@ -296,17 +299,47 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition newlyEnrolledInCDDPDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459"));
         CohortDefinition newlyEnrolledInCCLADDuringPeriod = commonCohortLibrary.newlyEnrolledDuringPeriod(commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459"));
 
+        CohortDefinition silentlyTransferred=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+              Arrays.asList(hivMetadata.getConcept("f57b1500-7ff2-46b4-b183-fed5bce479a9")), BaseObsCohortDefinition.TimeModifier.LAST);
 
+        CohortDefinition incompleteTracingAttempts=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("1a467610-b640-4d9b-bc13-d2631fa57a45")), BaseObsCohortDefinition.TimeModifier.LAST);
 
+        CohortDefinition unableToBeLocated=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("8b386488-9494-4bb6-9537-dcad6030fab0")), BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition stoppedARVTaking=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("dca26b47-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition noAttemptToTrace=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("b192a41c-f7e8-47a9-89c5-62e7a4bffddd")), BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition diedTraceOutcome=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition diedOfTB =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("dc6527eb-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfCancer = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("116030AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfInfectiousDiseases = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("73d67c86-06df-4863-9819-ccb2a6bb98f8")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfNonInfectiousDiseases = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("13a7b84b-b661-48a5-8315-0bcc0174e5c8")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfNaturalCauses = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("84899c95-d455-4293-be6f-7db600af058f")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfNonNaturalCauses = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("ab115b14-8a9f-4185-9deb-79c214dc1063")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition diedOfUnknown =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getMissedAppointmentEncounterType(),
+                Arrays.asList(hivMetadata.getConcept("dcd6865a-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
         // 2019 Report Cohorts
         CohortDefinition enrolledInTheQuarterAndScreenedForTB = df.getPatientsInAll(enrolledDuringTheQuarter, assessedForTBDuringQuarter);
         CohortDefinition enrolledInTheQuarterAndDiagnosedWithTB = df.getPatientsInAll(enrolledDuringTheQuarter, diagnosedWithTBDuringQuarter);
         CohortDefinition newlyEnrolledPregnantOrLactatingDuringPeriod= df.getPatientsInAll(enrolledDuringTheQuarter,enrolledWhenPregnantOrLactating);
         CohortDefinition activePatientsOnPreARTWithConfirmedAdvancedDisease =df.getPatientsInAll(patientWithConfirmedAdvancedDisease,activePatientsOnPreArt);
-        CohortDefinition newPositivesStartedOnArtInSameQuarter = df.getPatientsInAll(newHIVPositivesDuringPeriod,havingArtStartDateDuringQuarter);
-        CohortDefinition pregnantOrLactatingAndNewOnARTDuringQuarter= df.getPatientsInAll(enrolledWhenPregnantOrLactating,havingArtStartDateDuringQuarter);
+        CohortDefinition newPositivesStartedOnArtInSameQuarter = df.getPatientsInAll(newHIVVerificationsDuringPeriod,havingArtStartDateDuringQuarter);
+        CohortDefinition pregnantOrLactatingAndNewOnARTDuringQuarter= df.getPatientsInAll(startedARTWhenPregnantOrLactating,havingArtStartDateDuringQuarter);
 
-        CohortDefinition patientsStartedArtDuringQuarterWithBaselineCD4= df.getPatientsInAll(patientsWithBaselineCD4,havingArtStartDateDuringQuarter);
+        CohortDefinition patientsStartedArtDuringQuarterWithBaselineCD4= df.getPatientsInAll(patientsWithBaselineCD4,clientsStartedOnARTAtThisFacilityDuringPeriod);
         CohortDefinition newClientsWithBaselineCd4LessEqual200AndAccessedTBLAM= df.getPatientsInAll(newClientsWithBaselineCd4LessEqual200,accessedTBLAM);
         CohortDefinition newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAM= df.getPatientsInAll(newClientsWithBaselineCd4LessEqual200,positiveForTBLAM);
         CohortDefinition newClientsWithBaselineCd4LessEqual200AndPositiveForTBLAMAndTreatedForTB= df.getPatientsInAll(newClientsWithBaselineCd4LessEqual200,patientsPositiveForTBLAMAndTreatedForTB);
@@ -319,8 +352,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition activePatientsPresumptiveTBDuringQuarter = df.getPatientsInAll(activePatientsInCareDuringPeriod,presumptiveTBDuringQuarter);
         CohortDefinition activePatientsDiagnosedWithTBDuringQuarter = df.getPatientsInAll(activePatientsInCareDuringPeriod,diagnosedWithTBDuringQuarter);
-        CohortDefinition startedTPTDuringQuarterAndNewlyStartedOnART = df.getPatientsInAll(startedTPTDuringQuarter,havingArtStartDateDuringQuarter);
-        CohortDefinition startedTPTDuringQuarterAndPreviouslyOnART = df.getPatientsInAll(startedTPTDuringQuarter,beenOnArtBeforeQuarter);
+        CohortDefinition startedTPTDuringQuarterAndNewlyStartedOnART = df.getPatientsInAll(startedTPTDuringQuarter,clientsStartedOnARTAtThisFacilityDuringPeriod);
+        CohortDefinition startedTPTDuringQuarterAndPreviouslyOnART = df.getPatientsInAll(startedTPTDuringQuarter,onArtBeforeQuarter);
         CohortDefinition activePatientsAssessedForNutritionDuringQuarter = df.getPatientsInAll(patientsAssessedForNutritionDuringQuarter,activePatientsInCareDuringPeriod);
         CohortDefinition activePatientsThatAreMalnourishedDuringQuarter = df.getPatientsInAll(patientMalnourishedDuringPeriod,activePatientsInCareDuringPeriod);
         CohortDefinition activePatientsThatAreMalnourishedWhoReceivedTherapeuticFoods = df.getPatientsInAll(activePatientsThatAreMalnourishedDuringQuarter,patientsWhoReceivedTherapeuticFoods);
@@ -340,9 +373,9 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "6", "No. of CRAG positive clients identified during period", positiveForCRAG);
         addAgeGender(dsd, "7", "No. of TB LAM positive clients initiated on TB Treatment", positiveForTBLAMAndInitiatedOnTBTreatmentDuringPeriod);
         addAgeGender(dsd, "8", "No. of CRAG positive clients initiated on Fluconazole pre-emptive Therapy", positiveForCRAGAndInitiatedOnFluconazoleTreatmentDuringPeriod);
-        addAgeGender(dsd, "9", "Cumulative ever enrolled on ART by end of previous quarter", havingArtStartDateBeforeQuarter);
+        addAgeGender(dsd, "9", "Cumulative ever enrolled on ART by end of previous quarter", clientsStartedOnARTAtThisFacilityBeforePeriod);
         addAgeGender(dsd, "10", "new positives initiated on ART in the same quarter", newPositivesStartedOnArtInSameQuarter);
-        addAgeGender(dsd, "11", "new clients started on ART in the same quarter", havingArtStartDateDuringQuarter);
+        addAgeGender(dsd, "11", "new clients started on ART in the same quarter",clientsStartedOnARTAtThisFacilityDuringPeriod);
         addAgeGender(dsd, "12", "pregnant and lactating clients started on ART in the same quarter", pregnantOrLactatingAndNewOnARTDuringQuarter);
         addAgeGender(dsd, "13", "new clients started on ART with Baseline CD4", patientsStartedArtDuringQuarterWithBaselineCD4 );
         addAgeGender(dsd, "15", "new clients started on ART with Baseline CD4 less equal to 200", newClientsWithBaselineCd4LessEqual200 );
@@ -359,6 +392,21 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "24", "no of ART Clients that were lost to follow up",lost_to_followup);
         addAgeGender(dsd, "25", "no of ART Clients that were transferred out during period", transferredOutPatients);
         addAgeGender(dsd, "26", "clients with no clinical contact since last expected contact by the end of quarter", patientsWithNoClinicalContactSinceLastExpectedContact);
+        addAgeGender(dsd, "27a-", "clients with no clinical contact since last expected contact silently transfered", silentlyTransferred);
+        addAgeGender(dsd, "27b-", "clients with no clinical contact since last expected contact incompleteTracingAttempts",incompleteTracingAttempts);
+        addAgeGender(dsd, "27c-", "clients with no clinical contact since last expected contact unableToBeLocated",unableToBeLocated);
+        addAgeGender(dsd, "27d-", "clients with no clinical contact since last expected contact stoppedARVTaking",stoppedARVTaking);
+        addAgeGender(dsd, "27e-", "clients with no clinical contact since last expected contact noAttemptToTrace",noAttemptToTrace);
+        addAgeGender(dsd, "27f-", "clients with no clinical contact since last expected contact died",diedTraceOutcome);
+        addAgeGender(dsd, "28a-", "clients with no clinical contact since last expected contact died cause of 1 TB",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfTB));
+        addAgeGender(dsd, "28b-", "clients with no clinical contact since last expected contact died cause of 2 cancer",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfCancer));
+        addAgeGender(dsd, "28c-", "clients with no clinical contact since last expected contact died cause of 3 infectious disease",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfInfectiousDiseases));
+        addAgeGender(dsd, "28d-", "clients with no clinical contact since last expected contact died cause of 4 HIV non infectious disease",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfNonInfectiousDiseases));
+        addAgeGender(dsd, "28e-", "clients with no clinical contact since last expected contact died cause of 5 natural causes",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfNaturalCauses));
+        addAgeGender(dsd, "28f-", "clients with no clinical contact since last expected contact died cause of 6 non natural causes",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfNonNaturalCauses));
+        addAgeGender(dsd, "28g-", "clients with no clinical contact since last expected contact died cause of 7 unknown",df.getPatientsInAll(deadPatientsDuringPeriod,diedOfUnknown));
+        addAgeGender(dsd, "29", "active ART clients eligible for CPT", df.getPatientsInAll(activePatientsInCareDuringPeriod,eligibleForCPTDuringQuarter));
+        addAgeGender(dsd, "30", "active ART clients on CPT", df.getPatientsInAll(activePatientsInCareDuringPeriod,onCPTDuringQuarter));
         addAgeGender(dsd, "31", "active ART clients screened for TB at last visit in the quarter", activePatientsScreenedForTB);
         addAgeGender(dsd, "32", "active ART clients with presumptive TB during quarter", activePatientsPresumptiveTBDuringQuarter);
         addAgeGender(dsd, "33", "active ART clients diagnosed with TB during quarter", activePatientsDiagnosedWithTBDuringQuarter );
@@ -373,8 +421,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "40", "active Patients That Are Malnourished Who Received Therapeutic/Supplementary Foods",activePatientsThatAreMalnourishedWhoReceivedTherapeuticFoods);
         addAgeGender(dsd, "41a-", "activeOnART patients who had a viral load test at 6 months after art initiation total tested",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiation);
         addAgeGender(dsd, "41b-", "activeOnART patients who had a viral load test at 6 months after art initiation with suppressed VL",activeOnARTAndHadAViralLoadTest6MonthsAfterArtInitiationVirallySupressed);
-        addAgeGender(dsd, "42a-", "clients Who Had Viral Load Taken During The Past 12Months total ",clientsWhoHadViralLoadTakenDuringThePast12Months);
-        addAgeGender(dsd, "42b-", "clients Who Had Viral Load Taken During The Past 12Months virally suppressed ",clientsWhoHadViralLoadTakenDuringThePast12MonthsAndVirallySupressed );
+        addAgeGender(dsd, "42a-", "clients Who Had Viral Load Taken During The Past 12Months total ",df.getPatientsInAll(activePatientsInCareDuringPeriod,clientsWhoHadViralLoadTakenDuringThePast12Months));
+        addAgeGender(dsd, "42b-", "clients Who Had Viral Load Taken During The Past 12Months virally suppressed ",df.getPatientsInAll(activePatientsInCareDuringPeriod,clientsWhoHadViralLoadTakenDuringThePast12MonthsAndVirallySupressed ));
         addAgeGender(dsd, "43a-", "activeOnART patients who had a viral load test at 12 months after art initiation total tested",activeOnARTAndHadAViralLoadTest12MonthsAfterArtInitiation);
         addAgeGender(dsd, "43b-", "activeOnART patients who had a viral load test at 12 months after art initiation who are suppressed",patientsWhoHadAViralLoadTest12MonthsAfterArtInitiationAndAreVirallySupressed);
         addAgeGender(dsd, "44a-", "patients who had a repeat VL tht remained non suppressed during reporting period",nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL);
@@ -468,6 +516,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.4.1.4";
+        return "0.0.4.1.6";
     }
 }
