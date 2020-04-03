@@ -53,7 +53,7 @@ import java.util.Properties;
 /**
  */
 @Component
-public class SetupPNCRegister_2019 extends UgandaEMRDataExportManager {
+public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
