@@ -154,11 +154,11 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Client No", sdd.definition("Client No", getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NIN", nationalID, "");
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
-        dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Village+Parish", sdd.villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
-        dsd.addColumn("10-19yrs", age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("20-24yrs", age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("25+yrs", age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("10-19yrs", sdd.age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("20-24yrs", sdd.age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("25+yrs", sdd.age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("6 Hours", sdd.definition("6 Hours", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Days", sdd.definition("6 Days", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Weeks", sdd.definition("6 Weeks", getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
@@ -179,8 +179,8 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("CTX", sdd.definition("CTX", getConcept("d12abd7f-c90d-4798-9240-0f2f81977183")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Diagnosis-M", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MotherDiagnosisDataConverter());
         dsd.addColumn("WHO", sdd.definition("WHO", getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
-        dsd.addColumn("CD4", whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("VL", whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("CD4", sdd.whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("VL",sdd.whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Other treatment mother", sdd.definition("Other treatment mother", getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Baby status", sdd.definition("Baby status", getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BabyStatusDataConveter());
         dsd.addColumn("Age", sdd.definition("Age", getConcept("164438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -195,7 +195,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Vit A", sdd.definition("Vit A", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("PCV", sdd.definition("PCV", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("Other treatment child", sdd.definition("Other treatment child", getConcept("59560ede-43e2-4e56-a47e-0f876779f0e1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("RTW/RFW", referredToOrFrom(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("RTW/RFW", sdd.referredToOrFrom(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("FSG Enrollment", sdd.definition("FSG Enrollment", getConcept("7e8e0ef3-2fda-4c76-8cf6-c7a6f1584ff2")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FSGEnrollmentDataConverter());
         dsd.addColumn("Enrolled at MBCP", sdd.definition("Enrolled at MBCP", getConcept("f0d12a70-04a3-4f7f-992b-bed4ad331908")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
@@ -206,29 +206,5 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         return Dictionary.getConcept(uuid);
     }
 
-    private DataDefinition villageParish(){
-        CalculationDataDefinition cdf =new CalculationDataDefinition("village+parish", new PersonAddressCalculation());
-        cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cdf;
-    }
-    private DataDefinition age(Integer lower, Integer upper) {
-        CalculationDataDefinition cdf = new CalculationDataDefinition("Age-"+lower+"-"+upper+"yrs", new AgeLimitCalculation());
-        cdf.addCalculationParameter("lowerLimit", lower);
-        cdf.addCalculationParameter("upperLimit", upper);
-        cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cdf;
-    }
-    private DataDefinition whoCd4Vl(String q, String a){
-        CalculationDataDefinition cd = new CalculationDataDefinition("", new WhoCd4VLCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        cd.addCalculationParameter("question", q);
-        cd.addCalculationParameter("answer", a);
-        return cd;
-    }
 
-    private DataDefinition referredToOrFrom(){
-        CalculationDataDefinition cd = new CalculationDataDefinition("RTW/RFW", new RtwRfwCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
 }
