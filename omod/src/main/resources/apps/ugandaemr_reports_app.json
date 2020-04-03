@@ -584,6 +584,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS055-HCTRegister"
       },
       {
+        "id": "HMIS 008-PNC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 008 : PNC Register",
+        "url": "reportingui/runReport.page?reportDefinition=ffed8404-7f81-4c9e-a9eb-db2673397cc0",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS008-PNCRegister"
+      },
+      {
         "id": "HTS_RECENT Report ",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",

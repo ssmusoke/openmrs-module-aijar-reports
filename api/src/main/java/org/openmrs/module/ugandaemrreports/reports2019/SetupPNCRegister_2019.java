@@ -11,7 +11,7 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.ugandaemrreports.reports;
+package org.openmrs.module.ugandaemrreports.reports2019;
 
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
@@ -31,24 +31,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.ARVsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.BabyStatusDataConveter;
-import org.openmrs.module.ugandaemrreports.data.converter.BreastStatusDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.CervixStatusDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.FpPNCDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.IFODataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.IYCFDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.ImmunizationDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MNCDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MUACDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.MotherDiagnosisDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.RoutineAdminDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.TimingForPNCDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.WHODataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -58,6 +41,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCal
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -69,7 +53,7 @@ import java.util.Properties;
 /**
  */
 @Component
-public class SetupPNCRegister extends UgandaEMRDataExportManager {
+public class SetupPNCRegister_2019 extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -82,7 +66,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "6625672c-3ee1-11e7-ad03-507b9dc4c741";
+        return "d6ab98f5-570d-45d6-ac57-bd143b162948";
     }
 
     @Override
@@ -100,7 +84,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister_2019.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8-10,dataset:PNC");
         props.put("sortWeight", "5000");
@@ -110,12 +94,12 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getUuid() {
-        return "489baf0e-3ee1-11e7-a1d1-507b9dc4c741";
+        return "ffed8404-7f81-4c9e-a9eb-db2673397cc0";
     }
 
     @Override
     public String getName() {
-        return "Integrated Postnatal Register";
+        return "Integrated Postnatal Register 2019";
     }
 
     @Override
@@ -137,7 +121,7 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.0.6";
     }
 
     @Override
@@ -155,14 +139,20 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
         PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+
         PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
+        PatientIdentifierType nationalIdentifiernumber = MetadataUtils.existing(PatientIdentifierType.class, "f0c16a6d-dc5f-4118-a803-616d0075d282");
+
         DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
         DataDefinition identifierDefPre = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
+        DataDefinition nationalID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(nationalIdentifiernumber.getName(), nationalIdentifiernumber), identifierFormatter);
+
 
 
         //start adding columns
         dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Client No", sdd.definition("Client No", getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter()         );
+        dsd.addColumn("Client No", sdd.definition("Client No", getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("NIN", nationalID, "");
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
@@ -206,6 +196,8 @@ public class SetupPNCRegister extends UgandaEMRDataExportManager {
         dsd.addColumn("PCV", sdd.definition("PCV", getConcept("dc918618-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ImmunizationDataConverter());
         dsd.addColumn("Other treatment child", sdd.definition("Other treatment child", getConcept("59560ede-43e2-4e56-a47e-0f876779f0e1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("RTW/RFW", referredToOrFrom(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("FSG Enrollment", sdd.definition("FSG Enrollment", getConcept("7e8e0ef3-2fda-4c76-8cf6-c7a6f1584ff2")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FSGEnrollmentDataConverter());
+        dsd.addColumn("Enrolled at MBCP", sdd.definition("Enrolled at MBCP", getConcept("f0d12a70-04a3-4f7f-992b-bed4ad331908")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
         return dsd;
     }
