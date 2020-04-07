@@ -36,10 +36,14 @@ public class PersonAddressCalculation extends AbstractPatientCalculation {
             String villageParish = "";
             String village = "";
             String parish = "";
+            String subcounty="";
+            String district="";
+
             Person person = personService.getPerson(ptId);
             if(person.getPersonAddress() != null && person.getPersonAddress().getAddress5() != null) {
                 village = person.getPersonAddress().getAddress5();
             }
+
             if(person.getPersonAddress() != null && person.getPersonAddress().getAddress4() != null) {
                 parish = person.getPersonAddress().getAddress4();
             }

@@ -341,6 +341,15 @@
         "requiredPrivilege": "App: ugandaemrreports.maternityRegister"
       },
       {
+        "id": "HMIS 006-Marternity Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 006-Marternity Register 2019",
+        "url": "reportingui/runReport.page?reportDefinition=694cb788-c3d1-406a-be2d-65e322f71205",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.maternityRegister"
+      },
+      {
         "id": "PNC Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
