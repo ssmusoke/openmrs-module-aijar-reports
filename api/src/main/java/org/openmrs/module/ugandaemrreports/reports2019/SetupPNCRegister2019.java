@@ -104,7 +104,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Contains mothers information after delivery";
+        return "PostNatal Register 2019";
     }
 
     @Override
@@ -121,7 +121,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.6";
+        return "1.0.8";
     }
 
     @Override
@@ -138,24 +138,13 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"), "startDate=${startDate},endDate=${endDate}");
 
-        PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
-
-        PatientIdentifierType preARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
-        PatientIdentifierType nationalIdentifiernumber = MetadataUtils.existing(PatientIdentifierType.class, "f0c16a6d-dc5f-4118-a803-616d0075d282");
-
-        DataConverter identifierFormatter = new ObjectFormatter("{identifier}");
-        DataDefinition identifierDefPre = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(preARTNo.getName(), preARTNo), identifierFormatter);
-        DataDefinition nationalID = new ConvertedPatientDataDefinition("identifier", new PatientIdentifierDataDefinition(nationalIdentifiernumber.getName(), nationalIdentifiernumber), identifierFormatter);
-
-
-
         //start adding columns
         dsd.addColumn("Serial No", sdd.definition("Serial No",  getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Client No", sdd.definition("Client No", getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("NIN", nationalID, "");
+        dsd.addColumn("NIN", sdd.getNationalIdentifiernumber(), "");
         dsd.addColumn("Mother Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village+Parish", sdd.villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
         dsd.addColumn("10-19yrs", sdd.age(10,19), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("20-24yrs", sdd.age(20,24), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("25+yrs", sdd.age(25,200), "onDate=${endDate}", new CalculationResultDataConverter());
@@ -172,12 +161,11 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
         dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
         dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
-        dsd.addColumn("Pre-ART No", identifierDefPre, "");
         dsd.addColumn("Iron", sdd.definition("Iron", getConcept("315825e8-8ba4-4551-bdd1-aa4e02a36639")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Folic Acid", sdd.definition("Folic Acid", getConcept("8c346216-c444-4528-a174-5139922218ed")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Vit A", sdd.definition("Vit A", getConcept("88ec2c8b-eb7b-4595-8612-1871568507a5")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("CTX", sdd.definition("CTX", getConcept("d12abd7f-c90d-4798-9240-0f2f81977183")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
-        dsd.addColumn("Diagnosis-M", sdd.definition("Diagnosis", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MotherDiagnosisDataConverter());
+        dsd.addColumn("Diagnosis-M", sdd.definition("Diagnosis-M", getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MotherDiagnosisDataConverter());
         dsd.addColumn("WHO", sdd.definition("WHO", getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
         dsd.addColumn("CD4", sdd.whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("VL",sdd.whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());

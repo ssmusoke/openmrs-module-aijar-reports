@@ -34,9 +34,6 @@ public class FSGEnrollmentDataConverter implements DataConverter {
         else if(concept != null && concept.equals(Dictionary.getConcept("0c0edbd7-ce81-48fd-8f56-ab3aa4406f8d"))){
             return "FSGK";
         }
-        else if(concept != null && concept.equals(Dictionary.getConcept("a02f9bdc-1ae2-4cfa-8023-1f534a9e906d"))){
-            return "a02f9bdc-1ae2-4cfa-8023-1f534a9e906d";
-        }
         else if(concept != null && concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))){
             return "FSG✔";
         }
