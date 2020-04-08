@@ -590,7 +590,7 @@
         "label": "HMIS 008 : PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=ffed8404-7f81-4c9e-a9eb-db2673397cc0",
         "order": 20,
-        "requiredPrivilege": "App: ugandaemrreports.HMIS008-PNCRegister"
+        "requiredPrivilege": "App: ugandaemrreports.PNCRegister"
       },
       {
         "id": "HTS_RECENT Report ",
