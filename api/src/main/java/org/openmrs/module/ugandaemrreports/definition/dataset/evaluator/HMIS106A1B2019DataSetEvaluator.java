@@ -32,7 +32,6 @@ import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HMIS106A1B2019DataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -130,7 +129,6 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
 
 
        DataSetRow all = new DataSetRow();
-        DataSetRow eMTCT = new DataSetRow();
         for (int i = 0; i < periods.size(); i++) {
 
             String col = indicators[i];
@@ -150,18 +148,16 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 Collection startedArt = CollectionUtils.subtract(allStarted, transferInPatients.getMemberIds());
                 Collection transferIn = CollectionUtils.intersection(allStarted, transferInPatients.getMemberIds());
 
-                Map<Integer, Object> cD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> cD4L200 = new HashMap<Integer, Object>();
                 Map<Integer, Object> transferOut = new HashMap<Integer, Object>();
                 Map<Integer, Object> dead = new HashMap<Integer, Object>();
                 Map<String, Cohort> lost = new HashMap<String, Cohort>();
                 Set<Integer> stopped = new HashSet<Integer>();
-                Map<Integer, Object> cCD4 = new HashMap<Integer, Object>();
-                Map<Integer, Object> pCD4L500 = new HashMap<Integer, Object>();
 
 
                 if (startedArt.size() > 0) {
                     baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(startedArt));
-                    cD4L500 = getPatientBaselineCD4DataLS500(baselineCD4);
+                    cD4L200 = getPatientBaselineCD4DataLS200(baselineCD4);
                     transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate);
 
                 }
@@ -182,16 +178,12 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
 
                 Collection alive = CollectionUtils.subtract(net, allLostAndDied);
 
-                if (alive.size() > 0) {
-                    cCD4 = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
-                    pCD4L500 = getPatientBaselineCD4DataLS500(cCD4);
-                }
 
 
                 addAgeCohortIndicators(pdh,indicators[i],3,all,startedArt,ageCohorts);
 
-                addAgeCohortIndicatorsWithBaseFraction(pdh,indicators[i],4,all,cD4L500,baselineCD4,ageCohorts);
-                addAgeCohortIndicatorsWithMedian(pdh,indicators[i],5,all,cD4L500,ageCohorts);
+                addAgeCohortIndicatorsWithBaseFraction(pdh,indicators[i],4,all,cD4L200,baselineCD4,ageCohorts);
+                addAgeCohortIndicatorsWithMedian(pdh,indicators[i],5,all,cD4L200,ageCohorts);
 
                 addAgeCohortIndicators(pdh,indicators[i],6,all,transferIn,ageCohorts);
 
@@ -208,6 +200,7 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 addAgeCohortIndicators(pdh,indicators[i],13,all,alive,ageCohorts);
 
                 addAgeCohortIndicatorsWithPercentage(pdh,indicators[i],14,all,alive,net,ageCohorts);
+
             } else {
                 pdh.addCol(all, indicators[i]+String.valueOf(3)+"A", 0);
                 pdh.addCol(all, indicators[i]+String.valueOf(3)+"B",0);
@@ -265,18 +258,16 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
 
 
-                Map<Integer, Object> mothersCD4L500 = new HashMap<Integer, Object>();
+                Map<Integer, Object> mothersCD4L200 = new HashMap<Integer, Object>();
                 Map<Integer, Object> transferOutMothers = new HashMap<Integer, Object>();
                 Map<Integer, Object> deadMothers = new HashMap<Integer, Object>();
                 Map<String, Cohort> lostMothers = new HashMap<String, Cohort>();
                 Set<Integer> stoppedMothers = new HashSet<Integer>();
-                Map<Integer, Object> cCD4W = new HashMap<Integer, Object>();
-                Map<Integer, Object> pCD4L500W = new HashMap<Integer, Object>();
 
 
                 if (allMotherStarted.size() > 0) {
                     baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMotherStarted));
-                    mothersCD4L500 = getPatientBaselineCD4DataLS500(baselineCD4Mothers);
+                    mothersCD4L200 = getPatientBaselineCD4DataLS200(baselineCD4Mothers);
                     transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStarted), endDate);
 
                 }
@@ -296,16 +287,12 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
 
                 Collection alive = CollectionUtils.subtract(netMothers, allLostAndDied);
 
-                if (alive.size() > 0) {
-                    cCD4W = getPatientWithRecentCD4(Joiner.on(",").join(alive), endDate);
-                    pCD4L500W = getPatientBaselineCD4DataLS500(cCD4W);
-                }
 
                 pdh.addCol(all, indicators[i]+"3D", allMotherStarted.size());
                 pdh.addCol(all, indicators[i]+"6D", mothersTransferIn.size());
 
-                pdh.addCol(all, indicators[i]+"4D", dft.format(((double) mothersCD4L500.size()) / baselineCD4Mothers.size()));
-                pdh.addCol(all, indicators[i]+"5D", getMedianCD4(mothersCD4L500));
+                pdh.addCol(all, indicators[i]+"4D", dft.format(((double) mothersCD4L200.size()) / baselineCD4Mothers.size()));
+                pdh.addCol(all, indicators[i]+"5D", getMedianCD4(mothersCD4L200));
                 pdh.addCol(all, indicators[i]+"7D", transferOutMothers.size());
                 pdh.addCol(all, indicators[i]+"8D", netMothers.size());
                 pdh.addCol(all, indicators[i]+"9D", getPatientStopped(Joiner.on(",").join(netMothers), endDate));
@@ -416,14 +403,6 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
         return patientDataService.evaluate(definition, context).getData();
     }
 
-    private Map<Integer, Object> getPatientWithRecentCD4(String cohort, String endDate) throws EvaluationException {
-        String sql = String.format("select DISTINCT A.person_id,A.value_numeric from (select o.person_id, o.value_numeric,o.obs_datetime from obs o where o.person_id in (%s) and o.concept_id = 5497 and obs_datetime <= '%s' and voided = 0) A  LEFT JOIN (select o.person_id, o.value_numeric,o.obs_datetime from obs o where o.person_id in (%s) and o.concept_id = 5497 and obs_datetime <= '%s' and voided = 0) B ON(A.person_id = B.person_id AND A.obs_datetime < B.obs_datetime) WHERE B.person_id IS NULL", cohort, endDate, cohort, endDate);
-        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
-        definition.setSql(sql);
-        EvaluationContext context = new EvaluationContext();
-        context.setBaseCohort(new Cohort(cohort));
-        return patientDataService.evaluate(definition, context).getData();
-    }
 
     private Map<Integer, Object> getPatientTransferredOut(String cohort, String endDate) throws EvaluationException {
         String sql = String.format("select o.person_id, o.value_datetime from obs o where o.voided = 0 and o.person_id in (%s) and o.concept_id = 99165 and o.value_datetime <= '%s'", cohort, endDate);
@@ -571,10 +550,10 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
         return l;
     }
 
-    private Map<Integer, Object> getPatientBaselineCD4DataLS500(Map<Integer, Object> data) {
+    private Map<Integer, Object> getPatientBaselineCD4DataLS200(Map<Integer, Object> data) {
         Map<Integer, Object> result = new HashMap<Integer, Object>();
         for (Map.Entry<Integer, Object> o : data.entrySet()) {
-            if (Double.valueOf(String.valueOf(o.getValue())) < 500.0) {
+            if (Double.valueOf(String.valueOf(o.getValue())) <= 200.0) {
                 result.put(o.getKey(), o.getValue());
             }
         }

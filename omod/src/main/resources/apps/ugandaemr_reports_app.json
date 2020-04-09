@@ -102,6 +102,14 @@
         "url": "reportingui/runReport.page?reportDefinition=167cf668-071e-488b-b159-d5f391774038",
         "order": 10,
         "requiredPrivilege": "App: ugandaemrreports.HMIS106aSection1B"
+      },{
+        "id": "HMIS 106a Section 1B 2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2019",
+        "type": "link",
+        "label": "HMIS 106a Section 1B",
+        "url": "reportingui/runReport.page?reportDefinition=edc03eac-37bd-450c-bc10-9c4a7d57a82b",
+        "order": 10,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS106aSection1B"
       },
       {
         "id": "CBS Adult Quarterly Report",
