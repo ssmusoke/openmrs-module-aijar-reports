@@ -28,18 +28,21 @@ public class FSGEnrollmentDataConverter implements DataConverter {
             return "";
         }
         Concept concept = ((Obs) obj).getValueCoded();
-        if(concept != null && concept.equals(Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77"))){
-            return "FSG";
+        if (concept != null) {
+            if (concept.equals(Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77"))) {
+                return "FSG";
+            } else if (concept.equals(Dictionary.getConcept("0c0edbd7-ce81-48fd-8f56-ab3aa4406f8d"))) {
+                return "FSGK";
+            } else if (concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))) {
+                return "FSG✔";
+            } else {
+                return null;
+            }
         }
-        else if(concept != null && concept.equals(Dictionary.getConcept("0c0edbd7-ce81-48fd-8f56-ab3aa4406f8d"))){
-            return "FSGK";
-        }
-        else if(concept != null && concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))){
-            return "FSG✔";
-        }
-
         return null;
     }
+
+
 
     @Override
     public Class<?> getInputDataType() {

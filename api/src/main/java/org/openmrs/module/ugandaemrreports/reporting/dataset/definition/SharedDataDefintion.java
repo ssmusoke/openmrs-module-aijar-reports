@@ -31,6 +31,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCal
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -39,6 +40,10 @@ import java.util.Date;
  */
 @Component
 public class SharedDataDefintion {
+
+    public Concept getConcept(String uuid) {
+        return Dictionary.getConcept(uuid);
+    }
 
     public DataDefinition definition(String name, Concept concept) {
         ObsForPersonDataDefinition obsForPersonDataDefinition = new ObsForPersonDataDefinition();

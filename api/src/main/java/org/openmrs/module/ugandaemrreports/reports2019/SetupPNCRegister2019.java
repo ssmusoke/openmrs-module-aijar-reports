@@ -73,6 +73,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildExcelReportDesign(reportDefinition));
         return l;
     }
 
@@ -82,9 +83,16 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
      * @param reportDefinition
      * @return The report design
      */
+
     @Override
+
+
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister2019.xls");
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        return rd;
+    }
+    public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign("402dbc34-53b2-4170-b2db-75ee47c03d2f", reportDefinition, "PNCRegister2019.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8-10,dataset:PNC");
         props.put("sortWeight", "5000");
