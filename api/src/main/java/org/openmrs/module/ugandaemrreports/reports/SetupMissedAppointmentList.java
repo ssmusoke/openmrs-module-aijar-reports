@@ -119,9 +119,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferredOutPatients = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
-        CohortDefinition patientsDeadAndTransferredOut =df.getPatientsInAny(deadPatients,transferredOutPatients);
+        CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
         CohortDefinition definition =df.getPatientsNotIn( df.getMissedAppointment(), patientsDeadAndTransferredOut);
 
         dsd.setName(getName());

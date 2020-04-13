@@ -218,6 +218,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getDeadAndTransferredOutPatientsDuringPeriod() {
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferredOutPatients = getPatientsTransferredOutDuringPeriod();
+        return df.getPatientsInAny(deadPatients, transferredOutPatients);
+    }
+
     public CohortDefinition getPatientsHavingTransferInRegimenDuringPeriod(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtTransferInRegimen(), hivMetadata.getARTSummaryPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
