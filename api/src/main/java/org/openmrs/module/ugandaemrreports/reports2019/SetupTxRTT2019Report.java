@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.reports2019;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -118,7 +120,7 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
         CohortDefinition females = cohortDefinitionLibrary.females();
 
         CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
-        CohortDefinition missedAppointment28DaysAndAbove = df.getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(28);
+        CohortDefinition missedAppointment28DaysAndAbove = getPatientsWithNoClinicalContactsFor28DaysAndAbove();
         CohortDefinition RTT = df.getPatientsInAll(onArtDuringQuarter,missedAppointment28DaysAndAbove);
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
@@ -180,6 +182,15 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
+    public CohortDefinition getPatientsWithNoClinicalContactsFor28DaysAndAbove() {
+        String query = "select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
+                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:startDate group by patient_id) last_encounter \n" +
+                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :startDate group by person_id)t1 \n " +
+                "where next_visit > last_enc_date and datediff(:startDate,next_visit)>=28 ";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return  cd;
+    }
 
     public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
         return df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
@@ -187,6 +198,6 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.1.1";
+        return "0.0.1.2";
     }
 }
