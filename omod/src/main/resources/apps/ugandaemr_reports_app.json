@@ -171,6 +171,13 @@
         "order": 40,
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDuefor2ndPCRR"
       },{
+        "id": "Exposed Infants Due for 3rd PCR",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Exposed Infants Due for 3rd PCR",
+        "url": "reportingui/runReport.page?reportDefinition=7568b994-3a25-4092-a2fc-18d8ec23197f",
+        "order": 36
+      },{
         "id": "Exposed Infants Due for Rapid Test",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
