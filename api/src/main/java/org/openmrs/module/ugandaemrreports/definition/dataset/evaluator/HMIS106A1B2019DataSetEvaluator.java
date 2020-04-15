@@ -145,7 +145,7 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
             pdh.addCol(all, col+"2D", periods.get(i));
 
             if (allStarted.size() > 0) {
-                Collection startedArt = CollectionUtils.subtract(allStarted, transferInPatients.getMemberIds());
+                Collection startedArtAtThisFacility = CollectionUtils.subtract(allStarted, transferInPatients.getMemberIds());
                 Collection transferIn = CollectionUtils.intersection(allStarted, transferInPatients.getMemberIds());
 
                 Map<Integer, Object> cD4L200 = new HashMap<Integer, Object>();
@@ -155,10 +155,10 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 Set<Integer> stopped = new HashSet<Integer>();
 
 
-                if (startedArt.size() > 0) {
-                    baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(startedArt));
+                if (startedArtAtThisFacility.size() > 0) {
+                    baselineCD4 = getPatientBaselineCD4Data(Joiner.on(",").join(allStarted));
                     cD4L200 = getPatientBaselineCD4DataLS200(baselineCD4);
-                    transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate);
+                    transferOut = getPatientTransferredOut(Joiner.on(",").join(startedArtAtThisFacility), endDate);
 
                 }
 
@@ -180,14 +180,14 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
 
 
 
-                addAgeCohortIndicators(pdh,indicators[i],3,all,startedArt,ageCohorts);
+                addAgeCohortIndicators(pdh,indicators[i],3,all,startedArtAtThisFacility,ageCohorts);
 
                 addAgeCohortIndicatorsWithBaseFraction(pdh,indicators[i],4,all,cD4L200,baselineCD4,ageCohorts);
-                addAgeCohortIndicatorsWithMedian(pdh,indicators[i],5,all,cD4L200,ageCohorts);
+                addAgeCohortIndicatorsWithMedian(pdh,indicators[i],5,all,baselineCD4,ageCohorts);
 
                 addAgeCohortIndicators(pdh,indicators[i],6,all,transferIn,ageCohorts);
 
-                addAgeCohortIndicators(pdh,indicators[i],7,all,getPatientTransferredOut(Joiner.on(",").join(startedArt), endDate),ageCohorts);
+                addAgeCohortIndicators(pdh,indicators[i],7,all,getPatientTransferredOut(Joiner.on(",").join(startedArtAtThisFacility), endDate),ageCohorts);
 
                 addAgeCohortIndicators(pdh,indicators[i],8,all,net,ageCohorts);
                 addAgeCohortIndicators(pdh,indicators[i],9,all,stopped,ageCohorts);
@@ -254,7 +254,7 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
             }
 
             if (allMothers.size() > 0) {
-                Collection allMotherStarted = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
+                Collection allMotherStartedAtThisFacility = CollectionUtils.subtract(allMothers, transferInPatients.getMemberIds());
                 Collection mothersTransferIn = CollectionUtils.intersection(allMothers, transferInPatients.getMemberIds());
 
 
@@ -265,10 +265,10 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 Set<Integer> stoppedMothers = new HashSet<Integer>();
 
 
-                if (allMotherStarted.size() > 0) {
-                    baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMotherStarted));
+                if (allMotherStartedAtThisFacility.size() > 0) {
+                    baselineCD4Mothers = getPatientBaselineCD4Data(Joiner.on(",").join(allMothers));
                     mothersCD4L200 = getPatientBaselineCD4DataLS200(baselineCD4Mothers);
-                    transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStarted), endDate);
+                    transferOutMothers = getPatientTransferredOut(Joiner.on(",").join(allMotherStartedAtThisFacility), endDate);
 
                 }
                 Collection netMothers = CollectionUtils.subtract(allMothers, transferOutMothers.keySet());
@@ -288,11 +288,11 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 Collection alive = CollectionUtils.subtract(netMothers, allLostAndDied);
 
 
-                pdh.addCol(all, indicators[i]+"3D", allMotherStarted.size());
+                pdh.addCol(all, indicators[i]+"3D", allMotherStartedAtThisFacility.size());
                 pdh.addCol(all, indicators[i]+"6D", mothersTransferIn.size());
 
                 pdh.addCol(all, indicators[i]+"4D", dft.format(((double) mothersCD4L200.size()) / baselineCD4Mothers.size()));
-                pdh.addCol(all, indicators[i]+"5D", getMedianCD4(mothersCD4L200));
+                pdh.addCol(all, indicators[i]+"5D", getMedianCD4(baselineCD4Mothers));
                 pdh.addCol(all, indicators[i]+"7D", transferOutMothers.size());
                 pdh.addCol(all, indicators[i]+"8D", netMothers.size());
                 pdh.addCol(all, indicators[i]+"9D", getPatientStopped(Joiner.on(",").join(netMothers), endDate));
