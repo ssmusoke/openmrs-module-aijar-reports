@@ -13,21 +13,33 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.Concept;
-import org.openmrs.Obs;
 import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
 /**
  */
-public class PersonAttributeDataConverter implements DataConverter {
+public class NationalityPersonalAttributeDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-        if (obj == null) {
-            return "";
-        }
 
-        return ((PersonAttribute)obj).getValue();
+        String personAttribute = ((PersonAttribute)obj).getValue();
+        if(personAttribute!=null)
+        {
+            if(personAttribute.equals("165317"))
+            {
+                return "National";
+            }
+             if(personAttribute.equals("165318"))
+            {
+                return "Foreigner";
+            }
+             if(personAttribute.equals("160155"))
+            {
+                return "Refugee";
+            }
+                return ((PersonAttribute)obj).getValue();
+        }
+        return null;
     }
 
     @Override

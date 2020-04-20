@@ -13,16 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.reports2019;
 
-import org.openmrs.Concept;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttributeType;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.metadatadeploy.MetadataUtils;
-import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
@@ -32,22 +22,15 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -160,8 +143,8 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("District", basePatientDataLibrary.getDistrict(),(String)null);
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
         dsd.addColumn("Alternate Phone", new PersonAttributeDataDefinition("Alternate Phone", sdd.getAlternatePhoneNumber()), "", new PersonAttributeDataConverter());
-        dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new PersonAttributeDataConverter());
-        dsd.addColumn("ClientAge", sdd.age(10,200), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new NationalityPersonalAttributeDataConverter());
+        dsd.addColumn("ClientAge", sdd.getAgeDataDefinition(10,200), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("6 Hours", sdd.definition("6 Hours", sdd.getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Days", sdd.definition("6 Days", sdd.getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
         dsd.addColumn("6 Weeks", sdd.definition("6 Weeks", sdd.getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());
@@ -184,8 +167,8 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("CTX", sdd.definition("CTX", sdd.getConcept("d12abd7f-c90d-4798-9240-0f2f81977183")), "onOrAfter=${startDate},onOrBefore=${endDate}", new RoutineAdminDataConverter());
         dsd.addColumn("Diagnosis-M", sdd.definition("Diagnosis-M", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MotherDiagnosisDataConverter());
         dsd.addColumn("WHO", sdd.definition("WHO", sdd.getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
-        dsd.addColumn("CD4", sdd.whoCd4Vl("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("VL",sdd.whoCd4Vl("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("CD4", sdd.getWHOCD4ViralLoadCalculation("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("VL",sdd.getWHOCD4ViralLoadCalculation("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Other treatment mother", sdd.definition("Other treatment mother", sdd.getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Baby status", sdd.definition("Baby status", sdd.getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886")), "onOrAfter=${startDate},onOrBefore=${endDate}", new BabyStatusDataConveter());
         dsd.addColumn("Age", sdd.definition("Age", sdd.getConcept("164438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());

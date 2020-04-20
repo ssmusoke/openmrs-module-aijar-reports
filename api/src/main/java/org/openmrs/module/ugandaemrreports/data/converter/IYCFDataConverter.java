@@ -23,15 +23,12 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 public class IYCFDataConverter implements DataConverter{
     @Override
     public Object convert(Object obj) {
-
-        if (obj == null) {
-            return null;
-        }
         Concept iyfcResults = ((Obs) obj).getValueCoded();
         if(iyfcResults!=null) {
             if (iyfcResults.equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
                 return "Y";
-            } else if (iyfcResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))) {
+            }
+            if (iyfcResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))) {
                 return "N";
             }
         }

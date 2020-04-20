@@ -85,19 +85,19 @@ public class SharedDataDefintion {
         return Dictionary.getConcept(uuid);
     }
 
-    public DataDefinition villageParish(){
+    public DataDefinition getVillageAndParish(){
         CalculationDataDefinition cdf =new CalculationDataDefinition("village+parish", new PersonAddressCalculation());
         cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cdf;
     }
-    public DataDefinition age(Integer lower, Integer upper) {
+    public DataDefinition getAgeDataDefinition(Integer lower, Integer upper) {
         CalculationDataDefinition cdf = new CalculationDataDefinition("Age-"+lower+"-"+upper+"yrs", new AgeLimitCalculation());
         cdf.addCalculationParameter("lowerLimit", lower);
         cdf.addCalculationParameter("upperLimit", upper);
         cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cdf;
     }
-    public DataDefinition whoCd4Vl(String q, String a){
+    public DataDefinition getWHOCD4ViralLoadCalculation(String q, String a){
         CalculationDataDefinition cd = new CalculationDataDefinition("", new WhoCd4VLCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         cd.addCalculationParameter("question", q);
