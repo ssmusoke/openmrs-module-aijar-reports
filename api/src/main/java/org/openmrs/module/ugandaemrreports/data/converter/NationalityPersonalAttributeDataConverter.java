@@ -23,23 +23,27 @@ public class NationalityPersonalAttributeDataConverter implements DataConverter 
     public Object convert(Object obj) {
 
         String personAttribute = ((PersonAttribute)obj).getValue();
-        if(personAttribute!=null)
+        if(personAttribute == null){
+            return null;
+          }
+
+        if(personAttribute.equals("165317"))
         {
-            if(personAttribute.equals("165317"))
-            {
-                return "National";
-            }
-             if(personAttribute.equals("165318"))
-            {
-                return "Foreigner";
-            }
-             if(personAttribute.equals("160155"))
-            {
-                return "Refugee";
-            }
-                return ((PersonAttribute)obj).getValue();
+            return "National";
         }
-        return null;
+
+         if(personAttribute.equals("165318"))
+        {
+            return "Foreigner";
+        }
+
+         if(personAttribute.equals("160155"))
+        {
+            return "Refugee";
+        }
+
+        return ((PersonAttribute)obj).getValue();
+
     }
 
     @Override
