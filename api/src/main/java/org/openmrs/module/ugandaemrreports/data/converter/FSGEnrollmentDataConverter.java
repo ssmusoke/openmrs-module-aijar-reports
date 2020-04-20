@@ -20,23 +20,27 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class IYCFDataConverter implements DataConverter{
+public class FSGEnrollmentDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
         if (obj == null) {
             return null;
         }
-        Concept iyfcResults = ((Obs) obj).getValueCoded();
-        if(iyfcResults!=null) {
-            if (iyfcResults.equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
-                return "Y";
-            } else if (iyfcResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))) {
-                return "N";
+        Concept concept = ((Obs) obj).getValueCoded();
+        if (concept != null) {
+            if (concept.equals(Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77"))) {
+                return "FSG";
+            } else if (concept.equals(Dictionary.getConcept("0c0edbd7-ce81-48fd-8f56-ab3aa4406f8d"))) {
+                return "FSGK";
+            } else if (concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))) {
+                return "FSG✔";
             }
         }
         return null;
     }
+
+
 
     @Override
     public Class<?> getInputDataType() {

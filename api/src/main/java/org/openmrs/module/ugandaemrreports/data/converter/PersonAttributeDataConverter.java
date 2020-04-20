@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
+import org.openmrs.Concept;
+import org.openmrs.Obs;
 import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
@@ -24,8 +26,26 @@ public class PersonAttributeDataConverter implements DataConverter {
         if (obj == null) {
             return "";
         }
-
-        return ((PersonAttribute)obj).getValue();
+        String personAttribute = ((PersonAttribute)obj).getValue();
+        if(personAttribute!=null)
+        {
+            if(personAttribute.equals("165317"))
+            {
+                return "National";
+            }
+            else if(personAttribute.equals("165318"))
+            {
+                return "Foreigner";
+            }
+            else if(personAttribute.equals("160155"))
+            {
+                return "Refugee";
+            }
+            else{
+                return ((PersonAttribute)obj).getValue();
+            }
+        }
+        return null;
     }
 
     @Override
