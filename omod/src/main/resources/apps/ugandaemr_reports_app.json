@@ -341,7 +341,7 @@
         "requiredPrivilege": "App: ugandaemrreports.maternityRegister"
       },
       {
-        "id": "HMIS 006-Marternity Register",
+        "id": "HMIS 006 - Marternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
         "type": "link",
         "label": "HMIS 006-Marternity Register 2019",
