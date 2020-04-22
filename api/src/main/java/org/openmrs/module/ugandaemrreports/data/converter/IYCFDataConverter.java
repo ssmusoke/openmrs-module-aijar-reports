@@ -34,7 +34,7 @@ public class IYCFDataConverter implements DataConverter{
         if (iyfcResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))) {
                 return "N";
             }
-        return ((Obs) obj).getValueCoded();
+        return iyfcResults;
     }
 
     @Override

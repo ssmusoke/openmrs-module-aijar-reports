@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.Concept;
-import org.openmrs.Obs;
 import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 
