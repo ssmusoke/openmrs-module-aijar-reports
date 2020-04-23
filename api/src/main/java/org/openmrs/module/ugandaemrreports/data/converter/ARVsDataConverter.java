@@ -24,30 +24,30 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 public class ARVsDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-
-        if (obj == null) {
-            return "";
-        }
         Concept arvResultsConcept = ((Obs) obj).getValueCoded();
 
-        if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3"))){
+        if (arvResultsConcept == null) {
+            return null;
+        }
+
+        if(arvResultsConcept.equals(Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3"))){
             return "ART";
         }
-        else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("2aa7d442-6cbb-4609-9dd3-bc2ad6f05016"))){
+        if(arvResultsConcept.equals(Dictionary.getConcept("2aa7d442-6cbb-4609-9dd3-bc2ad6f05016"))){
             return "ARTK";
         }
 
-        else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("2c000b41-f9d7-40c1-8de0-bce91dbae932"))){
-            return "=CONCATENATE(\"ART\",UNICHAR(8730))";
+        if(arvResultsConcept.equals(Dictionary.getConcept("2c000b41-f9d7-40c1-8de0-bce91dbae932"))){
+            return "ART✔";
         }
-        else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("bbc63761-0741-4583-9396-a34d3a18601c"))){
-            return "=CONCATENATE(\"ARTK\",UNICHAR(8730))";
+        if(arvResultsConcept.equals(Dictionary.getConcept("bbc63761-0741-4583-9396-a34d3a18601c"))){
+            return "ARTK✔";
         }
-        else  if(arvResultsConcept != null && arvResultsConcept.equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))){
+        if(arvResultsConcept.equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))){
             return "NA";
         }
 
-        return null;
+        return arvResultsConcept;
     }
 
     @Override
