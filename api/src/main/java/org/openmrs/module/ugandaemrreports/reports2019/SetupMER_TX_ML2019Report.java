@@ -118,7 +118,7 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxNewAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition TX_ML = getPatientsWithNoClinicalContactsForAbove28DaysByEndDate();
+        CohortDefinition TX_ML = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
         CohortDefinition silentlyTransferred=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("f57b1500-7ff2-46b4-b183-fed5bce479a9")), BaseObsCohortDefinition.TimeModifier.LAST);
 
@@ -192,15 +192,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     }
 
-    public CohortDefinition getPatientsWithNoClinicalContactsForAbove28DaysByEndDate() {
-        String query = "select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
-                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:endDate group by patient_id) last_encounter \n" +
-                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :endDate group by person_id)t1 \n " +
-                "where next_visit > last_enc_date and datediff(:endDate,next_visit)> 28 ";
-        SqlCohortDefinition cd = new SqlCohortDefinition(query);
-        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
-        return  cd;
-    }
 
     private Concept getCauseOfDeathConcept(){
         return hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115");
@@ -209,6 +200,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.2";
+        return "0.0.3";
     }
 }
