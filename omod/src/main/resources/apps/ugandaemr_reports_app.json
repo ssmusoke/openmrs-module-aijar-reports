@@ -676,6 +676,14 @@
         "order": 50
       },
       {
+        "id": "MER TX_ML Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "TX_ML Report",
+        "url": "reportingui/runReport.page?reportDefinition=5b922f62-f844-4962-9465-61cf8f52f4b7",
+        "order": 55
+      },
+      {
         "id": "Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
         "type": "link",
