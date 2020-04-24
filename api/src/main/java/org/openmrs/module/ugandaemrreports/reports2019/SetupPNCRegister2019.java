@@ -115,7 +115,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.6";
+        return "1.0.7";
     }
 
     @Override
@@ -137,6 +137,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Client No", sdd.definition("Client No", sdd.getConcept("ef1f4c7a-2b90-4412-83bb-87ae8094ce4c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NIN", sdd.getNationalIDNumber(), "");
         dsd.addColumn("Mother Name",  new PreferredNameDataDefinition(), (String) null);
+        dsd.addColumn("Father Name", sdd.definition("Father Name", sdd.getConcept("1594AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Village", basePatientDataLibrary.getVillage(),(String)null);
         dsd.addColumn("Parish", basePatientDataLibrary.getParish(),(String)null);
         dsd.addColumn("County", basePatientDataLibrary.getCounty(),(String)null);
