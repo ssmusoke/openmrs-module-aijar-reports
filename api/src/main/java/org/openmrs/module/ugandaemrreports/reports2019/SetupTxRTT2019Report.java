@@ -19,6 +19,7 @@ import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reports.Helper;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -125,7 +126,7 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
         CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod = df.getPatientsInAll(onArtDuringQuarter,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
-        CohortDefinition RTT = df.getPatientsInAny(getLostPatientsDuringPeriodAndReturnToCareWithinSamePeriod(),patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod);
+        CohortDefinition returnToCareClients = df.getPatientsInAny(getLostPatientsDuringPeriodAndReturnToCareWithinSamePeriod(),patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod);
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
                 Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -134,57 +135,49 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
                 Arrays.asList(Dictionary.getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
 
 
-        addGender(dsd, "a", "RTT ", RTT);
-        addGender(dsd, "b", "RTT ", RTT);
+        addGender(dsd, "a", "returnToCareClients ", returnToCareClients);
+        addGender(dsd, "b", "returnToCareClients ", returnToCareClients);
 
-        addIndicator(dsd,"PWIDSf","PWIDs TX Curr on ART female",df.getPatientsInAll(females,PWIDS,RTT),"");
-        addIndicator(dsd,"PWIDSm","PWIDs TX Curr on ART male",df.getPatientsInAll(males,PWIDS,RTT),"");
+        Helper.addIndicator(dsd, "PWIDSf", "PWIDs TX Curr on ART female", df.getPatientsInAll(females, PWIDS, returnToCareClients), "");
+        Helper.addIndicator(dsd, "PWIDSm", "PWIDs TX Curr on ART male", df.getPatientsInAll(males, PWIDS, returnToCareClients), "");
 
-        addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,RTT),"");
-        addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,RTT),"");
+        Helper.addIndicator(dsd, "PIPf", "PIPs TX Curr on ART female", df.getPatientsInAll(females, PIPS, returnToCareClients), "");
+        Helper.addIndicator(dsd, "PIPm", "PIPs TX Curr on ART male", df.getPatientsInAll(males, PIPS, returnToCareClients), "");
 
         return rd;
     }
 
     public void addGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         if (key == "a") {
-            addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1female");
-            addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4female");
-            addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9female");
-            addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14female");
-            addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19female");
-            addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24female");
-            addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29female");
-            addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34female");
-            addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39female");
-            addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44female");
-            addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49female");
-            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50female");
+            Helper.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1female");
+            Helper.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4female");
+            Helper.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9female");
+            Helper.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14female");
+            Helper.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19female");
+            Helper.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24female");
+            Helper.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29female");
+            Helper.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34female");
+            Helper.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39female");
+            Helper.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44female");
+            Helper.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49female");
+            Helper.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50female");
         } else if (key == "b") {
-            addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1male");
-            addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4male");
-            addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9male");
-            addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14male");
-            addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19male");
-            addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24male");
-            addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29male");
-            addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34male");
-            addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39male");
-            addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44male");
-            addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49male");
-            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50male");
+            Helper.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1male");
+            Helper.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4male");
+            Helper.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between5and9male");
+            Helper.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between10and14male");
+            Helper.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between15and19male");
+            Helper.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between20and24male");
+            Helper.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between25and29male");
+            Helper.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between30and34male");
+            Helper.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39male");
+            Helper.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44male");
+            Helper.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49male");
+            Helper.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50male");
         }
     }
 
 
-    public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
-        CohortIndicator ci = new CohortIndicator();
-        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
-        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
-        ci.setType(CohortIndicator.IndicatorType.COUNT);
-        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
-        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
-    }
 
     public CohortDefinition getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod() {
         String query = "select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
@@ -207,12 +200,8 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
         return  cd;
     }
 
-    public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
-        return df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
-    }
-
     @Override
     public String getVersion() {
-        return "0.0.1.3";
+        return "0.0.1.4";
     }
 }

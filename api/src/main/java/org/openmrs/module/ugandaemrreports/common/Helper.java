@@ -4,7 +4,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.ReportingConstants;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.definition.service.SerializedDefinitionService;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -286,4 +291,14 @@ public class Helper {
         }
         return convertedDates;
     }
+
+    public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
+        CohortIndicator ci = new CohortIndicator();
+        ci.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        ci.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ci.setType(CohortIndicator.IndicatorType.COUNT);
+        ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
+        dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
+    }
+
 }
