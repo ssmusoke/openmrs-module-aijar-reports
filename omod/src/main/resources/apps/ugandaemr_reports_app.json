@@ -658,6 +658,14 @@
         "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
         "order": 40,
         "requiredPrivilege": "App: ugandaemrreports.MERPMTCTSTATReport"
+      },{
+        "id": "MER_TX_RTT_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "MER TX RTT  Report",
+        "url": "reportingui/runReport.page?reportDefinition=c17ea006-b599-45c4-94c9-33f6f4d99f4c",
+        "order": 45,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport"
       }, {
         "id": "MER_TX_TB",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
