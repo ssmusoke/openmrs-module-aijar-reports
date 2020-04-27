@@ -593,6 +593,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS055-HCTRegister"
       },
       {
+        "id": "HMIS 008-PNC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 008 : PNC Register",
+        "url": "reportingui/runReport.page?reportDefinition=ffed8404-7f81-4c9e-a9eb-db2673397cc0",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.PNCRegister"
+      },
+      {
         "id": "HTS_RECENT Report ",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
@@ -658,6 +667,14 @@
         "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
         "order": 40,
         "requiredPrivilege": "App: ugandaemrreports.MERPMTCTSTATReport"
+      },{
+        "id": "MER_TX_RTT_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "MER TX RTT  Report",
+        "url": "reportingui/runReport.page?reportDefinition=c17ea006-b599-45c4-94c9-33f6f4d99f4c",
+        "order": 45,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport"
       }, {
         "id": "MER_TX_TB",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
@@ -674,6 +691,14 @@
         "label": "PMTCT ART  Report",
         "url": "reportingui/runReport.page?reportDefinition=47246504-69df-4060-b202-e2903305c456",
         "order": 50
+      },
+      {
+        "id": "MER TX_ML Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "TX_ML Report",
+        "url": "reportingui/runReport.page?reportDefinition=5b922f62-f844-4962-9465-61cf8f52f4b7",
+        "order": 55
       },
       {
         "id": "Appointments List",
@@ -860,6 +885,14 @@
         "label": "Recency HTS Client Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
         "order":10,
+        "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },{
+        "id": "HMIS PHAR 003:Dispensing Log",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "HMIS PHAR 003:Dispensing Log",
+        "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
+        "order":15,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },
       {

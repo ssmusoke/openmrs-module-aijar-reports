@@ -190,6 +190,12 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getMedicationDispensingEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "22902411-19c1-4a02-b19a-bf1a9c24fd51"));
+        return l;
+    }
+
     public Concept getARVDuration() {
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
     }
@@ -523,5 +529,11 @@ public class HIVMetadata extends Metadata {
 
     public Concept getNumberOfDaysDispensed(){
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
+    }
+
+    public List<EncounterType> getMissedAppointmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "791faefd-36b8-482f-ab78-20c297b03851"));
+        return l;
     }
 }
