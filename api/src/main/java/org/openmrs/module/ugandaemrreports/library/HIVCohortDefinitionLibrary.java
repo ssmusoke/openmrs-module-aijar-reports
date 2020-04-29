@@ -2,8 +2,10 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  */
@@ -216,6 +219,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsTransferredOutDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getDeadAndTransferredOutPatientsDuringPeriod() {
+        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
+        CohortDefinition transferredOutPatients = getPatientsTransferredOutDuringPeriod();
+        return df.getPatientsInAny(deadPatients, transferredOutPatients);
     }
 
     public CohortDefinition getPatientsHavingTransferInRegimenDuringPeriod(String olderThan) {
@@ -491,5 +500,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(Double value1, RangeComparator rangeComparator1, Double value2, RangeComparator rangeComparator2){
         return df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator1,value1,rangeComparator2,value2, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsWithNoClinicalContactsByEndDateForDays(Integer days) {
+        String query = String.format("select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
+                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:endDate group by patient_id) last_encounter \n" +
+                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :endDate group by person_id)t1 \n " +
+                "where next_visit > last_enc_date and datediff(:endDate,next_visit)> '%d'",days);
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
     }
 }
