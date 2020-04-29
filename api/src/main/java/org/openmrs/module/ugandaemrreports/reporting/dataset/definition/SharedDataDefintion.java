@@ -28,9 +28,7 @@ import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDat
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.stereotype.Component;
@@ -107,6 +105,23 @@ public class SharedDataDefintion {
 
     public DataDefinition referredToOrFrom(){
         CalculationDataDefinition cd = new CalculationDataDefinition("RTW/RFW", new RtwRfwCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+    public DataDefinition getBloodPressure(){
+        CalculationDataDefinition cdf = new CalculationDataDefinition("bp", new BloodPressureCalculation());
+        cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cdf;
+    }
+
+    public DataDefinition getIronGiven() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Iron given", new IronGivenCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    public DataDefinition getFolicAcidGiven() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Folic acid given", new FolicAcidCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }
