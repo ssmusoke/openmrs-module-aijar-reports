@@ -25,7 +25,7 @@ public class ImmunizationDataConverter implements DataConverter {
     public Object convert(Object obj) {
         Concept concept = ((Obs) obj).getValueCoded();
         if (concept==null) {
-            return null;
+            return "";
         }
         if(concept.equals(Dictionary.getConcept("dc8e1be9-30ab-102d-86b0-7a5022ba4115"))){
             return "✔";

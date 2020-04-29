@@ -13,10 +13,7 @@
  */
 package org.openmrs.module.ugandaemrreports.reporting.dataset.definition;
 
-import org.openmrs.Concept;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttribute;
-import org.openmrs.PersonAttributeType;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.TimeQualifier;
@@ -28,6 +25,8 @@ import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDat
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.MaternityEncounterDateCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
@@ -109,5 +108,15 @@ public class SharedDataDefintion {
         CalculationDataDefinition cd = new CalculationDataDefinition("RTW/RFW", new RtwRfwCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
+    }
+    public DataDefinition getNameofProvideratDelivery() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Delivered By", new ProviderNameCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+
+    public PersonName getPersonNamesByProviderUUID(String providerUUID) {
+        return Context.getProviderService().getProviderByUuid(providerUUID).getPerson().getPersonName();
     }
 }
