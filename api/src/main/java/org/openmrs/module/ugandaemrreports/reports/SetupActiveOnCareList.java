@@ -83,6 +83,7 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildCSVReportDesign(reportDefinition));
         return l;
     }
 
@@ -96,13 +97,19 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ActiveoncareList.xls");
+        ReportDesign rd = createExcelTemplateDesign("c2ef160f-f855-462d-a2ad-c38ca3ceffa0", reportDefinition, "ActiveoncareList.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8,dataset:ACTIVEONCARE_LIST");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
     }
+
+    public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        return rd;
+    }
+
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -164,6 +171,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return "3.0";
     }
 }
