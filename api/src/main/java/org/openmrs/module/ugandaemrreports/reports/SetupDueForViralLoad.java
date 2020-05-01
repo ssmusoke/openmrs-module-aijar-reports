@@ -12,12 +12,14 @@ import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibra
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -131,6 +133,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
+        rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(healthFacilityName()));
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
@@ -189,7 +192,6 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
         addColumn(dsd,"pregnant",getObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(), null, TimeQualifier.FIRST, "6m", df.getObsValueCodedConverter()));
 
-
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activeAndDueForViralLoad));
 
@@ -216,9 +218,15 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         return df.createPatientDataDefinition(def, converter, Parameters.combineParameters(startDate, endDate));
     }
 
+    private DataSetDefinition healthFacilityName() {
+        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+        dsd.setFacilityName("aijar.healthCenterName");
+        return dsd;
+    }
+
     @Override
     public String getVersion() {
-        return "2.0.8";
+        return "3.0.2";
     }
 }
 
