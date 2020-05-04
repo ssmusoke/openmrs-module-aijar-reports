@@ -584,6 +584,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS055-HCTRegister"
       },
       {
+        "id": "HMIS 008-PNC Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "type": "link",
+        "label": "HMIS 008 : PNC Register",
+        "url": "reportingui/runReport.page?reportDefinition=ffed8404-7f81-4c9e-a9eb-db2673397cc0",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.PNCRegister"
+      },
+      {
         "id": "HTS_RECENT Report ",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
@@ -622,7 +631,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
         "type": "link",
         "label": "Tx New Report",
-        "url": "reportingui/runReport.page?reportDefinition=621890e1-3549-4ccf-ad93-c206bd3e7c17",
+        "url": "reportingui/runReport.page?reportDefinition=65fec0844-1970-43c5-bf77-b296415daa34",
         "order": 25,
         "requiredPrivilege": "App: ugandaemrreports.MERTxNewReport"
       },{
@@ -649,6 +658,14 @@
         "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
         "order": 40,
         "requiredPrivilege": "App: ugandaemrreports.MERPMTCTSTATReport"
+      },{
+        "id": "MER_TX_RTT_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "MER TX RTT  Report",
+        "url": "reportingui/runReport.page?reportDefinition=c17ea006-b599-45c4-94c9-33f6f4d99f4c",
+        "order": 45,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport"
       }, {
         "id": "MER_TX_TB",
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
@@ -657,6 +674,22 @@
         "url": "reportingui/runReport.page?reportDefinition=beb0d204-c3f1-43da-81cb-7fa7b9dc31fd",
         "order":45,
         "requiredPrivilege": "App: ugandaemrreports.MERTX_TB"
+      },
+      {
+        "id": "PMTCT ART  Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "PMTCT ART  Report",
+        "url": "reportingui/runReport.page?reportDefinition=47246504-69df-4060-b202-e2903305c456",
+        "order": 50
+      },
+      {
+        "id": "MER TX_ML Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "type": "link",
+        "label": "TX_ML Report",
+        "url": "reportingui/runReport.page?reportDefinition=5b922f62-f844-4962-9465-61cf8f52f4b7",
+        "order": 55
       },
       {
         "id": "Appointments List",
@@ -844,6 +877,14 @@
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
         "order":10,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },{
+        "id": "HMIS PHAR 003:Dispensing Log",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "type": "link",
+        "label": "HMIS PHAR 003:Dispensing Log",
+        "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
+        "order":15,
+        "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },
       {
         "id": "HMIS 105  4",
@@ -858,18 +899,19 @@
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2019",
         "type": "link",
-        "label": "HMIS 105 Section 4: HTS",
+        "label": "HMIS 105 Section 4: HTS 2019",
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
-        "id": "HMIS 105 Section 4",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "id": "UgandaEMR Metrics Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
         "type": "link",
-        "label": "HMIS 105 Section 4: HTS",
-        "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
-        "order": 5
+        "label": "UgandaEMR Metrics Report",
+        "url": "reportingui/runReport.page?reportDefinition=dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
         "id": "HMIS 106A Section 1A",

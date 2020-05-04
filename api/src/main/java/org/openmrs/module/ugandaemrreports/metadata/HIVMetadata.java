@@ -160,6 +160,12 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getMissedAppointmentRegisterEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "791faefd-36b8-482f-ab78-20c297b03851"));
+        return l;
+    }
+
     public List<EncounterType> getEIDSummaryPageEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "9fcfcc91-ad60-4d84-9710-11cc25258719"));
@@ -192,6 +198,12 @@ public class HIVMetadata extends Metadata {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"));
+        return l;
+    }
+
+    public List<EncounterType> getMedicationDispensingEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "22902411-19c1-4a02-b19a-bf1a9c24fd51"));
         return l;
     }
 
