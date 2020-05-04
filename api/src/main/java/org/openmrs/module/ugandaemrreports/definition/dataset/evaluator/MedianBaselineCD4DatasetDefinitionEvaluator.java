@@ -48,7 +48,7 @@ public class MedianBaselineCD4DatasetDefinitionEvaluator implements DataSetEvalu
 //        List<Integer> results = evaluationService.evaluateToList(q, Integer.class, context);
         List<Object[]> results = evaluationService.evaluateToList(q, context);
 
-        if(results.size()>0 && !results.isEmpty()){
+        if(results.size()>0 && !results.isEmpty() && results.get(0)[0] != null){
             pdh.addCol(row, "14y",String.valueOf(results.get(0)[0]));
         }else{
             pdh.addCol(row, "14y","");
