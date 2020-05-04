@@ -48,7 +48,7 @@ public class MedianBaselineCD4DatasetDefinitionEvaluator implements DataSetEvalu
 //        List<Integer> results = evaluationService.evaluateToList(q, Integer.class, context);
         List<Object[]> results = evaluationService.evaluateToList(q, context);
 
-        if(results.size()>0 && !results.isEmpty()){
+        if(results.size()>0 && !results.isEmpty()&& results.get(0)[0]==null){
             pdh.addCol(row, "14y",String.valueOf(results.get(0)[0]));
         }else{
             pdh.addCol(row, "14y","");
@@ -56,25 +56,6 @@ public class MedianBaselineCD4DatasetDefinitionEvaluator implements DataSetEvalu
 
         dataSet.addRow(row);
         return dataSet;
-    }
-
-    private double getmedian(Integer[] results) {
-        // sort array
-        Arrays.sort(results);
-        double median;
-        // get count of scores
-        int totalElements = results.length;
-        // check if total number of scores is even
-        if (totalElements % 2 == 0) {
-            int sumOfMiddleElements = results[totalElements / 2] +
-                    results[totalElements / 2 - 1];
-            // calculate average of middle elements
-            median = ((double) sumOfMiddleElements) / 2;
-        } else {
-            // get the middle element
-            median = (double) results[results.length / 2];
-        }
-        return median;
     }
 
 }
