@@ -20,31 +20,26 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class ImmunizationDataConverter implements DataConverter {
+public class FSGEnrollmentDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
         Concept concept = ((Obs) obj).getValueCoded();
-        if (concept==null) {
+
+        if (concept == null) {
             return null;
         }
-        if(concept.equals(Dictionary.getConcept("dc8e1be9-30ab-102d-86b0-7a5022ba4115"))){
-            return "✔";
-        }
-         if(concept.equals(Dictionary.getConcept("dc883964-30ab-102d-86b0-7a5022ba4115"))){
-            return "✔";
-        }
-        if(concept.equals(Dictionary.getConcept("782AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return "✔";
-        }
-        if (concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))){
-            return "✔";
-        }
-        if(concept.equals(Dictionary.getConcept("62d87122-0a08-4e04-b57c-7e1b2f821854"))){
-            return "✔";
-        }
+            if (concept.equals(Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77"))) {
+                return "FSG";
+            } else if (concept.equals(Dictionary.getConcept("0c0edbd7-ce81-48fd-8f56-ab3aa4406f8d"))) {
+                return "FSGK";
+            } else if (concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))) {
+                return "FSG✔";
+            }
 
         return concept;
     }
+
+
 
     @Override
     public Class<?> getInputDataType() {
