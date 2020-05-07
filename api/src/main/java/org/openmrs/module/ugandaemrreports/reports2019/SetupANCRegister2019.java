@@ -90,7 +90,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getUuid() {
-        return "f717a684-3c78-11e7-adec-507b9dc4c741";
+        return "95b4a987-2a8d-41f2-94b2-9c5bbeef9ca9";
     }
 
     @Override
@@ -117,7 +117,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.4";
+        return "2.0.5";
     }
 
     @Override
@@ -147,20 +147,25 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Parish", basePatientDataLibrary.getParish(),(String)null);
         dsd.addColumn("County", basePatientDataLibrary.getCounty(),(String)null);
         dsd.addColumn("District", basePatientDataLibrary.getDistrict(),(String)null);
+        dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new NationalityPersonalAttributeDataConverter());
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
         dsd.addColumn("Age", sdd.getAgeDataDefinition(10,200), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("ANC Visit", sdd.definition("ANC Visit",  sdd.getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Gravida", sdd.definition("Gravida",  sdd.getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Parity", sdd.definition("Parity",  sdd.getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Gestational Age", sdd.definition("Gestational Age",  sdd.getConcept("dca0a383-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Gestational Age", sdd.definition("Gestational Age",  sdd.getConcept("dcd034ed-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("ANC1 Timing", sdd.definition("ANC1 Timing",  sdd.getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
-        dsd.addColumn("EDD", sdd.definition("EDD", sdd.getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("EDD", sdd.definition("EDD", sdd.getConcept("5b110c7d-8031-4526-9724-f262d6e2733e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Weight", sdd.definition("Weight",  sdd.getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Height", sdd.definition("Height",  sdd.getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("MUAC", sdd.definition("MUAC",  sdd.getConcept("5f86d19d-9546-4466-89c0-6f80c101191b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MUACDataConverter());
         dsd.addColumn("INR NO", sdd.definition("INR NO",  sdd.getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("BP", sdd.getBloodPressure(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", sdd.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
+        dsd.addColumn("STK Given", sdd.definition("STK Given", sdd.getConcept("609c9aee-92b3-4e17-828a-efc7933f2ecf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STKDataConverter());
+        dsd.addColumn("AgeP", sdd.definition("AgeP", sdd.getConcept("4049d989-b99e-440d-8f70-c222aa9fe45c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("FacilityResult", sdd.definition("FacilityResult", sdd.getConcept("e47d9ead-5b33-4315-9ea0-42669e4491b6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STKResultDataConverter());
+
         dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", sdd.getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
         dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WHO", sdd.definition("WHO", sdd.getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
