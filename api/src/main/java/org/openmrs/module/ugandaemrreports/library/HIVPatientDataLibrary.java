@@ -599,9 +599,6 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getHepCScreeningDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
     }
 
-//    public PatientDataDefinition getCurrentDSDMEnrollmentDate() {
-//        return df.getObsByEndDate(hivMetadata.getCurrentDSDMModelEnrollmentDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
-//    }
 
     public PatientDataDefinition getLastHepCScreeningResult() {
         return df.getObs(hivMetadata.getHepCResults(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueCodedConverter());
