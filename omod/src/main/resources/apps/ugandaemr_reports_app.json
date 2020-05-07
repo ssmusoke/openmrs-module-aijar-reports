@@ -71,7 +71,7 @@
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "UgandaEMR Reports - 2014 HMIS Tools",
-        "url": "ugandaemrreports/reports.page",
+        "url": "ugandaemrreports/reports_2014.page",
         "icon": "icon-book",
         "order": 110,
         "requiredPrivilege": "App: ugandaemrreports.UgandaEMRReports2014HMISTools"
@@ -80,7 +80,7 @@
         "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
         "type": "link",
         "label": "UgandaEMR Reports - 2019 HMIS Tools",
-        "url": "ugandaemrreports/reports_2019.page",
+        "url": "ugandaemrreports/reports.page",
         "icon": "icon-book",
         "order": 111,
         "requiredPrivilege": "App: ugandaemrreports.UgandaEMRReports2019HMISTools"
