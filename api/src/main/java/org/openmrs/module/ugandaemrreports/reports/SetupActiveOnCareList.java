@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +153,14 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         addColumn(dsd,"latestViralLoad",hivPatientData.getViralLoadByEndDate());
         addColumn(dsd,"latestVLQualitative",hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd,"returnVisitDate",hivPatientData.getLastReturnDateByEndDate());
+        addColumn(dsd,"model",hivPatientData.getDSDMModel());
+        dsd.addColumn("DSDM Date",new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter());
+        addColumn(dsd,"Hep-B Date",hivPatientData.getLastHepBScreeningDate());
+        addColumn(dsd,"Hep-B Result",hivPatientData.getLastHepBScreeningResult());
+        addColumn(dsd,"Hep-C Date",hivPatientData.getLastHepCScreeningDate());
+        addColumn(dsd,"Hep-C Result",hivPatientData.getLastHepCScreeningResult());
+        addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+        addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
 
 
 
@@ -164,6 +173,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return "1.0.6";
     }
 }
