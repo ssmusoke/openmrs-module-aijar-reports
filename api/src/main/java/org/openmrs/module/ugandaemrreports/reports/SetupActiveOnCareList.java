@@ -61,6 +61,12 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         return "9d6c7e51-2257-4f56-addc-e37e8272ff9d";
     }
 
+
+    public String getCSVDesignUuid()
+        {
+        return "c2ef160f-f855-462d-a2ad-c38ca3ceffa0";
+    }
+
     @Override
     public String getName() {
         return "Active Patients in Care";
@@ -84,6 +90,7 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildCSVReportDesign(reportDefinition));
         return l;
     }
 
@@ -104,6 +111,12 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         rd.setProperties(props);
         return rd;
     }
+
+    public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createCSVDesign(getCSVDesignUuid(), reportDefinition);
+        return rd;
+    }
+
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -173,6 +186,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.6";
+        return "3.0.1";
     }
 }
