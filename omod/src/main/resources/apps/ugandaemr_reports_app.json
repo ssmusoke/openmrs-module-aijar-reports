@@ -6,37 +6,37 @@
     "requiredPrivilege": "App: ugandaemr.reports",
     "extensionPoints": [
       {
-        "id": "org.openmrs.module.ugandaemr.reports.overview",
+        "id": "org.openmrs.module.ugandaemr.reports.overview2014",
         "description": "Links to available Facility level Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "id": "org.openmrs.module.ugandaemr.reports.overview",
         "description": "Links to available Facility level Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.monthly",
+        "id": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "description": "Links to available Monthly Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.registers",
+        "id": "org.openmrs.module.ugandaemr.reports.registers2014",
         "description": "Links to available Registers",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "id": "org.openmrs.module.ugandaemr.reports.quarterly2014",
         "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "id": "org.openmrs.module.ugandaemr.integrationdataexports2014",
         "description": "Data Exports for Integrations",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.quarterly2019",
+        "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       },
@@ -46,21 +46,21 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "id": "org.openmrs.module.ugandaemr.reports.monthly",
         "description": "Links to available Monthly Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       },{
-        "id": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "id": "org.openmrs.module.ugandaemr.integrationdataexports",
         "description": "Links to available Integration Data Exports 2019",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.mer",
+        "id": "org.openmrs.module.ugandaemr.mer2014",
         "description": "Links to available MER Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.mer2019",
+        "id": "org.openmrs.module.ugandaemr.mer",
         "description": "Links to available MER Reports 2019",
         "supportedExtensionTypes": [ "link" ]
       }
@@ -87,7 +87,7 @@
       },
       {
         "id": "HMIS 106a Section 1A",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2014",
         "type": "link",
         "label": "HMIS 106a Section 1A",
         "url": "reportingui/runReport.page?reportDefinition=167cf668-0715-488b-b159-d5f391774091",
@@ -96,7 +96,7 @@
       },
       {
         "id": "HMIS 106a Section 1B",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2014",
         "type": "link",
         "label": "HMIS 106a Section 1B",
         "url": "reportingui/runReport.page?reportDefinition=167cf668-071e-488b-b159-d5f391774038",
@@ -123,7 +123,7 @@
       },
       {
         "id": "Appointments List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
@@ -131,7 +131,7 @@
         "requiredPrivilege": "App: ugandaemrreports.appointmentList"
       },{
         "id": "Missed Appointments List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Missed Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=654c7276-75f8-11e6-8b77-86f30ca893d3",
@@ -140,7 +140,7 @@
       },
       {
         "id": "ART Patient Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "ART Patient Export",
         "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
@@ -148,7 +148,7 @@
         "requiredPrivilege": "App: ugandaemrreports.aRTPatientExport"
       },{
         "id": "Facility Death List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Facility Death List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
@@ -156,7 +156,7 @@
         "requiredPrivilege": "App: ugandaemrreports.facilityDeathList"
       },{
         "id": "Exposed Infants Due for 1st PCR",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Exposed Infants Due for 1st PCR",
         "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
@@ -164,7 +164,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantDuefor1stPCR"
       },{
         "id": "Exposed Infants Due for 2nd PCR",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Exposed Infants Due for 2nd PCR",
         "url": "reportingui/runReport.page?reportDefinition=cd8b4a66-f4e6-43b6-a4fd-061e57823cc4",
@@ -172,7 +172,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDuefor2ndPCRR"
       },{
         "id": "Exposed Infants Due for Rapid Test",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Exposed Infants Due for Rapid Test",
         "url": "reportingui/runReport.page?reportDefinition=1ff3e32c-5526-11e7-b407-15be7a295d59",
@@ -180,7 +180,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDueforRapidTest"
       },{
         "id": "Exposed Infants Due for Appointment",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Exposed Infants Due for Appointment",
         "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
@@ -188,7 +188,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDueforAppointment"
       },{
         "id": "OptionB+ Weekly SMS Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "OptionB+ Weekly SMS Report",
         "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
@@ -196,7 +196,7 @@
         "requiredPrivilege": "App: ugandaemrreports.optionBWeeklySMSReport"
       },{
         "id": "Transfer Out List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Transfer Out List",
         "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
@@ -204,7 +204,7 @@
         "requiredPrivilege": "App: ugandaemrreports.transferOutList"
       },{
         "id": "Transfer In List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Transfer In List",
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
@@ -212,7 +212,7 @@
         "requiredPrivilege": "App: ugandaemrreports.transferInList"
       },{
         "id": "Lost Clients",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Lost Clients",
         "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
@@ -220,7 +220,7 @@
         "requiredPrivilege": "App: ugandaemrreports.lostClients"
       },{
         "id": "Lost To Follow Up",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Lost To Follow Up",
         "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
@@ -228,7 +228,7 @@
         "requiredPrivilege": "App: ugandaemrreports.lostToFollowUp"
       },{
         "id": "Active Patients in Care",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
@@ -236,7 +236,7 @@
         "requiredPrivilege": "App: ugandaemrreports.activePatientsInCare"
       },{
         "id": "Due For Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Due For Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
@@ -245,7 +245,7 @@
 
       },{
         "id": "Overdue for Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Overdue for Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=41814bf8-dfa9-4d67-a197-bd4b6e40db63",
@@ -254,7 +254,7 @@
       },
       {
         "id": "Non Suppressed Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Non Suppressed Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=8067d0cf-9925-4377-9b16-31e4c8500fe1",
@@ -262,7 +262,7 @@
         "requiredPrivilege": "App: ugandaemrreports.nonSuppressedViralLoad"
       },{
         "id": "HCT Card Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "HCT Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=76d3cbdb-7b81-423e-8a53-cc3773f2c456",
@@ -270,7 +270,7 @@
         "requiredPrivilege": "App: ugandaemrreports.hCTCardDataExport"
       },{
         "id": "DSDM:Stablity Assessment Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Stablity Assessment Report",
         "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
@@ -279,7 +279,7 @@
       },
       {
         "id": "Patient DSDM Model Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2014",
         "type": "link",
         "label": "Patient DSDM Model Report",
         "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
@@ -288,7 +288,7 @@
       },
       {
         "id": "OPD Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 031: OPD Register",
         "url": "reportingui/runReport.page?reportDefinition=df041e1d-0043-4a01-815b-c9f66edcac7e",
@@ -297,7 +297,7 @@
       },
       {
         "id": "SMC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 035: SMC Register",
         "url": "reportingui/runReport.page?reportDefinition=c1122646-3b37-11e7-aa22-507b9dc4c741",
@@ -306,7 +306,7 @@
       },
       {
         "id": "Patient Appointment Book",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 053: Patient Appointment Book",
         "url": "reportingui/runReport.page?reportDefinition=4986aa7a-38fb-420e-853e-583eefa065d0",
@@ -324,7 +324,7 @@
       },
       {
         "id": "ANC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 071: ANC Register",
         "url": "reportingui/runReport.page?reportDefinition=f717a684-3c78-11e7-adec-507b9dc4c741",
@@ -333,7 +333,7 @@
       },
       {
         "id": "Maternity Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 072: Maternity Register",
         "url": "reportingui/runReport.page?reportDefinition=3607d6cb-e0cd-4296-8b4e-cd2ec8fd190c",
@@ -342,7 +342,7 @@
       },
       {
         "id": "PNC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 078: PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=489baf0e-3ee1-11e7-a1d1-507b9dc4c741",
@@ -351,7 +351,7 @@
       },
       {
         "id": "Pre-ART Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 080: Pre-ART Register ",
         "url": "reportingui/runReport.page?reportDefinition=a4743b94-c76a-4d9d-90f1-d48003394da6",
@@ -360,7 +360,7 @@
       },
       {
         "id": "ART Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 081: ART Register",
         "url": "reportingui/runReport.page?reportDefinition=9c85e206-c3cd-4dc1-b332-13f1d02f1c54",
@@ -369,7 +369,7 @@
       },
       {
         "id": "EID Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 082: EID Register",
         "url": "reportingui/runReport.page?reportDefinition=adf50b27-266f-4b46-9569-424eb664ffc6",
@@ -378,7 +378,7 @@
       },
       {
         "id": "TB Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",
         "label": "HMIS 096a: TB Register",
         "url": "reportingui/runReport.page?reportDefinition=00002c21-2c46-4ea1-9993-4ea63c3d7e06",
@@ -414,7 +414,7 @@
       },
       {
         "id": "HMIS 105 - 1",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 - 1: OPD",
         "url": "reportingui/runReport.page?reportDefinition=85b9a42b-d16b-4b3c-992f-adbb806f0b00",
@@ -423,7 +423,7 @@
       },
       {
         "id": "HMIS 105 Section 2.1 to 2.7",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 Section 2.1 to 2.7: MCH",
         "url": "reportingui/runReport.page?reportDefinition=66c0d746-3f92-11e7-9b20-507b9dc4c741",
@@ -432,7 +432,7 @@
       },
       {
         "id": "HMIS 105 Section 2.8 to 2.12",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 Section 2.8 to 2.12: MCH - Child Services",
         "url": "reportingui/runReport.page?reportDefinition=9401662d-e715-4370-bfc7-048825dd8107",
@@ -441,7 +441,7 @@
       },
       {
         "id": "HMIS 105 - 3 to 4",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 - 3 to 4: Outreach and HCT",
         "url": "reportingui/runReport.page?reportDefinition=fe02c34a-5c67-453b-93e9-4946e7bd8c59",
@@ -451,7 +451,7 @@
 
       {
         "id": "HMIS 105 Section 5",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 Section 5: SMC",
         "url": "reportingui/runReport.page?reportDefinition=54d3f8fa-712a-11e7-a3df-507b9dc4c741",
@@ -476,7 +476,7 @@
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
       },{
         "id": "Family Connect EMTCT Module Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2014",
         "type": "link",
         "label": "Family Connect EMTCT Module Data Export",
         "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
@@ -494,7 +494,7 @@
       },
       {
         "id": "Tx Current_30Days Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "Tx Current_30Days Report",
         "url": "reportingui/runReport.page?reportDefinition=f4b2cc4b-79a9-487f-9bb1-34c8112deb94",
@@ -502,7 +502,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTxCurrent_30DaysReport"
       },{
         "id": "Tx Current_90Days Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "Tx Current_90Days Report",
         "url": "reportingui/runReport.page?reportDefinition=660bdb55-36ea-4e57-8c62-136300035ce3",
@@ -518,7 +518,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTxNewReport"
       },{
         "id": "TB STAT Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "TB STAT Report",
         "url": "reportingui/runReport.page?reportDefinition=a781267d-2793-496f-81a6-aa460df5777e",
@@ -526,7 +526,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTBSTATReport"
       },{
         "id": "TB ART Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "TB ART Report",
         "url": "reportingui/runReport.page?reportDefinition=ebab92eb-90b8-460d-a356-c2f7800e068f",
@@ -534,7 +534,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTBARTReport"
       },{
         "id": "PMTCT STAT  Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "PMTCT STAT  Report",
         "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
@@ -542,7 +542,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERPMTCTSTATReport"
       }, {
         "id": "MER_TX_TB",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "TX_TB",
         "url": "reportingui/runReport.page?reportDefinition=beb0d204-c3f1-43da-81cb-7fa7b9dc31fd",
@@ -567,7 +567,7 @@
       },
       {
         "id": "HMIS 106a With DSDM Aggregations",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2014",
         "type": "link",
         "label": "HMIS 106a With DSDM Aggregations",
         "url": "reportingui/runReport.page?reportDefinition=c05879b8-77db-4a91-90a9-34631cd0ca3b",
@@ -585,7 +585,7 @@
       },
       {
         "id": "HMIS 008-PNC Register",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
         "label": "HMIS 008 : PNC Register",
         "url": "reportingui/runReport.page?reportDefinition=ffed8404-7f81-4c9e-a9eb-db2673397cc0",
@@ -594,7 +594,7 @@
       },
       {
         "id": "HTS_RECENT Report ",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "HTS_RECENT Report",
         "url": "reportingui/runReport.page?reportDefinition=43636326-36c5-4104-b358-b912a038ee9d",
@@ -603,7 +603,7 @@
       },
       {
         "id": "HCT_TST_Facility Report ",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "HCT_TST_Facility Report",
         "url": "reportingui/runReport.page?reportDefinition=5688b030-d2b7-43b5-affd-9e94a07a1a8a",
@@ -612,7 +612,7 @@
       },
       {
         "id": "Tx Current_28Days Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "Tx Current_28Days Report",
         "url": "reportingui/runReport.page?reportDefinition=8dafdc32-97b7-4f49-828e-475cd4f09669",
@@ -620,7 +620,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERHCTTSTFacilityReport"
       },{
         "id": "Tx Current_90Days Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "Tx Current_90Days Report",
         "url": "reportingui/runReport.page?reportDefinition=214fb8ef-6219-43f3-b20b-023261c0dec6",
@@ -628,7 +628,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTxCurrent_90DaysReport"
       },{
         "id": "Tx New Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "Tx New Report",
         "url": "reportingui/runReport.page?reportDefinition=65fec0844-1970-43c5-bf77-b296415daa34",
@@ -636,7 +636,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTxNewReport"
       },{
         "id": "TB STAT Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "TB STAT Report",
         "url": "reportingui/runReport.page?reportDefinition=a781267d-2793-496f-81a6-aa460df5777e",
@@ -644,7 +644,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTBSTATReport"
       },{
         "id": "TB ART Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "TB ART Report",
         "url": "reportingui/runReport.page?reportDefinition=ebab92eb-90b8-460d-a356-c2f7800e068f",
@@ -652,7 +652,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTBARTReport"
       },{
         "id": "PMTCT STAT  Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "PMTCT STAT  Report",
         "url": "reportingui/runReport.page?reportDefinition=2356ee4a-c974-40e3-b28d-5b56f76ce295",
@@ -660,7 +660,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERPMTCTSTATReport"
       },{
         "id": "MER_TX_RTT_Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "MER TX RTT  Report",
         "url": "reportingui/runReport.page?reportDefinition=c17ea006-b599-45c4-94c9-33f6f4d99f4c",
@@ -668,7 +668,7 @@
         "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport"
       }, {
         "id": "MER_TX_TB",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer2014",
         "type": "link",
         "label": "TX_TB",
         "url": "reportingui/runReport.page?reportDefinition=beb0d204-c3f1-43da-81cb-7fa7b9dc31fd",
@@ -677,7 +677,7 @@
       },
       {
         "id": "PMTCT ART  Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "PMTCT ART  Report",
         "url": "reportingui/runReport.page?reportDefinition=47246504-69df-4060-b202-e2903305c456",
@@ -685,7 +685,7 @@
       },
       {
         "id": "MER TX_ML Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.mer2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "TX_ML Report",
         "url": "reportingui/runReport.page?reportDefinition=5b922f62-f844-4962-9465-61cf8f52f4b7",
@@ -693,7 +693,7 @@
       },
       {
         "id": "Appointments List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c",
@@ -701,7 +701,7 @@
         "requiredPrivilege": "App: ugandaemrreports.appointmentsList"
       },{
         "id": "Missed Appointments List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Missed Appointments List",
         "url": "reportingui/runReport.page?reportDefinition=654c7276-75f8-11e6-8b77-86f30ca893d3",
@@ -710,7 +710,7 @@
       },
       {
         "id": "ART Patient Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "ART Patient Export",
         "url": "reportingui/runReport.page?reportDefinition=0272907f-f2bf-437f-8bf9-8c4cb0a983fa",
@@ -718,7 +718,7 @@
         "requiredPrivilege": "App: ugandaemrreports.ARTPatientExport"
       },{
         "id": "Facility Death List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Facility Death List",
         "url": "reportingui/runReport.page?reportDefinition=9c85e2eb-c3ce-4dc1-b332-13f1d02f1c5a",
@@ -726,7 +726,7 @@
         "requiredPrivilege": "App: ugandaemrreports.facilityDeathList"
       },{
         "id": "Exposed Infants Due for 1st PCR",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for 1st PCR",
         "url": "reportingui/runReport.page?reportDefinition=47bbb9e4-a160-47f7-a547-619fcc5dff0d",
@@ -734,7 +734,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDuefor1stPCR"
       },{
         "id": "Exposed Infants Due for 2nd PCR",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for 2nd PCR",
         "url": "reportingui/runReport.page?reportDefinition=cd8b4a66-f4e6-43b6-a4fd-061e57823cc4",
@@ -742,7 +742,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDuefor2ndPCR"
       },{
         "id": "Exposed Infants Due for Rapid Test",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for Rapid Test",
         "url": "reportingui/runReport.page?reportDefinition=1ff3e32c-5526-11e7-b407-15be7a295d59",
@@ -750,7 +750,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDueforRapidTest"
       },{
         "id": "Exposed Infants Due for Appointment",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Exposed Infants Due for Appointment",
         "url": "reportingui/runReport.page?reportDefinition=4f2cd763-6737-4e82-93e0-515d0633c58b",
@@ -758,7 +758,7 @@
         "requiredPrivilege": "App: ugandaemrreports.exposedInfantsDueforAppointment"
       },{
         "id": "OptionB+ Weekly SMS Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "OptionB+ Weekly SMS Report",
         "url": "reportingui/runReport.page?reportDefinition=09c76cd3-4585-4e1c-b3f7-78e2a5726d6d",
@@ -766,7 +766,7 @@
         "requiredPrivilege": "App: ugandaemrreports.optionBWeeklySMSReport"
       },{
         "id": "Transfer Out List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Transfer Out List",
         "url": "reportingui/runReport.page?reportDefinition=2404d86c-81a4-4fda-9e77-ea4d6eacdfb6",
@@ -777,7 +777,7 @@
 
       {
         "id": "Transfer In List",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Transfer In List",
         "url": "reportingui/runReport.page?reportDefinition=795050b6-3804-46d7-b49f-cb146a6cbf74",
@@ -787,7 +787,7 @@
 
       {
         "id": "Lost Clients",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Lost Clients",
         "url": "reportingui/runReport.page?reportDefinition=6325ccbd-2d98-4e8c-bc1c-befc2eb0dfa5",
@@ -796,7 +796,7 @@
       },
       {
         "id": "Lost To Follow Up",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Lost To Follow Up",
         "url": "reportingui/runReport.page?reportDefinition=a549c20a-ff8e-4b92-afbe-aeeaa4e47ff7",
@@ -804,7 +804,7 @@
         "requiredPrivilege": "App: ugandaemrreports.lostToFollowUp"
       },{
         "id": "Active Patients in Care",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Active Patients in Care",
         "url": "reportingui/runReport.page?reportDefinition=9d6c7e51-2257-4f56-addc-e37e8272ff9d",
@@ -812,7 +812,7 @@
         "requiredPrivilege": "App: ugandaemrreports.activePatientsInCare"
       },{
         "id": "Due For Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Due For Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=23ef26dd-8e26-4109-b8f2-d102a119b901",
@@ -820,7 +820,7 @@
         "requiredPrivilege": "App: ugandaemrreports.dueForViralLoad"
       },{
         "id": "Overdue for Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Overdue for Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=41814bf8-dfa9-4d67-a197-bd4b6e40db63",
@@ -829,7 +829,7 @@
       },
       {
         "id": "Non Suppressed Viral Load",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Non Suppressed Viral Load",
         "url": "reportingui/runReport.page?reportDefinition=8067d0cf-9925-4377-9b16-31e4c8500fe1",
@@ -838,7 +838,7 @@
       },
       {
         "id": "HTS Client Card Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "HTS Client Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=96e0926d-1606-4de6-943f-cb036bdc15ad",
@@ -846,7 +846,7 @@
         "requiredPrivilege": "App: ugandaemrreports.HTSClientCardDataExport"
       },{
         "id": "DSDM:Stablity Assessment Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Stablity Assessment Report",
         "url": "reportingui/runReport.page?reportDefinition=9d066d2b-3cee-4fba-a148-bb82c4ba65ef",
@@ -855,7 +855,7 @@
       },
       {
         "id": "Patient DSDM Model Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
         "label": "Patient DSDM Model Report",
         "url": "reportingui/runReport.page?reportDefinition=941d0567-4848-41b2-8713-305667c89d01",
@@ -863,7 +863,7 @@
         "requiredPrivilege": "App: ugandaemrreports.patientDSDMModelReport"
       },{
         "id": "Family Connect EMTCT Module Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
         "label": "Family Connect EMTCT Module Data Export",
         "url": "reportingui/runReport.page?reportDefinition=bf79f017-8591-4eaf-88c9-1cde33226517",
@@ -871,7 +871,7 @@
         "requiredPrivilege": "App: ugandaemrreports.familyConnectEMTCTModuleDataExport"
       },{
         "id": "Recency HTS Client Card Data Export",
-        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
         "label": "Recency HTS Client Card Data Export",
         "url": "reportingui/runReport.page?reportDefinition=662d4c00-d6bb-4494-8180-48776f415802",
@@ -879,7 +879,7 @@
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },{
         "id": "HMIS PHAR 003:Dispensing Log",
-        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.registers",
         "type": "link",
         "label": "HMIS PHAR 003:Dispensing Log",
         "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
@@ -888,7 +888,7 @@
       },
       {
         "id": "HMIS 105  4",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HMIS 105 SECTION 4:  HCT",
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
@@ -897,7 +897,7 @@
       },
       {
         "id": "HMIS 105 Section 4",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
         "label": "HMIS 105 Section 4: HTS 2019",
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
@@ -906,7 +906,7 @@
       },
       {
         "id": "UgandaEMR Metrics Report",
-        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
         "label": "UgandaEMR Metrics Report",
         "url": "reportingui/runReport.page?reportDefinition=dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a",
