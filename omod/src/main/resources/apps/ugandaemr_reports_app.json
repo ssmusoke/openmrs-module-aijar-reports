@@ -113,8 +113,26 @@
         "requiredPrivilege": "App: ugandaemrreports.CBSAdultQuarterlyReport"
       },
       {
+        "id": "CBS Adult Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2014",
+        "type": "link",
+        "label": "CBS Adult Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=9c85e908-c3cd-4dc1-b145-13f1d02f1c54",
+        "order": 15,
+        "requiredPrivilege": "App: ugandaemrreports.CBSAdultQuarterlyReport"
+      },
+      {
         "id": "HMIS 177 Viral Load Addendum Quarterly Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "url": "reportingui/runReport.page?reportDefinition=6633f9c9-dffb-4e6b-bfcc-e2ddb08805ca",
+        "order": 25,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS177ViralLoadAddendumQuarterlyReport"
+      },
+      {
+        "id": "HMIS 177 Viral Load Addendum Quarterly Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2014",
         "type": "link",
         "label": "HMIS 177 Viral Load Addendum Quarterly Report",
         "url": "reportingui/runReport.page?reportDefinition=6633f9c9-dffb-4e6b-bfcc-e2ddb08805ca",
@@ -395,6 +413,15 @@
         "requiredPrivilege": "App: ugandaemrreports.caseBasedSurveillanceEIDReport"
       },
       {
+        "id": "Case Based Surveillance EID Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
+        "type": "link",
+        "label": "Case Based Surveillance EID Report",
+        "url": "reportingui/runReport.page?reportDefinition=167cf668-0715-488b-b159-d5f391774099",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.caseBasedSurveillanceEIDReport"
+      },
+      {
         "id": "Adherence Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
@@ -404,8 +431,26 @@
         "requiredPrivilege": "App: ugandaemrreports.adherenceReport"
       },
       {
+        "id": "Adherence Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
+        "type": "link",
+        "label": "Adherence Report",
+        "url": "reportingui/runReport.page?reportDefinition=167cf66c-0715-488b-b159-d5f391774095",
+        "order": 10,
+        "requiredPrivilege": "App: ugandaemrreports.adherenceReport"
+      },
+      {
         "id": "Early Warning Indicator Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "Early Warning Indicator Report",
+        "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
+        "order": 15,
+        "requiredPrivilege": "App: ugandaemrreports.earlyWarningIndicatorReport"
+      },
+      {
+        "id": "Early Warning Indicator Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "Early Warning Indicator Report",
         "url": "reportingui/runReport.page?reportDefinition=167cf667-071d-488b-b159-d5f391774090",
@@ -466,9 +511,28 @@
         "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
         "order": 45,
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
-      },{
+      },
+      {
+        "id": "HCA Annual Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
+        "type": "link",
+        "label": "HCA Annual Report",
+        "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
+        "order": 45,
+        "requiredPrivilege": "App: ugandaemrreports.HCAReport"
+      },
+      {
         "id": "HCA 12 and 24 Months Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HCA 12 and 24 Months Report",
+        "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
+        "order": 50,
+        "requiredPrivilege": "App: ugandaemrreports.HCAReport"
+      },
+      {
+        "id": "HCA 12 and 24 Months Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly2014",
         "type": "link",
         "label": "HCA 12 and 24 Months Report",
         "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
