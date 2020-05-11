@@ -24,7 +24,7 @@ public class NationalityPersonalAttributeDataConverter implements DataConverter 
 
         String personAttribute = ((PersonAttribute)obj).getValue();
         if(personAttribute == null){
-            return null;
+            return "";
           }
 
         if(personAttribute.equals("165317"))

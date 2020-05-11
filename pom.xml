@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version>2.0.17-SNAPSHOT</version>
+    <version>2.0.16-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -161,7 +161,7 @@
                 <version>${uiframeworkModuleVersion}</version>
                 <scope>provided</scope>
             </dependency>
-    
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>webservices.rest-omod-common</artifactId>
@@ -228,12 +228,12 @@
         <repository>
             <id>openmrs-repo-modules</id>
             <name>OpenMRS Modules</name>
-            <url>https://openmrs.jfrog.io/artifactory/modules/</url>
+            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
         </repository>
         <snapshotRepository>
             <id>openmrs-repo-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>https://openmrs.jfrog.io/openmrs/snapshots</url>
+            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
