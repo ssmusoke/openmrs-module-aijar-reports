@@ -47,7 +47,7 @@
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <reportingVersion>1.20.0</reportingVersion>
         <serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
-        <ugandaemrsyncVersion>1.0.4-SNAPSHOT</ugandaemrsyncVersion>
+        <ugandaemrsyncVersion>1.0.3</ugandaemrsyncVersion>
         <uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
         <webservices.restModuleVersion>2.17</webservices.restModuleVersion>
     </properties>
