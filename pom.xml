@@ -185,6 +185,7 @@
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>ugandaemrsync-api</artifactId>
                 <version>${ugandaemrsyncVersion}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
