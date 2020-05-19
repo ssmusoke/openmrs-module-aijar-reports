@@ -228,8 +228,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
 
 
-        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
-        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(beenOnArtDuringQuarter, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
+        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
+        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
 
         CohortDefinition activeOnArtOnCPT = df.getPatientsInAll(beenOnArtDuringQuarter, onCPTDuringQuarter);
         CohortDefinition activeOnArtAssessedForTB = df.getPatientsInAll(beenOnArtDuringQuarter, assessedForTBDuringQuarter);
@@ -364,6 +364,8 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition nonSuppressedARTClientsWhoSwitchedFrom1stTo2nd= df.getPatientsInAll(nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL, patientsWhoSwitchedFrom1stLineTo2nd);
         CohortDefinition nonSuppressedARTClientsWhoSwitchedFrom2ndTo3rd= df.getPatientsInAll(nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL, patientsWhoSwitchedFrom2ndLineTo3rd);
 
+        CohortDefinition HIVDRTestedDuringPeriod= df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("164989AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),null,Arrays.asList(hivMetadata.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+
         addAgeGender(dsd, "1", "New Clients enrolled in care during reporting quarter", enrolledDuringTheQuarter);
         addAgeGender(dsd, "2", "Pregnant and lactating enrolled in care", newlyEnrolledPregnantOrLactatingDuringPeriod);
         addAgeGender(dsd, "3a-", "No. of clients newly enrolled into Care - Screened for TB", enrolledInTheQuarterAndScreenedForTB);
@@ -386,6 +388,9 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "16e-", "new clients positive for CRAG", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAG);
         addAgeGender(dsd, "16f-", "new clients positive for CRAG treated with fluconazole", newClientsWithBaselineCd4LessEqual200AndPositiveForCRAGTreatedWithFluconazole );
         addAgeGender(dsd, "17", "cumulative no of individuals ever started on ART", cumulativeOnArt);
+        addAgeGender(dsd, "18", "active on 1st line", onFirstLineRegimen);
+        addAgeGender(dsd, "19", "active on 2nd line", onSecondLineRegimen);
+        addAgeGender(dsd, "20", "active on 3rd line", onThirdLineRegimenDuringQuarter);
         addAgeGender(dsd, "21", "No. of active clients with confirmed Advanced Disease By end of quarter",activeClientsWithConfirmedAdvancedDiseaseByEndOfReportingPeriod);
         addAgeGender(dsd, "22", "no of ART Clients transferred in during quarter", transferredInTheQuarter);
         addAgeGender(dsd, "23", "no of ART Clients that died in the quarter", deadPatientsDuringPeriod);
@@ -428,6 +433,9 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         addAgeGender(dsd, "44a-", "patients who had a repeat VL tht remained non suppressed during reporting period",nonSuppressedARTClientsWhoHadNonSuppressedRepeatVL);
         addAgeGender(dsd, "44b-", "patients who had a repeat VL tht remained non suppressed & switched from 1st to 2nd line ",nonSuppressedARTClientsWhoSwitchedFrom1stTo2nd);
         addAgeGender(dsd, "44c-", "patients who had a repeat VL tht remained non suppressed & switched from 2nd to 3rd line",nonSuppressedARTClientsWhoSwitchedFrom2ndTo3rd);
+        addAgeGender(dsd, "45a-", "patients who had HIVDR test during period and on First line",df.getPatientsInAll(onFirstLineRegimen,HIVDRTestedDuringPeriod));
+        addAgeGender(dsd, "45b-", "patients who had HIVDR test during period and on  2nd line ",df.getPatientsInAll(onSecondLineRegimen,HIVDRTestedDuringPeriod));
+        addAgeGender(dsd, "45c-", "patients who had HIVDR test during period and on 3rd line",df.getPatientsInAll(onThirdLineRegimenDuringQuarter,HIVDRTestedDuringPeriod));
         addAgeGender(dsd, "46", "patients who are non suppressed & tested for CD4",patientsNonSuppressedAndTestedWithCD4);
         addAgeGender(dsd, "47a-", "non suppressed & tested for CD4 and accessed TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndAccessedTBLAM);
         addAgeGender(dsd, "47b-", "non suppressed & tested for CD4 and positive 4 TB LAM",patientsNonSuppressedCd4DuringPeriodLessThan200AndPositiveForTBLAM);
@@ -516,6 +524,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.5";
+        return "0.0.5.5";
     }
 }
