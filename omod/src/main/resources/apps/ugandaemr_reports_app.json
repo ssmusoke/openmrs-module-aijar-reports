@@ -350,6 +350,15 @@
         "requiredPrivilege": "App: ugandaemrreports.ANCRegister"
       },
       {
+        "id": "ANC Register 2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 005: ANC Register",
+        "url": "reportingui/runReport.page?reportDefinition=95b4a987-2a8d-41f2-94b2-9c5bbeef9ca9",
+        "order": 25,
+        "requiredPrivilege": "App: ugandaemrreports.ANCRegister"
+      },
+      {
         "id": "Maternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers2014",
         "type": "link",

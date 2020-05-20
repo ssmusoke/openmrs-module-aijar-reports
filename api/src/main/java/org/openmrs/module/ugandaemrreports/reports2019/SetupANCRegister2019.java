@@ -123,7 +123,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.7";
+        return "2.0.9.6";
     }
 
     @Override
@@ -171,6 +171,27 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("STK Given", sdd.definition("STK Given", sdd.getConcept("609c9aee-92b3-4e17-828a-efc7933f2ecf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STKDataConverter());
         dsd.addColumn("AgeP", sdd.definition("AgeP", sdd.getConcept("4049d989-b99e-440d-8f70-c222aa9fe45c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("FacilityResult", sdd.definition("FacilityResult", sdd.getConcept("e47d9ead-5b33-4315-9ea0-42669e4491b6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STKResultDataConverter());
+        dsd.addColumn("TFV Given", sdd.definition("TFV Given", sdd.getConcept("03aad24f-b80f-4f17-af88-90b83592d044")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TFVDataConverter());
+        dsd.addColumn("Place of Linkage", sdd.definition("Place of Linkage", sdd.getConcept("89d3ee61-7c74-4537-b199-4026bd6a3f67")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("PreART Number", sdd.definition("PreART Number", sdd.getConcept("723c45bf-57eb-4865-b5c9-4a0ad6a36522")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Client ID", sdd.definition("Client ID", sdd.getConcept("b12f285a-0a26-44b5-83b3-e229bda74679")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Risk Assessment", sdd.definition("Risk Assessment", sdd.getConcept("a6037516-7c28-48ac-83c4-98ab4a032fa3")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("ART Code", sdd.definition("ART Code", sdd.getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
+        dsd.addColumn("Linkage ART No", sdd.definition("Linkage ART No", sdd.getConcept("9db2900d-2b44-4629-bdf8-bf25de650577")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Infant Arv Prophylaxis", sdd.definition("Infant Arv Prophylaxis", sdd.getConcept("f42e40f3-7f76-4c0d-b9cc-f66acbb092c4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("MNC", sdd.definition("MNC", sdd.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
+        dsd.addColumn("TB Status", sdd.definition("TB Status", sdd.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("WOA Scan", sdd.definition("WOA Scan", sdd.getConcept("d202c0ae-d84f-4beb-9670-6cc6a00063d1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("GBV Risk", sdd.definition("GBV Risk", sdd.getConcept("6b433917-16af-498d-8fda-0e7919f59c5b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Hb", sdd.definition("Hb", sdd.getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Blood Group", sdd.definition("Blood Group", sdd.getConcept("dc747e86-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Rh", sdd.definition("Rh", sdd.getConcept("1429AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Sickle Cells", sdd.definition("Sickle Cells", sdd.getConcept("907e11ae-5d80-4ee5-8167-42417b8bc4c9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Protein", sdd.definition("Protein", sdd.getConcept("dc86b057-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Glucose", sdd.definition("Glucose", sdd.getConcept("dc8e2009-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Folic Acid", sdd.definition("Folic Acid", sdd.getConcept("961ff308-bc19-4ae4-ba11-fe29157d20f9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Combined", sdd.definition("Combined", sdd.getConcept("d62eb8dd-81bd-4d52-9b22-d3226fe6f7ab")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Misoprostol", sdd.definition("Misoprostol",sdd.getConcept("1743fc63-094c-412b-bcf9-793391102377")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 
         dsd.addColumn("EMTCT codesP", sdd.definition("EMTCT codesP", sdd.getConcept("62a37075-fc2a-4729-8950-b9fae9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
         dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -180,11 +201,9 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
        // dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", sdd.getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
         dsd.addColumn("Pre-ART No", sdd.getPreARTNumber(), "");
         dsd.addColumn("IYCF", sdd.definition("IYCF", sdd.getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFDataConverter());
-        dsd.addColumn("MNC", sdd.definition("MNC", sdd.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
-        dsd.addColumn("TB Status", sdd.definition("TB Status", sdd.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Haemoglobin", sdd.definition("Haemoglobin", sdd.getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Syphilis testW", sdd.definition("Syphilis testW", sdd.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
-        dsd.addColumn("Syphilis testP", sdd.definition("Syphilis testP", sdd.getConcept("d8bc9915-ed4b-4df9-9458-72ca1bc2cd06")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
+        dsd.addColumn("Syphilis testW", sdd.definition("Syphilis testW", sdd.getConcept("3c5aa2a6-ca7a-478c-b559-d11040691b8d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
+        dsd.addColumn("Syphilis testP", sdd.definition("Syphilis testP", sdd.getConcept("3c5aa2a6-ca7a-478c-b559-d11040691b8d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new SyphilisTestDataConverter());
         dsd.addColumn("FPC", sdd.definition("FPC", sdd.getConcept("0815c786-5994-49e4-aa07-28b662b0e428")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FpcDataConverter());
         dsd.addColumn("TT", sdd.definition("TT", sdd.getConcept("39217e3d-6a39-4679-bf56-f0954a7ffdb8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TetanusDataConverter());
         dsd.addColumn("IPT/CTX", sdd.definition("IPT/CTX", sdd.getConcept("1da3cb98-59d8-4bfd-b0bb-c9c1bcd058c6")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IptCtxDataConverter());

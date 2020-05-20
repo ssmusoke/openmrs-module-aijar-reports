@@ -13,30 +13,28 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class MNCDataConverter implements DataConverter{
+public class TFVDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
+        Obs obs = ((Obs) obj);
         if (obj == null) {
             return "";
         }
-        Concept mncResults = ((Obs) obj).getValueCoded();
 
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))){
-            return "Y";
+        if (obs.getValueCoded().equals(Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465"))) {
+            return "TRR";
         }
-
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))){
-            return  "N";
+        if (obs.getValueCoded().equals(Dictionary.getConcept("8dcaefaa-aa91-4c24-aaeb-122cff549ab3"))) {
+            return "TRR+";
         }
-        return null;
+        return obs;
     }
 
     @Override
