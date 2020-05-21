@@ -64,6 +64,10 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         return l;
     }
 
+    public String getCSVDesignUuid()
+    {
+        return "816ebd6e-a2c9-4eda-a1a0-0515a713939d";
+    }
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
      *
@@ -74,11 +78,11 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign (ReportDefinition reportDefinition) {
-        ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+        ReportDesign rd = createCSVDesign(getCSVDesignUuid(), reportDefinition);
         return rd;
     }
     public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign("816ebd6e-a2c9-4eda-a1a0-0515a713939c", reportDefinition, "PNCRegister2019.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PNCRegister2019.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8-10,dataset:PNC");
         props.put("sortWeight", "5000");
@@ -115,7 +119,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.7";
+        return "1.0.9";
     }
 
     @Override

@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version>2.0.14-SNAPSHOT</version>
+    <version>2.0.20-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -47,7 +47,7 @@
         <metadatasharingVersion>1.1.9</metadatasharingVersion>
         <reportingVersion>1.20.0</reportingVersion>
         <serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
-        <ugandaemrsyncVersion>1.0.1</ugandaemrsyncVersion>
+        <ugandaemrsyncVersion>1.0.3</ugandaemrsyncVersion>
         <uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
         <webservices.restModuleVersion>2.17</webservices.restModuleVersion>
     </properties>
@@ -185,6 +185,7 @@
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>ugandaemrsync-api</artifactId>
                 <version>${ugandaemrsyncVersion}</version>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -228,12 +229,12 @@
         <repository>
             <id>openmrs-repo-modules</id>
             <name>OpenMRS Modules</name>
-            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/modules</url>
+            <url>https://openmrs.jfrog.io/artifactory/modules/</url>
         </repository>
         <snapshotRepository>
             <id>openmrs-repo-snapshots</id>
             <name>OpenMRS Snapshots</name>
-            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/snapshots</url>
+            <url>https://openmrs.jfrog.io/openmrs/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
