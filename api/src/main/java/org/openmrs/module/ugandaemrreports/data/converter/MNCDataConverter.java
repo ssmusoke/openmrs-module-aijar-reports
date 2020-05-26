@@ -29,11 +29,11 @@ public class MNCDataConverter implements DataConverter{
         }
         Concept mncResults = ((Obs) obj).getValueCoded();
 
-        if(mncResults != null && mncResults.equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))){
+        if(mncResults != null && mncResults.equals(Dictionary.getConcept(Dictionary.YES_CIEL))){
             return "Y";
         }
 
-        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))){
+        else if(mncResults != null && mncResults.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
             return  "N";
         }
         return null;

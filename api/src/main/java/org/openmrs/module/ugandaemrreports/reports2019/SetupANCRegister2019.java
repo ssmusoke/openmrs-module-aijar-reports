@@ -1,15 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports2019;
 
-import org.openmrs.Concept;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttributeType;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.metadatadeploy.MetadataUtils;
-import org.openmrs.module.reporting.data.DataDefinition;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
@@ -18,15 +9,28 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.CalculationResultDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.NationalityPersonalAttributeDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.ARVsDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.WHODataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.IYCFDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.FpcDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.TetanusDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.IptCtxDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.FreeLlinDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.MebendazoleDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.MUACDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.STKDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.STKResultDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.TFVDataConverter;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.ANCEncounterDateCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -123,7 +127,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.0";
+        return "3.0.1";
     }
 
     @Override
@@ -160,7 +164,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Gravida", sdd.definition("Gravida",  sdd.getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Parity", sdd.definition("Parity",  sdd.getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Gestational Age", sdd.definition("Gestational Age",  sdd.getConcept("dcd034ed-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("ANC1 Timing", sdd.definition("ANC1 Timing",  sdd.getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
+        dsd.addColumn("ANC1 Timing", sdd.definition("ANC1 Timing",  sdd.getConcept("3a862ab6-7601-4412-b626-d373c1d4a51e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("EDD", sdd.definition("EDD", sdd.getConcept("5b110c7d-8031-4526-9724-f262d6e2733e")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Weight", sdd.definition("Weight",  sdd.getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Height", sdd.definition("Height",  sdd.getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -179,7 +183,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("ART Code", sdd.definition("ART Code", sdd.getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
         dsd.addColumn("Linkage ART No", sdd.definition("Linkage ART No", sdd.getConcept("9db2900d-2b44-4629-bdf8-bf25de650577")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Infant Arv Prophylaxis", sdd.definition("Infant Arv Prophylaxis", sdd.getConcept("f42e40f3-7f76-4c0d-b9cc-f66acbb092c4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("MNC", sdd.definition("MNC", sdd.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MNCDataConverter());
+        dsd.addColumn("MNC", sdd.definition("MNC", sdd.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("TB Status", sdd.definition("TB Status", sdd.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WOA Scan", sdd.definition("WOA Scan", sdd.getConcept("d202c0ae-d84f-4beb-9670-6cc6a00063d1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("GBV Risk", sdd.definition("GBV Risk", sdd.getConcept("6b433917-16af-498d-8fda-0e7919f59c5b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -213,7 +217,6 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Other treatments", sdd.definition("Other treatments", sdd.getConcept("2aa72406-436e-490d-8aa4-d5336148204f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Referal In/Out", sdd.referredToOrFrom(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Risk Factor/Complications", sdd.definition("Risk Factor/Complications", sdd.getConcept("120186AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-
         return dsd;
     }
 
