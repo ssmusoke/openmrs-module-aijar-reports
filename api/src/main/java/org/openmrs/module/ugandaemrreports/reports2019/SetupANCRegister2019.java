@@ -123,7 +123,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.9.7";
+        return "3.0.0";
     }
 
     @Override
@@ -144,7 +144,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addRowFilter(Cohorts.genderAndHasAncEncounter(true, false, "044daI6d-f80e-48fe-aba9-037f241905Pe"), "startDate=${startDate},endDate=${endDate}");
 
         //start adding columns here
-        dsd.addColumn("Visit Date", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("Visit Date", sdd.getEncounterDate("Visit Date",new ANCEncounterDateCalculation()), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Serial No", sdd.definition("Serial No",  sdd.getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Client No", sdd.definition("Client No",  sdd.getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NIN", sdd.getNationalIDNumber(), "");
@@ -216,9 +216,5 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
         return dsd;
     }
-    private DataDefinition getEncounterDate() {
-        CalculationDataDefinition cd = new CalculationDataDefinition("Visit Date", new ANCEncounterDateCalculation());
-        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-        return cd;
-    }
+
 }

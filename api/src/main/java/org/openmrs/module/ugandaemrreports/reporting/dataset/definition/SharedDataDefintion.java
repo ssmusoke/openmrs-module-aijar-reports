@@ -18,6 +18,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.PersonAttribute;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
+import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -28,6 +29,7 @@ import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDat
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.ANCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -122,6 +124,11 @@ public class SharedDataDefintion {
 
     public DataDefinition getFolicAcidGiven() {
         CalculationDataDefinition cd = new CalculationDataDefinition("Folic acid given", new FolicAcidCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+    public DataDefinition getEncounterDate(String date, PatientCalculation encounterDateCalculation) {
+        CalculationDataDefinition cd = new CalculationDataDefinition(date, encounterDateCalculation);
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
     }
