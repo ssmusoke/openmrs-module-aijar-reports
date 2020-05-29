@@ -118,7 +118,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		rd.addDataSetDefinition("HTSCARDDATAEXPORT", Mapped.mapStraightThrough(dataSetDefinition()));
-		rd.addDataSetDefinition("S", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
+		rd.addDataSetDefinition("HTSCARDDATAEXPORT", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
 		return rd;
 	}
 	private Concept getConcept(String uuid) {
