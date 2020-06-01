@@ -22,10 +22,10 @@ public class NationalityPersonalAttributeDataConverter implements DataConverter 
     @Override
     public Object convert(Object obj) {
 
-        String personAttribute = ((PersonAttribute)obj).getValue();
-        if(personAttribute == null){
+        if(obj == null){
             return "";
           }
+        String personAttribute = ((PersonAttribute)obj).getValue();
 
         if(personAttribute.equals("165317"))
         {
