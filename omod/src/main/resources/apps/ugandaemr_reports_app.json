@@ -979,7 +979,7 @@
       },
       {
         "id": "HMIS 106A Section 1A",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
         "label": "HMIS 106A Section 1A",
         "url": "reportingui/runReport.page?reportDefinition=5718901d-3dae-4a0d-9847-df345bf0de39",
