@@ -291,11 +291,15 @@ public class HMIS106A1B2019DataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(all, indicators[i]+"3D", allMotherStartedAtThisFacility.size());
                 pdh.addCol(all, indicators[i]+"6D", mothersTransferIn.size());
 
-                pdh.addCol(all, indicators[i]+"4D", dft.format(((double) mothersCD4L200.size()) / baselineCD4Mothers.size()));
+                if( baselineCD4Mothers.size() > 0 ) {
+                    pdh.addCol(all, indicators[i] + "4D", dft.format(((double) mothersCD4L200.size()) / baselineCD4Mothers.size()));
+                }else{
+                    pdh.addCol(all, indicators[i]+"4D", "-");
+                }
                 pdh.addCol(all, indicators[i]+"5D", getMedianCD4(baselineCD4Mothers));
                 pdh.addCol(all, indicators[i]+"7D", transferOutMothers.size());
                 pdh.addCol(all, indicators[i]+"8D", netMothers.size());
-                pdh.addCol(all, indicators[i]+"9D", getPatientStopped(Joiner.on(",").join(netMothers), endDate));
+                pdh.addCol(all, indicators[i]+"9D", stoppedMothers.size());
                 pdh.addCol(all, indicators[i]+"10D", getDeadPatients(Joiner.on(",").join(netMothers), endDate).size());
                 pdh.addCol(all, indicators[i]+"11D", lostMothers.get("lost").getSize());
                 pdh.addCol(all, indicators[i]+"12D", lostMothers.get("dropped").getSize());
