@@ -13,42 +13,42 @@
  */
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.Concept;
-import org.openmrs.Obs;
+import org.openmrs.PersonAttribute;
 import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class ImmunizationDataConverter implements DataConverter {
+public class NationalityPersonalAttributeDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-        Concept concept = ((Obs) obj).getValueCoded();
-        if (concept==null) {
+
+        String personAttribute = ((PersonAttribute)obj).getValue();
+        if(personAttribute == null){
             return null;
-        }
-        if(concept.equals(Dictionary.getConcept("dc8e1be9-30ab-102d-86b0-7a5022ba4115"))){
-            return "✔";
-        }
-         if(concept.equals(Dictionary.getConcept("dc883964-30ab-102d-86b0-7a5022ba4115"))){
-            return "✔";
-        }
-        if(concept.equals(Dictionary.getConcept("782AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))){
-            return "✔";
-        }
-        if (concept.equals(Dictionary.getConcept("680f7f8d-eac6-44b4-8899-101fa2c4f873"))){
-            return "✔";
-        }
-        if(concept.equals(Dictionary.getConcept("62d87122-0a08-4e04-b57c-7e1b2f821854"))){
-            return "✔";
+          }
+
+        if(personAttribute.equals("165317"))
+        {
+            return "National";
         }
 
-        return concept;
+         if(personAttribute.equals("165318"))
+        {
+            return "Foreigner";
+        }
+
+         if(personAttribute.equals("160155"))
+        {
+            return "Refugee";
+        }
+
+        return ((PersonAttribute)obj).getValue();
+
     }
 
     @Override
     public Class<?> getInputDataType() {
-        return Obs.class;
+        return PersonAttribute.class;
     }
 
     @Override

@@ -5,7 +5,6 @@ import org.openmrs.PatientProgram;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.cohort.EvaluatedCohort;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.InProgramCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.evaluator.CohortDefinitionEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
@@ -37,7 +36,7 @@ public class CurrentlyInProgramCohortEvaluator implements CohortDefinitionEvalua
      * @should find patients in a program on the onOrBefore date if passed in time is at midnight
      */
     public EvaluatedCohort evaluate(CohortDefinition cohortDefinition, EvaluationContext context) {
-        InProgramCohortDefinition cd = (InProgramCohortDefinition) cohortDefinition;
+        CurrentlyInProgramCohortDefinition cd = (CurrentlyInProgramCohortDefinition) cohortDefinition;
 
         Date onOrAfter = cd.getOnDate() != null ? cd.getOnDate() : cd.getOnOrAfter();
         Date onOrBefore = cd.getOnDate() != null ? cd.getOnDate() : cd.getOnOrBefore();

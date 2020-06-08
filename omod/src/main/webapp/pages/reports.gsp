@@ -24,11 +24,11 @@
     ];
 </script>
 <style>
-    .dashboard .info-container {
-        width: 30%;
-    }
+.dashboard .info-container {
+    width: 30%;
+}
 </style>
-<h2>UgandaEMR Reports</h2>
+<h2>UgandaEMR Reports - HMIS Tools 2019 Version</h2>
 <div class="dashboard clear">
     <div class="info-container column">
         <% if (overview) { %>
@@ -99,23 +99,23 @@
 
     </div>
     <div class="info-container column">
-       <% if (mer) { %>
-          <div class="info-section">
-                <div class="info-header"><h3>Mer Reports</h3></div>
+        <% if (mer) { %>
+        <div class="info-section">
+            <div class="info-header"><h3>Mer Reports</h3></div>
 
-                <div class="info-body">
-                    <ul>
-                        <% mer.each { %>
-                        <li>
-                            ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
-                        </li>
-                        <% } %>
-                    </ul>
-                </div>
-           </div>
-       <% } %>
+            <div class="info-body">
+                <ul>
+                    <% mer.each { %>
+                    <li>
+                        ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
 
-       <% if (ewi) { %>
+        <% if (ewi) { %>
         <div class="info-section">
             <div class="info-header"><h3>Early Warning Indicators</h3></div>
 

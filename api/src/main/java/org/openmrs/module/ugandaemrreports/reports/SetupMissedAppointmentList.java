@@ -12,9 +12,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,9 @@ import java.util.Properties;
  */
 @Component
 public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
+
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
     private DataFactory df;
@@ -115,7 +119,8 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getMissedAppointment();
+        CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
+        CohortDefinition definition =df.getPatientsNotIn( df.getMissedAppointment(), patientsDeadAndTransferredOut);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -143,6 +148,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.8.0";
+        return "3.0";
     }
 }

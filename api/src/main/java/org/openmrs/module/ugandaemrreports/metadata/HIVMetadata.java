@@ -7,6 +7,7 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -183,10 +184,26 @@ public class HIVMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getMissedAppointmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "791faefd-36b8-482f-ab78-20c297b03851"));
+        return l;
+    }
+
+    public List<Concept> getNoClinicalContactOutcomes(){
+        return getConceptList("dca26b47-30ab-102d-86b0-7a5022ba4115,160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,f57b1500-7ff2-46b4-b183-fed5bce479a9,8b386488-9494-4bb6-9537-dcad6030fab0,1a467610-b640-4d9b-bc13-d2631fa57a45,b192a41c-f7e8-47a9-89c5-62e7a4bffddd,e063241f-5a50-4fea-9bce-d1bf8332f081");
+    }
+
     public List<EncounterType> getArtEncounterTypes() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f"));
         l.add(MetadataUtils.existing(EncounterType.class, "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f"));
+        return l;
+    }
+
+    public List<EncounterType> getMedicationDispensingEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "22902411-19c1-4a02-b19a-bf1a9c24fd51"));
         return l;
     }
 
@@ -245,6 +262,10 @@ public class HIVMetadata extends Metadata {
 
     public Concept getTBStartDate() {
         return getConcept("dce02eca-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getFluconazoleStartDate() {
+        return getConcept("539a716b-4e1b-4a99-ad1d-f4e3a09a75ae");
     }
 
     public Concept getTBStopDate() {
@@ -325,6 +346,9 @@ public class HIVMetadata extends Metadata {
 
     public Concept getMalnutrition() {
         return getConcept("dc655734-30ab-102d-86b0-7a5022ba4115");
+    }
+    public Concept getNutritionStatus() {
+        return getConcept("165050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     public Concept getMUAC() {
@@ -523,5 +547,31 @@ public class HIVMetadata extends Metadata {
 
     public Concept getNumberOfDaysDispensed(){
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
+    }
+
+    public Concept getAdvancedDiseaseStatus(){
+        return getConcept("17def5f6-d6b4-444b-99ed-40eb05d2c4f8");
+    }
+
+    public List<Concept> getConfirmedAdvancedDiseaseConcepts(){
+        return Arrays.asList(getConfirmedAdvancedDiseaseCDLessThan200(),getConfirmedAdvancedDiseaseChildLessThan5Yrs(),getConfirmedAdvancedDiseasePosTB(),getConfirmedAdvancedDiseasePosCrag(),getConfirmedAdvancedDiseaseWHOStage3OR4());
+    }
+     public Concept getConfirmedAdvancedDiseaseCDLessThan200(){
+         return getConcept("1615507f-54c6-4c18-b1ce-46a3d6d23154");
+     }
+
+    public Concept getConfirmedAdvancedDiseasePosCrag(){
+        return getConcept("e48dcbe9-9c13-4526-95db-97223f3bf757");
+    }
+
+    public Concept getConfirmedAdvancedDiseasePosTB(){
+        return getConcept("1f6fe5aa-29ba-4e84-8074-a7ea06eb8440");
+    }
+    public Concept getConfirmedAdvancedDiseaseWHOStage3OR4(){
+        return getConcept("2050efe0-6a18-4028-a26e-16b90dfd853d");
+    }
+
+    public Concept getConfirmedAdvancedDiseaseChildLessThan5Yrs(){
+        return getConcept("7cc40cbc-984f-40e0-aae3-50339dff8f4a");
     }
 }
