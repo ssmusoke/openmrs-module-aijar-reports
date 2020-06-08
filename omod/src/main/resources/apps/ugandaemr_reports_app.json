@@ -976,6 +976,14 @@
         "url": "reportingui/runReport.page?reportDefinition=dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "HMIS 106A Section 1A",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A Section 1A",
+        "url": "reportingui/runReport.page?reportDefinition=5718901d-3dae-4a0d-9847-df345bf0de39",
+        "order": 5
       }
     ]
   }
