@@ -1457,7 +1457,7 @@ public class DataFactory {
 
     public PatientDataDefinition getEncounterUuid() {
         EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(Dictionary.getEncounterType("264daIZd-f80e-48fe-nba9-P37f2W1905Pv")), "onOrBefore");
-        def.setWhich(TimeQualifier.LAST);
+        def.setWhich(TimeQualifier.LAST); 
         def.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         def.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return createPatientDataDefinition(def, getEncounterUuidConverter(), "onOrAfter=startDate, onOrBefore=endDate");
