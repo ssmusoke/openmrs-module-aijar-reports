@@ -1,6 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.Cohort;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -122,7 +121,7 @@ public class SetupTxTBReport extends UgandaEMRDataExportManager {
 
 
 
-        CohortDefinition assessedForTBDuringQuarter = hivCohortDefinitionLibrary.getAccessedForTBDuringPeriod();
+        CohortDefinition assessedForTBDuringQuarter = hivCohortDefinitionLibrary.getAssessedForTBDuringPeriod();
 
         CohortDefinition diagnosedWithTBDuringQuarter = hivCohortDefinitionLibrary.getDiagnosedWithTBDuringPeriod();
         CohortDefinition screenedNegativeForTB = hivCohortDefinitionLibrary.getScreenedForTBNegativeDuringPeriod();
