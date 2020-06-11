@@ -105,7 +105,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Intergrated Antenatal Register";
+        return "Intergrated Antenatal Register 2019";
     }
 
     @Override
@@ -127,7 +127,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.1";
+        return "3.0.4";
     }
 
     @Override

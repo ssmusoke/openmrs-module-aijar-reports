@@ -24,11 +24,11 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 public class ARVsDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-        Concept arvResultsConcept = ((Obs) obj).getValueCoded();
 
-        if (arvResultsConcept == null) {
-            return null;
+        if(obj == null){
+            return "";
         }
+        Concept arvResultsConcept = ((Obs) obj).getValueCoded();
 
         if(arvResultsConcept.equals(Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3"))){
             return "ART";
