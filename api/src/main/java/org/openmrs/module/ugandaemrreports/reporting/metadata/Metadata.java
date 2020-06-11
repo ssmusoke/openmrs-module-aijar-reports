@@ -298,7 +298,8 @@ public class Metadata {
         public static final String TRANSFER_IN_REGIMEN_OTHER = "a5bfc18e-c6db-4d5d-81f5-18d61b1355a8";
 
         public static final String  TRANSFER_OUT_DATE = "fc1b1e96-4afb-423b-87e5-bb80d451c967";
-
+        public static final String TB_LAM_RESULTS ="066b84a0-e18f-4cdd-a0d7-189454f4c7a4";
+        public static final String CRAG_RESULTS ="43c33e93-90ff-406b-b7b2-9c655b2a561a";
     }
 
     public static class Identifier {
