@@ -574,4 +574,29 @@ public class HIVMetadata extends Metadata {
     public Concept getConfirmedAdvancedDiseaseChildLessThan5Yrs(){
         return getConcept("7cc40cbc-984f-40e0-aae3-50339dff8f4a");
     }
+
+    public Concept getTPTInitiationDate() {
+        return  getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7");
+    }
+
+    public Concept getTPTCompletionDate() {
+        return getConcept("813e21e7-4ccb-4fe9-aaab-3c0e40b6e356");
+    }
+
+    public Concept getHepBScreeningDate() {
+        return getConcept("53df33eb-4060-4300-8b7e-0f0784947767");
+    }
+
+    public Concept getHepCScreeningDate() {
+        return getConcept("d8fcb0c7-6e6e-4efc-ac2b-3fae764fd198");
+    }
+
+
+    public Concept getHepCResults() {
+        return getConcept("dca17ac9-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getHepBResults() {
+        return getConcept("dca16e53-30ab-102d-86b0-7a5022ba4115");
+    }
 }
