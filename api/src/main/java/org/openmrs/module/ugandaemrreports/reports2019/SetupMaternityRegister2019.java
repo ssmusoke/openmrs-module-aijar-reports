@@ -206,8 +206,18 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("Final Diagnosis", sdd.definition("Final Diagnosis", sdd.getConcept("ed9f9b24-b356-4a42-8356-426c74d0aaf9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Delivered By", sdd.getNameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Transefered By", sdd.getNameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
-		dsd.addColumn("Bleeding", sdd.definition("Bleeding", sdd.getConcept("f0d21d70-986e-43ed-b72b-98c693c15f84")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("PNC at 6 Baby", sdd.definition("PNC at 6 Baby", sdd.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Bleedingat6", sdd.definition("Bleedingat6", sdd.getConcept("ac307106-50c4-4625-b041-ac77b4a14fb4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Blood Pressureat6", sdd.definition("Blood Pressureat6", sdd.getConcept("5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Checked Codeat6", sdd.definition("Checked Codeat6", sdd.getConcept("8453f86e-270f-4a30-a2fb-799534012f96")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Breast Feedingat6", sdd.definition("Breast Feedingat6", sdd.getConcept("b0551461-d462-42f3-aeaf-9e1c05c58527")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Fifth Minuteat6", sdd.definition("Fifth Minuteat6", sdd.getConcept("bdb1ea82-e125-4cb9-8c25-2326337bd82c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+
+		dsd.addColumn("Bleedingat24", sdd.definition("Bleedingat24", sdd.getConcept("ac307106-50c4-4625-b041-ac77b4a14fb4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Blood Pressureat24", sdd.definition("Blood Pressureat24", sdd.getConcept("5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Checked Codeat24", sdd.definition("Checked Codeat24", sdd.getConcept("8453f86e-270f-4a30-a2fb-799534012f96")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Breast Feedingat24", sdd.definition("Breast Feedingat24", sdd.getConcept("b0551461-d462-42f3-aeaf-9e1c05c58527")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Fifth Minuteat24", sdd.definition("Fifth Minuteat24", sdd.getConcept("bdb1ea82-e125-4cb9-8c25-2326337bd82c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+
 		dsd.addColumn("LLINs Given", sdd.definition("LLINs Given", sdd.getConcept("165025AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Condition of Baby", sdd.definition("Condition of Baby", sdd.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Final DiagnosisM", sdd.definition("Final DiagnosisM", sdd.getConcept("29253d22-531f-42c2-a4e9-a597d4a9308b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
