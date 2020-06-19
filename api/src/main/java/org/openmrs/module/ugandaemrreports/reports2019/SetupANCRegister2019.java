@@ -92,7 +92,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
     public ReportDesign buildExcelDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "ANCRegister2019.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:10-13,dataset:ANC");
+        props.put("repeatingSections", "sheet:1,row:11-14,dataset:ANC");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -127,7 +127,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.4";
+        return "3.1.6";
     }
 
     @Override
@@ -169,7 +169,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Weight", sdd.definition("Weight",  sdd.getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("Height", sdd.definition("Height",  sdd.getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("MUAC", sdd.definition("MUAC",  sdd.getConcept("5f86d19d-9546-4466-89c0-6f80c101191b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MUACDataConverter());
-        dsd.addColumn("INR NO", sdd.definition("INR NO",  sdd.getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("INR Number", sdd.definition("INR Number",  sdd.getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("BP", sdd.getBloodPressure(), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("EMTCT codesW", sdd.definition("EMTCT codesW", sdd.getConcept("d5b0394c-424f-41db-bc2f-37180dcdbe74")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
         dsd.addColumn("STK Given", sdd.definition("STK Given", sdd.getConcept("609c9aee-92b3-4e17-828a-efc7933f2ecf")), "onOrAfter=${startDate},onOrBefore=${endDate}", new STKDataConverter());
@@ -201,7 +201,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("WHO", sdd.definition("WHO", sdd.getConcept("dcdff274-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new WHODataConverter());
         dsd.addColumn("CD4", sdd.getWHOCD4ViralLoadCalculation("dcbcba2c-30ab-102d-86b0-7a5022ba4115", "159376AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), "onDate=${endDate}", new CalculationResultDataConverter());
-        dsd.addColumn("VL", sdd.getWHOCD4ViralLoadCalculation("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
+        dsd.addColumn("ViralLoad", sdd.getWHOCD4ViralLoadCalculation("dc8d83e3-30ab-102d-86b0-7a5022ba4115", "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Pre-ART No", sdd.getPreARTNumber(), "");
         dsd.addColumn("IYCF", sdd.definition("IYCF", sdd.getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFDataConverter());
         dsd.addColumn("Haemoglobin", sdd.definition("Haemoglobin", sdd.getConcept("dc548e89-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
