@@ -11,43 +11,30 @@
  *
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-
 package org.openmrs.module.ugandaemrreports.data.converter;
 
-import org.openmrs.Concept;
 import org.openmrs.Obs;
 import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 
 /**
  */
-public class ARVsDataConverter implements DataConverter {
+public class STKDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
-        if(obj == null){
+        Obs obs = ((Obs) obj);
+        if (obj == null) {
             return "";
         }
-        Concept arvResultsConcept = ((Obs) obj).getValueCoded();
 
-        if(arvResultsConcept.equals(Dictionary.getConcept("026e31b7-4a26-44d0-8398-9a41c40ff7d3"))){
-            return "ART";
+        if (obs.getValueCoded().equals(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "Yes";
         }
-        if(arvResultsConcept.equals(Dictionary.getConcept("2aa7d442-6cbb-4609-9dd3-bc2ad6f05016"))){
-            return "ARTK";
+        if (obs.getValueCoded().equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
+            return "No";
         }
-
-        if(arvResultsConcept.equals(Dictionary.getConcept("2c000b41-f9d7-40c1-8de0-bce91dbae932"))){
-            return "ART✔";
-        }
-        if(arvResultsConcept.equals(Dictionary.getConcept("bbc63761-0741-4583-9396-a34d3a18601c"))){
-            return "ARTK✔";
-        }
-        if(arvResultsConcept.equals(Dictionary.getConcept("dc9b0596-30ab-102d-86b0-7a5022ba4115"))){
-            return "NA";
-        }
-
-        return arvResultsConcept;
+        return obs;
     }
 
     @Override

@@ -9,19 +9,18 @@ public class BreastFeedingDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
 
-        Concept value = ((Obs)obj).getValueCoded();
-
-        if (value == null) {
+        if (obj == null) {
             return "";
         }
-        if(value.equals(Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115"))) {
+        Concept value = ((Obs)obj).getValueCoded();
+        if(value != null && value.equals(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "Yes";
         }
-         if(value.equals(Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115"))) {
+        else if(value != null && value.equals(Dictionary.getConcept("1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"))) {
             return "No";
         }
 
-        return value;
+        return null;
     }
 
     @Override

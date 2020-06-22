@@ -83,7 +83,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "1.8";
+		return "3.0";
 	}
 
 	/**
