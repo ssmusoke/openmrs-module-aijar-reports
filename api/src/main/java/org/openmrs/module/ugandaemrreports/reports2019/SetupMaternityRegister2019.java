@@ -83,7 +83,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.0";
+		return "3.0.4";
 	}
 
 	/**
@@ -153,10 +153,10 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 
 
-		dsd.addColumn("DOA", getEncounterDate(), "onDate=${endDate}", new CalculationResultDataConverter());
+		dsd.addColumn("DOA", sdd.getEncounterDate("DOA",new MaternityEncounterDateCalculation()), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Admission Number",sdd.definition("Admission Number",sdd.getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("ANC and Ref No", sdd.definition("ANC and Ref No", sdd.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("IPD No",sdd.definition("IPD No",sdd.getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("IPD Number",sdd.definition("IPD Number",sdd.getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("NIN", sdd.getNationalIDNumber(), "");
 		dsd.addColumn("Client Name", new PreferredNameDataDefinition(), (String) null);
 		dsd.addColumn("Village", basePatientDataLibrary.getVillage(),(String)null);
@@ -164,7 +164,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("County", basePatientDataLibrary.getCounty(),(String)null);
 		dsd.addColumn("District", basePatientDataLibrary.getDistrict(),(String)null);
 		dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new NationalityPersonalAttributeDataConverter());
-		dsd.addColumn("Phone No", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
+		dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
 		dsd.addColumn("Age", sdd.getAgeDataDefinition(10, 200), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Gravida", sdd.definition("Gravida", sdd.getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Parity", sdd.definition("Parity", sdd.getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -178,7 +178,8 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("eMTCT P", sdd.definition("EMTCT codesP", sdd.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb")), "onOrAfter=${startDate},onOrBefore=${endDate}", new EmctCodesDataConverter());
 		dsd.addColumn("ART Number", sdd.definition("ART Number", sdd.getConcept("105ef9de-ad90-4c08-bcd5-ab48f74f6287")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("CTX", sdd.definition("CTX", sdd.getConcept("791cc131-8f5f-4795-a1bc-196241a007b7")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("SyphilisW", sdd.definition("SyphilisW", sdd.getConcept("791cc131-8f5f-4795-a1bc-196241a007b7")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("SyphilisW", sdd.definition("SyphilisW", sdd.getConcept("3c5aa2a6-ca7a-478c-b559-d11040691b8d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("SyphilisP", sdd.definition("SyphilisP", sdd.getConcept("3c5aa2a6-ca7a-478c-b559-d11040691b8d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FinalDiagnosisDataConverter());
 		dsd.addColumn("Mode of Delivery", sdd.definition("Mode of Delivery", sdd.getConcept("dcc3ac63-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Date of Delivery", sdd.definition("Date Of Deliverly", sdd.getConcept("5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
@@ -206,6 +207,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("Final Diagnosis", sdd.definition("Final Diagnosis", sdd.getConcept("ed9f9b24-b356-4a42-8356-426c74d0aaf9")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Delivered By", sdd.getNameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Transefered By", sdd.getNameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
+		dsd.addColumn("Transfered to", sdd.definition("Transfered to",sdd.getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Bleedingat6", sdd.definition("Bleedingat6", sdd.getConcept("ac307106-50c4-4625-b041-ac77b4a14fb4")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Blood Pressureat6", sdd.definition("Blood Pressureat6", sdd.getConcept("5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Checked Codeat6", sdd.definition("Checked Codeat6", sdd.getConcept("8453f86e-270f-4a30-a2fb-799534012f96")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -223,29 +225,19 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("Final DiagnosisM", sdd.definition("Final DiagnosisM", sdd.getConcept("29253d22-531f-42c2-a4e9-a597d4a9308b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("IYCF", sdd.definition("IYCF", sdd.getConcept("5d993591-9334-43d9-a208-11b10adfad85")), "onOrAfter=${startDate},onOrBefore=${endDate}", new IYCFDataConverter());
 		dsd.addColumn("IYCF Option", sdd.definition("Infant Feeding Option", sdd.getConcept("dc9a00a2-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new InfantfeedingOptionDataConverter());
-		dsd.addColumn("Counselling at Discharge", sdd.definition("Counselling at Discharge", sdd.getConcept("3095d500-4a3e-4cf3-ab96-6f406e0d371d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new CounsellingAtdisChargeDataConverter());
-		dsd.addColumn("Condition of Mother At Discharge", sdd.definition("Condition of Mother At Discharge", sdd.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94")), "onOrAfter=${startDate},onOrBefore=${endDate}", new CounsellingAtdisChargeDataConverter());
+		dsd.addColumn("Counselled at Discharge", sdd.definition("Counselled at Discharge", sdd.getConcept("3095d500-4a3e-4cf3-ab96-6f406e0d371d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Condition At Discharge", sdd.definition("Condition At Discharge", sdd.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Date of Discharge", sdd.definition("Date of Discharge", sdd.getConcept("ff31a419-0eb1-45fc-920a-77b4a3481e00")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Name of Person Discharging", sdd.getNameofProvideratDelivery(), "onDate=${endDate}", new CalculationResultDataConverter());
-
 		dsd.addColumn("Weight", sdd.definition("Weight", sdd.getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Height", sdd.definition("Height", sdd.getConcept("5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("MUAC", sdd.definition("MUAC", sdd.getConcept("5f86d19d-9546-4466-89c0-6f80c101191b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new MUACDataConverter());
-
-
 		dsd.addColumn("ARVs drugs", sdd.definition("ARVs drugs", sdd.getConcept("a615f932-26ee-449c-8e20-e50a15232763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ARVsDataConverter());
 		dsd.addColumn("Vit A", sdd.definition("Vit A", sdd.getConcept("88ec2c8b-eb7b-4595-8612-1871568507a5")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("INR", sdd.definition("INR", sdd.getConcept("b644c29c-9bb0-447e-9f73-2ae89496a709")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("PNC at 6 Baby", sdd.definition("PNC at 6 Baby", sdd.getConcept("93ca1215-5346-4fde-8905-84e930d9f1c1")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Delivery", sdd.definition("Delivery", sdd.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new DeliveryDataConverter());
-
-
 		return dsd;
-	}
-	public DataDefinition getEncounterDate() {
-		CalculationDataDefinition cd = new CalculationDataDefinition("DOA", new MaternityEncounterDateCalculation());
-		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
-		return cd;
 	}
 
 }
