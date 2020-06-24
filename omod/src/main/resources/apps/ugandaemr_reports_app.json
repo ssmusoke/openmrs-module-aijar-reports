@@ -379,7 +379,7 @@
         "id": "HMIS 006 - Maternity Register",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "HMIS 006: Marternity Register",
+        "label": "HMIS 006: Maternity Register",
         "url": "reportingui/runReport.page?reportDefinition=694cb788-c3d1-406a-be2d-65e322f71205",
         "order": 20,
         "requiredPrivilege": "App: ugandaemrreports.maternityRegister"

@@ -21,23 +21,16 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.MaternityEncounterDateCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -83,7 +76,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.0.4";
+		return "3.2.4";
 	}
 
 	/**

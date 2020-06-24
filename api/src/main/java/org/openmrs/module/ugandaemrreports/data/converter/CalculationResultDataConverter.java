@@ -86,7 +86,7 @@ public class CalculationResultDataConverter implements DataConverter {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormatter = new SimpleDateFormat("MMM dd,yyyy");
+        DateFormat dateFormatter = new SimpleDateFormat("MMM dd, yyyy");
         return date == null?"":dateFormatter.format(date);
     }
 }
