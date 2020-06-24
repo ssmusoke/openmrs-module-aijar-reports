@@ -76,7 +76,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.2.4";
+		return "3.3.4";
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("SyphilisP", sdd.definition("SyphilisP", sdd.getConcept("3c5aa2a6-ca7a-478c-b559-d11040691b8d")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Diagnosis", sdd.definition("Diagnosis", sdd.getConcept("1284AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new FinalDiagnosisDataConverter());
 		dsd.addColumn("Mode of Delivery", sdd.definition("Mode of Delivery", sdd.getConcept("dcc3ac63-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("Date of Delivery", sdd.definition("Date Of Deliverly", sdd.getConcept("5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new Anc1TimingDataConverter());
+		dsd.addColumn("Date of Delivery", sdd.definition("Date Of Deliverly", sdd.getConcept("5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Time of Delivery", sdd.definition("Time of Delivery", sdd.getConcept("f9573837-6a9b-4f2f-9298-aecf27b15fb3")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Live Birth", sdd.definition("Live Birth", sdd.getConcept("f9573837-6a9b-4f2f-9298-aecf27b15fb3")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Management of 3rd stage labour", sdd.definition("Management of 3rd stage labour", sdd.getConcept("425458af-d1f7-40e4-a672-7d9e38aedb3c")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ManagementStageLabourConverter());
