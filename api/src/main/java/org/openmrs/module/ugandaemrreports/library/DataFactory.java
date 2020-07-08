@@ -64,7 +64,7 @@ public class DataFactory {
     }
 
     public DataConverter getEncounterUuidConverter() {
-        return new PropertyConverter(Encounter.class, "encounterId");
+        return new PropertyConverter(Encounter.class, "encounteruuid");
     }
 
     public DataConverter getEncounterLocationNameConverter() {
