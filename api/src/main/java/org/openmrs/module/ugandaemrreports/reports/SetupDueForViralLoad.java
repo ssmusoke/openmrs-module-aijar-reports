@@ -226,7 +226,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.2";
+        return "3.0.5";
     }
 }
 
