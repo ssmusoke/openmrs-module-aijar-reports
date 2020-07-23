@@ -61,14 +61,18 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 		return "9021b6b4-da42-4bd5-a4a9-ad92523d7bf5";
 	}
 
+	public String getCSVDesignUuid()
+	{
+		return "8d711174-7454-4094-a560-00ab51f50ac9";
+	}
 
-	
+
 	/**
      * @return the uuid for the report design for exporting to Excel
      */
 	@Override
 	public String getExcelDesignUuid() {
-		return "7faea756-d161-49e9-963c-d5696e89cbe9";
+		return "7faea756-d161-49e9-963c-d5696e89cbe5";
 	}
 	
 	@Override
@@ -96,12 +100,12 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createCSVDesign(getExcelDesignUuid(), reportDefinition);
+		ReportDesign rd = createCSVDesign(getCSVDesignUuid(), reportDefinition);
 		return rd;
 	}
 
 	public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign("8d711174-7454-4094-a560-00ab51f50ac8", reportDefinition, "HTSRegister_2019.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HTSRegister_2019.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:4-8,dataset:HTS");
 		props.put("sortWeight", "5000");
@@ -191,6 +195,6 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.0.0";
+		return "3.0.1";
 	}
 }

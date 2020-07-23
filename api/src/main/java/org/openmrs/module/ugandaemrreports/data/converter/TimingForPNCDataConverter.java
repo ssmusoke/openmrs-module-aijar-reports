@@ -23,7 +23,6 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 public class TimingForPNCDataConverter implements DataConverter {
     @Override
     public Object convert(Object obj) {
-        //1822AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1073AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA,1074AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         if (obj == null) {
             return "";
         }
