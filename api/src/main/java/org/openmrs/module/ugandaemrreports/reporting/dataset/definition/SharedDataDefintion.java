@@ -17,7 +17,9 @@ import org.openmrs.Concept;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -35,5 +37,11 @@ public class SharedDataDefintion {
         obsForPersonDataDefinition.setQuestion(concept);
         obsForPersonDataDefinition.setWhich(TimeQualifier.LAST);
         return obsForPersonDataDefinition;
+    }
+
+    public DataSetDefinition healthFacilityName() {
+        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+        dsd.setFacilityName("aijar.healthCenterName");
+        return dsd;
     }
 }

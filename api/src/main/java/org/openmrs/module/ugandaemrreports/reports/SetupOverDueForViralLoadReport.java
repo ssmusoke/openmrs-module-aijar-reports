@@ -133,7 +133,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-        rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(healthFacilityName()));
+        rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(sdd.healthFacilityName()));
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setParameters(getParameters());
@@ -218,15 +218,9 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
         return df.createPatientDataDefinition(def, converter, Parameters.combineParameters(endDate));
     }
 
-    private DataSetDefinition healthFacilityName() {
-        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
-        dsd.setFacilityName("aijar.healthCenterName");
-        return dsd;
-    }
-
     @Override
     public String getVersion() {
-        return "3.0.6";
+        return "3.0.6.1";
     }
 }
 
