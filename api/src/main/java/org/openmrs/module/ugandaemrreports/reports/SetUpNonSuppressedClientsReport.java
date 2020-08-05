@@ -1,6 +1,8 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -118,7 +120,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition artcohortDefinition = df.getPatientsWithNonSuppressedViralLoad();
+        CohortDefinition artcohortDefinition = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(), RangeComparator.GREATER_EQUAL,1000.0, BaseObsCohortDefinition.TimeModifier.LAST);
 
 
         dsd.setName(getName());
@@ -153,7 +155,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "2.0.9";
+        return "2.1.2";
     }
 }
 
