@@ -27,6 +27,7 @@ import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
@@ -36,6 +37,7 @@ import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCal
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -144,5 +146,11 @@ public class SharedDataDefintion {
         CalculationDataDefinition cd = new CalculationDataDefinition(date, encounterDateCalculation);
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
+    }
+
+    public DataSetDefinition healthFacilityName() {
+        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+        dsd.setFacilityName("aijar.healthCenterName");
+        return dsd;
     }
 }
