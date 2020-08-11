@@ -115,7 +115,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
 
             CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-            CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+            CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
             CohortDefinition patientsDeadAndtransferedOut =df.getPatientsInAny(deadPatients,transferedOut);
             CohortDefinition allLostClients = df.getLostClients();
 
