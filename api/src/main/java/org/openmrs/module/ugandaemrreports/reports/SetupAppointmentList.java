@@ -57,6 +57,10 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         return "98e92026-8c00-415f-9882-43917181f02d";
     }
 
+    public String getCSVDesignUuid() {
+        return "6f73facc-05dd-49d5-9a2a-646fe731afaa";
+    }
+
     @Override
     public String getUuid() {
         return "9c85e20b-c3ce-4dc1-b332-13f1d02f1c5c";
@@ -83,6 +87,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildExcelReportDesign(reportDefinition));
         l.add(buildReportDesign(reportDefinition));
         return l;
     }
@@ -95,8 +100,11 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
      * @return The report design
      */
     @Override
-
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+       return createCSVDesign(getCSVDesignUuid(), reportDefinition);
+    }
+
+    public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
         ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "AppointmentList.xls");
         Properties props = new Properties();
         props.put("repeatingSections", "sheet:1,row:8,dataset:APPOINTMENT_LIST");
@@ -140,6 +148,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.7";
+        return "1.1.0";
     }
 }
