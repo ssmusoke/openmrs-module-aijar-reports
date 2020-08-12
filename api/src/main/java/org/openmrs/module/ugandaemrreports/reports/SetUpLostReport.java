@@ -56,7 +56,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
     }
 
     public String getCSVDesignUuid() {
-        return "8d711174-7454-4094-a560-00ab51f50ac9";
+        return "d6ec3892-5759-402b-8c99-fcf760828f0c";
     }
 
     @Override
@@ -145,6 +145,9 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd,"Model", hivPatientData.getDSDMModel());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Last Appointment", hivPatientData.getExpectedReturnDate());
 
