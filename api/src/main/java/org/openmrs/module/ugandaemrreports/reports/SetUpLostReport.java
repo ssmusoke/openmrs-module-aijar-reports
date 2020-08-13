@@ -151,7 +151,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
-        dsd.addColumn("DSDM Model Enrollment Date", new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter(),new ObsDatetimeConverter());
+        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Last Appointment", hivPatientData.getExpectedReturnDate());
 
@@ -163,6 +163,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.0";
+        return "1.1.1";
     }
 }
