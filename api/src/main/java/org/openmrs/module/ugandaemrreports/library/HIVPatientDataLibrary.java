@@ -196,6 +196,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return convert(def, df.getDSDMProgramConverter());
     }
 
+    public PatientDataDefinition getDSDMEnrollmentDate() {
+        DSDMModelDataDefinition def =  new DSDMModelDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(def,df.getDateEnrolledConverter());
+    }
+
     public PatientDataDefinition getFirstTB() {
         return getSummaryPageObsValue(hivMetadata.getDateEligibilityTB(), df.getObsValueNumericConverter());
     }
@@ -567,7 +574,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getVLQualitativeByEndDate(){
-        return   df.getObsByEndDate(hivMetadata.getViralLoadDetection(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+        return   df.getObsByEndDate(hivMetadata.getViralLoadDetection(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueConverter());
     }
 
     public PatientDataDefinition getLastEncounterByEndDate(){
@@ -579,6 +586,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
         return df.convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"),df.getDeathDateConverter());
     }
+
 
     public PatientDataDefinition getTPTInitiationDate() {
         return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());

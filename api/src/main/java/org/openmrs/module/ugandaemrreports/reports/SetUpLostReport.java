@@ -10,6 +10,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.ObsDatetimeConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,9 +147,11 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-        addColumn(dsd,"Model", hivPatientData.getDSDMModel());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
+        dsd.addColumn("DSDM Model Enrollment Date", new DSDMModelDataDefinition(), "", df.getDateEnrolledConverter(),new ObsDatetimeConverter());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Last Appointment", hivPatientData.getExpectedReturnDate());
 
