@@ -144,9 +144,10 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "Village", df.getPreferredAddress("address5"));
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
+        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
@@ -159,6 +160,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.6";
+        return "3.0.8";
     }
 }

@@ -152,6 +152,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.6";
+        return "3.0.9";
     }
 }
