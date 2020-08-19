@@ -11,6 +11,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.ObsDatetimeConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +145,11 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
+        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
         addColumn(dsd, "Last Appointment", hivPatientData.getExpectedReturnDate());
         rd.addDataSetDefinition("LOST_TO_FOLLOW_UP", Mapped.mapStraightThrough(dsd));
@@ -153,6 +160,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.0";
+        return "3.0.9";
     }
 }

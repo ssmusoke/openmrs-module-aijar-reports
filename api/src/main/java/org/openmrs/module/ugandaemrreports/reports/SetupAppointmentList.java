@@ -18,10 +18,7 @@ import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Daily Appointments List report
@@ -137,6 +134,13 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
+        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
+        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
+        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
@@ -148,6 +152,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.0";
+        return "4.0.1";
     }
 }
