@@ -163,6 +163,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.3";
+        return "1.1.4";
     }
 }

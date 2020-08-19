@@ -160,6 +160,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.8";
+        return "3.0.9";
     }
 }
