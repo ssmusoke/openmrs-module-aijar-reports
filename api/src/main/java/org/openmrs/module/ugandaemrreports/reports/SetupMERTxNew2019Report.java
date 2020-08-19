@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+
 /**
  *  TX Current Report
  */
@@ -119,7 +121,7 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
 
-        CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
+        CohortDefinition havingArtStartDateDuringQuarter = df.getPatientsNotIn(hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(),transferIn());
         CohortDefinition lactating = addParameters(artCohortLibrary.lactatingAtARTStart());
 
 
@@ -193,6 +195,6 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.3";
+        return "0.1.4";
     }
 }
