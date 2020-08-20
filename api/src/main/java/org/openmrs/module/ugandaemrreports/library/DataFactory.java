@@ -375,6 +375,12 @@ public class DataFactory {
         return convert(d, converter);
     }
 
+    public PatientDataDefinition getPersonUUID(String property) {
+        PersonUUIDDataDefinition d = new PersonUUIDDataDefinition();
+        PropertyConverter converter = new PropertyConverter(Person.class, property);
+        return convert(d, converter);
+    }
+
     public PatientDataDefinition getObsValue(Concept question, List<EncounterType> encounterTypes, DataConverter converter) {
         ObsForPersonInPeriodDataDefinition def = new ObsForPersonInPeriodDataDefinition();
         def.setQuestion(question);
