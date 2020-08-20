@@ -16,6 +16,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.ugandaemrreports.common.Enums;
+import org.openmrs.module.ugandaemrreports.data.converter.CodedConceptUUIDValueConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -92,6 +93,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
 
+
+    public PatientDataDefinition getCurrentRegimenUuid() {
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new CodedConceptUUIDValueConverter());
+    }
     public PatientDataDefinition getCurrentRegimenDate() {
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
@@ -194,6 +199,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
         def.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(def, df.getDSDMProgramConverter());
+    }
+
+    public PatientDataDefinition getPatientUUID() {
+        PersonUUIDDataDefinition def = new PersonUUIDDataDefinition();
+        return convert(def, df.getPatientUUIDConverter());
     }
 
     public PatientDataDefinition getDSDMEnrollmentDate() {

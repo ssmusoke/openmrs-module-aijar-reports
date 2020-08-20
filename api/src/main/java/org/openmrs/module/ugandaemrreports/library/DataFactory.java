@@ -83,6 +83,7 @@ public class DataFactory {
         return new PropertyConverter(Obs.class, "valueDatetime");
     }
 
+
     public DataConverter getObsValueDatetimeCollectionConverter() {
         ChainedConverter itemConverter = new ChainedConverter(getObsValueDatetimeConverter(), getObjectFormatter());
         CollectionConverter collectionConverter = new CollectionConverter(itemConverter, true, null);
@@ -166,6 +167,10 @@ public class DataFactory {
 
     public DataConverter getDSDMProgramConverter() {
         return new PropertyConverter(DSDMModel.class, "progId");
+    }
+
+    public DataConverter getPatientUUIDConverter() {
+        return new PropertyConverter(Person.class, "uuid");
     }
     public DataConverter getDeathCourseConverter() {
         return new PropertyConverter(DeathDate.class, "caseOfDeath");
@@ -372,6 +377,12 @@ public class DataFactory {
     public PatientDataDefinition getPreferredAddress(String property) {
         PreferredAddressDataDefinition d = new PreferredAddressDataDefinition();
         PropertyConverter converter = new PropertyConverter(PersonAddress.class, property);
+        return convert(d, converter);
+    }
+
+    public PatientDataDefinition getPersonUUID(String property) {
+        PersonUUIDDataDefinition d = new PersonUUIDDataDefinition();
+        PropertyConverter converter = new PropertyConverter(Person.class, property);
         return convert(d, converter);
     }
 
