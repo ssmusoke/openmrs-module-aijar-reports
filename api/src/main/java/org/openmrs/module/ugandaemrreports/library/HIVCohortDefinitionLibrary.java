@@ -1,10 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.Concept;
-import org.openmrs.EncounterType;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
@@ -12,7 +9,6 @@ import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWithNoClinicalContactDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -22,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 /**
  */
@@ -226,13 +221,17 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtTransferInRegimen(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getPatientsTransferredOutDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferredOut(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    public CohortDefinition getPatientsTransferredOutBetweenStartAndEndDate() {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsTransferredOutByEndOfPeriod() {
+        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getDeadAndTransferredOutPatientsDuringPeriod() {
-        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferredOutPatients = getPatientsTransferredOutDuringPeriod();
+        CohortDefinition deadPatients = df.getDeadPatientsByEndDate();
+        CohortDefinition transferredOutPatients = getPatientsTransferredOutByEndOfPeriod();
         return df.getPatientsInAny(deadPatients, transferredOutPatients);
     }
 

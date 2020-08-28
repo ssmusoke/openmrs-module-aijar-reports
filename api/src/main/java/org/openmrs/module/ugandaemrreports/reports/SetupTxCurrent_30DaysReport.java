@@ -1,12 +1,10 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -121,7 +119,7 @@ public class SetupTxCurrent_30DaysReport extends UgandaEMRDataExportManager {
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
         CohortDefinition tx_Curr_lost_to_followup = df.getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(30);
         CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferedOut,tx_Curr_lost_to_followup);
 

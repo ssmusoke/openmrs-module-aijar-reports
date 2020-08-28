@@ -123,7 +123,7 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
         CohortDefinition females = cohortDefinitionLibrary.females();
 
         CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferredOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition transferredOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
         CohortDefinition tx_Curr_lost_to_followup = df.getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(90);
         CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferredOut,tx_Curr_lost_to_followup);
 

@@ -163,7 +163,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
                 hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod("6m"));
 
         CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
         CohortDefinition patientsDeadAndtransferedOut =df.getPatientsInAny(deadPatients,transferedOut);
 
 
