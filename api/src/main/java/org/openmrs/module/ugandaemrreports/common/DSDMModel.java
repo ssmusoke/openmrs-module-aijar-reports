@@ -15,7 +15,7 @@ public class DSDMModel {
     }
 
     public String toString() {
-        return DateUtil.formatDate(dateOfEnrollment, "MMM d, yyyy", "");
+        return DateUtil.formatDate(dateOfEnrollment, "MMM dd, yyyy", "");
     }
 
     public DSDMModel(Date dateOfEnrollment, String progId) {

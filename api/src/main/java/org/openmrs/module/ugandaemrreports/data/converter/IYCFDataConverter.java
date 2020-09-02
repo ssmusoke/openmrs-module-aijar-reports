@@ -23,6 +23,10 @@ import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 public class IYCFDataConverter implements DataConverter{
     @Override
     public Object convert(Object obj) {
+        if(obj == null)
+        {
+            return "";
+        }
         Concept iyfcResults = ((Obs) obj).getValueCoded();
         if(iyfcResults==null)
         {

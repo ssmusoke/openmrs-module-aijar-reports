@@ -510,4 +510,21 @@ public class Cohorts {
 
         return cd;
     }
+
+    public static CohortDefinition getPatientsWhoSwitchedFromFirstLineToSecondLineAsOnARTSummaryDuringPeriod(){
+        String sql = "select o.person_id from obs o  inner  join obs p on o.person_id= p.person_id where o.concept_id=99164 and o.value_datetime between :startDate and :endDate and p.concept_id=165310 and p.value_coded= 1371  and p.obs_datetime=o.obs_datetime group by o.person_id";
+        SqlCohortDefinition cd = new SqlCohortDefinition(sql);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cd;
+    }
+
+    public static CohortDefinition getPatientsWhoSwitchedFromSecondLineToThirdLineAsOnARTSummaryDuringPeriod(){
+        String sql = "select o.person_id from obs o  inner  join obs p on o.person_id= p.person_id where o.concept_id=162991 and o.value_datetime between :startDate and :endDate and p.concept_id=165311 and p.value_coded= 1371  and p.obs_datetime=o.obs_datetime group by o.person_id";
+        SqlCohortDefinition cd = new SqlCohortDefinition(sql);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cd;
+    }
+
 }

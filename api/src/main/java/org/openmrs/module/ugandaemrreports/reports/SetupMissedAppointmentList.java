@@ -11,6 +11,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.ObsDatetimeConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
@@ -25,7 +27,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Daily Appointments List report
+ * Missed Appointments List report
  */
 @Component
 public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
@@ -59,6 +61,10 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         return "654c6fec-75f8-11e6-8b77-86f30ca893d3";
     }
 
+    public String getCSVDesignUuid() {
+        return "bf38ef47-4354-485e-8867-4bf6eb6fe818";
+    }
+
     @Override
     public String getUuid() {
         return "654c7276-75f8-11e6-8b77-86f30ca893d3";
@@ -82,10 +88,16 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         return l;
     }
 
+    public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createCSVDesign(getCSVDesignUuid(), reportDefinition);
+        return rd;
+    }
+
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
+        l.add(buildCSVReportDesign(reportDefinition));
         return l;
     }
 
@@ -136,6 +148,14 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
+        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
+        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
+        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
         addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
         addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
@@ -148,6 +168,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0";
+        return "3.0.9";
     }
 }

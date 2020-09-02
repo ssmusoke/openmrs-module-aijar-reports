@@ -7,10 +7,7 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.MapConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.converter.PropertyConverter;
+import org.openmrs.module.reporting.data.converter.*;
 import org.openmrs.module.reporting.data.patient.definition.*;
 import org.openmrs.module.reporting.data.person.definition.AgeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonDataDefinition;
@@ -19,6 +16,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.parameter.ParameterizableUtil;
 import org.openmrs.module.ugandaemrreports.common.Enums;
+import org.openmrs.module.ugandaemrreports.data.converter.CodedConceptUUIDValueConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -92,9 +90,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getCurrentRegimen() {
-        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
 
+
+    public PatientDataDefinition getCurrentRegimenUuid() {
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new CodedConceptUUIDValueConverter());
+    }
     public PatientDataDefinition getCurrentRegimenDate() {
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
@@ -197,6 +199,18 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
         def.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(def, df.getDSDMProgramConverter());
+    }
+
+    public PatientDataDefinition getPatientUUID() {
+        PersonUUIDDataDefinition def = new PersonUUIDDataDefinition();
+        return convert(def, df.getPatientUUIDConverter());
+    }
+
+    public PatientDataDefinition getDSDMEnrollmentDate() {
+        DSDMModelDataDefinition def =  new DSDMModelDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(def,df.getDateEnrolledConverter());
     }
 
     public PatientDataDefinition getFirstTB() {
@@ -490,10 +504,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getArtStartDate() {
-        return df.getObs(hivMetadata.getArtStartDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsDatetimeConverter());
+        return df.getObs(hivMetadata.getArtStartDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, new ObsDatetimeConverter());
     }
     public PatientDataDefinition getViralLoadDate() {
-        return df.getObs(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObs(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
 
@@ -570,7 +584,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getVLQualitativeByEndDate(){
-        return   df.getObsByEndDate(hivMetadata.getViralLoadDetection(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+        return   df.getObsByEndDate(hivMetadata.getViralLoadDetection(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueConverter());
     }
 
     public PatientDataDefinition getLastEncounterByEndDate(){
@@ -580,5 +594,33 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getDeathDateByEndDate() {
         DeathDateDataDefinition cd =  new DeathDateDataDefinition();
         cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
-        return df.convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"),df.getDeathDateConverter()); }
+        return df.convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"),df.getDeathDateConverter());
+    }
+
+
+    public PatientDataDefinition getTPTInitiationDate() {
+        return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getTPTCompletionDate() {
+        return df.getObsByEndDate(hivMetadata.getTPTCompletionDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getLastHepBScreeningDate() {
+        return df.getObsByEndDate(hivMetadata.getHepBScreeningDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getLastHepCScreeningDate() {
+        return df.getObsByEndDate(hivMetadata.getHepCScreeningDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
+    }
+
+
+    public PatientDataDefinition getLastHepCScreeningResult() {
+        return df.getObs(hivMetadata.getHepCResults(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+
+    public PatientDataDefinition getLastHepBScreeningResult() {
+        return df.getObs(hivMetadata.getHepBResults(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+
 }

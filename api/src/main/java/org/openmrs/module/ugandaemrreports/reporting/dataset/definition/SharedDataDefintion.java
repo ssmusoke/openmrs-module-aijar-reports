@@ -15,9 +15,10 @@ package org.openmrs.module.ugandaemrreports.reporting.dataset.definition;
 
 import org.openmrs.Concept;
 import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttribute;
+import org.openmrs.PersonName;
 import org.openmrs.PersonAttributeType;
 import org.openmrs.api.context.Context;
+import org.openmrs.calculation.patient.PatientCalculation;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.DataDefinition;
@@ -26,13 +27,17 @@ import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.WhoCd4VLCalculation;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.pnc.RtwRfwCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -109,5 +114,43 @@ public class SharedDataDefintion {
         CalculationDataDefinition cd = new CalculationDataDefinition("RTW/RFW", new RtwRfwCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
         return cd;
+    }
+    public DataDefinition getNameofProvideratDelivery() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Delivered By", new ProviderNameCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+
+        return cd;
+    }
+
+    public DataDefinition getBloodPressure(){
+        CalculationDataDefinition cdf = new CalculationDataDefinition("bp", new BloodPressureCalculation());
+        cdf.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cdf;
+    }
+
+    public DataDefinition getIronGiven() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Iron given", new IronGivenCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    public PersonName getPersonNamesByProviderUUID(String providerUUID) {
+        return Context.getProviderService().getProviderByUuid(providerUUID).getPerson().getPersonName();
+    }
+    public DataDefinition getFolicAcidGiven() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Folic acid given", new FolicAcidCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+    public DataDefinition getEncounterDate(String date, PatientCalculation encounterDateCalculation) {
+        CalculationDataDefinition cd = new CalculationDataDefinition(date, encounterDateCalculation);
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+        return cd;
+    }
+
+    public DataSetDefinition healthFacilityName() {
+        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+        dsd.setFacilityName("aijar.healthCenterName");
+        return dsd;
     }
 }

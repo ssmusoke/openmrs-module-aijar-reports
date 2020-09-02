@@ -121,7 +121,7 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod();
+        CohortDefinition definition = hivCohortDefinitionLibrary.getPatientsTransferredOutBetweenStartAndEndDate();
 
         PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
 
@@ -159,6 +159,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1";
+        return "1.2";
     }
 }
