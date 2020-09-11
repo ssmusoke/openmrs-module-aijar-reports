@@ -93,6 +93,9 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
 
+    public PatientDataDefinition getPreviousRegimen() {
+        return df.getObsBeforeDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
+    }
 
     public PatientDataDefinition getCurrentRegimenUuid() {
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new CodedConceptUUIDValueConverter());

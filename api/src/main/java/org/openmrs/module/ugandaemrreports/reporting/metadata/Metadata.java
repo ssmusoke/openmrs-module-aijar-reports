@@ -300,6 +300,8 @@ public class Metadata {
         public static final String  TRANSFER_OUT_DATE = "fc1b1e96-4afb-423b-87e5-bb80d451c967";
         public static final String TB_LAM_RESULTS ="066b84a0-e18f-4cdd-a0d7-189454f4c7a4";
         public static final String CRAG_RESULTS ="43c33e93-90ff-406b-b7b2-9c655b2a561a";
+
+        public static final String DTG_TLD_REGIMEN_LIST = "";
     }
 
     public static class Identifier {
