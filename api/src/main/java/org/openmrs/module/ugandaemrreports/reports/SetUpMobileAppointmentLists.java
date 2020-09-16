@@ -125,7 +125,9 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
         CohortDefinition missedAppointmentLists = df.getMissedAppointment();
         CohortDefinition combinedCohort = df.getPatientsInAny(appointmentList,missedAppointmentLists);
         CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
-        CohortDefinition patientsWithAppointmentsAndMissedAppointments =df.getPatientsNotIn(combinedCohort,patientsDeadAndTransferredOut);
+        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition cohortstoExclude =df.getPatientsInAny(hadEncounterInPeriod,patientsDeadAndTransferredOut);
+        CohortDefinition patientsWithAppointmentsAndMissedAppointments =df.getPatientsNotIn(combinedCohort,cohortstoExclude);
 
 
         dsd.setName(getName());
@@ -158,6 +160,6 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.9";
+        return "2.0.0";
     }
 }
