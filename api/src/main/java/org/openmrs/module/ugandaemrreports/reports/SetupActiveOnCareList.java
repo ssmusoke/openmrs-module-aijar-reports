@@ -1,6 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -11,12 +11,10 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -41,8 +39,7 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
     @Autowired
     private BasePatientDataLibrary basePatientData;
 
-    @Autowired
-    private HIVMetadata hivMetadata;
+
 
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
@@ -130,17 +127,8 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
-        CohortDefinition exclusionpatients =df.getPatientsInAny(deadPatients,transferedOut);
 
-        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
-
-        CohortDefinition returnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition longAppointments = df.getPatientsWithLongRefills();
-        CohortDefinition eligiblePatientOnCare = df.getPatientsInAny(returnVisitDuringPeriod,longAppointments,hadEncounterInPeriod);
-        CohortDefinition definition =df.getPatientsNotIn(eligiblePatientOnCare,exclusionpatients);
+        CohortDefinition definition = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -186,6 +174,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.2";
+        return "3.1.0";
     }
 }

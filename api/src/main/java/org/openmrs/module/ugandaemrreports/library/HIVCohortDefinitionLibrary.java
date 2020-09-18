@@ -66,6 +66,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientsTransferredOutDuringPeriod() {
+        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);    }
+
     public CohortDefinition getTransferredInToCareDuringPeriod(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferIn(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -538,12 +541,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsInAll(getPatientsTestedForHIV(),getPatientsWhoReceivedHIVResults());
     }
 
-    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(Double noOfDrugs, RangeComparator rangeComparator){
-        return df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator, noOfDrugs, BaseObsCohortDefinition.TimeModifier.ANY);
+    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(Double noOfDrugs, RangeComparator rangeComparator){
+        return df.getPatientsWithNumericObsByEndDate(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator, noOfDrugs, BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(Double value1, RangeComparator rangeComparator1, Double value2, RangeComparator rangeComparator2){
-        return df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator1,value1,rangeComparator2,value2, BaseObsCohortDefinition.TimeModifier.ANY);
+    public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(Double value1, RangeComparator rangeComparator1, Double value2, RangeComparator rangeComparator2){
+        return df.getPatientsWithNumericObsByEndOfPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator1,value1,rangeComparator2,value2, BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsWithNoClinicalContactsByEndDateForDays(Integer days) {
@@ -593,4 +596,43 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
    public CohortDefinition getPatientsWhoHadAViralLoadTestDuringThePastPeriodFromEndDate(String pastPeriods){
        return df.getPatientsWhoseObsValueDateIsBetweenPastPeriodFromEndDate(hivMetadata.getViralLoadDate(),hivMetadata.getARTEncounterPageEncounterType(),pastPeriods, BaseObsCohortDefinition.TimeModifier.ANY);
    }
+
+    public static SqlCohortDefinition getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate() {
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  where encounter_datetime <= :endDate and encounter_type=15 and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0;");
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return cohortDefinition;
+
+    }
+
+    public static SqlCohortDefinition getPatientsTxLostToFollowupByDays(String days) {
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(:endDate,max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id  where encounter_datetime <=:endDate " +
+                "and encounter_type=15 and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;\n");
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return cohortDefinition;
+
+    }
+
+    public CohortDefinition getActivePatientsWithLostToFollowUpAsByDays(String days){
+        CohortDefinition deadPatients = df.getDeadPatientsByEndDate();
+
+        CohortDefinition tx_Curr_lost_to_followup = getPatientsTxLostToFollowupByDays(days);
+        CohortDefinition transferredOut =getPatientsTransferredOutDuringPeriod();
+        CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferredOut,tx_Curr_lost_to_followup);
+
+        CohortDefinition transferredInToCareDuringPeriod= getTransferredInToCareDuringPeriod();
+        CohortDefinition havingBaseRegimenDuringQuarter = getPatientsHavingBaseRegimenDuringPeriod();
+        CohortDefinition havingArtStartDateDuringQuarter = getArtStartDateBetweenPeriod();
+        CohortDefinition onArtDuringQuarter = getPatientsHavingRegimenDuringPeriod();
+
+        CohortDefinition patientsWithactiveReturnVisitDate = getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate();
+        CohortDefinition allActivePatients = df.getPatientsInAny(patientsWithactiveReturnVisitDate,transferredInToCareDuringPeriod,havingArtStartDateDuringQuarter,
+                onArtDuringQuarter, havingBaseRegimenDuringQuarter);
+        CohortDefinition activeExcludingDeadLostAndTransfferedOut= df.getPatientsNotIn(allActivePatients,excludedPatients);
+
+        return activeExcludingDeadLostAndTransfferedOut;
+    }
 }
