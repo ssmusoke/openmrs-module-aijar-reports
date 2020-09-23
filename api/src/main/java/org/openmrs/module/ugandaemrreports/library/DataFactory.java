@@ -852,6 +852,19 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
+    public CohortDefinition getPatientsWithNumericObsByEndOfPeriod(Concept question, List<EncounterType> restrictToTypes, RangeComparator operator, Double value, RangeComparator operator2, Double value2, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(question);
+        cd.setEncounterTypeList(restrictToTypes);
+        cd.setOperator1(operator);
+        cd.setValue1(value);
+        cd.setOperator2(operator2);
+        cd.setValue2(value2);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("onOrBefore=endDate"));
+    }
+
     public CohortDefinition getPatientsWithNumericObsDuringPeriod(Concept question, List<EncounterType> restrictToTypes,String olderThan, RangeComparator operator, Double value, RangeComparator operator2, Double value2, BaseObsCohortDefinition.TimeModifier timeModifier) {
         NumericObsCohortDefinition cd = new NumericObsCohortDefinition();
         cd.setTimeModifier(timeModifier);

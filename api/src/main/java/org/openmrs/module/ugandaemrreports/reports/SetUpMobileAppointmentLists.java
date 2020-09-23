@@ -11,10 +11,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.EmctCodesDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -47,6 +44,11 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVMetadata hivMetadata;
+
+    @Autowired
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+
 
 
 
@@ -119,11 +121,18 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition appointmentList = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition missedAppointmentLists = df.getMissedAppointment();
+        CohortDefinition combinedCohort = df.getPatientsInAny(appointmentList,missedAppointmentLists);
+        CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
+        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+        CohortDefinition cohortstoExclude =df.getPatientsInAny(hadEncounterInPeriod,patientsDeadAndTransferredOut);
+        CohortDefinition patientsWithAppointmentsAndMissedAppointments =df.getPatientsNotIn(combinedCohort,cohortstoExclude);
+
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithAppointmentsAndMissedAppointments));
         addColumn(dsd,"Person UUID",hivPatientData.getPatientUUID());
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
@@ -144,13 +153,13 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsWithAppointmentsAndMissedAppointments));
 
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "1.0.8";
+        return "2.0.0";
     }
 }
