@@ -114,10 +114,6 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getDead(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition gePatientsWhoDiedBefore(String olderThan) {
-        return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getDead(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
-    }
-
     public CohortDefinition getTransferredInToCareBeforePeriod() {
         return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getTransferIn(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
