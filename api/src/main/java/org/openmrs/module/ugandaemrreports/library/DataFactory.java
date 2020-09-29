@@ -714,6 +714,13 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"));
     }
 
+    public CohortDefinition getDeadPatientsByEndOfPreviousDate(String olderThan) {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrBefore=startDate-" + olderThan));
+    }
+
     public CohortDefinition getDeadPatients() {
         BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
         cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));

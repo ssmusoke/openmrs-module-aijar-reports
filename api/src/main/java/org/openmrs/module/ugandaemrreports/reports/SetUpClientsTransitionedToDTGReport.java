@@ -139,7 +139,9 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition transitionedToDTGCohort =  df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenInPeriod(), hivCohortDefinitionLibrary.getPatientsOnDTGRegimenBeforePeriod());
+        CohortDefinition patientsOnDTGInPeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenInPeriod(), df.getDeadPatientsDuringPeriod(), hivCohortDefinitionLibrary.getTransferredOut());
+        CohortDefinition patientsOnDTGBeforePeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenBeforePeriod(), df.getDeadPatientsByEndOfPreviousDate("1d"));
+        CohortDefinition transitionedToDTGCohort =  df.getPatientsNotIn(patientsOnDTGInPeriod, patientsOnDTGBeforePeriod);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
