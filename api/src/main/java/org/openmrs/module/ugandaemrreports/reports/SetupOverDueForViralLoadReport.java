@@ -192,6 +192,8 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getLastReturnDateByEndDate());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone2", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Telephone3", basePatientData.getSecondAlternateTelePhoneNumber());
         addColumn(dsd,"pregnant",getObsByEndDate(hivMetadata.getEMTCTAtEnrollment(), null, TimeQualifier.FIRST, df.getObsValueCodedConverter()));
 
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activeAndOverDueForViralLoad));
@@ -220,7 +222,7 @@ public class SetupOverDueForViralLoadReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.6.1";
+        return "3.0.6.2";
     }
 }
 

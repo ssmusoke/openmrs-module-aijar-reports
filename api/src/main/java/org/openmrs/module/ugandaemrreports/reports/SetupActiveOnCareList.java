@@ -140,6 +140,8 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd,"Age",hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone2", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Telephone3", basePatientData.getSecondAlternateTelePhoneNumber());
         addColumn(dsd,"Address",basePatientData.getAddressFull());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
@@ -174,6 +176,6 @@ public class SetupActiveOnCareList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.1.0";
+        return "3.1.1";
     }
 }

@@ -143,6 +143,8 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Alternate Telephone", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Sceond Alternate Telephone", basePatientData.getSecondAlternateTelePhoneNumber());
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -152,6 +154,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "4.0.1";
+        return "4.0.2";
     }
 }

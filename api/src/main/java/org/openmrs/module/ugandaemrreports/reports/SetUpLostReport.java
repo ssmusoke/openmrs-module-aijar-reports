@@ -142,6 +142,8 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone2", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Telephone3", basePatientData.getSecondAlternateTelePhoneNumber());
         addColumn(dsd, "Parish", df.getPreferredAddress("address4"));
         addColumn(dsd, "Village", df.getPreferredAddress("address5"));
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getEnrollmentDate());
@@ -163,6 +165,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.4";
+        return "1.1.5";
     }
 }

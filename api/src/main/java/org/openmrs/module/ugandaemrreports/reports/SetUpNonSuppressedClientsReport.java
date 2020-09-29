@@ -132,6 +132,8 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
         addColumn(dsd, "Given Name", builtInPatientData.getPreferredGivenName());
         addColumn(dsd, "Sex", builtInPatientData.getGender());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone2", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Telephone3", basePatientData.getSecondAlternateTelePhoneNumber());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
@@ -155,7 +157,7 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "2.1.2";
+        return "2.1.3";
     }
 }
 

@@ -142,6 +142,8 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 
 		//start constructing of the dataset
 		PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+		PersonAttributeType phoneNumber2 = Context.getPersonService().getPersonAttributeTypeByUuid("8c44d411-285f-46c6-9f17-c2f919823b34");
+		PersonAttributeType phoneNumber3 = Context.getPersonService().getPersonAttributeTypeByUuid("a00eda65-2f66-4fda-a683-c1787eb626a9");
 		PersonAttributeType maritalStatus = Context.getPersonService().getPersonAttributeTypeByUuid("dce0c134-30ab-102d-86b0-7a5022ba4115");
 		PatientIdentifierType NIN = MetadataUtils.existing(PatientIdentifierType.class,"f0c16a6d-dc5f-4118-a803-616d0075d282");
 
@@ -164,6 +166,8 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("parish",df.getPreferredAddress("address4") ,(String)null);
 		dsd.addColumn("village",df.getPreferredAddress("address5") ,(String)null);
 		dsd.addColumn("phoneNumber", new PersonAttributeDataDefinition("phoneNumber", phoneNumber), "", new PersonAttributeDataConverter());
+		dsd.addColumn("phoneNumber2", new PersonAttributeDataDefinition("phoneNumber2", phoneNumber2), "", new PersonAttributeDataConverter());
+		dsd.addColumn("phoneNumber3", new PersonAttributeDataDefinition("phoneNumber3", phoneNumber3), "", new PersonAttributeDataConverter());
 		dsd.addColumn("htsModel", sdd.definition("htsModel",  getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("htsApproach", sdd.definition("htsApproach",  getConcept("ff820a28-1adf-4530-bf27-537bfa9ce0b2")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataInUppercaseConverter());
 		dsd.addColumn("entrypoint", sdd.definition("entrypoint",  getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -195,6 +199,6 @@ public class SetupHTSRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.0.1";
+		return "3.0.2";
 	}
 }

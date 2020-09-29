@@ -148,6 +148,7 @@ public class SetupPNCRegister2019 extends UgandaEMRDataExportManager {
         dsd.addColumn("District", basePatientDataLibrary.getDistrict(),(String)null);
         dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
         dsd.addColumn("Alternate Phone", new PersonAttributeDataDefinition("Alternate Phone", sdd.getAlternatePhoneNumber()), "", new PersonAttributeDataConverter());
+        dsd.addColumn("Alternate Phone 2", new PersonAttributeDataDefinition("Alternate Phone 2", sdd.getSecondAlternatePhoneNumber()), "", new PersonAttributeDataConverter());
         dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new NationalityPersonalAttributeDataConverter());
         dsd.addColumn("ClientAge", sdd.getAgeDataDefinition(10,200), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("6 Hours", sdd.definition("6 Hours", sdd.getConcept("1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new TimingForPNCDataConverter());

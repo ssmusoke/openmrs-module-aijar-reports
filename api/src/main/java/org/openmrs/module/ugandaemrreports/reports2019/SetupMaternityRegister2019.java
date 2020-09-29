@@ -76,7 +76,7 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "3.3.4";
+		return "3.3.5";
 	}
 
 	/**
@@ -158,6 +158,8 @@ public class SetupMaternityRegister2019 extends UgandaEMRDataExportManager {
 		dsd.addColumn("District", basePatientDataLibrary.getDistrict(),(String)null);
 		dsd.addColumn("Nationality", new PersonAttributeDataDefinition("Nationality", sdd.getPatientNationality()), "", new NationalityPersonalAttributeDataConverter());
 		dsd.addColumn("Phone Number", new PersonAttributeDataDefinition("Phone Number", sdd.getPhoneNumber()), "", new PersonAttributeDataConverter());
+		dsd.addColumn("Phone Number 2", new PersonAttributeDataDefinition("Phone Number 2", sdd.getAlternatePhoneNumber()), "", new PersonAttributeDataConverter());
+		dsd.addColumn("Phone Number 3", new PersonAttributeDataDefinition("Phone Number 3", sdd.getSecondAlternatePhoneNumber()), "", new PersonAttributeDataConverter());
 		dsd.addColumn("Age", sdd.getAgeDataDefinition(10, 200), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Gravida", sdd.definition("Gravida", sdd.getConcept("dcc39097-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Parity", sdd.definition("Parity", sdd.getConcept("1053AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());

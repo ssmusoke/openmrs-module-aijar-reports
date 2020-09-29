@@ -190,6 +190,8 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastEncounterByEndDate());
         addColumn(dsd, "Appointment Date", hivPatientData.getLastReturnDateByEndDate());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone2", basePatientData.getAlternateTelePhoneNumber());
+        addColumn(dsd, "Telephone3", basePatientData.getSecondAlternateTelePhoneNumber());
         addColumn(dsd,"pregnant",getObsDuringPeriod(hivMetadata.getEMTCTAtEnrollment(), null, TimeQualifier.FIRST, "6m", df.getObsValueCodedConverter()));
 
         rd.addDataSetDefinition("DUE_FOR_VIRAL_LOAD", Mapped.mapStraightThrough(dsd));
@@ -222,7 +224,7 @@ public class SetupDueForViralLoad extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.5.1";
+        return "3.0.5.2";
     }
 }
 

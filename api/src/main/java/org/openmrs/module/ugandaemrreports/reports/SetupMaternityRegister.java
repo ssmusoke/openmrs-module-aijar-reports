@@ -177,6 +177,8 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 
 		//start constructing of the dataset
 		PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+		PersonAttributeType phoneNumber2 = Context.getPersonService().getPersonAttributeTypeByUuid("8c44d411-285f-46c6-9f17-c2f919823b34");
+		PersonAttributeType phoneNumber3 = Context.getPersonService().getPersonAttributeTypeByUuid("a00eda65-2f66-4fda-a683-c1787eb626a9");
 
 
 		//identifier
@@ -194,6 +196,8 @@ public class SetupMaternityRegister extends UgandaEMRDataExportManager {
 		dsd.addColumn("Name", new PreferredNameDataDefinition(), (String) null);
 		dsd.addColumn("Village+Parish", villageParish(), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Phone No", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+		dsd.addColumn("Phone No2", new PersonAttributeDataDefinition("Phone Number 2", phoneNumber2), "", new PersonAttributeDataConverter());
+		dsd.addColumn("Phone No3", new PersonAttributeDataDefinition("Phone Number 3", phoneNumber3), "", new PersonAttributeDataConverter());
 		dsd.addColumn("Age 10-19", age(10, 19), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Age 20-24", age(20, 24), "onDate=${endDate}", new CalculationResultDataConverter());
 		dsd.addColumn("Age >=25", age(25, 200), "onDate=${endDate}", new CalculationResultDataConverter());

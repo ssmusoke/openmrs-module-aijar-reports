@@ -74,9 +74,16 @@ public class SharedDataDefintion {
         PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
          return phoneNumber;
     }
+
+    public PersonAttributeType getSecondAlternatePhoneNumber()
+    {
+        PersonAttributeType scondAlternatePhoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("a00eda65-2f66-4fda-a683-c1787eb626a9");
+        return scondAlternatePhoneNumber;
+    }
+
     public PersonAttributeType getAlternatePhoneNumber()
     {
-        PersonAttributeType alternatePhonenumber = Context.getPersonService().getPersonAttributeTypeByUuid("553834ef-b3fe-4c79-826a-6d4b6978bcff");
+        PersonAttributeType alternatePhonenumber = Context.getPersonService().getPersonAttributeTypeByUuid("8c44d411-285f-46c6-9f17-c2f919823b34");
         return alternatePhonenumber;
     }
     public  DataDefinition getNationalIDNumber()

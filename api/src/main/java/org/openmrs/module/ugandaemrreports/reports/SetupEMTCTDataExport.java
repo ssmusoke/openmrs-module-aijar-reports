@@ -117,6 +117,8 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
 
         //start constructing of the dataset
         PersonAttributeType phoneNumber = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
+        PersonAttributeType phoneNumber2 = Context.getPersonService().getPersonAttributeTypeByUuid("8c44d411-285f-46c6-9f17-c2f919823b34");
+        PersonAttributeType phoneNumber3 = Context.getPersonService().getPersonAttributeTypeByUuid("14d4f066-15f5-102d-96e4-000c29c2a5d7");
 
         //identifier
         PatientIdentifierType ARTNo = MetadataUtils.existing(PatientIdentifierType.class, "e1731641-30ab-102d-86b0-7a5022ba4115");
@@ -136,6 +138,8 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("PhoneNumber", new PersonAttributeDataDefinition("Phone Number", phoneNumber), "", new PersonAttributeDataConverter());
+        dsd.addColumn("PhoneNumber2", new PersonAttributeDataDefinition("Phone Number 2", phoneNumber2), "", new PersonAttributeDataConverter());
+        dsd.addColumn("PhoneNumber3", new PersonAttributeDataDefinition("Phone Number 3", phoneNumber3), "", new PersonAttributeDataConverter());
         addColumn(dsd, "LastVisitDate", hivPatientData.getDateOfLastEncounter());
         addColumn(dsd, "healthCenterName", hivPatientData.getLocationOfLastEncounter());
         dsd.addColumn("EDD", sdd.definition("EDD", getConcept("dcc033e5-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
@@ -148,7 +152,7 @@ public class SetupEMTCTDataExport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.5-SNAPSHOT";
+        return "0.6-SNAPSHOT";
     }
 
     @Override

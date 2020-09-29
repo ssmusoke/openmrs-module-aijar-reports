@@ -59,4 +59,14 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
         PersonAttributeDataDefinition personAttributeDataDefinition = PatientColumns.createAttributeForPersonData("telephone", commonReportMetadata.getTelephone());
         return df.convert(personAttributeDataDefinition, new PropertyConverter(PersonAttribute.class, "value"));
     }
+
+    public PatientDataDefinition getAlternateTelePhoneNumber() {
+        PersonAttributeDataDefinition personAttributeDataDefinition = PatientColumns.createAttributeForPersonData("alternatetelephonenumber", commonReportMetadata.getAlternateTelephoneNumber());
+        return df.convert(personAttributeDataDefinition, new PropertyConverter(PersonAttribute.class, "value"));
+    }
+
+    public PatientDataDefinition getSecondAlternateTelePhoneNumber() {
+        PersonAttributeDataDefinition personAttributeDataDefinition = PatientColumns.createAttributeForPersonData("secondalternatetelephonenumber", commonReportMetadata.getSecondAlternateTelephoneNumber());
+        return df.convert(personAttributeDataDefinition, new PropertyConverter(PersonAttribute.class, "value"));
+    }
 }

@@ -122,6 +122,8 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
 		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		addColumn(dsd, "Telephone", basePatientData.getTelephone());
+		addColumn(dsd, "Alternate Telephone", basePatientData.getAlternateTelePhoneNumber());
+		addColumn(dsd, "Sceond Alternate Telephone", basePatientData.getSecondAlternateTelePhoneNumber());
 		addColumn(dsd, "Date Enrolled", hivPatientData.getEnrollmentDate());
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
 		addColumn(dsd, "Last Regimen Pickup Date", hivPatientData.getLastRegimenPickupDate()); // when the patient last got ART drugs, N/A for lost to follow up and those
@@ -142,6 +144,6 @@ public class SetupARTCarePatientExportList extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "1.0.1";
+		return "1.0.2";
 	}
 }
