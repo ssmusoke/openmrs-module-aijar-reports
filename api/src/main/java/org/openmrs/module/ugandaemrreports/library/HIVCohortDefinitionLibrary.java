@@ -1,7 +1,10 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
@@ -13,6 +16,7 @@ import org.openmrs.module.ugandaemrreports.definition.cohort.definition.Patients
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +24,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 /**
+ *
  */
 @Component
 public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefinition> {
@@ -114,22 +119,23 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getEnrolledInCareToCareWhenPregnantOrLactating() {
-        return  df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEntryPoint(),hivMetadata.getARTSummaryPageEncounterType(),Arrays.asList(hivMetadata.getEMTCTAtEnrollment()), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getEntryPoint(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getEMTCTAtEnrollment()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getStartedOnARTWhenPregnantOrLactating(){
-        return df.getPatientsInAny( getPregnantAtArtStartDuringPeriod(), getLactatingAtArtStartDuringPeriod());
+    public CohortDefinition getStartedOnARTWhenPregnantOrLactating() {
+        return df.getPatientsInAny(getPregnantAtArtStartDuringPeriod(), getLactatingAtArtStartDuringPeriod());
     }
+
     public CohortDefinition getPregnantOrLactating() {
         return df.getPatientsWithCodedObs(hivMetadata.getEMTCTAtEnrollment(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.FIRST);
     }
 
     public CohortDefinition getPregnantAtArtStartDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPregnantAtArtStart(),hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPregnantAtArtStart(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getLactatingAtArtStartDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getLactatingAtArtStart(),hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getLactatingAtArtStart(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPregnantOrLactating(String olderThan) {
@@ -180,16 +186,16 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getPatientWithRecentHIVInfectionDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("141518BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientWithRecentHIVInfectionDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"), hivMetadata.getHCTEncounterType(), Arrays.asList(Dictionary.getConcept("141518BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientWithLongTermHIVInfectionDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("141519BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientWithLongTermHIVInfectionDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"), hivMetadata.getHCTEncounterType(), Arrays.asList(Dictionary.getConcept("141519BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientWhoTestedForRecencyHIVInfectionDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientWhoTestedForRecencyHIVInfectionDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("141520BBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"), hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsHavingRegimenDuringPeriod() {
@@ -243,11 +249,11 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getOnCPTDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("c3d744f6-00ef-4774-b9a7-d33c58f5b014"),hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),BaseObsCohortDefinition.TimeModifier.LAST);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("c3d744f6-00ef-4774-b9a7-d33c58f5b014"), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getEligibleOnCPTDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("c3d744f6-00ef-4774-b9a7-d33c58f5b014"),hivMetadata.getARTEncounterPageEncounterType(),BaseObsCohortDefinition.TimeModifier.LAST);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("c3d744f6-00ef-4774-b9a7-d33c58f5b014"), hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getOnCPTBeforePeriod() {
@@ -260,8 +266,8 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getDiagnosedWithTBDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusDiagnosed(),
-                hivMetadata.getConcept("ff246b26-f2d1-45f6-9e33-385eb8d19d3f"),hivMetadata.getConcept("e2fd439a-619e-4067-a2f1-8e2454120a58"),hivMetadata.getConcept("d5a86db5-3e7f-4344-85d7-572c8bb6b966"),
-                hivMetadata.getConcept("d941bfbc-7546-464b-90ff-b8e28d247d47"),hivMetadata.getConcept("36cd82a6-370d-4188-bf69-ad8ebbc86d37"),hivMetadata.getConcept("1435dcb2-9470-4b69-8d05-199e5f13044c")), BaseObsCohortDefinition.TimeModifier.ANY);
+                hivMetadata.getConcept("ff246b26-f2d1-45f6-9e33-385eb8d19d3f"), hivMetadata.getConcept("e2fd439a-619e-4067-a2f1-8e2454120a58"), hivMetadata.getConcept("d5a86db5-3e7f-4344-85d7-572c8bb6b966"),
+                hivMetadata.getConcept("d941bfbc-7546-464b-90ff-b8e28d247d47"), hivMetadata.getConcept("36cd82a6-370d-4188-bf69-ad8ebbc86d37"), hivMetadata.getConcept("1435dcb2-9470-4b69-8d05-199e5f13044c")), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getScreenedForTBNegativeDuringPeriod() {
@@ -277,9 +283,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getPresumptiveTBDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("dcdaaf0f-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getTBStatusDiagnosed(),
-                hivMetadata.getConcept("ff246b26-f2d1-45f6-9e33-385eb8d19d3f"),hivMetadata.getConcept("e2fd439a-619e-4067-a2f1-8e2454120a58"),hivMetadata.getConcept("d5a86db5-3e7f-4344-85d7-572c8bb6b966"),
-                hivMetadata.getConcept("d941bfbc-7546-464b-90ff-b8e28d247d47"),hivMetadata.getConcept("36cd82a6-370d-4188-bf69-ad8ebbc86d37"),hivMetadata.getConcept("1435dcb2-9470-4b69-8d05-199e5f13044c")), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("dcdaaf0f-30ab-102d-86b0-7a5022ba4115"), hivMetadata.getTBStatusDiagnosed(),
+                hivMetadata.getConcept("ff246b26-f2d1-45f6-9e33-385eb8d19d3f"), hivMetadata.getConcept("e2fd439a-619e-4067-a2f1-8e2454120a58"), hivMetadata.getConcept("d5a86db5-3e7f-4344-85d7-572c8bb6b966"),
+                hivMetadata.getConcept("d941bfbc-7546-464b-90ff-b8e28d247d47"), hivMetadata.getConcept("36cd82a6-370d-4188-bf69-ad8ebbc86d37"), hivMetadata.getConcept("1435dcb2-9470-4b69-8d05-199e5f13044c")), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsWhoseTBStartDateDuringThePeriod() {
@@ -319,15 +325,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getPatientsWithModeratelyAcuteMalnutritionDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(),Arrays.asList(hivMetadata.getConcept("267a937a-f03c-487b-963c-1858f1382a5a")), BaseObsCohortDefinition.TimeModifier.LAST);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("267a937a-f03c-487b-963c-1858f1382a5a")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsWithSevereAcuteMalnutritionDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(),Arrays.asList(hivMetadata.getConcept("a4543170-8155-41c7-b618-da6962b81f45")), BaseObsCohortDefinition.TimeModifier.LAST);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("a4543170-8155-41c7-b618-da6962b81f45")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getPatientsWithSevereAcuteMalnutritionWithOedemaDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(),Arrays.asList(hivMetadata.getConcept("e4d7bc04-14e6-4ed2-a0d8-1ad85314b071")), BaseObsCohortDefinition.TimeModifier.LAST);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getNutritionStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getConcept("e4d7bc04-14e6-4ed2-a0d8-1ad85314b071")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     //
@@ -475,7 +481,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsWithViralLoadDuringPeriod() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),BaseObsCohortDefinition.TimeModifier.ANY);
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
     public CohortDefinition getPatientsWithViralLoadDuringPeriod(String monthsBack) {
@@ -483,25 +489,25 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsBack, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getPatientsWithViralLoadDuringPeriodPlusMnths (String monthsadded) {
+    public CohortDefinition getPatientsWithViralLoadDuringPeriodPlusMnths(String monthsadded) {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDatePlusMonths(hivMetadata.getViralLoadDate(),
                 Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsadded, BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod(String monthsBack){
+    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromPeriod(String monthsBack) {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),monthsBack,BaseObsCohortDefinition.TimeModifier.LAST
-                );
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), monthsBack, BaseObsCohortDefinition.TimeModifier.LAST
+        );
     }
 
-    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromEndDate(String monthsBack){
+    public CohortDefinition getPatientsWhoseLastViralLoadWasMonthsAgoFromEndDate(String monthsBack) {
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getViralLoadDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),BaseObsCohortDefinition.TimeModifier.LAST,monthsBack);
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.LAST, monthsBack);
     }
 
-    public CohortDefinition getPatientsWithLastViralLoadByEndDate(){
+    public CohortDefinition getPatientsWithLastViralLoadByEndDate() {
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getViralLoadDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()),BaseObsCohortDefinition.TimeModifier.ANY
+                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY
         );
     }
 
@@ -509,36 +515,37 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY, olderThan);
     }
 
-    public CohortDefinition getPatientsWhoTestedHIVPositiveDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWhoTestedHIVPositiveDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), null, Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWhoTestedHIVNegativeDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),null,Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWhoTestedHIVNegativeDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), null, Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     /**
      * HTS report cohorts
+     *
      * @return
      */
-    public CohortDefinition getPatientsTestedForHIV(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsTestedForHIV() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS), hivMetadata.getHCTEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWhoReceivedHIVResultsAsIndividuals(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467"), hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWhoReceivedHIVResultsAsIndividuals() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("3437ae80-bcc5-41e2-887e-d56999a1b467"), hivMetadata.getHCTEncounterType(), Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWhoReceivedHIVResultsAsCouple(){
-        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d"), hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWhoReceivedHIVResultsAsCouple() {
+        return df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d"), hivMetadata.getHCTEncounterType(), Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWhoReceivedHIVResults(){
-        return df.getPatientsInAny(getPatientsWhoReceivedHIVResultsAsCouple(),getPatientsWhoReceivedHIVResultsAsIndividuals());
+    public CohortDefinition getPatientsWhoReceivedHIVResults() {
+        return df.getPatientsInAny(getPatientsWhoReceivedHIVResultsAsCouple(), getPatientsWhoReceivedHIVResultsAsIndividuals());
     }
 
     public CohortDefinition getPatientsTestedForHIVAndReceivedResults() {
-        return df.getPatientsInAll(getPatientsTestedForHIV(),getPatientsWhoReceivedHIVResults());
+        return df.getPatientsInAll(getPatientsTestedForHIV(), getPatientsWhoReceivedHIVResults());
     }
 
     public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(Double noOfDrugs, RangeComparator rangeComparator){
@@ -553,29 +560,29 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         String query = String.format("select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
                 "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:endDate group by patient_id) last_encounter \n" +
                 "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :endDate group by person_id)t1 \n " +
-                "where next_visit > last_enc_date and datediff(:endDate,next_visit)> '%d'",days);
+                "where next_visit > last_enc_date and datediff(:endDate,next_visit)> '%d'", days);
         SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
-        return  cd;
+        return cd;
     }
 
-    public CohortDefinition getPatientsWithConfirmedAdvancedDiseaseDuringPeriod(){
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdvancedDiseaseStatus(),hivMetadata.getARTEncounterPageEncounterType(),hivMetadata.getConfirmedAdvancedDiseaseConcepts(), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWithConfirmedAdvancedDiseaseDuringPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getAdvancedDiseaseStatus(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getConfirmedAdvancedDiseaseConcepts(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWithConfirmedAdvancedDiseaseByEndDate(){
-        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getAdvancedDiseaseStatus(),hivMetadata.getARTEncounterPageEncounterType(),hivMetadata.getConfirmedAdvancedDiseaseConcepts(), BaseObsCohortDefinition.TimeModifier.LAST);
+    public CohortDefinition getPatientsWithConfirmedAdvancedDiseaseByEndDate() {
+        return df.getPatientsWithCodedObsByEndDate(hivMetadata.getAdvancedDiseaseStatus(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getConfirmedAdvancedDiseaseConcepts(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
-    public CohortDefinition getPatientsWithNoClinicalContactSinceLastExpectedContactByEndDate(){
+    public CohortDefinition getPatientsWithNoClinicalContactSinceLastExpectedContactByEndDate() {
         PatientsWithNoClinicalContactDefinition cd = new PatientsWithNoClinicalContactDefinition();
         cd.addParameter(new Parameter("endDate", "Ending", Date.class));
         return df.convert(cd, ObjectUtil.toMap("endDate=endDate"));
     }
 
-    public CohortDefinition getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate(String periodInMonths){
-        String query ="select  p.person_id from obs  p inner join\n" +
-                "            (select person_id,value_datetime from obs o where o.voided =0 and o.concept_id = 99161 and o.value_datetime between date_sub(:startDate, interval " + periodInMonths +" MONTH) AND date_sub(:endDate, interval " + periodInMonths +" MONTH))\n" +
+    public CohortDefinition getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate(String periodInMonths) {
+        String query = "select  p.person_id from obs  p inner join\n" +
+                "            (select person_id,value_datetime from obs o where o.voided =0 and o.concept_id = 99161 and o.value_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH))\n" +
                 "              as art_start on p.person_id = art_start.person_id where p.concept_id=163023 and p.value_datetime BETWEEN :startDate AND :endDate and p.voided= 0 group by p.person_id";
         SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -583,9 +590,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return cd;
     }
 
-    public CohortDefinition getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationAndAreSuppressedByEndDate(String periodInMonths){
-        String query ="select obs.person_id from obs inner join (select  p.person_id,p.encounter_id from obs  p inner join\n" +
-                "            (select person_id,value_datetime from obs o where o.voided =0 and o.concept_id = 99161 and o.value_datetime between date_sub(:startDate, interval " + periodInMonths +" MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH))\n" +
+    public CohortDefinition getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationAndAreSuppressedByEndDate(String periodInMonths) {
+        String query = "select obs.person_id from obs inner join (select  p.person_id,p.encounter_id from obs  p inner join\n" +
+                "            (select person_id,value_datetime from obs o where o.voided =0 and o.concept_id = 99161 and o.value_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH))\n" +
                 "              as art_start on p.person_id = art_start.person_id where p.concept_id=163023 and p.value_datetime BETWEEN :startDate AND :startDate and p.voided= 0 group by p.person_id)vl on obs.encounter_id= vl.encounter_id where obs.concept_id=856  and obs.voided=0 and obs.value_numeric<1000";
         SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
@@ -596,6 +603,14 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
    public CohortDefinition getPatientsWhoHadAViralLoadTestDuringThePastPeriodFromEndDate(String pastPeriods){
        return df.getPatientsWhoseObsValueDateIsBetweenPastPeriodFromEndDate(hivMetadata.getViralLoadDate(),hivMetadata.getARTEncounterPageEncounterType(),pastPeriods, BaseObsCohortDefinition.TimeModifier.ANY);
    }
+
+    public CohortDefinition getPatientsOnDTGRegimenInPeriod() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), Dictionary.getConceptList(Metadata.Concept.DTG_TLD_REGIMEN_LIST), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsOnDTGRegimenBeforePeriod() {
+        return df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), Dictionary.getConceptList(Metadata.Concept.DTG_TLD_REGIMEN_LIST), "1d", BaseObsCohortDefinition.TimeModifier.ANY);
+    }
 
     public static SqlCohortDefinition getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate() {
         SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  where encounter_datetime <= :endDate and encounter_type=15 and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0;");

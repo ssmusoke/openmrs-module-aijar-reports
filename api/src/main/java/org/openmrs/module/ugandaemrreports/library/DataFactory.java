@@ -281,8 +281,19 @@ public class DataFactory {
     }
 
     public PatientDataDefinition getObsAfterDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
-        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrAfter", timeQualifier);
-        return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrAfter", "startDate", olderThan));
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrBefore", "startDate", olderThan));
+    }
+
+    public PatientDataDefinition getObsBeforeDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        // ensure that the period used does not overlap with the current period so remove one day
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_START_DATE + "-1d");
+    }
+
+    public PatientDataDefinition getObsBeforeDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
+        ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
+        return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrBefore", "startDate", olderThan));
     }
 
 
@@ -701,6 +712,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate"));
+    }
+
+    public CohortDefinition getDeadPatientsByEndOfPreviousDate(String olderThan) {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrBefore=startDate-" + olderThan));
     }
 
     public CohortDefinition getDeadPatients() {
