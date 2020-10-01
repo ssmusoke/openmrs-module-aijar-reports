@@ -42,4 +42,6 @@ public class ARTClinicCohortDefinitionLibrary extends BaseDefinitionLibrary<Coho
 		return df.getPatientsWhoseObsValueDateIsOnSpecifiedDate(hivMetadata.getReturnVisitDate(), hivMetadata.getARTEncounterPageEncounterType());
 	}
 
+
+
 }

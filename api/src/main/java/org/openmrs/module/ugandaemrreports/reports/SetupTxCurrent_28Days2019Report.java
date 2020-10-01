@@ -122,30 +122,15 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
 
-        CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
-        CohortDefinition transferredOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
-        CohortDefinition tx_Curr_lost_to_followup = df.getPatientsWhoHaveNotComeAfterTheirLastMissedAppointmentByMinimumDays(28);
-        CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferredOut,tx_Curr_lost_to_followup);
-
-
-        CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-        CohortDefinition havingBaseRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingBaseRegimenDuringPeriod();
-        CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
-        CohortDefinition longRefills = df.getPatientsWithLongRefills();
-
-        CohortDefinition patientsWithLessThan3MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(90.0, RangeComparator.LESS_THAN);
-        CohortDefinition patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(180.0, RangeComparator.GREATER_EQUAL);
-        CohortDefinition patientsWith3To5MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysDuringPeriod(90.0,RangeComparator.GREATER_EQUAL,150.0,RangeComparator.LESS_EQUAL);
+        CohortDefinition patientsWithLessThan3MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(90.0, RangeComparator.LESS_THAN);
+        CohortDefinition patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(180.0, RangeComparator.GREATER_EQUAL);
+        CohortDefinition patientsWith3To5MonthsOfARVDrugsDispensed = hivCohortDefinitionLibrary.getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(90.0,RangeComparator.GREATER_EQUAL,150.0,RangeComparator.LESS_EQUAL);
 
         CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
         CohortDefinition below15Years = cohortDefinitionLibrary.MoHChildren();
 
 
-        CohortDefinition eligible = df.getPatientsInAny(longRefills,transferredInToCareDuringPeriod,havingArtStartDateDuringQuarter,
-                                            onArtDuringQuarter, havingBaseRegimenDuringQuarter);
-
-        CohortDefinition beenOnArtDuringQuarter = df.getPatientsNotIn(eligible,excludedPatients);
+        CohortDefinition beenOnArtDuringQuarter = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
 
         CohortDefinition currentOnARTAndDrugsDispensedToPatientsBelow15Years = df.getPatientsInAll(beenOnArtDuringQuarter,below15Years);
         CohortDefinition currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales = df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15Years,females);
@@ -153,9 +138,6 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
         CohortDefinition currentOnARTAndDrugsDispensedToPatientsAbove15Years = df.getPatientsInAll(beenOnArtDuringQuarter,above15Years);
         CohortDefinition currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales = df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15Years,females);
         CohortDefinition currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales = df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15Years,males);
-
-
-
 
         setupTxNewReport.addGender(dsd,"a","TX Curr on ART female",beenOnArtDuringQuarter);
         setupTxNewReport.addGender(dsd,"b","TX Curr on ART male",beenOnArtDuringQuarter);
@@ -193,6 +175,6 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.3.5";
     }
 }

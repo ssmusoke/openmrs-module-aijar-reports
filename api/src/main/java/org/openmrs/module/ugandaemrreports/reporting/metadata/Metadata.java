@@ -300,6 +300,8 @@ public class Metadata {
         public static final String  TRANSFER_OUT_DATE = "fc1b1e96-4afb-423b-87e5-bb80d451c967";
         public static final String TB_LAM_RESULTS ="066b84a0-e18f-4cdd-a0d7-189454f4c7a4";
         public static final String CRAG_RESULTS ="43c33e93-90ff-406b-b7b2-9c655b2a561a";
+
+        public static final String DTG_TLD_REGIMEN_LIST = "a58d12c5-abc2-4575-8fdb-f30960f348fc,6cc36637-596a-4426-92cf-170f76ea437d,a779d984-9ccf-4424-a750-47506bf8212b,29abb0ac-fcda-4dc0-b69b-9a2558e6a122,3b5248cc-0527-468e-8eb5-23565a4bad1f,2ae8fb21-1070-4d54-ab0e-c3afeb570dca";
     }
 
     public static class Identifier {

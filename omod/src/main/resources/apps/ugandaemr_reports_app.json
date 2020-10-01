@@ -952,6 +952,14 @@
         "order": 125,
         "requiredPrivilege": "App: ugandaemrreports.patientDSDMModelReport"
       },{
+        "id": "Transitioned to DTG Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients Transitioned to DTG",
+        "url": "reportingui/runReport.page?reportDefinition=e38117c0-9ddd-4d51-b3b7-a39e38fd85a1",
+        "order": 130,
+        "requiredPrivilege": "App: ugandaemrreports.transitionedToDTGReport"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
