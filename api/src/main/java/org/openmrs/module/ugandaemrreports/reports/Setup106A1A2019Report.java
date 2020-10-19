@@ -115,7 +115,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
         CohortDefinition transferredInBeforeQuarter = hivCohortDefinitionLibrary.getTransferredInToCareBeforePeriod();
-        CohortDefinition transferredInPatients= df.getPatientsInAny(transferredInTheQuarter,transferredInBeforeQuarter);
 
         CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
         CohortDefinition onArtBeforeQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenBeforePeriod();
@@ -129,10 +128,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition enrolledWhenPregnantOrLactating = hivCohortDefinitionLibrary.getEnrolledInCareToCareWhenPregnantOrLactating();
         CohortDefinition startedARTWhenPregnantOrLactating = hivCohortDefinitionLibrary.getStartedOnARTWhenPregnantOrLactating();
 
-
-        CohortDefinition onINHDuringQuarter = hivCohortDefinitionLibrary.getOnINHDuringPeriod();
-        CohortDefinition onINHBeforeQuarter = hivCohortDefinitionLibrary.getOnINHDuringBeforePeriod();
-
         CohortDefinition onCPTDuringQuarter = hivCohortDefinitionLibrary.getOnCPTDuringPeriod();
         CohortDefinition eligibleForCPTDuringQuarter = hivCohortDefinitionLibrary.getEligibleOnCPTDuringPeriod();
 
@@ -144,33 +139,14 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition onTBRxDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnTBRxDuringPeriod();
         CohortDefinition onTBRxBeforeQuarter = hivCohortDefinitionLibrary.getStartedTBRxBeforePeriod();
 
-        CohortDefinition oedemaWasTakenDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoseOedemaWasTakenDuringPeriod();
-
-        CohortDefinition mUACWasTakenDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoMUACWasTakenDuringPeriod();
-
-        CohortDefinition assessedForMalnutritionDuringQuarter = hivCohortDefinitionLibrary.getPatientsAssessedForMalnutrition();
         CohortDefinition patientsAssessedForNutritionDuringQuarter = hivCohortDefinitionLibrary.getPatientsAssessedForNutrition();
         CohortDefinition patientMalnourishedDuringPeriod = df.getPatientsInAny(hivCohortDefinitionLibrary.getPatientsWithModeratelyAcuteMalnutritionDuringPeriod(),
                 hivCohortDefinitionLibrary.getPatientsWithSevereAcuteMalnutritionDuringPeriod(),hivCohortDefinitionLibrary.getPatientsWithSevereAcuteMalnutritionWithOedemaDuringPeriod());
         CohortDefinition patientsWhoReceivedTherapeuticFoods = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("8531d1a7-9793-4c62-adab-f6716cf9fabb"),hivMetadata.getARTEncounterPageEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("598dba00-b878-474c-9a10-9998f1748228"),hivMetadata.getConcept("76d127ee-7e5b-467a-b1d4-eab8ebcf2c37")), BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition heightWasTakenDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoHeightWasTakenDuringPeriod();
-
-        CohortDefinition weightWasTakenDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoWeightWasTakenDuringPeriod();
-
-        CohortDefinition baseWeightWasTakenDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoBaseWeightWasTakenDuringPeriod();
-
-        CohortDefinition mUACWasYellowOrRedDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoMUACWasRedOrYellowDuringPeriod();
-
-        CohortDefinition malnourishedDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoAreMalnourishedDuringPeriod();
-
-        CohortDefinition oedemaWasYesDuringQuarter = hivCohortDefinitionLibrary.getPatientsWhoseOedemaWasYesDuringPeriod();
-
         CohortDefinition patientsWithBaselineCD4 = hivCohortDefinitionLibrary.getPatientsWithBaselineCD4();
         CohortDefinition baseCD4L200 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(),RangeComparator.LESS_EQUAL, 200.0, BaseObsCohortDefinition.TimeModifier.FIRST);
-
-        CohortDefinition eligibleByEndOfQuarter = hivCohortDefinitionLibrary.getEligibleAndReadyByEndOfQuarter();
 
         CohortDefinition childrenOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnFirstLineRegimenDuringPeriod());
         CohortDefinition childrenOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod());
@@ -180,10 +156,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition onThirdLineRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
 
-        CohortDefinition patientsWithGoodAdherenceDuringQuarter = hivCohortDefinitionLibrary.getPatientsWithGoodAdherence();
-
-        CohortDefinition patientsWithReturnVisitDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(),
-                Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition beenOnArtBeforeQuarter = df.getPatientsInAny(onArtBeforeQuarter, havingArtStartDateBeforeQuarter, havingBaseRegimenBeforeQuarter);
         CohortDefinition longRefillPatients = df.getPatientsWithLongRefills();
         CohortDefinition beenOnArtDuringQuarter = df.getPatientsInAny(onArtDuringQuarter, havingArtStartDateDuringQuarter,longRefillPatients);
@@ -191,12 +163,11 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, enrolledInTheQuarter);
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
         CohortDefinition transferredOutPatients = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
-        CohortDefinition deadPatientsByEndDate = df.getPatientsInAll(everEnrolledByEndQuarter,df.getDeadPatientsByEndDate());
         CohortDefinition deadPatientsDuringPeriod =df.getPatientsInAll(everEnrolledByEndQuarter, df.getDeadPatientsDuringPeriod());
         CohortDefinition lost_to_followup = df.getLostToFollowUp();
 
-        CohortDefinition activePatients= df.getPatientsInAny(hadEncounterInQuarter,longRefillPatients,patientsWithReturnVisitDuringPeriod);
-        CohortDefinition activePatientsInCareDuringPeriod = df.getPatientsNotIn(activePatients,df.getPatientsInAny(transferredOutPatients,deadPatientsByEndDate,lost_to_followup));
+         CohortDefinition activePatientsInCareDuringPeriod = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
+
         CohortDefinition patientsWhoHadAViralLoadTest6MonthsAfterArtInitiation = addStartDateAndEndDateParameters(hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate("6"));
         CohortDefinition patientsWhoHadAViralLoadTest12MonthsAfterArtInitiation = addStartDateAndEndDateParameters( hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationByEndDate("12"));
         CohortDefinition patientsWhoHadAViralLoadTest6MonthsAfterArtInitiationAndAreVirallySupressed = addStartDateAndEndDateParameters( hivCohortDefinitionLibrary.getPatientsWhoHadAViralLoadTestPeriodAfterArtInitiationAndAreSuppressedByEndDate("6"));
@@ -205,41 +176,14 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition patientsWhoSwitchedFrom1stLineTo2nd = addStartDateAndEndDateParameters(Cohorts.getPatientsWhoSwitchedFromFirstLineToSecondLineAsOnARTSummaryDuringPeriod());
         CohortDefinition patientsWhoSwitchedFrom2ndLineTo3rd = addStartDateAndEndDateParameters(Cohorts.getPatientsWhoSwitchedFromSecondLineToThirdLineAsOnARTSummaryDuringPeriod());
 
-        CohortDefinition cumulativeEverEnrolled = df.getPatientsInAny(everEnrolledByEndQuarter, enrolledDuringTheQuarter);
-
         CohortDefinition onPreArt = df.getPatientsNotIn(hadEncounterInQuarter, df.getPatientsInAny(beenOnArtBeforeQuarter, beenOnArtDuringQuarter));
 
-        CohortDefinition onPreArtWhoReceivedCPT = df.getPatientsInAll(onPreArt, onCPTDuringQuarter);
-
-        CohortDefinition onPreArtAssessedForTB = df.getPatientsInAll(onPreArt, assessedForTBDuringQuarter);
-
-        CohortDefinition onPreArtDiagnosedWithTB = df.getPatientsInAll(onPreArt, diagnosedWithTBDuringQuarter);
 
         CohortDefinition startedTBDuringQuarter = df.getPatientsNotIn(onTBRxDuringQuarter, onTBRxBeforeQuarter);
-
-        CohortDefinition onPreArtStartedTBRx = df.getPatientsInAll(onPreArt, startedTBDuringQuarter);
-
-        CohortDefinition assessedForMalnutrition = df.getPatientsInAny(oedemaWasTakenDuringQuarter, mUACWasTakenDuringQuarter, assessedForMalnutritionDuringQuarter, heightWasTakenDuringQuarter, weightWasTakenDuringQuarter, baseWeightWasTakenDuringQuarter);
-
-        CohortDefinition onPreArtAssessedForMalnutrition = df.getPatientsInAll(onPreArt, assessedForMalnutrition);
-
-        CohortDefinition whoAreMalnourished = df.getPatientsInAny(mUACWasYellowOrRedDuringQuarter, malnourishedDuringQuarter, oedemaWasYesDuringQuarter);
-        CohortDefinition onPreArtWhoAreMalnourished = df.getPatientsInAll(onPreArt, whoAreMalnourished);
-
 
 
         CohortDefinition onFirstLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
         CohortDefinition onSecondLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
-
-        CohortDefinition activeOnArtOnCPT = df.getPatientsInAll(beenOnArtDuringQuarter, onCPTDuringQuarter);
-        CohortDefinition activeOnArtAssessedForTB = df.getPatientsInAll(beenOnArtDuringQuarter, assessedForTBDuringQuarter);
-        CohortDefinition activeOnArtDiagnosedWithTB = df.getPatientsInAll(beenOnArtDuringQuarter, diagnosedWithTBDuringQuarter);
-        CohortDefinition activeOnArtOnTBRx = df.getPatientsInAll(beenOnArtDuringQuarter, onTBRxDuringQuarter);
-        CohortDefinition activeOnArtWithGoodAdherence = df.getPatientsInAll(beenOnArtDuringQuarter, patientsWithGoodAdherenceDuringQuarter);
-
-        CohortDefinition activeOnArtAssessedForMalnutrition = df.getPatientsInAll(beenOnArtDuringQuarter, assessedForMalnutrition);
-
-        CohortDefinition activeOnArtWhoAreMalnourished = df.getPatientsInAll(beenOnArtDuringQuarter, whoAreMalnourished);
 
 
         CohortDefinition clientsStartedOnARTAtThisFacilityBeforePeriod = df.getPatientsNotIn(havingArtStartDateBeforeQuarter,transferredInBeforeQuarter);
@@ -524,6 +468,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.5.5";
+        return "0.0.7";
     }
 }
