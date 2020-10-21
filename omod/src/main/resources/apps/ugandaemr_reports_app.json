@@ -408,6 +408,14 @@
         "order": 85,
         "requiredPrivilege": "App: ugandaemrreports.activePatientsInCare"
       },{
+        "id": "PEPFAR Active Patients in Care",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "PEPFAR Active Patients in Care",
+        "url": "reportingui/runReport.page?reportDefinition=72884470-099f-4c51-9313-4ba828980c18",
+        "order": 86,
+        "requiredPrivilege": "App: ugandaemrreports.activePatientsInCare"
+      },{
         "id": "Due For Viral Load",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
