@@ -128,7 +128,7 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
         CohortDefinition deadPatients = df.getDeadPatientsDuringPeriod();
         CohortDefinition transferedOut = hivCohortDefinitionLibrary.getPatientsTransferredOutByEndOfPeriod();
         CohortDefinition patientsDeadAndtransferedOut = df.getPatientsInAny(deadPatients, transferedOut);
-        CohortDefinition clientsLostToFollowUp = df.getLostToFollowUp();
+        CohortDefinition clientsLostToFollowUp = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("90");
 
         CohortDefinition definition = df.getPatientsNotIn(clientsLostToFollowUp, patientsDeadAndtransferedOut);
 
@@ -160,6 +160,6 @@ public class SetUpLostToFollowUp extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.9";
+        return "3.1.2";
     }
 }

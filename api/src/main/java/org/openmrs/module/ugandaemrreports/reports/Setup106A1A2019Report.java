@@ -164,7 +164,7 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
         CohortDefinition enrolledDuringTheQuarter = df.getPatientsNotIn(enrolledInTheQuarter, transferredInTheQuarter);
         CohortDefinition transferredOutPatients = hivCohortDefinitionLibrary.getPatientsTransferredOutBetweenStartAndEndDate();
         CohortDefinition deadPatientsDuringPeriod =df.getPatientsInAll(everEnrolledByEndQuarter, df.getDeadPatientsDuringPeriod());
-        CohortDefinition lost_to_followup = df.getLostToFollowUp();
+        CohortDefinition lost_to_followup = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("90");
 
          CohortDefinition activePatientsInCareDuringPeriod = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
 
@@ -468,6 +468,6 @@ public class Setup106A1A2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.7";
+        return "3.1.0";
     }
 }
