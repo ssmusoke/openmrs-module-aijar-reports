@@ -631,6 +631,22 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     }
 
+    public static  SqlCohortDefinition gePatientsHavingAppointmentToday() {
+        SqlCohortDefinition haveAppointmentToday = new SqlCohortDefinition("select person_id from  obs o where  o.concept_id=5096 and o.value_datetime >= :startDate and o.value_datetime <= :startDate and o.voided=0;");
+        haveAppointmentToday.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return haveAppointmentToday;
+    }
+
+    public static  SqlCohortDefinition gePatientsHavingAnEncounterToday(){
+        SqlCohortDefinition haveEncounterToday = new SqlCohortDefinition("select patient_id from encounter inner join encounter_type et on encounter.encounter_type = et.encounter_type_id where encounter_datetime >= :startDate and encounter_datetime <= :startDate  and et.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and encounter.voided=0");
+        haveEncounterToday.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return haveEncounterToday;
+    }
+
+    public  CohortDefinition getDailyMissedAppointmentCohort() {
+        return df.getPatientsNotIn(gePatientsHavingAppointmentToday(),gePatientsHavingAnEncounterToday());
+    }
+
     public CohortDefinition getActivePatientsWithLostToFollowUpAsByDays(String days){
         CohortDefinition deadPatients = df.getDeadPatientsByEndDate();
 
