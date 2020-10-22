@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
@@ -11,12 +12,14 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -152,7 +155,7 @@ public class SetupDailyMissedAppointmentList extends UgandaEMRDataExportManager 
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
         addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
-        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
+        addColumn(dsd, "Date Seen", hivPatientData.getLastVisitDate());
 
         rd.addDataSetDefinition("MISSED_APPOINTMENT", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -162,6 +165,6 @@ public class SetupDailyMissedAppointmentList extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "1.1.3";
+        return "1.1.7";
     }
 }
