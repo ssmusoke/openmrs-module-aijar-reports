@@ -1103,7 +1103,7 @@ public class DataFactory {
         cd.setTimeModifier(timeModifier);
         cd.setQuestion(dateConcept);
         cd.setEncounterTypeList(types);
-        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.setOperator1(RangeComparator.GREATER_THAN);
         cd.addParameter(new Parameter("value1", "value1", Date.class));
         return convert(cd, ObjectUtil.toMap("value1=startDate"));
     }

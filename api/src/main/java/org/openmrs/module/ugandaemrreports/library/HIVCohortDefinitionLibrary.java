@@ -613,7 +613,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public static SqlCohortDefinition getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate() {
-        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  where encounter_datetime <= :endDate and encounter_type=15 and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0;");
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <= :endDate and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0;");
         cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
         cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
 
@@ -622,13 +622,31 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public static SqlCohortDefinition getPatientsTxLostToFollowupByDays(String days) {
-        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(:endDate,max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id  where encounter_datetime <=:endDate " +
-                "and encounter_type=15 and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;\n");
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(:endDate,max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <=:endDate " +
+                "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;");
         cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
         cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
 
         return cohortDefinition;
 
+    }
+
+    public static  SqlCohortDefinition getPatientsHavingAppointmentToday() {
+        SqlCohortDefinition haveAppointmentToday = new SqlCohortDefinition("select person_id from  obs o where  o.concept_id=5096 and o.value_datetime >= :startDate and o.value_datetime <= :startDate and o.voided=0;");
+        haveAppointmentToday.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return haveAppointmentToday;
+    }
+
+    public static  SqlCohortDefinition getPatientsHavingAnEncounterToday(){
+        SqlCohortDefinition haveEncounterToday = new SqlCohortDefinition("select patient_id from encounter inner join encounter_type et on encounter.encounter_type = et.encounter_type_id where encounter_datetime >= :startDate and encounter_datetime <= :startDate  and et.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and encounter.voided=0");
+        haveEncounterToday.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return haveEncounterToday;
+    }
+
+    public  CohortDefinition getDailyMissedAppointmentCohort() {
+        CohortDefinition patientsWithReturnVisitDateGreaterThanToday = df.getPatientsWhoseObsValueAfterDate(hivMetadata.getReturnVisitDate(),hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition excludedPatients = df.getPatientsInAny(patientsWithReturnVisitDateGreaterThanToday,getPatientsHavingAnEncounterToday());
+        return df.getPatientsNotIn(getPatientsHavingAppointmentToday(),excludedPatients);
     }
 
     public CohortDefinition getActivePatientsWithLostToFollowUpAsByDays(String days){

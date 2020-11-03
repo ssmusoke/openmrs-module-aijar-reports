@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
@@ -11,18 +12,14 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.ObsDatetimeConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.DSDMModelDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -30,7 +27,7 @@ import java.util.Properties;
  * Missed Appointments List report
  */
 @Component
-public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
+public class SetupDailyMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
@@ -58,26 +55,26 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "654c6fec-75f8-11e6-8b77-86f30ca893d3";
+        return "2bc2405c-d09e-4209-87a6-079fc0752b81";
     }
 
     public String getCSVDesignUuid() {
-        return "bf38ef47-4354-485e-8867-4bf6eb6fe818";
+        return "5c3711d0-e118-4ade-9cdf-da9fdbb4d802";
     }
 
     @Override
     public String getUuid() {
-        return "654c7276-75f8-11e6-8b77-86f30ca893d3";
+        return "73585ad5-8a5c-4e4a-b197-9241abe24bd9";
     }
 
     @Override
     public String getName() {
-        return "Missed Appointment List";
+        return "Daily Missed Appointment List";
     }
 
     @Override
     public String getDescription() {
-        return "Clients that Missed Appointment ";
+        return "Clients that Missed Appointment on Date ";
     }
 
     @Override
@@ -132,7 +129,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
         CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
-        CohortDefinition definition =df.getPatientsNotIn( df.getMissedAppointment(), patientsDeadAndTransferredOut);
+        CohortDefinition definition =df.getPatientsNotIn( hivCohortDefinitionLibrary. getDailyMissedAppointmentCohort(), patientsDeadAndTransferredOut);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -158,7 +155,7 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
         addColumn(dsd, "Supposed Visit Date", hivPatientData.getExpectedReturnDateDuringPeriod());
-        addColumn(dsd, "Date Seen", hivPatientData.getLastARTEncounter());
+        addColumn(dsd, "Date Seen", hivPatientData.getLastVisitDate());
 
         rd.addDataSetDefinition("MISSED_APPOINTMENT", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
@@ -168,6 +165,6 @@ public class SetupMissedAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.1.0";
+        return "1.1.7";
     }
 }
