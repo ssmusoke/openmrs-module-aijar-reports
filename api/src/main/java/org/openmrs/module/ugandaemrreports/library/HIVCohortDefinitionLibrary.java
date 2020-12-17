@@ -628,8 +628,8 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     }
 
-    public CohortDefinition getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter() {
-        return df.convert(getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate(),ObjectUtil.toMap("startDate=startDate-3m,endDate=endDate-3m"));
+    public CohortDefinition getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter(String olderThan) {
+        return df.convert(getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate(),ObjectUtil.toMap("startDate=startDate-"+olderThan +",endDate=endDate-"+olderThan));
     }
 
     public static SqlCohortDefinition getPatientsTxLostToFollowupByDays(String days) {
@@ -642,8 +642,8 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     }
 
-    public  CohortDefinition getPatientsTxLostToFollowupByDaysInPreviousQuarter(String days) {
-        return df.convert(getPatientsTxLostToFollowupByDays(days),ObjectUtil.toMap("startDate=startDate-3m,endDate=endDate-3m"));
+    public  CohortDefinition getPatientsTxLostToFollowupByDaysInPreviousQuarter(String days,String olderThan) {
+        return df.convert(getPatientsTxLostToFollowupByDays(days),ObjectUtil.toMap("startDate=startDate-" +olderThan +",endDate=endDate-"+olderThan));
     }
 
     public static  SqlCohortDefinition getPatientsHavingAppointmentToday() {

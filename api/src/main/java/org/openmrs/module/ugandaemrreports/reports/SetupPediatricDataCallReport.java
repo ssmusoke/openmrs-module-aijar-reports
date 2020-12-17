@@ -127,11 +127,11 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 //        CohortDefinition males = cohortDefinitionLibrary.males();
 //        CohortDefinition females = cohortDefinitionLibrary.females();
         CohortDefinition TX_ML = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
-        CohortDefinition deadPatients = df.getDeadPatientsByEndDate("3m");
+        CohortDefinition deadPatientsPreviousQuarter = df.getDeadPatientsByEndDate("3m");
 
-        CohortDefinition tx_Curr_lost_to_followup = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDaysInPreviousQuarter("28");
-        CohortDefinition transferredOut =hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod("3m");
-        CohortDefinition excludedPatients =df.getPatientsInAny(deadPatients,transferredOut,tx_Curr_lost_to_followup);
+        CohortDefinition tx_Curr_lost_to_followup_previousQuater = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDaysInPreviousQuarter("28","3m");
+        CohortDefinition transferredOutPreviousQuater =hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod("3m");
+        CohortDefinition excludedPatients =df.getPatientsInAny(deadPatientsPreviousQuarter,transferredOutPreviousQuater,tx_Curr_lost_to_followup_previousQuater);
 
         CohortDefinition transferredInToCareDuringPeriod= hivCohortDefinitionLibrary.getTransferredInToCarePreviousQuarter("3m");
         CohortDefinition havingBaseRegimenDuringQuarter = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtStartRegimen(), hivMetadata.getARTSummaryPageEncounterType(),"3m", BaseObsCohortDefinition.TimeModifier.ANY);
@@ -139,7 +139,7 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
         CohortDefinition onArtDuringQuarter =  df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(),"3m", BaseObsCohortDefinition.TimeModifier.ANY);
 
-        CohortDefinition patientsWithactiveReturnVisitDate = hivCohortDefinitionLibrary.getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter();
+        CohortDefinition patientsWithactiveReturnVisitDate = hivCohortDefinitionLibrary.getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter("3m");
         CohortDefinition allActivePatients = df.getPatientsInAny(patientsWithactiveReturnVisitDate,transferredInToCareDuringPeriod,havingArtStartDateDuringQuarter,
                 onArtDuringQuarter, havingBaseRegimenDuringQuarter);
         CohortDefinition activePatientsinPreviousQuarter= df.getPatientsNotIn(allActivePatients,excludedPatients);
@@ -155,6 +155,31 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
         CohortDefinition TXMLAndActivePatientsinPreviousQuarter15Years = df.getPatientsInAll(TX_ML,activePatientsinPreviousQuarterBelow15Years);
 
+//         cohorts for pregnant women and viral load taking
+        CohortDefinition deadPatients2QuartersBefore = df.getDeadPatientsByEndDate("6m");
+        CohortDefinition tx_Curr_lost_to_followup_previous2Quater = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDaysInPreviousQuarter("28","6m");
+        CohortDefinition transferredOutPrevious2Quaters =hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod("6m");
+        CohortDefinition excludedPatients2QuatersBefore =df.getPatientsInAny(deadPatients2QuartersBefore,transferredOutPrevious2Quaters,tx_Curr_lost_to_followup_previous2Quater);
+
+        CohortDefinition transferredInToCare2QuatersBefore= hivCohortDefinitionLibrary.getTransferredInToCarePreviousQuarter("6m");
+        CohortDefinition havingBaseRegimen2QuatersBefore= df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtStartRegimen(), hivMetadata.getARTSummaryPageEncounterType(),"6m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition havingArtStartDate2QuatersBefore =  df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtStartDate(), hivMetadata.getARTSummaryPageEncounterType(),"6m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition onArtDuring2QuartersBefore =  df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(),"6m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition patientsWithActiveReturnVisitDate2Quarters = hivCohortDefinitionLibrary.getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter("6m");
+        CohortDefinition allActivePatients2 = df.getPatientsInAny(patientsWithActiveReturnVisitDate2Quarters,transferredInToCare2QuatersBefore,havingArtStartDate2QuatersBefore,
+                onArtDuring2QuartersBefore, havingBaseRegimen2QuatersBefore);
+        CohortDefinition activePatientsinPrevious2Quarters = df.getPatientsNotIn(allActivePatients2,excludedPatients2QuatersBefore);
+        CohortDefinition pregnant2QuatersBefore =   df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getPregnantAtArtStart(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()),"6m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition breastFeeding2QuatersBefore =  df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getLactatingAtArtStart(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()),"6m",BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition breastFeedingAndLactating = df.getPatientsInAny(pregnant2QuatersBefore, breastFeeding2QuatersBefore);
+        CohortDefinition pregnantPatient2QuatersBefore = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("dcda5179-30ab-102d-86b0-7a5022ba4115"),hivMetadata.getARTEncounterPageEncounterType(),
+                Arrays.asList(Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("9e5ac0a8-6041-4feb-8c07-fe522ef5f9ab")),"6m", BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition activeAndPregnantAndBreastFeedingClients = df.getPatientsInAll(activePatientsinPrevious2Quarters,df.getPatientsInAny(breastFeedingAndLactating,pregnantPatient2QuatersBefore));
+        CohortDefinition viraLoadTakenDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getViralLoadDate(),hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition viraLoadTakenAndSupressed = df.getPatientsInAll(viraLoadTakenDuringPeriod,df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getViralLoadCopies(),hivMetadata.getARTEncounterPageEncounterType(),RangeComparator.LESS_THAN,1000.0, BaseObsCohortDefinition.TimeModifier.LAST));
+
 
 
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = setupTxRTT2019Report.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
@@ -166,9 +191,11 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
         setupTxNewReport.addIndicator(dsd, "g","TX_NEW",df.getPatientsInAll(TXNewInReportingPeriod,below15YearsWithInReportingPeriod) ,"");
         setupTxNewReport.addIndicator(dsd, "h","TX_NEW_Active_turning_15_YearsInReporting_Period",df.getPatientsInAll(df.getPatientsInAny(TXNewInReportingPeriod,activePatientsinPreviousQuarterBelow15Years),patientsMaking15YearsWithInReportingPeriod) ,"");
         setupTxNewReport.addIndicator(dsd, "i","TX_CURR_Children_In_Reporting_Period",df.getPatientsInAll(activeWithinReportingPeriod,below15YearsWithInReportingPeriod) ,"");
-//        setupTxNewReport.addIndicator(dsd, "j","outAging children ",df.getPatientsInAll(activePatientsinPreviousQuarterBelow15Years,patientsMaking15YearsWithInReportingPeriod) ,"");
-//        setupTxNewReport.addIndicator(dsd, "k","Active within reporting period",activeWithinReportingPeriod ,"");
 
+        setupTxNewReport.addIndicator(dsd, "j","pregnant and breast feeding",activeAndPregnantAndBreastFeedingClients ,"");
+        setupTxNewReport.addIndicator(dsd, "k","pregnant and breast feeding and viral load done at 6months",df.getPatientsInAll(activeAndPregnantAndBreastFeedingClients,viraLoadTakenDuringPeriod) ,"");
+        setupTxNewReport.addIndicator(dsd, "l","pregnant and breast feeding and viral load done at 6months and is suppressed",df.getPatientsInAll(activeAndPregnantAndBreastFeedingClients,viraLoadTakenAndSupressed) ,"");
+//
 
         return rd;
     }
@@ -186,6 +213,6 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.1";
+        return "1.1.7";
     }
 }
