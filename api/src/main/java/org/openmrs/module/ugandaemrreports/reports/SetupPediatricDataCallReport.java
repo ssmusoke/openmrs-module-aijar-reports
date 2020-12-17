@@ -71,12 +71,12 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Data Call Report";
+        return "PMTCT Data Request Report";
     }
 
     @Override
     public String getDescription() {
-        return "Data Call Report";
+        return "PMTCT Data Request Report";
     }
 
     @Override
