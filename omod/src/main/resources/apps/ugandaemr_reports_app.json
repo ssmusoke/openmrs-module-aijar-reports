@@ -534,10 +534,10 @@
         "order": 5
       },
       {
-        "id": "PMTCT Data Request Report",
+        "id": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "PMTCT Data Request Report",
+        "label": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "url": "reportingui/runReport.page?reportDefinition=639026cd-1cb9-46c1-9a06-81208e9ed412",
         "order": 10
       }

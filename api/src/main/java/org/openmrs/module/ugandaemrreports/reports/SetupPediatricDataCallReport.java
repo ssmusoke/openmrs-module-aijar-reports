@@ -6,11 +6,13 @@ import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -71,12 +73,12 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "PMTCT Data Request Report";
+        return "Transitioning Children and Viral Load Monitoring  in PMTCT Report";
     }
 
     @Override
     public String getDescription() {
-        return "PMTCT Data Request Report";
+        return "Transitioning Children and Viral Load Monitoring  in PMTCT Report";
     }
 
     @Override
@@ -114,6 +116,7 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
+        rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(healthFacilityName()));
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
 
@@ -211,8 +214,14 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate-3m"));
     }
 
+    private DataSetDefinition healthFacilityName() {
+        NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
+        dsd.setFacilityName("aijar.healthCenterName");
+        return dsd;
+    }
+
     @Override
     public String getVersion() {
-        return "1.1.8";
+        return "1.2.1";
     }
 }
