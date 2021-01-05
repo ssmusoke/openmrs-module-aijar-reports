@@ -52,7 +52,7 @@ public class SetupHMISTB009Register extends UgandaEMRDataExportManager {
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
 		l.add(df.getStartDateParameter());
-//		l.add(df.getEndDateParameter());
+		l.add(df.getEndDateParameter());
 		return l;
 	}
 	
@@ -74,7 +74,7 @@ public class SetupHMISTB009Register extends UgandaEMRDataExportManager {
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "0009-HealthUnitTBRegister.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:8,dataset:TB");
+		props.put("repeatingSections", "sheet:1,row:8-11,dataset:TB");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -98,7 +98,7 @@ public class SetupHMISTB009Register extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "1.0.1";
+		return "1.0.9";
 	}
 
 }

@@ -40,243 +40,293 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		
 		context = ObjectUtil.nvl(context, new EvaluationContext());	
 
-		String summarySql = "SELECT \r\n" +
-				"\tUNIQUE_TB_NO.identifier \tAS unitTbNo,\r\n" +
-				"\tSUBDIST_TB_NO.identifier\tAS hsdNo,\r\n" +
-				"\tDIST_TB_NO.identifier\tAS distTbNo,\r\n" +
-				"\tCONCAT(PN.family_name, ' ', PN.given_name, '\\r\\n', IFNULL(CONTACT.value_text, ''), ' ', IFNULL(PAT.value,''))\tAS patientAndContact,\r\n" +
-				"\tCONCAT(CASE HEALTH_WORKER.value_coded \r\n" +
-				"\tWHEN 1065 THEN 'Y'\r\n" +
-				"\tWHEN 1066 THEN 'N'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND,\r\n" +
-				"\tIFNULL(CADRE_HEALTH_WORKER.name,''))\tAS healthWorker,\r\n" +
-				"\tP.gender\tAS sex,\r\n" +
-				"\tYEAR(A.encounter_datetime) - YEAR(P.birthdate) - (RIGHT(A.encounter_datetime, 5) < RIGHT(P.birthdate, 5)) \tAS age,\r\n" +
-				"\tCONCAT('District: ', IFNULL(PA.county_district,''), '\\r\\n',\r\n" +
-				"\t'County: ', IFNULL(PA.state_province,''), '\\r\\n', \r\n" +
-				"\t'Sub-county: ', IFNULL(PA.address3,''), '\\r\\n', \r\n" +
-				"\t'Parish: ',   IFNULL(PA.address4,''), '\\r\\n', \r\n" +
-				"\t'Village: ', IFNULL(PA.address5,''))\tAS address,\r\n" +
-				"\tCONCAT(DATE_FORMAT(A.encounter_datetime,'%d/%m/%Y'),'\\n', IFNULL(REG.name,''))\tAS dateTreatmentStartedAndRegimen,\r\n" +
-				"\tCASE DISEASE_CLASS.value_coded \r\n" +
-				"\tWHEN 113489 THEN 'P-BC'\r\n" +
-				"\tWHEN 113491 THEN 'P-CD'\r\n" +
-				"\tWHEN 5042 THEN 'EP'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND\tAS diseaseClass,\r\n" +
-				"\tIFNULL(TYPE_OF_PATIENT.name,'')\tAS typeOfPatient,\r\n" +
-				"\tCONCAT(IFNULL(TRANSFER_IN_FROM.value_text,''),'\\n', IFNULL(TRANSFER_IN_TB_NO.identifier,''))\tAS transferIn,\r\n" +
-				"\tCONCAT(IFNULL(SPUTUM_SMEAR_RESULTS.name,''),'\\n', IFNULL(DATE_FORMAT(SPUTUM_SMEAR_DATE.value_datetime,'%d/%m/%Y'),\"\"))\tAS sputumSmearResults,\r\n" +
-				"\tCASE COUNSELLING_TESTING.value_coded \r\n" +
-				"\tWHEN 99294 THEN 'C'\r\n" +
-				"\tWHEN 99406 THEN 'CT'\r\n" +
-				"\tWHEN 99407 THEN 'CT1'\r\n" +
-				"\tWHEN 99408 THEN 'CT2'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND\tAS hivTest,\r\n" +
-				"\tCASE RECEIVED_RESULTS.value_coded \r\n" +
-				"\tWHEN 1065 THEN 'Y'\r\n" +
-				"\tWHEN 1066 THEN 'N'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND\tAS patientReceivedHivResults,\r\n" +
-				"\tCONCAT(CASE ON_CPT.value_coded \r\n" +
-				"\tWHEN 1065 THEN 'Y'\r\n" +
-				"\tWHEN 1066 THEN 'N'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND, '\\n',\r\n" +
-				"\tIFNULL(DATE_FORMAT(CPT_DATE.value_datetime,'%d/%m/%Y'),''))\tAS cpt,\r\n" +
-				"\tCONCAT(CASE ON_ART.value_coded \r\n" +
-				"\tWHEN 1065 THEN 'Y'\r\n" +
-				"\tWHEN 1066 THEN 'N'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND, '\\n',\r\n" +
-				"\tIFNULL(ART_NO.value_text, ''), '\\n',\r\n" +
-				"\tIFNULL(DATE_FORMAT(ART_DATE.value_datetime,'%d/%m/%Y'),''))\tAS artAndArtNo,\r\n" +
-				"\tCONCAT(IFNULL(TOTAL_CONTACT_LT_5.value_numeric,''),'\\n', IFNULL(TOTAL_CONTACT_LT_5_IPT.value_numeric,''))\tAS contact5Years,\r\n" +
-				"\tCONCAT(CASE TREATMENT_MODEL.value_coded \r\n" +
-				"\tWHEN 99416 THEN 'F'\r\n" +
-				"\tWHEN 99417 THEN 'C'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND, '\\n',\r\n" +
-				"\tIFNULL(DATE_FORMAT(DOTS_DATE.value_datetime,'%d/%m/%Y'),''), '\\n',\r\n" +
-				"\tIFNULL(TREATMENT_SUPPORTER.value_text, ''))\tAS treatmentModelAndNameOfTreatmentSupporter,\r\n" +
-				"\tIFNULL(TREATMENT_OUTCOME.value_coded, -1)\tAS treatmentOutcome,\r\n" +
-				"\tIFNULL(TRANSFER_OUT_UNIT.value_text, '')\tAS transferOutUnit,\r\n" +
-				"\tIFNULL(DATE_FORMAT(TREATMENT_OUTCOME_DATE.value_datetime,'%d/%m/%Y'),'')\tAS treatmentOutcomeDate,\r\n" +
-				"\tCASE DIAGNOSED_DR_TB.value_coded \r\n" +
-				"\tWHEN 1065 THEN 'Y'\r\n" +
-				"\tWHEN 1066 THEN 'N'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND\tAS diagnosedWithDrTb,\r\n" +
-				"\tIFNULL(REMARKS.value_text, '')\tAS remarks\t\r\n" +
-				"FROM\r\n" +
-				"(SELECT\r\n" +
-				"     e.encounter_id,\r\n" +
-				"     e.patient_id,\r\n" +
-				"     e.encounter_datetime\r\n" +
-				"   FROM encounter e\r\n" +
-				"   INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND (et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66')\r\n" +
-				String.format("	WHERE e.encounter_datetime <= '%s' AND e.encounter_datetime >= DATE_ADD('%s', INTERVAL %d MONTH) AND e.voided = 0\r\n", lastDateOfWorkingMonth.toString("yyyy-MM-dd"),lastDateOfWorkingMonth.toString("yyyy-MM-dd"),TB_TREATMENT_PERIOD) +					
-				"   ORDER BY e.encounter_datetime) A \r\n" +
-				"  INNER JOIN person P\r\n" +
-				"   ON (P.person_id = A.patient_id)\r\n" +
-				"  LEFT JOIN person_name PN ON (P.person_id = PN.person_id)\r\n" +
-				"  LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='8fd5e225-f91a-44af-ba04-3b41428d2164') UNIQUE_TB_NO ON P.person_id = UNIQUE_TB_NO.patient_id\r\n" +
-				"  LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='2a6f1f82-2b70-4a51-8507-3a849bc637c3') SUBDIST_TB_NO ON P.person_id = SUBDIST_TB_NO.patient_id\r\n" +
-				"  LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='8110f2d2-1f98-4c38-aef3-11b19bb0a589') DIST_TB_NO ON P.person_id = DIST_TB_NO.patient_id\r\n" +
-				"  LEFT JOIN person_attribute PAT ON (P.person_id = PAT.person_id AND PAT.person_attribute_type_id = 8 AND PAT.voided = 0)\r\n" +
-				"  LEFT JOIN obs CONTACT ON CONTACT.encounter_id = A.encounter_id AND CONTACT.concept_id = 163258 AND CONTACT.voided = 0 \r\n" +
-				"  LEFT JOIN obs HEALTH_WORKER ON HEALTH_WORKER.encounter_id = A.encounter_id AND HEALTH_WORKER.concept_id = 5619 AND HEALTH_WORKER.voided = 0 \r\n" +
-				"  LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 1783 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) CADRE_HEALTH_WORKER ON CADRE_HEALTH_WORKER.encounter_id = A.encounter_id  \r\n" +
-				"  LEFT JOIN person_address PA ON (P.person_id = PA.person_id AND PA.preferred = 1 AND PA.voided = 0)\r\n" +
-				"  LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99374 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id) REG ON REG.encounter_id = A.encounter_id\r\n" +
-				"  LEFT JOIN obs DISEASE_CLASS ON DISEASE_CLASS.encounter_id = A.encounter_id AND DISEASE_CLASS.concept_id = 99379 AND DISEASE_CLASS.voided = 0 \r\n" +
-				"  LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99386 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) TYPE_OF_PATIENT ON TYPE_OF_PATIENT.encounter_id = A.encounter_id \r\n" +
-				" LEFT JOIN obs COUNSELLING_TESTING ON COUNSELLING_TESTING.encounter_id = A.encounter_id AND COUNSELLING_TESTING.concept_id = 99409 AND COUNSELLING_TESTING.voided = 0 \r\n" +
-				" LEFT JOIN obs RECEIVED_RESULTS ON RECEIVED_RESULTS.encounter_id = A.encounter_id AND RECEIVED_RESULTS.concept_id = 99411 AND RECEIVED_RESULTS.voided = 0 \r\n" +
-				" LEFT JOIN obs ON_CPT ON ON_CPT.encounter_id = A.encounter_id AND ON_CPT.concept_id = 160434 AND ON_CPT.voided = 0 \r\n" +
-				" LEFT JOIN obs CPT_DATE ON CPT_DATE.encounter_id = A.encounter_id AND CPT_DATE.concept_id = 164361 AND CPT_DATE.voided = 0 \r\n" +
-				" LEFT JOIN obs ON_ART ON ON_ART.encounter_id = A.encounter_id AND ON_ART.concept_id = 159991 AND ON_ART.voided = 0 \r\n" +
-				" LEFT JOIN obs ART_DATE ON ART_DATE.encounter_id = A.encounter_id AND ART_DATE.concept_id = 99161 AND ART_DATE.voided = 0 \r\n" +
-				" LEFT JOIN obs ART_NO ON ART_NO.encounter_id = A.encounter_id AND ART_NO.concept_id = 99431 AND ART_NO.voided = 0 \r\n" +
-				" LEFT JOIN obs TREATMENT_OUTCOME ON TREATMENT_OUTCOME.encounter_id = A.encounter_id AND TREATMENT_OUTCOME.concept_id = 99423 AND TREATMENT_OUTCOME.voided = 0 \r\n" +
-				" LEFT JOIN obs REMARKS ON REMARKS.encounter_id = A.encounter_id AND REMARKS.concept_id = 159395 AND REMARKS.voided = 0 \r\n" +
-				" LEFT JOIN obs TRANSFER_IN_FROM ON TRANSFER_IN_FROM.encounter_id = A.encounter_id AND TRANSFER_IN_FROM.concept_id = 99109 AND TRANSFER_IN_FROM.voided = 0 \r\n" +
-				" LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='1d2be2a3-7d90-42a6-aasa5-a04b684a365b') TRANSFER_IN_TB_NO ON P.person_id = TRANSFER_IN_TB_NO.patient_id\r\n" +
-				" LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99030 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) MUAC ON MUAC.encounter_id = A.encounter_id\r\n" +
-				" LEFT JOIN obs W4A_Z_SCORE ON W4A_Z_SCORE.encounter_id = A.encounter_id AND W4A_Z_SCORE.concept_id = 1854 AND W4A_Z_SCORE.voided = 0 \r\n" +
-				" LEFT JOIN obs H4A_Z_SCORE ON H4A_Z_SCORE.encounter_id = A.encounter_id AND H4A_Z_SCORE.concept_id = 164088 AND H4A_Z_SCORE.voided = 0 \r\n" +
-				" LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='d4b21726-e908-4b1a-abab-b5f87cd01c18') INR_NO ON P.person_id = INR_NO.patient_id \r\n" +
-				" LEFT JOIN obs TOTAL_CONTACT_LT_5 ON TOTAL_CONTACT_LT_5.encounter_id = A.encounter_id AND TOTAL_CONTACT_LT_5.concept_id = 164419 AND TOTAL_CONTACT_LT_5.voided = 0 \r\n" +
-				" LEFT JOIN obs TOTAL_CONTACT_LT_5_IPT ON TOTAL_CONTACT_LT_5_IPT.encounter_id = A.encounter_id AND TOTAL_CONTACT_LT_5_IPT.concept_id = 164421 AND TOTAL_CONTACT_LT_5_IPT.voided = 0 \r\n" +
-				" LEFT JOIN obs TREATMENT_MODEL ON TREATMENT_MODEL.encounter_id = A.encounter_id AND TREATMENT_MODEL.concept_id = 99418 AND TREATMENT_MODEL.voided = 0 \r\n" +
-				" LEFT JOIN obs DOTS_DATE ON DOTS_DATE.encounter_id = A.encounter_id AND DOTS_DATE.concept_id = 90217 AND DOTS_DATE.voided = 0 \r\n" +
-				" LEFT JOIN obs TREATMENT_SUPPORTER ON TREATMENT_SUPPORTER.encounter_id = A.encounter_id AND TREATMENT_SUPPORTER.concept_id = 99142 AND TREATMENT_SUPPORTER.voided = 0 \r\n" +
-				" LEFT JOIN obs TREATMENT_PHASE ON TREATMENT_PHASE.encounter_id = A.encounter_id AND TREATMENT_PHASE.concept_id = 159792 AND TREATMENT_PHASE.voided = 0 \r\n" +
-				" LEFT JOIN obs DIAGNOSED_DR_TB ON DIAGNOSED_DR_TB.encounter_id = A.encounter_id AND DIAGNOSED_DR_TB.concept_id = 90211 AND DIAGNOSED_DR_TB.voided = 0\r\n" +
-				" LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 307 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) SPUTUM_SMEAR_RESULTS ON SPUTUM_SMEAR_RESULTS.encounter_id = A.encounter_id \r\n" +
-				" LEFT JOIN obs SPUTUM_SMEAR_DATE ON SPUTUM_SMEAR_DATE.encounter_id = A.encounter_id AND SPUTUM_SMEAR_DATE.concept_id = 99392 AND SPUTUM_SMEAR_DATE.voided = 0\r\n" +
-				" LEFT JOIN obs TREATMENT_OUTCOME_DATE ON TREATMENT_OUTCOME_DATE.encounter_id = A.encounter_id AND TREATMENT_OUTCOME_DATE.concept_id = 159787 AND TREATMENT_OUTCOME_DATE.voided = 0\r\n" +
-				" LEFT JOIN obs TRANSFER_OUT_UNIT ON TRANSFER_OUT_UNIT.encounter_id = A.encounter_id AND TRANSFER_OUT_UNIT.concept_id = 90211 AND TRANSFER_OUT_UNIT.voided = 0\r\n" +
-				" GROUP BY A.patient_id\r\n";
+		String summarySql = "SELECT   A.encounter_datetime\tAS doa,\n" +
+				"\t\t\t DISTRICT.value_text As District_No,\n" +
+				"\t\t\t UNIT.value_text As Unit_No,\n" +
+				"\t\t\t NIN.identifier\tAS NIN_no,\n" +
+				"\t\t\t PN.family_name,\n" +
+				"\t\t\t PN.given_name,\n" +
+				"\t\t\t NEXT_OF_KIN.value_text AS NEXT_OF_KIN,\n" +
+				"\t\t\t NEXT_OF_KIN_CONTACT.value_text AS NEXT_OF_KIN_CONTACT,\n" +
+				"\t\t\t P.gender AS SEX,\n" +
+				"\t\t\t YEAR(A.encounter_datetime) - YEAR(P.birthdate) - (RIGHT(A.encounter_datetime, 5) < RIGHT(P.birthdate, 5)) \tAS age,\n" +
+				"             CATEGORY.value as Client_Category,\n" +
+				"\t\t\t IFNULL(PA.address5,'')\tAS village,\n" +
+				"\t\t\t IFNULL(PA.address4,'')\tAS Parish,\n" +
+				"\t\t\t IFNULL(PA.address3,'')\tAS SubCounty,\n" +
+				"\t\t\t IFNULL(PA.county_district,'')\tAS District,\n" +
+				"             DISEASE_CLASS.name disease_classification,\n" +
+				"             1stLineSatrtDate.value_datetime AS DATE_STARTED_1ST_LINE,\n" +
+				"             1ST_REGIMEN.name AS DRUG_1ST_LINE,\n" +
+				"             PATIENT_TYPE.name AS patient_type,\n" +
+				"             RISK_GROUP.name AS Risk_Group,\n" +
+				"             PRE_RX_SMEAR.value_datetime AS Smear_date_taken,\n" +
+				"             PRE_RX_SMEAR.name AS Smear_Results,\n" +
+				"             PRE_RX_GENE.value_datetime AS Genexpert_date_taken,\n" +
+				"             PRE_RX_GENE.name AS Genexpert_Results,\n" +
+				"             PRE_RX_OTHER.value_datetime AS Other_date_taken,\n" +
+				"             PRE_RX_OTHER.value_text AS Other_Results,\n" +
+				"             MONTH_2_TEST.value_coded AS Month_2_Results,\n" +
+				"             MONTH_2_TEST.value_datetime AS Month_2_date,\n" +
+				"             MONTH_5_TEST.value_coded AS Month_5_Results,\n" +
+				"             MONTH_5_TEST.value_datetime AS Month_5_date,\n" +
+				"             MONTH_6_TEST.value_coded AS Month_6_Results,\n" +
+				"             MONTH_6_TEST.value_datetime AS Month_6_date,\n" +
+				"             WEIGHT.weight as weight,\n" +
+				"             HEIGHT.height as height,\n" +
+				"             MUAC.muac ,\n" +
+				"             MUACCODE.muac_code,\n" +
+				"             ZSCORE.score,\n" +
+				"             NUTRITION_STATUS.status,\n" +
+				"             NUTRITION.support,\n" +
+				"             INR.INRNo,\n" +
+				"             HIVSTATUS.status as  HIVSTATUS,\n" +
+				"             HIVSTATUSDATE.value_datetime as HIVSTATUSDATE,\n" +
+				"             CPTDATE.value_datetime as CPT_DATE,\n" +
+				"             CPT.status as CPPT_STATUS,\n" +
+				"             ART_STATUS.status as ART_STATUS,\n" +
+				"             ARTSTARTDATE.value_datetime as ARTSTART_DATE,\n" +
+				"             ARTNO.value_text as ART_NO,\n" +
+				"             TREATMENTMODEL.status as TREATMENT_MODEL,\n" +
+				"             WEEK1_2.encounter_datetime AS  WEEK1_2DATE,\n" +
+				"             WEEK1_2.value_numeric AS  WEEK1_2DAYS,\n" +
+				"             WEEK3_4.encounter_datetime AS  WEEK3_4DATE,\n" +
+				"             WEEK3_4.value_numeric AS  WEEK3_4DAYS,\n" +
+				"             WEEK5_6.encounter_datetime AS  WEEK5_6DATE,\n" +
+				"             WEEK5_6.value_numeric AS  WEEK5_6DAYS,\n" +
+				"             WEEK7_8.encounter_datetime AS  WEEK7_8DATE,\n" +
+				"             WEEK7_8.value_numeric AS  WEEK7_8DAYS,\n" +
+				"             MONTH_3.encounter_datetime AS  MONTH_3DATE,\n" +
+				"             MONTH_3.value_numeric AS  MONTH_3DAYS,\n" +
+				"             MONTH_4.encounter_datetime AS  MONTH_4DATE,\n" +
+				"             MONTH_4.value_numeric AS  MONTH_4DAYS,\n" +
+				"             MONTH_5.encounter_datetime AS  MONTH_5DATE,\n" +
+				"             MONTH_5.value_numeric AS  MONTH_5DAYS,\n" +
+				"             MONTH_6.encounter_datetime AS  MONTH_6DATE,\n" +
+				"             MONTH_6.value_numeric AS  MONTH_6DAYS,\n" +
+				"             MONTH_7.encounter_datetime AS  MONTH_7DATE,\n" +
+				"             MONTH_7.value_numeric AS  MONTH_7DAYS,\n" +
+				"             MONTH_8.encounter_datetime AS  MONTH_8DATE,\n" +
+				"             MONTH_8.value_numeric AS  MONTH_8DAYS,\n" +
+				"             MONTH_9.encounter_datetime AS  MONTH_9DATE,\n" +
+				"             MONTH_9.value_numeric AS  MONTH_9DAYS,\n" +
+				"             MONTH_10.encounter_datetime AS  MONTH_10DATE,\n" +
+				"             MONTH_10.value_numeric AS  MONTH_10DAYS,\n" +
+				"             MONTH_11.encounter_datetime AS  MONTH_11DATE,\n" +
+				"             MONTH_11.value_numeric AS  MONTH_11DAYS,\n" +
+				"             MONTH_12.encounter_datetime AS  MONTH_12DATE,\n" +
+				"             MONTH_12.value_numeric AS  MONTH_12DAYS,\n" +
+				"             T_OUT_DATE.value_datetime as Transfer_out_Date,\n" +
+				"             T_OUT_HF.value_text as Transfer_out_Facility,\n" +
+				"             T_OUT_DISTRICT.value_text as District,\n" +
+				"             T_OUT_TEL.value_text as TO_TEL,\n" +
+				"             OUTCOME.value_coded as Outcome,\n" +
+				"             OUTCOMEDATE.value_datetime as Outcome_Date,\n" +
+				"\t\t\t IFNULL(PAT.value,'') AS phone_number from (SELECT\t    e.encounter_id,\n" +
+				"\t\t\t    e.patient_id,\n" +
+				"\t\t\t    e.encounter_datetime\n" +
+				"\t\t\t  FROM encounter e\n" +
+				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
+				"\n" +
+				"\t\t              WHERE e.encounter_datetime between '2020-04-01' and '2020-04-30') A\n" +
+				"INNER JOIN person P\n" +
+				"\t\t\t   ON (P.person_id = A.patient_id)\n" +
+				"\t\t\t LEFT JOIN person_name PN ON (P.person_id = PN.person_id)\n" +
+				"\t\t\t LEFT JOIN person_address PA ON (P.person_id = PA.person_id AND PA.preferred = 1 AND PA.voided = 0)\n" +
+				"\t\t\t LEFT JOIN person_attribute PAT ON (P.person_id = PAT.person_id AND PAT.person_attribute_type_id = 8 AND PAT.voided = 0)\n" +
+				"\t\t\t LEFT JOIN (select patient_id,identifier from patient_identifier PI inner join patient_identifier_type pit on\n" +
+				"\t\t\t     PI.identifier_type = pit.patient_identifier_type_id where pit.uuid='f0c16a6d-dc5f-4118-a803-616d0075d282' and PI.voided=0)NIN  ON P.person_id = NIN.patient_id\n" +
+				"             LEFT JOIN obs DISTRICT ON DISTRICT.encounter_id = A.encounter_id AND DISTRICT.concept_id = 99031 AND DISTRICT.voided = 0\n" +
+				"             LEFT JOIN obs UNIT ON UNIT.encounter_id = A.encounter_id AND UNIT.concept_id = 165826 AND UNIT.voided = 0\n" +
+				"             LEFT JOIN obs NEXT_OF_KIN ON NEXT_OF_KIN.encounter_id = A.encounter_id AND NEXT_OF_KIN.concept_id = 162729 AND NEXT_OF_KIN.voided = 0\n" +
+				"             LEFT JOIN obs NEXT_OF_KIN_CONTACT ON NEXT_OF_KIN_CONTACT.encounter_id = A.encounter_id AND NEXT_OF_KIN_CONTACT.concept_id = 165052 AND NEXT_OF_KIN_CONTACT.voided = 0\n" +
+				"             LEFT JOIN (select person_id,cn.name as value from  person_attribute PA inner join person_attribute_type PAT  on PA.person_attribute_type_id = PAT.person_attribute_type_id INNER JOIN\n" +
+				"                 concept_name cn ON cn.concept_id=PA.value and PAT.uuid='dec484be-1c43-416a-9ad0-18bd9ef28929' and PA.voided=0) CATEGORY ON P.person_id = CATEGORY.person_id\n" +
+				"             LEFT JOIN (SELECT\n" +
+				"\t\t\t\to.encounter_id, cn.name\n" +
+				"\t\t\t     FROM obs o\n" +
+				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99336 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) DISEASE_CLASS ON DISEASE_CLASS.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN obs 1stLineSatrtDate ON 1stLineSatrtDate.encounter_id = A.encounter_id AND 1stLineSatrtDate.concept_id = 165838 AND 1stLineSatrtDate.voided = 0\n" +
+				"             LEFT JOIN  (SELECT\n" +
+				"\t\t\t\to.encounter_id, cn.name\n" +
+				"\t\t\t     FROM obs o\n" +
+				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 159958 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) 1ST_REGIMEN ON 1ST_REGIMEN.encounter_id = A.encounter_id\n" +
+				"\t\t\t LEFT JOIN  (SELECT\n" +
+				"\t\t\t\to.encounter_id, cn.name\n" +
+				"\t\t\t     FROM obs o\n" +
+				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99386 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) PATIENT_TYPE ON PATIENT_TYPE.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN  (SELECT\n" +
+				"\t\t\t\to.encounter_id, cn.name\n" +
+				"\t\t\t     FROM obs o\n" +
+				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 165169 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) RISK_GROUP ON RISK_GROUP.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN  (SELECT p.encounter_id, date_taken.value_datetime,cn.name from obs p inner join obs results on p.encounter_id=results.encounter_id\n" +
+				"                    INNER JOIN obs date_taken on p.obs_group_id= date_taken.obs_group_id\n" +
+				"                    INNER JOIN concept_name cn\n" +
+				"                        ON results.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                        where p.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165846  and o.voided=0)\n" +
+				"                        and p.concept_id=165844 and p.value_coded=90225 and results.concept_id=90225\n" +
+				"                          and date_taken.concept_id=164431 and date_taken.voided=0 and results.value_coded is not null group by p.encounter_id)PRE_RX_SMEAR on PRE_RX_SMEAR.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN  (SELECT p.encounter_id, date_taken.value_datetime,cn.name from obs p inner join obs results on p.encounter_id=results.encounter_id\n" +
+				"                    INNER JOIN obs date_taken on p.obs_group_id= date_taken.obs_group_id\n" +
+				"                    INNER JOIN concept_name cn\n" +
+				"                        ON results.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                        where p.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165846  and o.voided=0)\n" +
+				"                        and p.concept_id=165844 and p.value_coded=165413 and results.concept_id=162202\n" +
+				"                          and date_taken.concept_id=164431 and date_taken.voided=0 and results.value_coded is not null group by p.encounter_id)PRE_RX_GENE on PRE_RX_GENE.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN  (SELECT p.encounter_id, date_taken.value_datetime,results.value_text from obs p inner join obs results on p.encounter_id=results.encounter_id\n" +
+				"                    INNER JOIN obs date_taken on p.obs_group_id= date_taken.obs_group_id\n" +
+				"                        where p.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165846  and o.voided=0)\n" +
+				"                        and p.concept_id=165844 and p.value_coded=90002 and results.concept_id=99291\n" +
+				"                          and date_taken.concept_id=164431 and date_taken.voided=0 and results.value_coded is not null group by p.encounter_id)PRE_RX_OTHER on PRE_RX_OTHER.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
+				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
+				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
+				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 2 MONTH)\n" +
+				"                    AND DATE_ADD('2020-04-30',INTERVAL 2 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_2_TEST ON MONTH_2_TEST.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
+				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
+				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
+				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 MONTH)\n" +
+				"                    AND DATE_ADD('2020-04-30',INTERVAL 5 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_5_TEST ON MONTH_5_TEST.person_id = A.patient_id\n" +
+				"\t\t\t LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
+				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
+				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
+				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 6 MONTH)\n" +
+				"                    AND DATE_ADD('2020-04-30',INTERVAL 6 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_6_TEST ON MONTH_6_TEST.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,value_numeric weight, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=5089\n" +
+				"                 group by o.person_id order by encounter_datetime ASC  ) WEIGHT ON WEIGHT.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,value_numeric height, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=5090\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) HEIGHT ON HEIGHT.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,value_numeric muac, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=1343\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) MUAC ON MUAC.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,cn.name muac_code, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99030\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) MUACCODE ON MUACCODE.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,cn.name score, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99800\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) ZSCORE ON ZSCORE.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,cn.name status, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=165050\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) NUTRITION_STATUS ON NUTRITION_STATUS.person_id = A.patient_id\n" +
+				"\t\t\t LEFT JOIN (SELECT o.person_id,cn.name support, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99054\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) NUTRITION ON NUTRITION.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,value_numeric INRNo, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
+				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99733\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) INR ON INR.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o  INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id=165396\n" +
+				"                 and o.voided=0 group by encounter_id ) HIVSTATUS ON HIVSTATUS.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,value_datetime from obs o WHERE o.concept_id=164431 and o.voided=0 group by encounter_id) HIVSTATUSDATE ON HIVSTATUSDATE.encounter_id= A.encounter_id\n" +
+				"\t\t     LEFT JOIN (SELECT o.person_id,o.encounter_id,value_datetime from obs o WHERE o.concept_id=165881 and o.voided=0 group by encounter_id) CPTDATE ON CPTDATE.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                  WHERE o.concept_id=166070 AND o.voided = 0 group by encounter_id) CPT ON CPT.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0\n" +
+				"                  WHERE o.concept_id=1358 AND o.voided = 0 group by encounter_id) ART_STATUS ON ART_STATUS.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,value_datetime from obs o WHERE o.concept_id=99161 and o.voided=0 group by encounter_id) ARTSTARTDATE ON ARTSTARTDATE.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,value_text from obs o WHERE o.concept_id=99431 and o.voided=0 group by encounter_id) ARTNO ON ARTNO.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o  INNER  JOIN concept_name cn\n" +
+				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id=165869\n" +
+				"                 and o.voided=0 group by encounter_id ) TREATMENTMODEL ON TREATMENTMODEL.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 1 WEEK)\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 2 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK1_2 ON WEEK1_2.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 3 WEEK)\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 4 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK3_4 ON WEEK3_4.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 WEEK)\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 6 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK5_6 ON WEEK5_6.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 7 WEEK)\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 8 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK7_8 ON WEEK7_8.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 3 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 3 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_3 ON MONTH_3.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 4 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 4 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_4 ON MONTH_4.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 5 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_5 ON MONTH_5.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 6 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 6 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_6 ON MONTH_6.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 7 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 7 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_7 ON MONTH_7.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 8 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 8 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_8 ON MONTH_8.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 9 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 9 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_9 ON MONTH_9.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 10 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 10 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_10 ON MONTH_10.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 11 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 11 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_11 ON MONTH_11.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 12 MONTH )\n" +
+				"                    AND DATE_ADD('2020-04-01',INTERVAL 12 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_12 ON MONTH_12.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_datetime,encounter_id from obs where concept_id=165854 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DATE on T_OUT_DATE.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=90211 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_HF on T_OUT_HF.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=165853 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DISTRICT on T_OUT_DISTRICT.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=159635 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_TEL on T_OUT_TEL.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT patient_id, outcome.value_coded from encounter e2 INNER JOIN obs outcome on e2.encounter_id = outcome.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE outcome.concept_id= 99423 and outcome.voided=0)OUTCOME on OUTCOME.patient_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT patient_id, value_datetime from encounter e2 INNER JOIN obs outcomedate on e2.encounter_id = outcomedate.encounter_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
+				"                    WHERE outcomedate.concept_id= 165872 and outcomedate.voided=0)OUTCOMEDATE on OUTCOMEDATE.patient_id = A.patient_id";
 		
-		String followupSql = "SELECT \r\n" +
-				"\tGROUP_CONCAT(CONCAT(IFNULL(SPUTUM_SMEAR_RESULTS.name,''),'\\n', IFNULL(DATE_FORMAT(SPUTUM_SMEAR_DATE.value_datetime,'%d/%m/%Y'),\"\")))\tAS followUpSputumSmearResults,\r\n" +
-				"\tCONCAT(IFNULL(DST_RESULTS.name,''),'\\n', IFNULL(DATE_FORMAT(DST_DATE.value_datetime,'%d/%m/%Y'),\"\"))\tAS dstResults,\r\n" +
-				"\tCONCAT(IFNULL(MUAC.name,''),'\\n',\r\n" +
-				"\tCASE W4A_Z_SCORE.value_coded\r\n" +
-				"\tWHEN 115 THEN 'N'\r\n" +
-				"\tWHEN 99271 THEN 'MAM' \r\n" +
-				"\tWHEN 99272 THEN  'SAM'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND, '\\n',\r\n" +
-				"\tCASE H4A_Z_SCORE.value_coded\r\n" +
-				"\tWHEN 115 THEN 'N'\r\n" +
-				"\tWHEN 164085 THEN 'S' \r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND, '\\n',\r\n" +
-				"\tIFNULL(INR_NO.identifier,\"\"))\tAS zScoreAndInrNo,\r\n" +
-				"\tGROUP_CONCAT(CASE TREATMENT_PHASE.value_coded \r\n" +
-				"\tWHEN 159794 THEN 'Y'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND) \tAS intensive,\r\n" +
-				"\tGROUP_CONCAT(CASE TREATMENT_PHASE.value_coded \r\n" +
-				"\tWHEN 159795 THEN 'Y'\r\n" +
-				"\tELSE ''\r\n" +
-				"\tEND)\tAS continous,\r\n" +
-				"\tUNIQUE_TB_NO.identifier \tAS unitTbNo,\r\n" +
-				"\tA.encounter_id\tAS encounterId\r\n" +
-				"FROM\r\n" +
-				"(SELECT\r\n" +
-				"     e.encounter_id,\r\n" +
-				"     e.patient_id,\r\n" +
-				"     e.encounter_datetime\r\n" +
-				"   FROM encounter e\r\n" +
-				"   INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '455bad1f-5e97-4ee9-9558-ff1df8808732'\r\n" +
-				String.format("	WHERE e.encounter_datetime <= '%s' AND e.encounter_datetime >= DATE_ADD('%s', INTERVAL %d MONTH) AND e.voided = 0) A \r\n", lastDateOfWorkingMonth.toString("yyyy-MM-dd"), lastDateOfWorkingMonth.toString("yyyy-MM-dd"), TB_TREATMENT_PERIOD) +				
-				"  INNER JOIN person P\r\n" +
-				"   ON (P.person_id = A.patient_id)\r\n" +
-				"  LEFT JOIN person_name PN ON (P.person_id = PN.person_id)\r\n" +
-				"  LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='8fd5e225-f91a-44af-ba04-3b41428d2164') UNIQUE_TB_NO ON P.person_id = UNIQUE_TB_NO.patient_id\r\n" +
-				" LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99030 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) MUAC ON MUAC.encounter_id = A.encounter_id\r\n" +
-				" LEFT JOIN obs W4A_Z_SCORE ON W4A_Z_SCORE.encounter_id = A.encounter_id AND W4A_Z_SCORE.concept_id = 1854 AND W4A_Z_SCORE.voided = 0 \r\n" +
-				" LEFT JOIN obs H4A_Z_SCORE ON H4A_Z_SCORE.encounter_id = A.encounter_id AND H4A_Z_SCORE.concept_id = 164088 AND H4A_Z_SCORE.voided = 0 \r\n" +
-				" LEFT JOIN (\r\n" +
-				"\tSELECT \r\n" +
-				"\tPI.patient_id,PI.identifier \r\n" +
-				"\tFROM patient_identifier PI \r\n" +
-				"\tINNER JOIN patient_identifier_type PIT ON PI.identifier_type = PIT.patient_identifier_type_id AND PI.voided = 0 AND PIT.uuid='d4b21726-e908-4b1a-abab-b5f87cd01c18') INR_NO ON P.person_id = INR_NO.patient_id \r\n" +
-				" LEFT JOIN obs TREATMENT_PHASE ON TREATMENT_PHASE.encounter_id = A.encounter_id AND TREATMENT_PHASE.concept_id = 159792 AND TREATMENT_PHASE.voided = 0 \r\n" +
-				" LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 159984 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) DST_RESULTS ON DST_RESULTS.encounter_id = A.encounter_id \r\n" +
-				" LEFT JOIN obs DST_DATE ON DST_DATE.encounter_id = A.encounter_id AND DST_DATE.concept_id = 164396 AND DST_DATE.voided = 0 \r\n" +
-				" LEFT JOIN (SELECT \r\n" +
-				"\to.encounter_id, cn.name\r\n" +
-				"\t     FROM obs o \r\n" +
-				"\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 307 AND o.voided = 0\r\n" +
-				"\t     GROUP BY o.encounter_id ) SPUTUM_SMEAR_RESULTS ON SPUTUM_SMEAR_RESULTS.encounter_id = A.encounter_id \r\n" +
-				" LEFT JOIN obs SPUTUM_SMEAR_DATE ON SPUTUM_SMEAR_DATE.encounter_id = A.encounter_id AND SPUTUM_SMEAR_DATE.concept_id = 99392 AND SPUTUM_SMEAR_DATE.voided = 0\r\n" +
-				" GROUP BY UNIQUE_TB_NO.identifier\r\n";
+
 		
 		//Logger.getLogger(TBDatasetDefinition.class).info(summarySql);
-		SqlQueryBuilder q = new SqlQueryBuilder("SELECT TB_SUMMARY.*,TB_FOLLOWUP.* FROM (");
-		q.append(summarySql);
-		q.append(") AS TB_SUMMARY  LEFT JOIN (");
-		q.append(followupSql);
-		q.append(" ) AS TB_FOLLOWUP ON TB_SUMMARY.unitTbNo = TB_FOLLOWUP.unitTbNo");
-		
+		SqlQueryBuilder q = new SqlQueryBuilder(summarySql);
+
 		List<Object[]> results = evaluationService.evaluateToList(q, context);
 		
 		PatientDataHelper pdh = new PatientDataHelper();
@@ -284,165 +334,89 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		for (Object[] r : results) {
 			DataSetRow row = new DataSetRow();
 
-			pdh.addCol(row, "Unit TB No", r[0]);
-			pdh.addCol(row, "HSD No", r[1]);
-			pdh.addCol(row, "Dist TB No", r[2]);
-			pdh.addCol(row, "Contact, Patient, Telephone", r[3]);
-			pdh.addCol(row, "Health Worker", r[4]);
-			pdh.addCol(row, "Sex", r[5]);
-			pdh.addCol(row, "Age", r[6]);
-			pdh.addCol(row, "Address", r[7]);
-			pdh.addCol(row, "Date Treatment Started And Regimen", r[8]);
-			pdh.addCol(row, "Disease Class", r[9]);
-			pdh.addCol(row, "Type of Patient", r[10]);
-			pdh.addCol(row, "Transfer In", r[11]);
-			pdh.addCol(row, "Sputum Smear Results", r[12]);
-			pdh.addCol(row, "HIV Test", r[13]);
-			pdh.addCol(row, "Patient Received HIV Results", r[14]);
-			pdh.addCol(row, "CPT", r[15]);
-			pdh.addCol(row, "ART and ART No", r[16]);
-			pdh.addCol(row, "Contact <5 Years", r[17]);
-			pdh.addCol(row, "Treatment model and Name of treatment supporter", r[18]);
-			
-			pdh.addCol(row, "Cured", "");
-			pdh.addCol(row, "Completed", "");
-			pdh.addCol(row, "Failure", "");
-			pdh.addCol(row, "Died", "");
-			pdh.addCol(row, "Lost to Follow Up", "");
-			pdh.addCol(row, "Transferred Out", "");
-			
-			Integer treatmentOutcome = Integer.valueOf(r[19].toString());
-			switch (treatmentOutcome) {
-				case 159791:
-					pdh.addCol(row, "Cured", "Y");
-					break;
+			pdh.addCol(row, "DOA", r[0]);
+			pdh.addCol(row, "District No", r[1]);
+			pdh.addCol(row, "Unit_No", r[2]);
+			pdh.addCol(row, "NIN_no", r[3]);
+			pdh.addCol(row, "Family_name", r[4]);
+			pdh.addCol(row, "Given_name", r[5]);
+			pdh.addCol(row, "Next_of_Kin", r[6]);
+			pdh.addCol(row, "Next_of_kin_Contacts", r[7]);
+			pdh.addCol(row, "Sex", r[8]);
+			pdh.addCol(row, "Age", r[9]);
+			pdh.addCol(row, "Client_category", r[10]);
+			pdh.addCol(row, "Village", r[11]);
+			pdh.addCol(row, "Parish", r[12]);
+			pdh.addCol(row, "Sub county", r[13]);
+			pdh.addCol(row, "District", r[14]);
+			pdh.addCol(row, "Disease Classification", r[15]);
+			pdh.addCol(row, "1st line start date", r[16]);
+			pdh.addCol(row, "1st line drug", r[17]);
+			pdh.addCol(row, "patient type", r[18]);
+			pdh.addCol(row, "risk group", r[19]);
+			pdh.addCol(row, "smear date taken", r[20]);
+			pdh.addCol(row, "smear results", r[21]);
+			pdh.addCol(row, "GeneXpert date taken", r[22]);
+			pdh.addCol(row, "GeneXpert results", r[23]);
+			pdh.addCol(row, "Other test date taken", r[24]);
+			pdh.addCol(row, "Other test Results", r[25]);
+			pdh.addCol(row, "Month 2 results", r[26]);
+			pdh.addCol(row, "Month 2 date", r[27]);
+			pdh.addCol(row, "Month 5 results", r[28]);
+			pdh.addCol(row, "Month5date", r[29]);
+			pdh.addCol(row, "Month 6 results", r[30]);
+			pdh.addCol(row, "Month 6 date", r[31]);
+			pdh.addCol(row, "weight", r[32]);
+			pdh.addCol(row, "height", r[33]);
+			pdh.addCol(row, "muac", r[34]);
+			pdh.addCol(row, "muac code", r[35]);
+			pdh.addCol(row, "z score", r[36]);
+			pdh.addCol(row, "nutrition status", r[37]);
+			pdh.addCol(row, "nutrition support", r[38]);
+			pdh.addCol(row, "INR No", r[39]);
+			pdh.addCol(row, "hiv status", r[40]);
+			pdh.addCol(row, "hiv status date", r[41]);
+			pdh.addCol(row, "cpt date", r[42]);
+			pdh.addCol(row, "cpt status", r[43]);
+			pdh.addCol(row, "ART status", r[44]);
+			pdh.addCol(row, "ART start Date", r[45]);
+			pdh.addCol(row, "ART No", r[46]);
+			pdh.addCol(row, "Treatment Model", r[47]);
+			pdh.addCol(row, "Week 1 date", r[48]);
+			pdh.addCol(row, "Week 1 days", r[49]);
+			pdh.addCol(row, "Week 3 date", r[50]);
+			pdh.addCol(row, "Week 3 days", r[51]);
+			pdh.addCol(row, "Week 5 date", r[52]);
+			pdh.addCol(row, "Week 5 days", r[53]);
+			pdh.addCol(row, "Week 7 date", r[54]);
+			pdh.addCol(row, "Week 7 days", r[55]);
+			pdh.addCol(row, "Month 3 date", r[56]);
+			pdh.addCol(row, "Month 3 days", r[57]);
+			pdh.addCol(row, "Month 4 date", r[58]);
+			pdh.addCol(row, "Month 4 days", r[59]);
+			pdh.addCol(row, "Month 5 date", r[60]);
+			pdh.addCol(row, "Month 5 days", r[61]);
+			pdh.addCol(row, "Month 6 date", r[62]);
+			pdh.addCol(row, "Month 6 days", r[63]);
+			pdh.addCol(row, "Month 7 date", r[64]);
+			pdh.addCol(row, "Month 7 days", r[65]);
+			pdh.addCol(row, "Month 8 date", r[66]);
+			pdh.addCol(row, "Month 8 days", r[67]);
+			pdh.addCol(row, "Month 9 date", r[68]);
+			pdh.addCol(row, "Month 9 days", r[69]);
+			pdh.addCol(row, "Month 10 date", r[70]);
+			pdh.addCol(row, "Month 10 days", r[71]);
+			pdh.addCol(row, "Month 11 date", r[72]);
+			pdh.addCol(row, "Month 11 days", r[73]);
+			pdh.addCol(row, "Month 12 date", r[74]);
+			pdh.addCol(row, "Month 12 days", r[75]);
+			pdh.addCol(row, "Transfer out date", r[76]);
+			pdh.addCol(row, "Transfer out Facility", r[77]);
+			pdh.addCol(row, "Transfer out District", r[78]);
+			pdh.addCol(row, "Transfer out Tel", r[79]);
+//			pdh.addCol(row, "outcome results", r[80]);
+//			pdh.addCol(row, "outcome date", r[81]);
 
-				case 99421:
-					pdh.addCol(row, "Completed", "Y");
-					break;
-
-				case 159874:
-					pdh.addCol(row, "Failure", "Y");				
-					break;
-
-				case 1366:
-					pdh.addCol(row, "Died", "Y");				
-					break;
-
-				case 5240:
-					pdh.addCol(row, "Lost to Follow Up", "Y");				
-					break;
-					
-				case 90306:
-					String lostToFollowUp = "Y";
-					String transferOutUnit = (String) r[20];
-					String treatmentOutcomeDate = (String) r[21];
-					String transferredOut = lostToFollowUp + "\r\n"  
-											+ transferOutUnit + "\r\n" 
-											+ treatmentOutcomeDate;
-					pdh.addCol(row, "Transferred Out", transferredOut);					
-					break;
-					
-				default:
-					break;
-			}
-			
-			pdh.addCol(row, "Diagnosed with DR TB", r[22]);
-			pdh.addCol(row, "Remarks", r[23]);
-			pdh.addCol(row, "Other Results", "");						
-
-			pdh.addCol(row, "Follow up 2 Results", "");						
-			pdh.addCol(row, "Follow up 3 Results", "");						
-			pdh.addCol(row, "Follow up 5 Results", "");						
-			pdh.addCol(row, "Follow up 8 Results", "");						
-			
-			String followUpSputumSmearResults = r[24].toString();
-			String[] followUpSputumSmearResultsSplit = followUpSputumSmearResults.split(",");
-			for (int i = 0; i < followUpSputumSmearResultsSplit.length; i++) {
-				switch (i) {
-					case 0:
-						pdh.addCol(row, "Follow up 2 Results", followUpSputumSmearResultsSplit[i]);						
-						break;
-					case 1:
-						pdh.addCol(row, "Follow up 3 Results", followUpSputumSmearResultsSplit[i]);						
-						break;
-					case 2:
-						pdh.addCol(row, "Follow up 5 Results", followUpSputumSmearResultsSplit[i]);						
-						break;
-					case 3:
-						pdh.addCol(row, "Follow up 8 Results", followUpSputumSmearResultsSplit[i]);						
-						break;
-					
-					default:
-						break;
-				}				
-			}
-			
-			pdh.addCol(row, "DST Results", r[25]);
-			pdh.addCol(row, "Z Score and INR No", r[26]);
-
-			pdh.addCol(row, "Intensive 1", "");						
-			pdh.addCol(row, "Intensive 2", "");						
-			pdh.addCol(row, "Intensive 3", "");						
-			pdh.addCol(row, "Intensive 4", "");
-						
-			String intensivePhase = r[27].toString();
-			String[] intensivePhaseSplit = intensivePhase.split(",");
-			for (int i = 0; i < intensivePhaseSplit.length; i++) {
-				switch (i) {
-					case 0:
-						pdh.addCol(row, "Intensive 1", intensivePhaseSplit[i]);						
-						break;
-					case 1:
-						pdh.addCol(row, "Intensive 2", intensivePhaseSplit[i]);						
-						break;
-					case 2:
-						pdh.addCol(row, "Intensive 3", intensivePhaseSplit[i]);						
-						break;
-					case 3:
-						pdh.addCol(row, "Intensive 4", intensivePhaseSplit[i]);						
-						break;
-					
-					default:
-						break;
-				}
-			}
-
-			pdh.addCol(row, "Continous 3", "");
-			pdh.addCol(row, "Continous 4", "");
-			pdh.addCol(row, "Continous 5", "");
-			pdh.addCol(row, "Continous 6", "");
-			pdh.addCol(row, "Continous 7", "");
-			pdh.addCol(row, "Continous 8", "");
-			
-			String continousPhase = r[28].toString();
-			String[] continousPhaseSplit = continousPhase.split(",");
-			for (int i = 0; i < continousPhaseSplit.length; i++) {
-				switch (i) {
-					case 0:
-						pdh.addCol(row, "Continous 3", continousPhaseSplit[i]);						
-						break;
-					case 1:
-						pdh.addCol(row, "Continous 4", continousPhaseSplit[i]);						
-						break;
-					case 2:
-						pdh.addCol(row, "Continous 5", continousPhaseSplit[i]);						
-						break;
-					case 3:
-						pdh.addCol(row, "Continous 6", continousPhaseSplit[i]);						
-						break;
-					case 4:
-						pdh.addCol(row, "Continous 7", continousPhaseSplit[i]);						
-						break;
-					case 5:
-						pdh.addCol(row, "Continous 8", continousPhaseSplit[i]);						
-						break;
-					
-					default:
-						break;
-				}
-			}
-			
 			dataSet.addRow(row);
 		}
 		return dataSet;
