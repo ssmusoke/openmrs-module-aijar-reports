@@ -18,6 +18,7 @@ import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TB009DatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Handler(supports = {TB009DatasetDefinition.class })
@@ -40,7 +41,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		
 		context = ObjectUtil.nvl(context, new EvaluationContext());	
 
-		String summarySql = "SELECT   A.encounter_datetime\tAS doa,\n" +
+		String summarySql = "SELECT A.patient_id patient_id, A.encounter_datetime\tAS doa,\n" +
 				"\t\t\t DISTRICT.value_text As District_No,\n" +
 				"\t\t\t UNIT.value_text As Unit_No,\n" +
 				"\t\t\t NIN.identifier\tAS NIN_no,\n" +
@@ -79,55 +80,12 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             ZSCORE.score,\n" +
 				"             NUTRITION_STATUS.status,\n" +
 				"             NUTRITION.support,\n" +
-				"             INR.INRNo,\n" +
-				"             HIVSTATUS.status as  HIVSTATUS,\n" +
-				"             HIVSTATUSDATE.value_datetime as HIVSTATUSDATE,\n" +
-				"             CPTDATE.value_datetime as CPT_DATE,\n" +
-				"             CPT.status as CPPT_STATUS,\n" +
-				"             ART_STATUS.status as ART_STATUS,\n" +
-				"             ARTSTARTDATE.value_datetime as ARTSTART_DATE,\n" +
-				"             ARTNO.value_text as ART_NO,\n" +
-				"             TREATMENTMODEL.status as TREATMENT_MODEL,\n" +
-				"             WEEK1_2.encounter_datetime AS  WEEK1_2DATE,\n" +
-				"             WEEK1_2.value_numeric AS  WEEK1_2DAYS,\n" +
-				"             WEEK3_4.encounter_datetime AS  WEEK3_4DATE,\n" +
-				"             WEEK3_4.value_numeric AS  WEEK3_4DAYS,\n" +
-				"             WEEK5_6.encounter_datetime AS  WEEK5_6DATE,\n" +
-				"             WEEK5_6.value_numeric AS  WEEK5_6DAYS,\n" +
-				"             WEEK7_8.encounter_datetime AS  WEEK7_8DATE,\n" +
-				"             WEEK7_8.value_numeric AS  WEEK7_8DAYS,\n" +
-				"             MONTH_3.encounter_datetime AS  MONTH_3DATE,\n" +
-				"             MONTH_3.value_numeric AS  MONTH_3DAYS,\n" +
-				"             MONTH_4.encounter_datetime AS  MONTH_4DATE,\n" +
-				"             MONTH_4.value_numeric AS  MONTH_4DAYS,\n" +
-				"             MONTH_5.encounter_datetime AS  MONTH_5DATE,\n" +
-				"             MONTH_5.value_numeric AS  MONTH_5DAYS,\n" +
-				"             MONTH_6.encounter_datetime AS  MONTH_6DATE,\n" +
-				"             MONTH_6.value_numeric AS  MONTH_6DAYS,\n" +
-				"             MONTH_7.encounter_datetime AS  MONTH_7DATE,\n" +
-				"             MONTH_7.value_numeric AS  MONTH_7DAYS,\n" +
-				"             MONTH_8.encounter_datetime AS  MONTH_8DATE,\n" +
-				"             MONTH_8.value_numeric AS  MONTH_8DAYS,\n" +
-				"             MONTH_9.encounter_datetime AS  MONTH_9DATE,\n" +
-				"             MONTH_9.value_numeric AS  MONTH_9DAYS,\n" +
-				"             MONTH_10.encounter_datetime AS  MONTH_10DATE,\n" +
-				"             MONTH_10.value_numeric AS  MONTH_10DAYS,\n" +
-				"             MONTH_11.encounter_datetime AS  MONTH_11DATE,\n" +
-				"             MONTH_11.value_numeric AS  MONTH_11DAYS,\n" +
-				"             MONTH_12.encounter_datetime AS  MONTH_12DATE,\n" +
-				"             MONTH_12.value_numeric AS  MONTH_12DAYS,\n" +
-				"             T_OUT_DATE.value_datetime as Transfer_out_Date,\n" +
-				"             T_OUT_HF.value_text as Transfer_out_Facility,\n" +
-				"             T_OUT_DISTRICT.value_text as District,\n" +
-				"             T_OUT_TEL.value_text as TO_TEL,\n" +
-				"             OUTCOME.value_coded as Outcome,\n" +
-				"             OUTCOMEDATE.value_datetime as Outcome_Date,\n" +
-				"\t\t\t IFNULL(PAT.value,'') AS phone_number from (SELECT\t    e.encounter_id,\n" +
+				"             INR.INRNo \n" +
+				"             from (SELECT\t    e.encounter_id,\n" +
 				"\t\t\t    e.patient_id,\n" +
 				"\t\t\t    e.encounter_datetime\n" +
-				"\t\t\t  FROM encounter e\n" +
+				"\t\t\t  FROM   encounter e\n" +
 				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
-				"\n" +
 				"\t\t              WHERE e.encounter_datetime between '2020-04-01' and '2020-04-30') A\n" +
 				"INNER JOIN person P\n" +
 				"\t\t\t   ON (P.person_id = A.patient_id)\n" +
@@ -224,7 +182,62 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"                 group by o.person_id order by encounter_datetime ASC ) NUTRITION ON NUTRITION.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,value_numeric INRNo, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
 				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99733\n" +
-				"                 group by o.person_id order by encounter_datetime ASC ) INR ON INR.person_id = A.patient_id\n" +
+				"                 group by o.person_id order by encounter_datetime ASC ) INR ON INR.person_id = A.patient_id";
+
+		String ecounterAndProgranQuery = "SELECT   A.patient_id patient_id,\n" +
+				"             HIVSTATUS.status as  HIVSTATUS,\n" +
+				"             HIVSTATUSDATE.value_datetime as HIVSTATUSDATE,\n" +
+				"             CPTDATE.value_datetime as CPT_DATE,\n" +
+				"             CPT.status as CPPT_STATUS,\n" +
+				"             ART_STATUS.status as ART_STATUS,\n" +
+				"             ARTSTARTDATE.value_datetime as ARTSTART_DATE,\n" +
+				"             ARTNO.value_text as ART_NO,\n" +
+				"             TREATMENTMODEL.status as TREATMENT_MODEL,\n" +
+				"             WEEK1_2.encounter_datetime AS  WEEK1_2DATE,\n" +
+				"             WEEK1_2.value_numeric AS  WEEK1_2DAYS,\n" +
+				"             WEEK3_4.encounter_datetime AS  WEEK3_4DATE,\n" +
+				"             WEEK3_4.value_numeric AS  WEEK3_4DAYS,\n" +
+				"             WEEK5_6.encounter_datetime AS  WEEK5_6DATE,\n" +
+				"             WEEK5_6.value_numeric AS  WEEK5_6DAYS,\n" +
+				"             WEEK7_8.encounter_datetime AS  WEEK7_8DATE,\n" +
+				"             WEEK7_8.value_numeric AS  WEEK7_8DAYS,\n" +
+				"             MONTH_3.encounter_datetime AS  MONTH_3DATE,\n" +
+				"             MONTH_3.value_numeric AS  MONTH_3DAYS,\n" +
+				"             MONTH_4.encounter_datetime AS  MONTH_4DATE,\n" +
+				"             MONTH_4.value_numeric AS  MONTH_4DAYS,\n" +
+				"             MONTH_5.encounter_datetime AS  MONTH_5DATE,\n" +
+				"             MONTH_5.value_numeric AS  MONTH_5DAYS,\n" +
+				"             MONTH_6.encounter_datetime AS  MONTH_6DATE,\n" +
+				"             MONTH_6.value_numeric AS  MONTH_6DAYS,\n" +
+				"             MONTH_7.encounter_datetime AS  MONTH_7DATE,\n" +
+				"             MONTH_7.value_numeric AS  MONTH_7DAYS,\n" +
+				"             MONTH_8.encounter_datetime AS  MONTH_8DATE,\n" +
+				"             MONTH_8.value_numeric AS  MONTH_8DAYS,\n" +
+				"             MONTH_9.encounter_datetime AS  MONTH_9DATE,\n" +
+				"             MONTH_9.value_numeric AS  MONTH_9DAYS,\n" +
+				"             MONTH_10.encounter_datetime AS  MONTH_10DATE,\n" +
+				"             MONTH_10.value_numeric AS  MONTH_10DAYS,\n" +
+				"             MONTH_11.encounter_datetime AS  MONTH_11DATE,\n" +
+				"             MONTH_11.value_numeric AS  MONTH_11DAYS,\n" +
+				"             MONTH_12.encounter_datetime AS  MONTH_12DATE,\n" +
+				"             MONTH_12.value_numeric AS  MONTH_12DAYS,\n" +
+				"             T_OUT_DATE.value_datetime as Transfer_out_Date,\n" +
+				"             T_OUT_HF.value_text as Transfer_out_Facility,\n" +
+				"             T_OUT_DISTRICT.value_text as District,\n" +
+				"             T_OUT_TEL.value_text as TO_TEL,\n" +
+				"             PROGRAM.outcome as Outcome,\n" +
+				"             PROGRAM.outcome_date as Outcome_Date,\n" +
+				"\t\t\t DRTB.name AS diagnosed_with_DRTB,\n" +
+				"             DRTB_DATE.value_datetime AS date_diagnosed_with_DRTB,\n" +
+				"             STARTED_DRTB.value_coded as STARTED_ON_DR_TREATMENT,\n" +
+				"             STARTED_DRTB_DATE.value_datetime as DATE_STARTED_ON_DR_TREATMENT,\n" +
+				"             DRTB_no.value_text as DRTBNO\n" +
+				"             from (SELECT\t    e.encounter_id,\n" +
+				"\t\t\t    e.patient_id,\n" +
+				"\t\t\t    e.encounter_datetime\n" +
+				"\t\t\t  FROM   encounter e\n" +
+				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
+				"\t\t              WHERE e.encounter_datetime between '2020-04-01' and '2020-04-30') A\n" +
 				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o  INNER  JOIN concept_name cn\n" +
 				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id=165396\n" +
 				"                 and o.voided=0 group by encounter_id ) HIVSTATUS ON HIVSTATUS.encounter_id= A.encounter_id\n" +
@@ -315,112 +328,255 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=90211 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_HF on T_OUT_HF.encounter_id= A.encounter_id\n" +
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=165853 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DISTRICT on T_OUT_DISTRICT.encounter_id= A.encounter_id\n" +
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=159635 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_TEL on T_OUT_TEL.encounter_id= A.encounter_id\n" +
-				"             LEFT JOIN (SELECT patient_id, outcome.value_coded from encounter e2 INNER JOIN obs outcome on e2.encounter_id = outcome.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE outcome.concept_id= 99423 and outcome.voided=0)OUTCOME on OUTCOME.patient_id = A.patient_id\n" +
-				"             LEFT JOIN (SELECT patient_id, value_datetime from encounter e2 INNER JOIN obs outcomedate on e2.encounter_id = outcomedate.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE outcomedate.concept_id= 165872 and outcomedate.voided=0)OUTCOMEDATE on OUTCOMEDATE.patient_id = A.patient_id";
-		
+				"             INNER JOIN (SELECT patient_id,cn.name outcome, date_completed outcome_date from patient_program pp inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741'\n" +
+				"               LEFT JOIN concept_name cn ON pp.outcome_concept_id = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 where pp.date_enrolled between\n" +
+				"\t\t\t    '2020-04-01' and '2020-04-30' group by patient_id ) PROGRAM on PROGRAM.patient_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT o.encounter_id, cn.name FROM obs o INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 90216 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) DRTB ON DRTB.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.encounter_id,value_datetime FROM obs o  WHERE o.concept_id = 165840 AND o.voided = 0 GROUP BY o.encounter_id ) DRTB_DATE ON DRTB_DATE.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.encounter_id, o.value_coded FROM obs o  WHERE o.concept_id = 165842 AND o.voided = 0\n" +
+				"\t\t\t     GROUP BY o.encounter_id ) STARTED_DRTB ON STARTED_DRTB.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.encounter_id,value_datetime FROM obs o  WHERE o.concept_id = 165841 AND o.voided = 0 GROUP BY o.encounter_id ) STARTED_DRTB_DATE ON STARTED_DRTB_DATE.encounter_id = A.encounter_id\n" +
+				"             LEFT JOIN (SELECT o.encounter_id,value_text FROM obs o  WHERE o.concept_id = 165843 AND o.voided = 0 GROUP BY o.encounter_id ) DRTB_no ON DRTB_no.encounter_id = A.encounter_id\n";
 
-		
+
+
 		//Logger.getLogger(TBDatasetDefinition.class).info(summarySql);
 		SqlQueryBuilder q = new SqlQueryBuilder(summarySql);
+		SqlQueryBuilder encounterQuery = new SqlQueryBuilder(ecounterAndProgranQuery);
 
 		List<Object[]> results = evaluationService.evaluateToList(q, context);
-		
+		List<Object[]> results1 = evaluationService.evaluateToList(encounterQuery, context);
+
+		List<EncounterObject> encounterObjects = convert(results1);
 		PatientDataHelper pdh = new PatientDataHelper();
-				
+
 		for (Object[] r : results) {
 			DataSetRow row = new DataSetRow();
 
-			pdh.addCol(row, "DOA", r[0]);
-			pdh.addCol(row, "District No", r[1]);
-			pdh.addCol(row, "Unit_No", r[2]);
-			pdh.addCol(row, "NIN_no", r[3]);
-			pdh.addCol(row, "Family_name", r[4]);
-			pdh.addCol(row, "Given_name", r[5]);
-			pdh.addCol(row, "Next_of_Kin", r[6]);
-			pdh.addCol(row, "Next_of_kin_Contacts", r[7]);
-			pdh.addCol(row, "Sex", r[8]);
-			pdh.addCol(row, "Age", r[9]);
-			pdh.addCol(row, "Client_category", r[10]);
-			pdh.addCol(row, "Village", r[11]);
-			pdh.addCol(row, "Parish", r[12]);
-			pdh.addCol(row, "Sub county", r[13]);
-			pdh.addCol(row, "District", r[14]);
-			pdh.addCol(row, "Disease Classification", r[15]);
-			pdh.addCol(row, "1st line start date", r[16]);
-			pdh.addCol(row, "1st line drug", r[17]);
-			pdh.addCol(row, "patient type", r[18]);
-			pdh.addCol(row, "risk group", r[19]);
-			pdh.addCol(row, "smear date taken", r[20]);
-			pdh.addCol(row, "smear results", r[21]);
-			pdh.addCol(row, "GeneXpert date taken", r[22]);
-			pdh.addCol(row, "GeneXpert results", r[23]);
-			pdh.addCol(row, "Other test date taken", r[24]);
-			pdh.addCol(row, "Other test Results", r[25]);
-			pdh.addCol(row, "Month 2 results", r[26]);
-			pdh.addCol(row, "Month 2 date", r[27]);
-			pdh.addCol(row, "Month 5 results", r[28]);
-			pdh.addCol(row, "Month5date", r[29]);
-			pdh.addCol(row, "Month 6 results", r[30]);
-			pdh.addCol(row, "Month 6 date", r[31]);
-			pdh.addCol(row, "weight", r[32]);
-			pdh.addCol(row, "height", r[33]);
-			pdh.addCol(row, "muac", r[34]);
-			pdh.addCol(row, "muac code", r[35]);
-			pdh.addCol(row, "z score", r[36]);
-			pdh.addCol(row, "nutrition status", r[37]);
-			pdh.addCol(row, "nutrition support", r[38]);
-			pdh.addCol(row, "INR No", r[39]);
-			pdh.addCol(row, "hiv status", r[40]);
-			pdh.addCol(row, "hiv status date", r[41]);
-			pdh.addCol(row, "cpt date", r[42]);
-			pdh.addCol(row, "cpt status", r[43]);
-			pdh.addCol(row, "ART status", r[44]);
-			pdh.addCol(row, "ART start Date", r[45]);
-			pdh.addCol(row, "ART No", r[46]);
-			pdh.addCol(row, "Treatment Model", r[47]);
-			pdh.addCol(row, "Week 1 date", r[48]);
-			pdh.addCol(row, "Week 1 days", r[49]);
-			pdh.addCol(row, "Week 3 date", r[50]);
-			pdh.addCol(row, "Week 3 days", r[51]);
-			pdh.addCol(row, "Week 5 date", r[52]);
-			pdh.addCol(row, "Week 5 days", r[53]);
-			pdh.addCol(row, "Week 7 date", r[54]);
-			pdh.addCol(row, "Week 7 days", r[55]);
-			pdh.addCol(row, "Month 3 date", r[56]);
-			pdh.addCol(row, "Month 3 days", r[57]);
-			pdh.addCol(row, "Month 4 date", r[58]);
-			pdh.addCol(row, "Month 4 days", r[59]);
-			pdh.addCol(row, "Month 5 date", r[60]);
-			pdh.addCol(row, "Month 5 days", r[61]);
-			pdh.addCol(row, "Month 6 date", r[62]);
-			pdh.addCol(row, "Month 6 days", r[63]);
-			pdh.addCol(row, "Month 7 date", r[64]);
-			pdh.addCol(row, "Month 7 days", r[65]);
-			pdh.addCol(row, "Month 8 date", r[66]);
-			pdh.addCol(row, "Month 8 days", r[67]);
-			pdh.addCol(row, "Month 9 date", r[68]);
-			pdh.addCol(row, "Month 9 days", r[69]);
-			pdh.addCol(row, "Month 10 date", r[70]);
-			pdh.addCol(row, "Month 10 days", r[71]);
-			pdh.addCol(row, "Month 11 date", r[72]);
-			pdh.addCol(row, "Month 11 days", r[73]);
-			pdh.addCol(row, "Month 12 date", r[74]);
-			pdh.addCol(row, "Month 12 days", r[75]);
-			pdh.addCol(row, "Transfer out date", r[76]);
-			pdh.addCol(row, "Transfer out Facility", r[77]);
-			pdh.addCol(row, "Transfer out District", r[78]);
-			pdh.addCol(row, "Transfer out Tel", r[79]);
-//			pdh.addCol(row, "outcome results", r[80]);
-//			pdh.addCol(row, "outcome date", r[81]);
+			pdh.addCol(row, "patientid",r[0]);
+			pdh.addCol(row, "DOA", r[1]);
+			pdh.addCol(row, "District No", r[2]);
+			pdh.addCol(row, "Unit_No", r[3]);
+			pdh.addCol(row, "NIN_no", r[4]);
+			pdh.addCol(row, "Family_name", r[5]);
+			pdh.addCol(row, "Given_name", r[6]);
+			pdh.addCol(row, "Next_of_Kin", r[7]);
+			pdh.addCol(row, "Next_of_kin_Contacts", r[8]);
+			pdh.addCol(row, "Sex", r[9]);
+			pdh.addCol(row, "Age", r[10]);
+			pdh.addCol(row, "Client_category", r[11]);
+			pdh.addCol(row, "Village", r[12]);
+			pdh.addCol(row, "Parish", r[13]);
+			pdh.addCol(row, "Sub county", r[14]);
+			pdh.addCol(row, "District", r[15]);
+			pdh.addCol(row, "Disease Classification", r[16]);
+			pdh.addCol(row, "1st line start date", r[17]);
+			pdh.addCol(row, "1st line drug", r[18]);
+			pdh.addCol(row, "patient type", r[19]);
+			pdh.addCol(row, "risk group", r[20]);
+			pdh.addCol(row, "smear date taken", r[21]);
+			pdh.addCol(row, "smear results", r[22]);
+			pdh.addCol(row, "GeneXpert date taken", r[23]);
+			pdh.addCol(row, "GeneXpert results", r[24]);
+			pdh.addCol(row, "Other test date taken", r[25]);
+			pdh.addCol(row, "Other test Results", r[26]);
+			pdh.addCol(row, "Month 2 results", r[27]);
+			pdh.addCol(row, "Month 2 date", r[28]);
+			pdh.addCol(row, "Month 5 results", r[29]);
+			pdh.addCol(row, "Month5date", r[30]);
+			pdh.addCol(row, "Month 6 results", r[31]);
+			pdh.addCol(row, "Month 6 date", r[32]);
+			pdh.addCol(row, "weight", r[33]);
+			pdh.addCol(row, "height", r[34]);
+			pdh.addCol(row, "muac", r[35]);
+			pdh.addCol(row, "muac code", r[36]);
+			pdh.addCol(row, "z score", r[37]);
+			pdh.addCol(row, "nutrition status", r[38]);
+			pdh.addCol(row, "nutrition support", r[39]);
+			pdh.addCol(row, "INR No", r[40]);
 
+			if(encounterObjects !=null){
+			EncounterObject enc= encounterObjects.stream().filter(p->r[0].equals(p.var1)).findAny().orElse(null);
+			if(enc!=null) {
+				pdh.addCol(row, "hiv status", enc.var2);
+				pdh.addCol(row, "hiv status date", enc.var3);
+				pdh.addCol(row, "cpt date", enc.var4);
+				pdh.addCol(row, "cpt status", enc.var5);
+				pdh.addCol(row, "ART status", enc.var6);
+				pdh.addCol(row, "ART start Date", enc.var7);
+				pdh.addCol(row, "ART No", enc.var8);
+				pdh.addCol(row, "Treatment Model", enc.var9);
+				pdh.addCol(row, "Week 1 date",enc.var10);
+				pdh.addCol(row, "Week 1 days", enc.var11);
+				pdh.addCol(row, "Week 3 date", enc.var12);
+				pdh.addCol(row, "Week 3 days", enc.var13);
+				pdh.addCol(row, "Week 5 date", enc.var14);
+				pdh.addCol(row, "Week 5 days", enc.var15);
+				pdh.addCol(row, "Week 7 date", enc.var16);
+				pdh.addCol(row, "Week 7 days", enc.var17);
+				pdh.addCol(row, "Month 3 date", enc.var18);
+				pdh.addCol(row, "Month 3 days", enc.var19);
+				pdh.addCol(row, "Month 4 date", enc.var20);
+				pdh.addCol(row, "Month 4 days", enc.var21);
+				pdh.addCol(row, "Month 5 date", enc.var22);
+				pdh.addCol(row, "Month 5 days", enc.var23);
+				pdh.addCol(row, "Month 6 date", enc.var24);
+				pdh.addCol(row, "Month 6 days", enc.var25);
+				pdh.addCol(row, "Month 7 date", enc.var26);
+				pdh.addCol(row, "Month 7 days", enc.var27);
+				pdh.addCol(row, "Month 8 date", enc.var28);
+				pdh.addCol(row, "Month 8 days", enc.var29);
+				pdh.addCol(row, "Month 9 date", enc.var30);
+				pdh.addCol(row, "Month 9 days", enc.var31);
+				pdh.addCol(row, "Month 10 date", enc.var32);
+				pdh.addCol(row, "Month 10 days", enc.var33);
+				pdh.addCol(row, "Month 11 date", enc.var34);
+				pdh.addCol(row, "Month 11 days", enc.var35);
+				pdh.addCol(row, "Month 12 date", enc.var36);
+				pdh.addCol(row, "Month 12 days", enc.var37);
+				pdh.addCol(row, "Transfer out date", enc.var38);
+				pdh.addCol(row, "Transfer out Facility", enc.var39);
+				pdh.addCol(row, "Transfer out District", enc.var40);
+				pdh.addCol(row, "Transfer out Tel", enc.var41);
+				pdh.addCol(row, "outcome results", enc.var42);
+				pdh.addCol(row, "outcome date", enc.var43);
+				pdh.addCol(row, "DR diagnosed", enc.var44);
+				pdh.addCol(row, "DR diagnosed date", enc.var45);
+			if(enc.var46 !=null &&Integer.valueOf(String.valueOf(enc.var46))==1){
+				pdh.addCol(row, "startedOn2ndLine", 'Y');
+			}else{
+				pdh.addCol(row, "startedOn2ndLine", "");
+			}
+				pdh.addCol(row, "startedOn2ndLine date", enc.var47);
+				pdh.addCol(row, "DRTBNO", enc.var48);
+
+
+			}
+			}
 			dataSet.addRow(row);
 		}
+
+
 		return dataSet;
 		
+	}
+
+	public List<EncounterObject> convert(List<Object[]> results){
+		List<EncounterObject> list = new ArrayList<>();
+		for (Object[] r:results) {
+			EncounterObject encounterObject = new EncounterObject(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10],r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],
+					r[19],r[20],r[21],r[22],r[23],r[24],r[25],r[26],r[27],r[28],
+					r[29],r[30],r[31],r[32],r[33],r[34],r[35],r[36],r[37],r[38],
+					r[39],r[40],r[41],r[42],r[43],r[44],r[45],r[46],r[47]);
+		list.add(encounterObject);
+		}
+		return list;
+	}
+
+	class EncounterObject{
+		Object var1;
+		Object var2;
+		Object var3;
+		Object var4;
+		Object var5;
+		Object var6;
+		Object var7;
+		Object var8;
+		Object var9;
+		Object var10;
+		Object var11;
+		Object var12;
+		Object var13;
+		Object var14;
+		Object var15;
+		Object var16;
+		Object var17;
+		Object var18;
+		Object var19;
+		Object var20;
+		Object var21;
+		Object var22;
+		Object var23;
+		Object var24;
+		Object var25;
+		Object var26;
+		Object var27;
+		Object var28;
+		Object var29;
+		Object var30;
+		Object var31;
+		Object var32;
+		Object var33;
+		Object var34;
+		Object var35;
+		Object var36;
+		Object var37;
+		Object var38;
+		Object var39;
+		Object var40;
+		Object var41;
+		Object var42;
+		Object var43;
+		Object var44;
+		Object var45;
+		Object var46;
+		Object var47;
+		Object var48;
+
+		public EncounterObject() {
+		}
+
+		public EncounterObject(Object var1, Object var2, Object var3, Object var4, Object var5, Object var6, Object var7, Object var8, Object var9, Object var10, Object var11, Object var12, Object var13, Object var14, Object var15, Object var16, Object var17, Object var18, Object var19, Object var20, Object var21, Object var22, Object var23, Object var24, Object var25, Object var26, Object var27, Object var28, Object var29, Object var30, Object var31, Object var32, Object var33, Object var34, Object var35, Object var36, Object var37, Object var38, Object var39, Object var40, Object var41, Object var42, Object var43, Object var44, Object var45, Object var46, Object var47, Object var48) {
+			this.var1 = var1;
+			this.var2 = var2;
+			this.var3 = var3;
+			this.var4 = var4;
+			this.var5 = var5;
+			this.var6 = var6;
+			this.var7 = var7;
+			this.var8 = var8;
+			this.var9 = var9;
+			this.var10 = var10;
+			this.var11 = var11;
+			this.var12 = var12;
+			this.var13 = var13;
+			this.var14 = var14;
+			this.var15 = var15;
+			this.var16 = var16;
+			this.var17 = var17;
+			this.var18 = var18;
+			this.var19 = var19;
+			this.var20 = var20;
+			this.var21 = var21;
+			this.var22 = var22;
+			this.var23 = var23;
+			this.var24 = var24;
+			this.var25 = var25;
+			this.var26 = var26;
+			this.var27 = var27;
+			this.var28 = var28;
+			this.var29 = var29;
+			this.var30 = var30;
+			this.var31 = var31;
+			this.var32 = var32;
+			this.var33 = var33;
+			this.var34 = var34;
+			this.var35 = var35;
+			this.var36 = var36;
+			this.var37 = var37;
+			this.var38 = var38;
+			this.var39 = var39;
+			this.var40 = var40;
+			this.var41 = var41;
+			this.var42 = var42;
+			this.var43 = var43;
+			this.var44 = var44;
+			this.var45 = var45;
+			this.var46 = var46;
+			this.var47 = var47;
+			this.var48 = var48;
+		}
 	}
 	
 }
