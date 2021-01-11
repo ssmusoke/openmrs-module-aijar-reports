@@ -23,8 +23,6 @@ import java.util.List;
 
 @Handler(supports = {TB009DatasetDefinition.class })
 public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
-	
-	private static final Integer TB_TREATMENT_PERIOD = -6;
 
 	@Autowired
 	private EvaluationService evaluationService;
@@ -34,10 +32,10 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 		TB009DatasetDefinition definition = (TB009DatasetDefinition) dataSetDefinition;
 				
-		String date = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
-		
-		LocalDate workingDate = StubDate.dateOf(date);
-		LocalDate lastDateOfWorkingMonth = workingDate.dayOfMonth().withMaximumValue();		
+		String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+		String endDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+
+
 		
 		context = ObjectUtil.nvl(context, new EvaluationContext());	
 
@@ -86,7 +84,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"\t\t\t    e.encounter_datetime\n" +
 				"\t\t\t  FROM   encounter e\n" +
 				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
-				"\t\t              WHERE e.encounter_datetime between '2020-04-01' and '2020-04-30') A\n" +
+	String.format(			"\t\t              WHERE e.encounter_datetime between '%s' and '%s') A\n",startDate,endDate) +
 				"INNER JOIN person P\n" +
 				"\t\t\t   ON (P.person_id = A.patient_id)\n" +
 				"\t\t\t LEFT JOIN person_name PN ON (P.person_id = PN.person_id)\n" +
@@ -143,18 +141,18 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
 				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
 				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
-				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 2 MONTH)\n" +
-				"                    AND DATE_ADD('2020-04-30',INTERVAL 2 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_2_TEST ON MONTH_2_TEST.person_id = A.patient_id\n" +
+	String.format(			"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('%s',INTERVAL 2 MONTH)\n",startDate) +
+	String.format(			"                    AND DATE_ADD('%s',INTERVAL 2 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_2_TEST ON MONTH_2_TEST.person_id = A.patient_id\n",endDate) +
 				"             LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
 				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
 				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
-				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 MONTH)\n" +
-				"                    AND DATE_ADD('2020-04-30',INTERVAL 5 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_5_TEST ON MONTH_5_TEST.person_id = A.patient_id\n" +
+	String.format(			"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('%s',INTERVAL 5 MONTH)\n",startDate) +
+	String.format(			"                    AND DATE_ADD('%s',INTERVAL 5 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_5_TEST ON MONTH_5_TEST.person_id = A.patient_id\n",endDate) +
 				"\t\t\t LEFT JOIN (SELECT o.person_id,date_taken.value_datetime,cn.name value_coded from obs o join obs test on o.encounter_id = test.encounter_id  INNER JOIN obs date_taken on o.obs_group_id= date_taken.obs_group_id\n" +
 				"                 join encounter e2 on o.encounter_id = e2.encounter_id INNER JOIN concept_name cn ON test.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED'\n" +
 				"                      AND cn.voided = 0 WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 99292  and o.voided=0)\n" +
-				"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 6 MONTH)\n" +
-				"                    AND DATE_ADD('2020-04-30',INTERVAL 6 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_6_TEST ON MONTH_6_TEST.person_id = A.patient_id\n" +
+	String.format(			"                    and date_taken.concept_id= 164431 and date_taken.voided=0 and test.concept_id=90225 and test.voided=0 AND e2.encounter_datetime between DATE_ADD('%s',INTERVAL 6 MONTH)\n",startDate) +
+	String.format(			"                    AND DATE_ADD('%s',INTERVAL 6 MONTH) group by o.encounter_id order by encounter_datetime DESC) MONTH_6_TEST ON MONTH_6_TEST.person_id = A.patient_id\n",endDate) +
 				"             LEFT JOIN (SELECT o.person_id,value_numeric weight, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
 				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=5089\n" +
 				"                 group by o.person_id order by encounter_datetime ASC  ) WEIGHT ON WEIGHT.person_id = A.patient_id\n" +
@@ -237,7 +235,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"\t\t\t    e.encounter_datetime\n" +
 				"\t\t\t  FROM   encounter e\n" +
 				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
-				"\t\t              WHERE e.encounter_datetime between '2020-04-01' and '2020-04-30') A\n" +
+		String.format(			"\t\t              WHERE e.encounter_datetime between '%s' and '%s') A\n",startDate,endDate)+
 				"             LEFT JOIN (SELECT o.person_id,o.encounter_id,cn.name status from obs o  INNER  JOIN concept_name cn\n" +
 				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id=165396\n" +
 				"                 and o.voided=0 group by encounter_id ) HIVSTATUS ON HIVSTATUS.encounter_id= A.encounter_id\n" +
@@ -330,7 +328,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=159635 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_TEL on T_OUT_TEL.encounter_id= A.encounter_id\n" +
 				"             INNER JOIN (SELECT patient_id,cn.name outcome, date_completed outcome_date from patient_program pp inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741'\n" +
 				"               LEFT JOIN concept_name cn ON pp.outcome_concept_id = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 where pp.date_enrolled between\n" +
-				"\t\t\t    '2020-04-01' and '2020-04-30' group by patient_id ) PROGRAM on PROGRAM.patient_id = A.patient_id\n" +
+		String.format(		"\t\t\t    '%s' and '%s' group by patient_id ) PROGRAM on PROGRAM.patient_id = A.patient_id\n",startDate,endDate) +
 				"             LEFT JOIN (SELECT o.encounter_id, cn.name FROM obs o INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 90216 AND o.voided = 0\n" +
 				"\t\t\t     GROUP BY o.encounter_id ) DRTB ON DRTB.encounter_id = A.encounter_id\n" +
 				"             LEFT JOIN (SELECT o.encounter_id,value_datetime FROM obs o  WHERE o.concept_id = 165840 AND o.voided = 0 GROUP BY o.encounter_id ) DRTB_DATE ON DRTB_DATE.encounter_id = A.encounter_id\n" +
