@@ -33,7 +33,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		TB009DatasetDefinition definition = (TB009DatasetDefinition) dataSetDefinition;
 				
 		String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
-		String endDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+		String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
 
 
 		
@@ -253,75 +253,89 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"                        ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id=165869\n" +
 				"                 and o.voided=0 group by encounter_id ) TREATMENTMODEL ON TREATMENTMODEL.encounter_id= A.encounter_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 1 WEEK)\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 2 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK1_2 ON WEEK1_2.person_id = A.patient_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 1 WEEK)\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 2 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK1_2 ON WEEK1_2.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 3 WEEK)\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 4 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK3_4 ON WEEK3_4.person_id = A.patient_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 3 WEEK)\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 4 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK3_4 ON WEEK3_4.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 WEEK)\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 6 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK5_6 ON WEEK5_6.person_id = A.patient_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 5 WEEK)\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 6 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK5_6 ON WEEK5_6.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 7 WEEK)\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 8 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK7_8 ON WEEK7_8.person_id = A.patient_id\n" +
+				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 7 WEEK)\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 8 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK7_8 ON WEEK7_8.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 3 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 3 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_3 ON MONTH_3.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 3 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 3 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_3 ON MONTH_3.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 4 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 4 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_4 ON MONTH_4.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 4 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 4 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_4 ON MONTH_4.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 5 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 5 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_5 ON MONTH_5.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 5 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 5 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_5 ON MONTH_5.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 6 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 6 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_6 ON MONTH_6.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 6 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 6 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_6 ON MONTH_6.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 7 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 7 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_7 ON MONTH_7.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 7 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 7 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_7 ON MONTH_7.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 8 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 8 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_8 ON MONTH_8.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 8 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 8 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_8 ON MONTH_8.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 9 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 9 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_9 ON MONTH_9.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 9 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 9 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_9 ON MONTH_9.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 10 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 10 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_10 ON MONTH_10.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 10 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 10 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_10 ON MONTH_10.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 11 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 11 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_11 ON MONTH_11.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 11 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 11 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_11 ON MONTH_11.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
-				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732'\n" +
-				"                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id\n" +
-				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD('2020-04-01',INTERVAL 12 MONTH )\n" +
-				"                    AND DATE_ADD('2020-04-01',INTERVAL 12 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_12 ON MONTH_12.person_id = A.patient_id\n" +
+				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
+				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
+				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
+				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 12 MONTH )\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 12 MONTH) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_12 ON MONTH_12.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT person_id, value_datetime,encounter_id from obs where concept_id=165854 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DATE on T_OUT_DATE.encounter_id= A.encounter_id\n" +
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=90211 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_HF on T_OUT_HF.encounter_id= A.encounter_id\n" +
 				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=165853 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DISTRICT on T_OUT_DISTRICT.encounter_id= A.encounter_id\n" +
