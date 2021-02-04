@@ -2,16 +2,19 @@ package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.RangeComparator;
+import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
-import org.openmrs.module.ugandaemrreports.common.Enums;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.TBMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.Date;
+
+import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
 
 /**
  */
@@ -23,6 +26,9 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     @Autowired
     private HIVMetadata hivMetadata;
+
+    @Autowired
+    private CommonDimensionLibrary commonDimensionLibrary;
 
     @Autowired
     private TBMetadata tbMetadata;
@@ -43,6 +49,87 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
     }
 
     public CohortDefinition getNewAndRelapsedPatientsDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBFormEncounterType(),tbMetadata.getNewAndRelapsedTBPatients(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType(), tbMetadata.getRelapsedPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+
+    public CohortDefinition getEnrolledOnDSTBDuringPeriod(){
+        ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
+        cd.setName("Enrolled in program During Period");
+        cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
+        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
+
+    }
+
+    public CohortDefinition getNewPatientsDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getRelapsedPatientsDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getRelapsedPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTreatedAfterLTFPPatientsDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentAfterLTFPPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTreatedAfterFailurePatientsDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentAfterFailurePatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTreatmentHistoryUnknownPatientsDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentHistoryUnknownPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsStartedOnTreatmentDuringperiod(){
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(tbMetadata.getDateStartedTBTreatment(),tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsWhoseHIVStatusIsNewlyDocumented(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getHIVStatusCategory(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewlyPositiveHIVStatus(),tbMetadata.getNegativeHIVStatus(),tbMetadata.getUnknownHIVStatus()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsWhoseHIVStatusIsKnownPositive(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getHIVStatusCategory(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getKnownPositiveHIVStatus()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsWhoseHIVStatusIsNewlyPositive(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getHIVStatusCategory(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewlyPositiveHIVStatus()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsStartedOnARTOnTBEnrollment(){
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("ab505422-26d9-41f1-a079-c3d222000440"),tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsOnCPTOnTBEnrollment(){
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("481c5fdb-4719-4be3-84c0-a64172a426c7"),tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
+    public CohortDefinition getPatientsWhoAreAlreadyOnART(){
+        return df.getPatientsWithCodedObsDuringPeriod(getConcept("dca25616-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("dca2817c-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsInitiatedOnART(){
+        return df.getPatientsWithCodedObsDuringPeriod(getConcept("dca25616-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("dca2670e-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsOnFacilityDOTSTreatmentModel(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTreatmentModel(),null,Arrays.asList(tbMetadata.getFacilityDOTsTreatmentModel()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsOnCommunityDOTSTreatmentModel(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTreatmentModel(),null,Arrays.asList(tbMetadata.getDigitalCommunityDOTsTreatmentModel(),tbMetadata.getNonDigitalCommunityDOTsTreatmentModel()), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
