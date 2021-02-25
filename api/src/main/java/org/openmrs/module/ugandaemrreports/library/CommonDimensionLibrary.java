@@ -739,7 +739,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         CohortDefinition treatedAfterLTFP = tbCohortDefinitionLibrary.getTreatedAfterLTFPPatientsDuringPeriod();
         CohortDefinition treatedAfterFailure = tbCohortDefinitionLibrary.getTreatedAfterFailurePatientsDuringPeriod();
         CohortDefinition treatementHistoryUnknown = tbCohortDefinitionLibrary.getTreatmentHistoryUnknownPatientsDuringPeriod();
-
+        CohortDefinition referredFromCommunity = tbCohortDefinitionLibrary.getPatientsReferredFromComunity();
         patientTypeDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
         patientTypeDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
 
@@ -748,6 +748,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         patientTypeDimension.addCohortDefinition("treatedAfterLTFP", Mapped.mapStraightThrough(treatedAfterLTFP));
         patientTypeDimension.addCohortDefinition("treatedAfterFailure", Mapped.mapStraightThrough(treatedAfterFailure));
         patientTypeDimension.addCohortDefinition("treatementHistoryUnknown", Mapped.mapStraightThrough(treatementHistoryUnknown));
+        patientTypeDimension.addCohortDefinition("referred", Mapped.mapStraightThrough(referredFromCommunity));
 
         return patientTypeDimension;
     }

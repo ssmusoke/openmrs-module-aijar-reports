@@ -126,6 +126,14 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
         return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTreatmentModel(),null,Arrays.asList(tbMetadata.getDigitalCommunityDOTsTreatmentModel(),tbMetadata.getNonDigitalCommunityDOTsTreatmentModel()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getPatientsWithTreatmentSupporters(){
+        return df.getPatientsWithCodedObsDuringPeriod(getConcept("805a9d40-8922-4fb0-8208-7c0fdf57936a"),tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsReferredFromComunity(){
+        return df.getPatientsWithCodedObsDuringPeriod(getConcept("67ea4375-0f4f-4e67-b8b0-403942753a4d"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1ca0db4a-c5c6-48ed-9e17-84905f4487eb")), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
 
 
 
