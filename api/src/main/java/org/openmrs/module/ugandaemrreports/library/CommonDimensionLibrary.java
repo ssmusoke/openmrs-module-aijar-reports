@@ -31,6 +31,9 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
+    TBCohortDefinitionLibrary tbCohortDefinitionLibrary;
+
+    @Autowired
     private DataFactory df;
     @Autowired
     private HIVMetadata hivMetadata;
@@ -726,5 +729,26 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         ageGenderDimension.addCohortDefinition("female",Mapped.mapStraightThrough(females));
         return ageGenderDimension;
 
+    }
+
+    public CohortDefinitionDimension getPatientTypeDimension(){
+        CohortDefinitionDimension patientTypeDimension= new CohortDefinitionDimension();
+
+        CohortDefinition newPatients = tbCohortDefinitionLibrary.getNewPatientsDuringPeriod();
+        CohortDefinition relapsedPatients = tbCohortDefinitionLibrary.getRelapsedPatientsDuringPeriod();
+        CohortDefinition treatedAfterLTFP = tbCohortDefinitionLibrary.getTreatedAfterLTFPPatientsDuringPeriod();
+        CohortDefinition treatedAfterFailure = tbCohortDefinitionLibrary.getTreatedAfterFailurePatientsDuringPeriod();
+        CohortDefinition treatementHistoryUnknown = tbCohortDefinitionLibrary.getTreatmentHistoryUnknownPatientsDuringPeriod();
+
+        patientTypeDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        patientTypeDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+
+        patientTypeDimension.addCohortDefinition("newPatients", Mapped.mapStraightThrough(newPatients));
+        patientTypeDimension.addCohortDefinition("relapsedPatients", Mapped.mapStraightThrough(relapsedPatients));
+        patientTypeDimension.addCohortDefinition("treatedAfterLTFP", Mapped.mapStraightThrough(treatedAfterLTFP));
+        patientTypeDimension.addCohortDefinition("treatedAfterFailure", Mapped.mapStraightThrough(treatedAfterFailure));
+        patientTypeDimension.addCohortDefinition("treatementHistoryUnknown", Mapped.mapStraightThrough(treatementHistoryUnknown));
+
+        return patientTypeDimension;
     }
 }

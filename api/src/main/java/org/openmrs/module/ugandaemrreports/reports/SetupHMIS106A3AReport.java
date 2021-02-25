@@ -3,7 +3,6 @@ package org.openmrs.module.ugandaemrreports.reports;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -12,9 +11,7 @@ import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimensio
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.TBMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +31,13 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
     private DataFactory df;
 
     @Autowired
-    ARTClinicCohortDefinitionLibrary hivCohorts;
+    SetupMERTxNew2019Report setupTxNewReport;
 
     @Autowired
-    private TBCohortDefinitionLibrary tbCohortDefinitionLibrary;
+    TBCohortDefinitionLibrary tbCohortDefinitionLibrary;
 
     @Autowired
-    private CommonDimensionLibrary commonDimensionLibrary;
+    CommonDimensionLibrary commonDimensionLibrary;
 
     @Autowired
     private TBMetadata tbMetadata;
@@ -112,19 +109,34 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
-
+        CohortIndicatorDataSetDefinition dsd1 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd2 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd3 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd4 = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("A1", Mapped.mapStraightThrough(dsd));
-        rd.addDataSetDefinition("A2", Mapped.mapStraightThrough(dsd));
-        rd.addDataSetDefinition("B", Mapped.mapStraightThrough(dsd));
-        rd.addDataSetDefinition("C", Mapped.mapStraightThrough(dsd));
+        dsd1.setParameters(getParameters());
+        dsd2.setParameters(getParameters());
+        dsd3.setParameters(getParameters());
+        dsd4.setParameters(getParameters());
 
-        CohortDefinitionDimension finerAgeDisaggregations = commonDimensionLibrary.getFinerAgeDisaggregations();
-        dsd.addDimension("age", Mapped.mapStraightThrough(finerAgeDisaggregations));
 
-        CohortDefinitionDimension patientTypeDimensions = getPatientTypeDimension();
+        CohortDefinitionDimension patientTypeDimensions = commonDimensionLibrary.getPatientTypeDimension();
+
+
+        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getTxCurrentAgeGenderGroup();
+        dsd2.addDimension("age", Mapped.mapStraightThrough(ageDimension));
+        dsd3.addDimension("age", Mapped.mapStraightThrough(ageDimension));
+
+
+
         dsd.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
+        dsd1.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
 
+        rd.addDataSetDefinition("A1", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("A2", Mapped.mapStraightThrough(dsd1));
+        rd.addDataSetDefinition("B", Mapped.mapStraightThrough(dsd2));
+        rd.addDataSetDefinition("C", Mapped.mapStraightThrough(dsd3));
+        rd.addDataSetDefinition("D", Mapped.mapStraightThrough(dsd4));
 
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
@@ -133,7 +145,7 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
         CohortDefinition below15Years = cohortDefinitionLibrary.MoHChildren();
 
-        CohortDefinition registered = tbCohortDefinitionLibrary.getNewPatientsDuringPeriod();
+        CohortDefinition registered = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod();
         CohortDefinition startedOnTBTreatmentDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnTreatmentDuringperiod();
 
         CohortDefinition bacteriologicallyConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -149,8 +161,18 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition EPTBConfirmedAndRegistered = df.getPatientsInAll(registered,EPTBConfirmed);
         CohortDefinition EPTBConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,EPTBConfirmed);
 
+        CohortDefinition newAndRelapsedPatients = tbCohortDefinitionLibrary.getNewAndRelapsedPatientsDuringPeriod();
+        CohortDefinition newAndRelapsedRegisteredClients = df.getPatientsInAll(newAndRelapsedPatients,registered);
 
+        CohortDefinition HIVStatusNewlyDocumented = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyDocumented();
+        CohortDefinition newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented= df.getPatientsInAll(newAndRelapsedPatients,HIVStatusNewlyDocumented);
 
+        CohortDefinition newlyDiagnosedHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyPositive();
+        CohortDefinition knownHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsKnownPositive();
+        CohortDefinition newAndRelapsedPatientsWhoHaveKnownHIVPositive = df.getPatientsInAll(knownHIVPositive,newAndRelapsedPatients);
+
+        CohortDefinition initiatedOnCPTDuringPeriod = tbCohortDefinitionLibrary.getPatientsOnCPTOnTBEnrollment();
+        CohortDefinition initiatedOnARTDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnARTOnTBEnrollment();
 
         CohortDefinition patientsWhoAreHealthWorkers = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("5619AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition patientsWhoAreTBContacts = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("b5171d08-77bf-40a8-a864-51caa6cd2480")), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -164,7 +186,7 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsWhoAreMentallyIll = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("134337AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
 
 
-//        addAgeGender(dsd,"A","all registered",males);
+
             add1AIndicators(dsd,"a","bacteria and registered ",bacteriologicallyConfirmedAndRegistered);
             add1AIndicators(dsd,"b","bacteria and on treatment",bacteriologicallyConfirmedAndStartedOnTratment);
             add1AIndicators(dsd,"c","clinicallyConfirmedAndRegistered",clinicallyConfirmedAndRegistered);
@@ -172,40 +194,31 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
             add1AIndicators(dsd,"e","EPTBConfirmedAndRegistered",EPTBConfirmedAndRegistered);
             add1AIndicators(dsd,"f","EPTBConfirmedAndStartedOnTratment",EPTBConfirmedAndStartedOnTratment);
 
-//            add1AIndicators(dsd,"7","treatementHistoryUnknown",null);
+            add1AIndicators(dsd1,"g","bacteria and registered children",df.getPatientsInAll(bacteriologicallyConfirmedAndRegistered,below15Years));
+            add1AIndicators(dsd1,"h","bacteria and on treatment children",df.getPatientsInAll(bacteriologicallyConfirmedAndStartedOnTratment,below15Years));
+            add1AIndicators(dsd1,"i","clinicallyConfirmedAndRegistered children",df.getPatientsInAll(clinicallyConfirmedAndRegistered,below15Years));
+            add1AIndicators(dsd1,"j","clinicallyConfirmedAndStartedOnTratment children",df.getPatientsInAll(clinicallyConfirmedAndStartedOnTratment,below15Years));
+            add1AIndicators(dsd1,"k","EPTBConfirmedAndRegistered children",df.getPatientsInAll(EPTBConfirmedAndRegistered,below15Years));
+            add1AIndicators(dsd1,"l","EPTBConfirmedAndStartedOnTratment children",df.getPatientsInAll(EPTBConfirmedAndStartedOnTratment,below15Years));
 
 
+            addGender(dsd2,"n","new relapsed and enrolled females",newAndRelapsedRegisteredClients);
+            addGender(dsd2,"m","new relapsed and enrolled males ",newAndRelapsedRegisteredClients);
 
+            splitGenderKeyAssigning(dsd3,"a","Total tested for HIV and with documented HIV Status ",newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented);
+            splitGenderKeyAssigning(dsd3,"b","newly Diagnosed HIV Positive ",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented,newlyDiagnosedHIVPositive));
+            splitGenderKeyAssigning(dsd3,"c","initiated On CPT During Period",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented,newlyDiagnosedHIVPositive,initiatedOnCPTDuringPeriod));
+            splitGenderKeyAssigning(dsd3,"d","initiated On ART During Period",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented,newlyDiagnosedHIVPositive,initiatedOnARTDuringPeriod));
+            splitGenderKeyAssigning(dsd3,"e","total known HIV+",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveKnownHIVPositive));
+            splitGenderKeyAssigning(dsd3,"f","total known HIV+ on CPT",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveKnownHIVPositive,tbCohortDefinitionLibrary.getPatientsOnCPT()));
+            splitGenderKeyAssigning(dsd3,"g","total known HIV+ on ART",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveKnownHIVPositive,tbCohortDefinitionLibrary.getPatientsWhoAreAlreadyOnART()));
+
+            addIndicator(dsd4,"FDOT","FDOT",tbCohortDefinitionLibrary.getPatientsOnFacilityDOTSTreatmentModel(),"");
+            addIndicator(dsd4,"CDOT","CDOT",tbCohortDefinitionLibrary.getPatientsOnCommunityDOTSTreatmentModel(),"");
         return rd;
     }
 
-    private void addAgeGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, key + "a", label + " (Below 1 Males)", cohortDefinition, "age=below1male");
-        addIndicator(dsd, key + "b", label + " (Below 1 Females)", cohortDefinition, "age=below1female");
-        addIndicator(dsd, key + "c", label + " (Between 1 and 1 Males)", cohortDefinition, "age=between1and4male");
-        addIndicator(dsd, key + "d", label + " (Between 1 and 4 Females)", cohortDefinition, "age=between1and4female");
-        addIndicator(dsd, key + "e", label + " (Between 5 and 9 Males)", cohortDefinition, "age=between5and9male");
-        addIndicator(dsd, key + "f", label + " (Between 5 and 9 Females)", cohortDefinition, "age=between5and9female");
-        addIndicator(dsd, key + "g", label + " (Between 10 and 14 Males)", cohortDefinition, "age=between10and14male");
-        addIndicator(dsd, key + "h", label + " (Between 10 and 14 Females)", cohortDefinition, "age=between10and14female");
-        addIndicator(dsd, key + "i", label + " (Between 15 and 19 Males)", cohortDefinition, "age=between15and19male");
-        addIndicator(dsd, key + "j", label + " (Between 15 and 19 Females)", cohortDefinition, "age=between15and19female");
-        addIndicator(dsd, key + "k", label + " (Between 20 and 24 Males)", cohortDefinition, "age=between20and24male");
-        addIndicator(dsd, key + "l", label + " (Between 20 and 24 Females)", cohortDefinition, "age=between20and24female");
-        addIndicator(dsd, key + "m", label + " (Between 25 and 29 Males)", cohortDefinition, "age=between25and29male");
-        addIndicator(dsd, key + "n", label + " (Between 25 and 29 Females)", cohortDefinition, "age=between25and29female");
-        addIndicator(dsd, key + "o", label + " (Between 30 and 34 Males)", cohortDefinition, "age=between30and34male");
-        addIndicator(dsd, key + "p", label + " (Between 30 and 34 Females)", cohortDefinition, "age=between30and34female");
-        addIndicator(dsd, key + "q", label + " (Between 35 and 39 Males)", cohortDefinition, "age=between35and39male");
-        addIndicator(dsd, key + "r", label + " (Between 35 and 39 Females)", cohortDefinition, "age=between35and39female");
-        addIndicator(dsd, key + "s", label + " (Between 40 and 44 Males)", cohortDefinition, "age=between40and44male");
-        addIndicator(dsd, key + "t", label + " (Between 40 and 44 Females)", cohortDefinition, "age=between40and44female");
-        addIndicator(dsd, key + "u", label + " (Between 45 and 49 Males)", cohortDefinition, "age=between45and49male");
-        addIndicator(dsd, key + "v", label + " (Between 45 and 49 Females)", cohortDefinition, "age=between45and49female");
-        addIndicator(dsd, key + "w", label + " (Above 50 Males)", cohortDefinition, "age=above50male");
-        addIndicator(dsd, key + "x", label + " (Above 50 Females)", cohortDefinition, "age=above50female");
-        addIndicator(dsd, key + "y", label + " Total", cohortDefinition, "");
-    }
+
 
     public void add1AIndicators(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         addIndicator(dsd, "1"+key , label + " new  ", cohortDefinition, "type=newPatients");
@@ -213,6 +226,7 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "3"+key , label + " treatedAfterLTFP", cohortDefinition, "type=treatedAfterLTFP");
         addIndicator(dsd, "4"+key , label + " treatedAfterFailure ", cohortDefinition, "type=treatedAfterFailure");
         addIndicator(dsd, "5"+key , label + " treatementHistoryUnknown", cohortDefinition, "type=treatementHistoryUnknown");
+        addIndicator(dsd, "6"+key , label + " overall", cohortDefinition, "");
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
@@ -224,32 +238,76 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
-    public CohortDefinitionDimension getPatientTypeDimension(){
-        CohortDefinition newPatients = tbCohortDefinitionLibrary.getNewPatientsDuringPeriod();
-        CohortDefinition relapsedPatients = tbCohortDefinitionLibrary.getRelapsedPatientsDuringPeriod();
-        CohortDefinition treatedAfterLTFP = tbCohortDefinitionLibrary.getTreatedAfterLTFPPatientsDuringPeriod();
-        CohortDefinition treatedAfterFailure = tbCohortDefinitionLibrary.getTreatedAfterFailurePatientsDuringPeriod();
-        CohortDefinition treatementHistoryUnknown = tbCohortDefinitionLibrary.getTreatmentHistoryUnknownPatientsDuringPeriod();
 
-        CohortDefinitionDimension patientTypeDimension= new CohortDefinitionDimension();
-        patientTypeDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
-        patientTypeDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
 
-        patientTypeDimension.addCohortDefinition("newPatients", Mapped.mapStraightThrough(newPatients));
-        patientTypeDimension.addCohortDefinition("relapsedPatients", Mapped.mapStraightThrough(relapsedPatients));
-        patientTypeDimension.addCohortDefinition("treatedAfterLTFP", Mapped.mapStraightThrough(treatedAfterLTFP));
-        patientTypeDimension.addCohortDefinition("treatedAfterFailure", Mapped.mapStraightThrough(treatedAfterFailure));
-        patientTypeDimension.addCohortDefinition("treatementHistoryUnknown", Mapped.mapStraightThrough(treatementHistoryUnknown));
-        patientTypeDimension.addCohortDefinition("treatementHistoryUnknown", Mapped.mapStraightThrough(treatementHistoryUnknown));
-
-        return patientTypeDimension;
+    public void addGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
+        if (key == "n") {
+            addIndicator(dsd, "2n", label, cohortDefinition, "age=below1female");
+            addIndicator(dsd, "3n", label, cohortDefinition, "age=between1and4female");
+            addIndicator(dsd, "4n", label, cohortDefinition, "age=between5and9female");
+            addIndicator(dsd, "5n", label, cohortDefinition, "age=between10and14female");
+            addIndicator(dsd, "6n", label, cohortDefinition, "age=between15and19female");
+            addIndicator(dsd, "7n", label, cohortDefinition, "age=between20and24female");
+            addIndicator(dsd, "8n", label, cohortDefinition, "age=between25and29female");
+            addIndicator(dsd, "9n", label, cohortDefinition, "age=between30and34female");
+            addIndicator(dsd, "10n", label, cohortDefinition, "age=between35and39female");
+            addIndicator(dsd, "11n", label, cohortDefinition, "age=between40and44female");
+            addIndicator(dsd, "12n", label, cohortDefinition, "age=between45and49female");
+            addIndicator(dsd, "13n", label, cohortDefinition, "age=above50female");
+        } else if (key == "m") {
+            addIndicator(dsd, "2m", label, cohortDefinition, "age=below1male");
+            addIndicator(dsd, "3m", label, cohortDefinition, "age=between1and4male");
+            addIndicator(dsd, "4m", label, cohortDefinition, "age=between5and9male");
+            addIndicator(dsd, "5m", label, cohortDefinition, "age=between10and14male");
+            addIndicator(dsd, "6m", label, cohortDefinition, "age=between15and19male");
+            addIndicator(dsd, "7m", label, cohortDefinition, "age=between20and24male");
+            addIndicator(dsd, "8m", label, cohortDefinition, "age=between25and29male");
+            addIndicator(dsd, "9m", label, cohortDefinition, "age=between30and34male");
+            addIndicator(dsd, "10m", label, cohortDefinition, "age=between35and39male");
+            addIndicator(dsd, "11m", label, cohortDefinition, "age=between40and44male");
+            addIndicator(dsd, "12m", label, cohortDefinition, "age=between45and49male");
+            addIndicator(dsd, "13m", label, cohortDefinition, "age=above50male");
+        }
     }
 
+    public void addOtherDimensionWithKey(CohortIndicatorDataSetDefinition dsd,String dimensionKey, String key, String label, CohortDefinition cohortDefinition) {
+        if (key == "n") {
+            addIndicator(dsd, dimensionKey+"2n", label, cohortDefinition, "age=below1female");
+            addIndicator(dsd, dimensionKey+"3n", label, cohortDefinition, "age=between1and4female");
+            addIndicator(dsd, dimensionKey+"4n", label, cohortDefinition, "age=between5and9female");
+            addIndicator(dsd, dimensionKey+"5n", label, cohortDefinition, "age=between10and14female");
+            addIndicator(dsd, dimensionKey+"6n", label, cohortDefinition, "age=between15and19female");
+            addIndicator(dsd, dimensionKey+"7n", label, cohortDefinition, "age=between20and24female");
+            addIndicator(dsd, dimensionKey+"8n", label, cohortDefinition, "age=between25and29female");
+            addIndicator(dsd, dimensionKey+"9n", label, cohortDefinition, "age=between30and34female");
+            addIndicator(dsd, dimensionKey+"10n", label, cohortDefinition, "age=between35and39female");
+            addIndicator(dsd, dimensionKey+"11n", label, cohortDefinition, "age=between40and44female");
+            addIndicator(dsd, dimensionKey+"12n", label, cohortDefinition, "age=between45and49female");
+            addIndicator(dsd, dimensionKey+"13n", label, cohortDefinition, "age=above50female");
+        } else if (key == "m") {
+            addIndicator(dsd, dimensionKey+"2m", label, cohortDefinition, "age=below1male");
+            addIndicator(dsd, dimensionKey+"3m", label, cohortDefinition, "age=between1and4male");
+            addIndicator(dsd, dimensionKey+"4m", label, cohortDefinition, "age=between5and9male");
+            addIndicator(dsd, dimensionKey+"5m", label, cohortDefinition, "age=between10and14male");
+            addIndicator(dsd, dimensionKey+"6m", label, cohortDefinition, "age=between15and19male");
+            addIndicator(dsd, dimensionKey+"7m", label, cohortDefinition, "age=between20and24male");
+            addIndicator(dsd, dimensionKey+"8m", label, cohortDefinition, "age=between25and29male");
+            addIndicator(dsd, dimensionKey+"9m", label, cohortDefinition, "age=between30and34male");
+            addIndicator(dsd, dimensionKey+"10m", label, cohortDefinition, "age=between35and39male");
+            addIndicator(dsd, dimensionKey+"11m", label, cohortDefinition, "age=between40and44male");
+            addIndicator(dsd, dimensionKey+"12m", label, cohortDefinition, "age=between45and49male");
+            addIndicator(dsd, dimensionKey+"13m", label, cohortDefinition, "age=above50male");
+        }
+    }
 
+    public void splitGenderKeyAssigning(CohortIndicatorDataSetDefinition dsd,String dimensionKey,String label,CohortDefinition cohortDefinition){
+        addOtherDimensionWithKey(dsd,dimensionKey,"n",label+" females",cohortDefinition);
+        addOtherDimensionWithKey(dsd,dimensionKey,"m",label+" males",cohortDefinition);
 
+    }
 
-    @Override
+        @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.6";
     }
 }

@@ -106,6 +106,10 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("481c5fdb-4719-4be3-84c0-a64172a426c7"),tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
+    public CohortDefinition getPatientsOnCPT(){
+        return df.getPatientsWithCodedObsDuringPeriod(getConcept("bb77f9f0-9743-4c60-8e70-b20b5e800a50"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")) ,BaseObsCohortDefinition.TimeModifier.LAST);
+    }
+
     public CohortDefinition getPatientsWhoAreAlreadyOnART(){
         return df.getPatientsWithCodedObsDuringPeriod(getConcept("dca25616-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("dca2817c-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
     }
