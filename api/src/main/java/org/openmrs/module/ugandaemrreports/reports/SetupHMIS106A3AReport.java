@@ -215,8 +215,8 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
             splitGenderKeyAssigning(dsd3,"f","total known HIV+ on CPT",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveKnownHIVPositive,tbCohortDefinitionLibrary.getPatientsOnCPT()));
             splitGenderKeyAssigning(dsd3,"g","total known HIV+ on ART",df.getPatientsInAll(newAndRelapsedPatientsWhoHaveKnownHIVPositive,tbCohortDefinitionLibrary.getPatientsWhoAreAlreadyOnART()));
 
-            addIndicator(dsd4,"FDOT","FDOT",tbCohortDefinitionLibrary.getPatientsOnFacilityDOTSTreatmentModel(),"");
-            addIndicator(dsd4,"CDOT","CDOT",tbCohortDefinitionLibrary.getPatientsOnCommunityDOTSTreatmentModel(),"");
+            addIndicator(dsd4,"FDOT","FDOT",df.getPatientsInAll(tbCohortDefinitionLibrary.getPatientsOnFacilityDOTSTreatmentModel(),newAndRelapsedPatients),"");
+            addIndicator(dsd4,"CDOT","CDOT",df.getPatientsInAll(tbCohortDefinitionLibrary.getPatientsOnCommunityDOTSTreatmentModel(),newAndRelapsedPatients),"");
         return rd;
     }
 
