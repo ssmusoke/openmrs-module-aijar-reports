@@ -32,9 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
 
 @Controller
 public class WebRendererReportsController {
@@ -64,8 +62,6 @@ public class WebRendererReportsController {
 
 
             CsvReportRenderer renderer = new CsvReportRenderer();
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-//            renderer.render(data, "", out);
 
             EvaluationContext context = new EvaluationContext();
 
@@ -73,20 +69,16 @@ public class WebRendererReportsController {
                 String fieldName = p.getField().getName();
                 Object valToSet = WidgetUtil.getFromRequest(request, fieldName, p.getField());
 
-                Class<? extends Collection<?>> collectionType = null;
-                Class<?> fieldType = p.getField().getType();
-                if (ReflectionUtil.isCollection(p.getField())) {
-                    collectionType = (Class<? extends Collection<?>>)p.getField().getType();
-                    fieldType = (Class<?>) ReflectionUtil.getGenericTypes(p.getField())[0];
-                }
                  ReflectionUtil.setPropertyValue(dataSetDefinition, p.getField(), valToSet);
 
             }
 
+            String fileName = dataSetDefinition.getName();
             rd.addDataSetDefinition("renderDatasetParsed", Mapped.mapStraightThrough(dataSetDefinition));
-
+            response.setHeader("Content-Type", "text/csv");
             ReportData reportData = getReportDefinitionService().evaluate(rd, context);
 
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName +".csv" +"\"");
             renderer.render(reportData, "", response.getOutputStream());
         }
         catch (Exception e) {
