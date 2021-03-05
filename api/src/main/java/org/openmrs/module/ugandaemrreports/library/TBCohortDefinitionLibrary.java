@@ -62,6 +62,16 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     }
 
+    public CohortDefinition getEnrolledOnDSTBDuringPeriod(String olderThan){
+        ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
+        cd.setName("Enrolled in program During Period");
+        cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
+        cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
+        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+
+    }
+
     public CohortDefinition getNewPatientsDuringPeriod(){
         return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
