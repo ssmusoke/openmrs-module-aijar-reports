@@ -177,10 +177,12 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition females = cohortDefinitionLibrary.females();
 
 
-        CohortDefinition above15Years = cohortDefinitionLibrary.above15Years();
+        CohortDefinition TBTransferInDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition TBTransferInAYearAgo = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+
         CohortDefinition below15Years = cohortDefinitionLibrary.MoHChildren();
 
-        CohortDefinition registered = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod();
+        CohortDefinition registered = df.getPatientsNotIn(tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod(),TBTransferInDuringPeriod);
         CohortDefinition startedOnTBTreatmentDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnTreatmentDuringperiod();
 
         CohortDefinition bacteriologicallyConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -188,23 +190,23 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition EPTBConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getEPTB()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         CohortDefinition bacteriologicallyConfirmedAndRegistered = df.getPatientsInAll(registered,bacteriologicallyConfirmed);
-        CohortDefinition bacteriologicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,bacteriologicallyConfirmed);
+        CohortDefinition bacteriologicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,bacteriologicallyConfirmedAndRegistered);
 
         CohortDefinition clinicallyConfirmedAndRegistered = df.getPatientsInAll(registered,clinicallyConfirmed);
-        CohortDefinition clinicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,clinicallyConfirmed);
+        CohortDefinition clinicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,clinicallyConfirmedAndRegistered);
 
         CohortDefinition EPTBConfirmedAndRegistered = df.getPatientsInAll(registered,EPTBConfirmed);
-        CohortDefinition EPTBConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,EPTBConfirmed);
+        CohortDefinition EPTBConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,EPTBConfirmedAndRegistered);
 
         CohortDefinition newAndRelapsedPatients = tbCohortDefinitionLibrary.getNewAndRelapsedPatientsDuringPeriod();
         CohortDefinition newAndRelapsedRegisteredClients = df.getPatientsInAll(newAndRelapsedPatients,registered);
 
         CohortDefinition HIVStatusNewlyDocumented = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyDocumented();
-        CohortDefinition newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented= df.getPatientsInAll(newAndRelapsedPatients,HIVStatusNewlyDocumented);
+        CohortDefinition newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented= df.getPatientsInAll(newAndRelapsedRegisteredClients,HIVStatusNewlyDocumented);
 
         CohortDefinition newlyDiagnosedHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyPositive();
         CohortDefinition knownHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsKnownPositive();
-        CohortDefinition newAndRelapsedPatientsWhoHaveKnownHIVPositive = df.getPatientsInAll(knownHIVPositive,newAndRelapsedPatients);
+        CohortDefinition newAndRelapsedPatientsWhoHaveKnownHIVPositive = df.getPatientsInAll(knownHIVPositive,newAndRelapsedRegisteredClients);
 
         CohortDefinition initiatedOnCPTDuringPeriod = tbCohortDefinitionLibrary.getPatientsOnCPTOnTBEnrollment();
         CohortDefinition initiatedOnARTDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnARTOnTBEnrollment();
@@ -261,7 +263,7 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition MTBTraceDetectedRRIndeterminate = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition MTBNotDetected  = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
 
-        CohortDefinition registeredAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),null,"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition registeredAYearAgo = df.getPatientsNotIn(df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),null,"12m", BaseObsCohortDefinition.TimeModifier.ANY),TBTransferInAYearAgo);
 
        CohortDefinition transferredto2ndLineTreatment = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(tbMetadata.getTransferredTo2ndLineTreatmentDate(),tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
        CohortDefinition curedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeCured()));
@@ -483,7 +485,9 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
     public CohortDefinitionDimension getTBCohortAnalysisIndicators(){
         CohortDefinitionDimension indicatorDimension= new CohortDefinitionDimension();
 
-        CohortDefinition registeredAYearAgo = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("12m");
+        CohortDefinition TBTransferInAYearAgo = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition registeredAYearAgo = df.getPatientsNotIn( tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("12m"),TBTransferInAYearAgo);
         CohortDefinition newAndRelapsedPatientsAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType(),tbMetadata.getRelapsedPatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition registeredAndNewAndRelapsedPatientsAYearAgo = df.getPatientsInAll(registeredAYearAgo,newAndRelapsedPatientsAYearAgo);
 
@@ -503,10 +507,10 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         indicatorDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
         indicatorDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
 
-        indicatorDimension.addCohortDefinition("19a", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,bacteriologicallyConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("19b", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,clinicallyConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("19c", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,EPTBConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("total", Mapped.mapStraightThrough(newAndRelapsedPatientsAYearAgo));
+        indicatorDimension.addCohortDefinition("19a", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,bacteriologicallyConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("19b", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,clinicallyConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("19c", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,EPTBConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("total", Mapped.mapStraightThrough(registeredAndNewAndRelapsedPatientsAYearAgo));
         indicatorDimension.addCohortDefinition("19d", Mapped.mapStraightThrough(treatmentAfterLostToFollowupOrTreatmentAfterFailureAyearAgo));
         indicatorDimension.addCohortDefinition("19e", Mapped.mapStraightThrough(treatmentHistoryUnknownAYearAgo));
         indicatorDimension.addCohortDefinition("19f", Mapped.mapStraightThrough(communityDOTSAYearAgo));
@@ -519,6 +523,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
         @Override
     public String getVersion() {
-        return "1.1.8";
+        return "1.1.9";
     }
 }
