@@ -1,8 +1,13 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.SetComparator;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -13,11 +18,13 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.TBMetadata;
+import org.openmrs.reporting.data.DatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
@@ -123,6 +130,9 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortIndicatorDataSetDefinition dsd5 = new CohortIndicatorDataSetDefinition();
         CohortIndicatorDataSetDefinition dsd6 = new CohortIndicatorDataSetDefinition();
         CohortIndicatorDataSetDefinition dsd7 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd8 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd9 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd10 = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd1.setParameters(getParameters());
         dsd2.setParameters(getParameters());
@@ -131,6 +141,9 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         dsd5.setParameters(getParameters());
         dsd6.setParameters(getParameters());
         dsd7.setParameters(getParameters());
+        dsd8.setParameters(getParameters());
+        dsd9.setParameters(getParameters());
+        dsd10.setParameters(getParameters());
 
 
         CohortDefinitionDimension patientTypeDimensions = commonDimensionLibrary.getPatientTypeDimension();
@@ -139,11 +152,14 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.getTxCurrentAgeGenderGroup();
         dsd2.addDimension("age", Mapped.mapStraightThrough(ageDimension));
         dsd3.addDimension("age", Mapped.mapStraightThrough(ageDimension));
+        dsd9.addDimension("indicator", Mapped.mapStraightThrough(getTBCohortAnalysisIndicators()));
+        dsd10.addDimension("indicator", Mapped.mapStraightThrough(getTBCohortAnalysisIndicators()));
 
 
 
         dsd.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
         dsd1.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
+        dsd8.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
 
         rd.addDataSetDefinition("A1", Mapped.mapStraightThrough(dsd));
         rd.addDataSetDefinition("A2", Mapped.mapStraightThrough(dsd1));
@@ -153,6 +169,9 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("E", Mapped.mapStraightThrough(dsd5));
         rd.addDataSetDefinition("G", Mapped.mapStraightThrough(dsd6));
         rd.addDataSetDefinition("H", Mapped.mapStraightThrough(dsd7));
+        rd.addDataSetDefinition("I", Mapped.mapStraightThrough(dsd8));
+        rd.addDataSetDefinition("J", Mapped.mapStraightThrough(dsd9));
+        rd.addDataSetDefinition("J2", Mapped.mapStraightThrough(dsd10));
 
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
@@ -216,21 +235,40 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsEverOnART = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
         CohortDefinition patientsWithOutBothTPTStartAndEndDates = df.getPatientsNotIn(patientsEverOnART,patientsWithEitherTPTStartDateOrTPTEndDate);
 
-        CohortDefinition eligbleForTPT = df.getPatientsInAny(startedTPTDuringQuarter,patientsWithOutBothTPTStartAndEndDates);
+        CohortDefinition eligibleForTPT = df.getPatientsInAny(startedTPTDuringQuarter,patientsWithOutBothTPTStartAndEndDates);
 
-        CohortDefinition newOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,noSignsOfTBDuringPeriod,eligbleForTPT);
-        CohortDefinition alreadyOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityBeforePeriod,noSignsOfTBDuringPeriod,eligbleForTPT);
+        CohortDefinition newOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
+        CohortDefinition alreadyOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityBeforePeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
 
         CohortDefinition bacteriallyConfirmedInPreviousQuarter = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()),"3m", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition registeredInPreviousQuarter = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("3m");
-        CohortDefinition registeredAndBacteriallyConfirmedinPreviousQuarter = df.getPatientsInAll(bacteriallyConfirmedInPreviousQuarter,registeredInPreviousQuarter);
-        CohortDefinition patientsWithSmeartestDoneAfterIntensivePahse = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWithWithExaminationDateOFSmeartestDoneAfterIntensivePahse = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("d2f31713-aada-4d0d-9340-014b2371bdd8"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition registeredAndBacteriallyConfirmedInPreviousQuarter = df.getPatientsInAll(bacteriallyConfirmedInPreviousQuarter,registeredInPreviousQuarter);
+        CohortDefinition patientsWithSmearTestDoneAfterIntensivePhase = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsWithWithExaminationDateOfSmearTestDoneAfterIntensivePhase = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("d2f31713-aada-4d0d-9340-014b2371bdd8"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
 
-        CohortDefinition registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment = df.getPatientsInAll(registeredAndBacteriallyConfirmedinPreviousQuarter,patientsWithSmeartestDoneAfterIntensivePahse,patientsWithWithExaminationDateOFSmeartestDoneAfterIntensivePahse);
+        CohortDefinition registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment = df.getPatientsInAll(registeredAndBacteriallyConfirmedInPreviousQuarter,patientsWithSmearTestDoneAfterIntensivePhase,patientsWithWithExaminationDateOfSmearTestDoneAfterIntensivePhase);
 
-        CohortDefinition positivesmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab74d-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabb4b-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabf68-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition negativesmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab32a-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition positiveSmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab74d-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabb4b-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabf68-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition negativeSmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab32a-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition accessedGeneXpertTest = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162203AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("162204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition registeredAndAccessedGeneXpertTestDuringPeriod = df.getPatientsInAll(registered,accessedGeneXpertTest);
+
+        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifR = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162203AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifS = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifIndeterminate = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition MTBTraceDetectedRRIndeterminate = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition MTBNotDetected  = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition registeredAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),null,"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+       CohortDefinition transferredto2ndLineTreatment = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(tbMetadata.getTransferredTo2ndLineTreatmentDate(),tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+       CohortDefinition curedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeCured()));
+       CohortDefinition diedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeDied()));
+       CohortDefinition treatmentCompletedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeTreatmentCompleted()));
+       CohortDefinition treatmentFailureOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeTreatmentFailure()));
+       CohortDefinition LTFPOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeLTFP()));
 
         add1AIndicators(dsd,"a","bacteria and registered ",bacteriologicallyConfirmedAndRegistered);
             add1AIndicators(dsd,"b","bacteria and on treatment",bacteriologicallyConfirmedAndStartedOnTratment);
@@ -282,10 +320,49 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
             addIndicator(dsd6,"alreadyMale2","alreadyOnARTMale2",df.getPatientsInAll(alreadyOnARTEligbleForTPT,males,cohortDefinitionLibrary.agedAtLeast(5)),"");
             addIndicator(dsd6,"alreadyFemale2","alreadyOnARTFemale2",df.getPatientsInAll(alreadyOnARTEligbleForTPT,females,cohortDefinitionLibrary.agedAtLeast(5)),"");
 
-            addIndicator(dsd7, "A","all registered with PTB previous quarter ",registeredAndBacteriallyConfirmedinPreviousQuarter,"");
+            addIndicator(dsd7, "A","all registered with PTB previous quarter ",registeredAndBacteriallyConfirmedInPreviousQuarter,"");
             addIndicator(dsd7, "B","all registered with PTB previous quarter that had smear test done ",registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment,"");
-            addIndicator(dsd7, "C"," had smear test done with negative results ",df.getPatientsInAll(registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment,negativesmearResults),"");
-            addIndicator(dsd7, "D"," had smear test done with postive results ",df.getPatientsInAll(registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment,positivesmearResults),"");
+            addIndicator(dsd7, "C"," had smear test done with negative results ",df.getPatientsInAll(registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment,negativeSmearResults),"");
+            addIndicator(dsd7, "D"," had smear test done with postive results ",df.getPatientsInAll(registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment,positiveSmearResults),"");
+
+            add1AIndicators(dsd8,"o","total accessed Genexpert at baseline ",registeredAndAccessedGeneXpertTestDuringPeriod);
+            add1AIndicators(dsd8,"p","MTB positive Rif S ",df.getPatientsInAll(registeredAndAccessedGeneXpertTestDuringPeriod,geneXpertBaselineTestResultsMTBPositiveAndRifS));
+            add1AIndicators(dsd8,"q","MTB positive Rif R",df.getPatientsInAll(registeredAndAccessedGeneXpertTestDuringPeriod,geneXpertBaselineTestResultsMTBPositiveAndRifR));
+            add1AIndicators(dsd8,"r","MTB positive Rif Indeterminant",df.getPatientsInAll(registeredAndAccessedGeneXpertTestDuringPeriod,geneXpertBaselineTestResultsMTBPositiveAndRifIndeterminate));
+//            add1AIndicators(dsd8,"s","MTB  detected RR indeterminant",df.getPatientsInAll(registeredAndAccessedGeneXpertTestDuringPeriod,MTBTraceDetectedRRIndeterminate));
+            add1AIndicators(dsd8,"u","MTB not detected",df.getPatientsInAll(registeredAndAccessedGeneXpertTestDuringPeriod,MTBNotDetected));
+
+             addCohortAnalysisIndicatorColumns(dsd9, "aa","aa", df.getPatientsInAll(males,registeredAYearAgo));
+             addCohortAnalysisIndicatorColumns(dsd9, "bb","bb", df.getPatientsInAll(females,registeredAYearAgo));
+            addCohortAnalysisIndicatorColumns(dsd9, "cc","cc", df.getPatientsInAll(males,transferredto2ndLineTreatment));
+            addCohortAnalysisIndicatorColumns(dsd9, "dd","dd", df.getPatientsInAll(females,transferredto2ndLineTreatment));
+            addCohortAnalysisIndicatorColumns(dsd9, "ee","ee", df.getPatientsInAll(males,curedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "ff","ff", df.getPatientsInAll(females,curedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "gg","gg", df.getPatientsInAll(males,treatmentCompletedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "hh","hh", df.getPatientsInAll(females,treatmentCompletedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "ii","ii", df.getPatientsInAll(males,diedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "jj","jj", df.getPatientsInAll(females,diedOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "kk","kk", df.getPatientsInAll(males,treatmentFailureOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "ll","ll", df.getPatientsInAll(females,treatmentFailureOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "mm","mm", df.getPatientsInAll(males,LTFPOutcome));
+            addCohortAnalysisIndicatorColumns(dsd9, "nn","nn", df.getPatientsInAll(females,LTFPOutcome));
+
+        addCohortAnalysisIndicatorColumns(dsd10, "aa","aa", df.getPatientsInAll(males,registeredAYearAgo));
+        addCohortAnalysisIndicatorColumns(dsd10, "bb","bb", df.getPatientsInAll(females,registeredAYearAgo));
+        addCohortAnalysisIndicatorColumns(dsd10, "cc","cc", df.getPatientsInAll(males,transferredto2ndLineTreatment));
+        addCohortAnalysisIndicatorColumns(dsd10, "dd","dd", df.getPatientsInAll(females,transferredto2ndLineTreatment));
+        addCohortAnalysisIndicatorColumns(dsd10, "ee","ee", df.getPatientsInAll(males,curedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "ff","ff", df.getPatientsInAll(females,curedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "gg","gg", df.getPatientsInAll(males,treatmentCompletedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "hh","hh", df.getPatientsInAll(females,treatmentCompletedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "ii","ii", df.getPatientsInAll(males,diedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "jj","jj", df.getPatientsInAll(females,diedOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "kk","kk", df.getPatientsInAll(males,treatmentFailureOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "ll","ll", df.getPatientsInAll(females,treatmentFailureOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "mm","mm", df.getPatientsInAll(males,LTFPOutcome));
+        addCohortAnalysisIndicatorColumns(dsd10, "nn","nn", df.getPatientsInAll(females,LTFPOutcome));
+
+
         return rd;
     }
 
@@ -378,8 +455,70 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
     }
 
+    private CohortDefinition getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram( List<Concept> codedValues){
+        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
+        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.FIRST);
+        cd.setQuestion(tbMetadata.getTreatmentOutcome());
+        cd.setEncounterTypeList(tbMetadata.getTBFollowupEncounterType());
+        cd.setOperator(SetComparator.IN);
+        cd.setValueList(codedValues);
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate-12m"));
+    }
+
+    private void addCohortAnalysisIndicatorColumns(CohortIndicatorDataSetDefinition dsd, String dimensionKey,String label, CohortDefinition cohortDefinition){
+        addIndicator(dsd, "1"+dimensionKey, label, cohortDefinition, "indicator=19a");
+        addIndicator(dsd, "2"+dimensionKey, label, cohortDefinition, "indicator=19b");
+        addIndicator(dsd, "3"+dimensionKey, label, cohortDefinition, "indicator=19c");
+        addIndicator(dsd, "4"+dimensionKey, label, cohortDefinition, "indicator=total");
+        addIndicator(dsd, "5"+dimensionKey, label, cohortDefinition, "indicator=19d");
+        addIndicator(dsd, "6"+dimensionKey, label, cohortDefinition, "indicator=19e");
+        addIndicator(dsd, "7"+dimensionKey, label, cohortDefinition, "indicator=19f");
+        addIndicator(dsd, "8"+dimensionKey, label, cohortDefinition, "indicator=20a");
+        addIndicator(dsd, "9"+dimensionKey, label, cohortDefinition, "indicator=20b");
+        addIndicator(dsd, "10"+dimensionKey, label, cohortDefinition, "indicator=20c");
+
+    }
+
+    public CohortDefinitionDimension getTBCohortAnalysisIndicators(){
+        CohortDefinitionDimension indicatorDimension= new CohortDefinitionDimension();
+
+        CohortDefinition registeredAYearAgo = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("12m");
+        CohortDefinition newAndRelapsedPatientsAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType(),tbMetadata.getRelapsedPatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition registeredAndNewAndRelapsedPatientsAYearAgo = df.getPatientsInAll(registeredAYearAgo,newAndRelapsedPatientsAYearAgo);
+
+        CohortDefinition bacteriologicallyConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition clinicallyConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getClinicallyDiagnosed()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition EPTBConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getEPTB()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+
+        CohortDefinition treatmentAfterLostToFollowupOrTreatmentAfterFailureAyearAgo =  df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentAfterLTFPPatientType(),tbMetadata.getTreatmentAfterFailurePatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition treatmentHistoryUnknownAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentHistoryUnknownPatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition communityDOTSAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTreatmentModel(),null,Arrays.asList(tbMetadata.getDigitalCommunityDOTsTreatmentModel(),tbMetadata.getNonDigitalCommunityDOTsTreatmentModel()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition allKnownHIVPositiveAtEndOfTreatment = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getHIVStatusCategory(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewlyPositiveHIVStatus(),tbMetadata.getKnownPositiveHIVStatus()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition childrenNewAndRelapsePatients = df.getPatientsInAll(cohortDefinitionLibrary.agedAtMost(14,"12m"),newAndRelapsedPatientsAYearAgo);
+        CohortDefinition childrenKnownHIVPositivePatients = df.getPatientsInAll(cohortDefinitionLibrary.agedAtMost(14,"12m"),allKnownHIVPositiveAtEndOfTreatment);
+
+        indicatorDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        indicatorDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+
+        indicatorDimension.addCohortDefinition("19a", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,bacteriologicallyConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("19b", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,clinicallyConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("19c", Mapped.mapStraightThrough(df.getPatientsInAll(newAndRelapsedPatientsAYearAgo,EPTBConfirmedAYearAgo)));
+        indicatorDimension.addCohortDefinition("total", Mapped.mapStraightThrough(newAndRelapsedPatientsAYearAgo));
+        indicatorDimension.addCohortDefinition("19d", Mapped.mapStraightThrough(treatmentAfterLostToFollowupOrTreatmentAfterFailureAyearAgo));
+        indicatorDimension.addCohortDefinition("19e", Mapped.mapStraightThrough(treatmentHistoryUnknownAYearAgo));
+        indicatorDimension.addCohortDefinition("19f", Mapped.mapStraightThrough(communityDOTSAYearAgo));
+        indicatorDimension.addCohortDefinition("20a", Mapped.mapStraightThrough(allKnownHIVPositiveAtEndOfTreatment));
+        indicatorDimension.addCohortDefinition("20b", Mapped.mapStraightThrough(childrenNewAndRelapsePatients));
+        indicatorDimension.addCohortDefinition("20c", Mapped.mapStraightThrough(childrenKnownHIVPositivePatients));
+
+        return indicatorDimension;
+    }
+
         @Override
     public String getVersion() {
-        return "1.0.9";
+        return "1.1.8";
     }
 }

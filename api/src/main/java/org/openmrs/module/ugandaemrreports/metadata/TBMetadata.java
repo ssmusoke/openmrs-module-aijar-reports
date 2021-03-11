@@ -92,6 +92,12 @@ public class TBMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "455bad1f-5e97-4ee9-9558-ff1df8808732"));
+        return l;
+    }
+
     public Concept getTBStartDate() {
         return getConcept("dce02eca-30ab-102d-86b0-7a5022ba4115");
     }
@@ -183,5 +189,17 @@ public class TBMetadata extends Metadata {
     public Concept getDigitalCommunityDOTsTreatmentModel(){ return getConcept("ad6416c2-ca66-45e7-bfa0-9c03df0ab761"); }
     public Concept getNonDigitalCommunityDOTsTreatmentModel(){ return getConcept("89753861-f946-4c2a-9aeb-e6cabbb2dc25"); }
     public Concept getRiskGroup(){ return getConcept("927563c5-cb91-4536-b23c-563a72d3f829"); }
+
+    public Concept getBaselineExaminationTests(){return getConcept("1eb51d98-a49f-4a9a-87a1-6c3541b5713a");}
+    public Concept getGeneXpertTests(){return getConcept("2cf5644d-73a7-42f2-b18c-f773f40b648c");}
+    public Concept getTransferredTo2ndLineTreatmentDate(){return getConcept("ff20a5bb-de72-4617-9fda-546af283d23d");}
+    public Concept getTreatmentOutcome(){return getConcept("e44c8c4c-db50-4d1e-9d6e-092d3b31cfd6");}
+    public Concept getTBOutcomeCured(){return getConcept("159791AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");}
+    public Concept getTBOutcomeTreatmentCompleted(){return getConcept("031d9b15-62d5-4f73-a374-5503f0421427");}
+    public Concept getTBOutcomeDied(){return getConcept("160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");}
+    public Concept getTBOutcomeLTFP(){return getConcept("dcb23465-30ab-102d-86b0-7a5022ba4115");}
+    public Concept getTBOutcomeTreatmentFailure(){return getConcept("159874AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");}
+
+
 
 }
