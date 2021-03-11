@@ -280,7 +280,7 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
             add1AIndicators(dsd,"f","EPTBConfirmedAndStartedOnTratment",EPTBConfirmedAndStartedOnTratment);
             add1AIndicators(dsd,"g","assigned treatment supporter", noOfPatientsWithTreatmentSupporters);
 
-            add1AIndicators(dsd1,"g","bacteria and registered children",df.getPatientsInAll(bacteriologicallyConfirmedAndRegistered,below15Years));
+            add1AIndicators(dsd1,"x","bacteria and registered children",df.getPatientsInAll(bacteriologicallyConfirmedAndRegistered,below15Years));
             add1AIndicators(dsd1,"h","bacteria and on treatment children",df.getPatientsInAll(bacteriologicallyConfirmedAndStartedOnTratment,below15Years));
             add1AIndicators(dsd1,"i","clinicallyConfirmedAndRegistered children",df.getPatientsInAll(clinicallyConfirmedAndRegistered,below15Years));
             add1AIndicators(dsd1,"j","clinicallyConfirmedAndStartedOnTratment children",df.getPatientsInAll(clinicallyConfirmedAndStartedOnTratment,below15Years));
@@ -523,6 +523,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
         @Override
     public String getVersion() {
-        return "1.1.9";
+        return "1.2.0";
     }
 }
