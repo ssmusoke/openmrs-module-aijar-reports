@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.Location;
-import org.openmrs.Program;
+import org.openmrs.*;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
@@ -540,6 +539,16 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     public Program getProgramByUuid(String uuid){
         Program program=Context.getProgramWorkflowService().getProgramByUuid(uuid);
+        return  program;
+    }
+
+    public ProgramWorkflow getProgramWorkFlow(String uuid){
+        ProgramWorkflow program=Context.getProgramWorkflowService().getWorkflowByUuid(uuid);
+        return  program;
+    }
+
+    public ProgramWorkflowState getProgramState(String uuid){
+        ProgramWorkflowState program=Context.getProgramWorkflowService().getStateByUuid(uuid);
         return  program;
     }
 

@@ -1,8 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.ProgramEnrollmentCohortDefinition;
+import org.openmrs.ProgramWorkflowState;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
 
@@ -52,14 +52,18 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
         return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType(), tbMetadata.getRelapsedPatientType()), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
-    public CohortDefinition getEnrolledOnDSTBDuringPeriod(){
+    public CohortDefinition getEnrolledTBDuringPeriod(){
         ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
         cd.setName("Enrolled in program During Period");
         cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
         cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
         cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
-        return df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
 
+    }
+
+    public CohortDefinition getEnrolledOnDSTBDuringPeriod(){
+        return df.getPatientsInAll(getEnrolledTBDuringPeriod(),getPatientsInDSTBState());
     }
 
     public CohortDefinition getEnrolledOnDSTBDuringPeriod(String olderThan){
@@ -68,8 +72,14 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
         cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
         cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
         cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
-        return df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+        CohortDefinition cd1= df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
 
+
+        InStateCohortDefinition cd2 = new InStateCohortDefinition();
+        cd2.setStates(Arrays.asList(commonDimensionLibrary.getProgramState("dc3fbc52-15a9-444c-99d1-65f01f9199dd")));
+        cd2.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd2.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        return df.getPatientsInAll( df.convert(cd2, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan)),cd1);
     }
 
     public CohortDefinition getNewPatientsDuringPeriod(){
@@ -144,14 +154,110 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
         return df.getPatientsWithCodedObsDuringPeriod(getConcept("67ea4375-0f4f-4e67-b8b0-403942753a4d"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1ca0db4a-c5c6-48ed-9e17-84905f4487eb")), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getDRTBEnrolledDuringPeriod(){
+        return df.getPatientsInAll(getEnrolledTBDuringPeriod(),getPatientsInDRTBState());
+    }
+
+    public CohortDefinition getPatientsInDSTBState(){
+        InStateCohortDefinition cd = new InStateCohortDefinition();
+        cd.setStates(Arrays.asList(commonDimensionLibrary.getProgramState("dc3fbc52-15a9-444c-99d1-65f01f9199dd")));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
+
+    public CohortDefinition getPatientsInDRTBState(){
+        InStateCohortDefinition cd = new InStateCohortDefinition();
+        cd.setStates(Arrays.asList(commonDimensionLibrary.getProgramState("673966b1-e181-4b46-a526-f7ac6954c59b")));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+    }
+
+    public CohortDefinition getPatientsInDRTBState(String olderThan){
+        InStateCohortDefinition cd = new InStateCohortDefinition();
+        cd.setStates(Arrays.asList(commonDimensionLibrary.getProgramState("673966b1-e181-4b46-a526-f7ac6954c59b")));
+        cd.addParameter(new Parameter("onOrAfter", "reporting.parameter.onOrAfter", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "reporting.parameter.onOrBefore", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+    }
+
+    public CohortDefinition getPatientWithRifampicinResitance(String periodInMonths){
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=767 and p.concept_id=159984 and p.value_coded=159956\n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
 
+    public CohortDefinition getPatientWithIsonaizidSus_ceptibility(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded =159958 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
+    public CohortDefinition getPatientWithIsonaizidResistant(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded =in 159956 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
+    public CohortDefinition getPatientWithAmikacinSus_ceptibility(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=71060 and p.concept_id=159984 and p.value_coded =159958 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
+    public CohortDefinition getPatientWithAmikacinResistant(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=71060 and p.concept_id=159984 and p.value_coded =in 159956 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
+    public CohortDefinition getPatientWithFQSus_ceptibility(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,80122,71060,72794,78385) and p.concept_id=159984 and p.value_coded =159958 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
-
-
+    public CohortDefinition getPatientWithFQResistant(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,80122,71060,72794,78385) and p.concept_id=159984 and p.value_coded =in 159956 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition();
+        cd.setQuery(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
 
 }

@@ -92,6 +92,18 @@ public class TBMetadata extends Metadata {
         return l;
     }
 
+    public List<EncounterType> getDRTBEnrollmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "0f1ec66d-61db-4575-8248-94e10a88178f"));
+        return l;
+    }
+
+    public List<EncounterType> getDRTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "41f8609d-e13b-4dff-8379-47ac5876512e"));
+        return l;
+    }
+
     public List<EncounterType> getTBFollowupEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "455bad1f-5e97-4ee9-9558-ff1df8808732"));
@@ -199,6 +211,9 @@ public class TBMetadata extends Metadata {
     public Concept getTBOutcomeDied(){return getConcept("160034AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");}
     public Concept getTBOutcomeLTFP(){return getConcept("dcb23465-30ab-102d-86b0-7a5022ba4115");}
     public Concept getTBOutcomeTreatmentFailure(){return getConcept("159874AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");}
+
+    public Concept getDSTTest(){ return getConcept("159956AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); }
+
 
 
 
