@@ -71,8 +71,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
 
+    public CohortDefinition getTransferredInToCarePreviousQuarter(String olderThan) {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(),olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
     public CohortDefinition getPatientsTransferredOutDuringPeriod() {
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);    }
+
+    public CohortDefinition getPatientsTransferredOutDuringPeriod(String olderThan) {
+        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY,olderThan);    }
 
     public CohortDefinition getTransferredInToCareDuringPeriod(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTransferIn(), hivMetadata.getARTSummaryPageEncounterType(), Arrays.asList(hivMetadata.getYes()), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
@@ -557,11 +564,12 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getPatientsWithNoClinicalContactsByEndDateForDays(Integer days) {
-        String query = String.format("select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
-                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:endDate group by patient_id) last_encounter \n" +
-                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :endDate group by person_id)t1 \n " +
-                "where next_visit > last_enc_date and datediff(:endDate,next_visit)> '%d'", days);
+        String query = String.format("select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o inner join\n" +
+                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime >=:startDate and encounter_datetime <=:endDate group by patient_id) last_encounter\n" +
+                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :endDate group by person_id)t1\n" +
+                "where next_visit > last_enc_date and datediff(:endDate,next_visit)>='%d'", days);
         SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return cd;
     }
@@ -621,6 +629,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     }
 
+    public CohortDefinition getPatientsWithEncountersBeforeEndDateOfPreviousQuarterThatHaveReturnVisitDatesByStartDateOfPreviousQuarter(String olderThan) {
+        return df.convert(getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate(),ObjectUtil.toMap("startDate=startDate-"+olderThan +",endDate=endDate-"+olderThan));
+    }
+
     public static SqlCohortDefinition getPatientsTxLostToFollowupByDays(String days) {
         SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(:endDate,max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <=:endDate " +
                 "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;");
@@ -629,6 +641,10 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
         return cohortDefinition;
 
+    }
+
+    public  CohortDefinition getPatientsTxLostToFollowupByDaysInPreviousQuarter(String days,String olderThan) {
+        return df.convert(getPatientsTxLostToFollowupByDays(days),ObjectUtil.toMap("startDate=startDate-" +olderThan +",endDate=endDate-"+olderThan));
     }
 
     public static  SqlCohortDefinition getPatientsHavingAppointmentToday() {
