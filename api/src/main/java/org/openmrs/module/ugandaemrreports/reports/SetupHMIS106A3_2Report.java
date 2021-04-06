@@ -122,26 +122,30 @@ public class SetupHMIS106A3_2Report extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd1 = new CohortIndicatorDataSetDefinition();
+        CohortIndicatorDataSetDefinition dsd2 = new CohortIndicatorDataSetDefinition();
 
 
-        CohortDefinitionDimension patientTypeDimensions = commonDimensionLibrary.getPatientTypeDimension();
+        dsd.addDimension("type", Mapped.mapStraightThrough(getDimension()));
 
 
-        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getTxCurrentAgeGenderGroup();
-
-        dsd.addDimension("type", Mapped.mapStraightThrough(patientTypeDimensions));
-
-
-        rd.addDataSetDefinition("A1", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("B", Mapped.mapStraightThrough(dsd1));
+        rd.addDataSetDefinition("C", Mapped.mapStraightThrough(dsd2));
 
 
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
 
         CohortDefinition registerd9to12MonthsAgo = tbCohortDefinitionLibrary.getPatientsInDRTBState("9m");
+        CohortDefinition registerdDuringPeriod = tbCohortDefinitionLibrary.getPatientsInDRTBState();
 
         CohortDefinition newCaseTypePatients9to12MonthsAgo = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("b3c43c5e-1987-42c1-a7b3-2c71dc58c126")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition newCaseTypePatientsDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("b3c43c5e-1987-42c1-a7b3-2c71dc58c126")), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition treatedPreviouslyCaseTypePatients9to12MonthsAgo = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("8b00c885-edec-47bf-8700-69913741f71c"),getConcept("8ad53c8c-e136-41e3-aab8-eace935a3bbe"),getConcept("a37462b6-1f47-4efb-8df5-2bdc742efc17"),getConcept("ce983c0e-cdea-42e2-b93f-5ad26fe05fba"),getConcept("11522b1b-59d3-4c1f-8a9a-5d780127e84f")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+
+        CohortDefinition previouslyTreatedWithFirstLineDrugsDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("ce983c0e-cdea-42e2-b93f-5ad26fe05fba")), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition previouslyTreatedWithSecondLineDrugsDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("11522b1b-59d3-4c1f-8a9a-5d780127e84f")), BaseObsCohortDefinition.TimeModifier.ANY);
 
         CohortDefinition patientsWhoAreHealthWorkers9monthsAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("5619AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition patientsWhoAreTBContacts9monthsAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("b5171d08-77bf-40a8-a864-51caa6cd2480")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
@@ -153,114 +157,75 @@ public class SetupHMIS106A3_2Report extends UgandaEMRDataExportManager {
         CohortDefinition MDRPatients = df.getPatientsInAll(RifampicinResistant,IsoniazidResistant);
 
         CohortDefinition FQpatientsSus_ceptibility = tbCohortDefinitionLibrary.getPatientWithFQSus_ceptibility("9");
+        CohortDefinition SLInjectable_patientsSus_ceptibility = tbCohortDefinitionLibrary.getPatientWithSL_InjectableSus_ceptibility("9");
         CohortDefinition FQpatientsResistant = tbCohortDefinitionLibrary.getPatientWithFQResistant("9");
-        CohortDefinition RR_MDRPatients = df.getPatientsInAll(df.getPatientsInAny(RifampicinResistant,IsoniazidResistant),df.getPatientsInAny(FQpatientsSus_ceptibility,FQpatientsResistant));
-        CohortDefinition RR_WithFQPatients = df.getPatientsInAll(RifampicinResistant,FQpatientsResistant);
+        CohortDefinition SLInjectable_patientsResistant = tbCohortDefinitionLibrary.getPatientWithSl_InjectableResistant("9");
+        CohortDefinition RR_MDRPatients = df.getPatientsInAll(MDRPatients,df.getPatientsInAny(FQpatientsSus_ceptibility,FQpatientsResistant,SLInjectable_patientsResistant,SLInjectable_patientsSus_ceptibility));
+        CohortDefinition RR_WithFQResistanceAndSL_InjectablePatients = df.getPatientsInAll(RifampicinResistant,FQpatientsResistant,SLInjectable_patientsResistant);
+        CohortDefinition RR_WithFQResistancePatients = df.getPatientsInAll(RifampicinResistant,FQpatientsResistant);
+        CohortDefinition RR_WithSL_InjectableResistancePatients = df.getPatientsInAll(RifampicinResistant,SLInjectable_patientsResistant);
+        CohortDefinition MDR_WithFQResistance = df.getPatientsInAll(MDRPatients,FQpatientsResistant);
+        CohortDefinition MDR_WithSLResistance = df.getPatientsInAll(MDRPatients,SLInjectable_patientsResistant);
+        CohortDefinition MDR_WithFQResistanceAndSLResistance = df.getPatientsInAll(MDRPatients,SLInjectable_patientsResistant,FQpatientsResistant);
 
 
-        CohortDefinition TBTransferInDuringPeriod = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition TBTransferInAYearAgo = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition hivStatusInDRRegisterDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f"),tbMetadata.getDRTBEnrollmentEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition hivStatusPositiveInDRRegisterDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
 
-        CohortDefinition below15Years = cohortDefinitionLibrary.MoHChildren();
+        CohortDefinition startedonARTDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(getConcept("6bd7bb95-343a-42ce-801f-d6876e263c57"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
 
-        CohortDefinition registered = df.getPatientsNotIn(tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod(),TBTransferInDuringPeriod);
-        CohortDefinition startedOnTBTreatmentDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnTreatmentDuringperiod();
+        CohortDefinition bacteriologicallyXDRMDRConfirmed = tbCohortDefinitionLibrary.getPatientsWithBacteriallyConfirmedMDRXDRRRDuringPeriod();
+        CohortDefinition presumptiveMDRXDRR = tbCohortDefinitionLibrary.getPatientsWithPresumptiveMDRXDRRRDuringPeriod();
 
-        CohortDefinition bacteriologicallyConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition clinicallyConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getClinicallyDiagnosed()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition EPTBConfirmed = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getEPTB()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition bacteriologicallyConfirmedAndNew =df.getPatientsInAll(newCaseTypePatientsDuringPeriod,bacteriologicallyXDRMDRConfirmed);
+        CohortDefinition bacteriologicallyConfirmedAndPreviousOnFirstLine =df.getPatientsInAll(previouslyTreatedWithFirstLineDrugsDuringPeriod,bacteriologicallyXDRMDRConfirmed);
+        CohortDefinition bacteriologicallyConfirmedAndPreviousOnSecondLine =df.getPatientsInAll(previouslyTreatedWithSecondLineDrugsDuringPeriod,bacteriologicallyXDRMDRConfirmed);
 
-        CohortDefinition bacteriologicallyConfirmedAndRegistered = df.getPatientsInAll(registered,bacteriologicallyConfirmed);
-        CohortDefinition bacteriologicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,bacteriologicallyConfirmedAndRegistered);
+        CohortDefinition presumptiveMDRXDRRAndNew =df.getPatientsInAll(newCaseTypePatientsDuringPeriod,presumptiveMDRXDRR);
+        CohortDefinition presumptiveMDRXDRRAndPreviousOnFirstLine =df.getPatientsInAll(previouslyTreatedWithFirstLineDrugsDuringPeriod,presumptiveMDRXDRR);
+        CohortDefinition presumptiveMDRXDRRAndPreviousOnSecondLine =df.getPatientsInAll(previouslyTreatedWithSecondLineDrugsDuringPeriod,presumptiveMDRXDRR);
 
-        CohortDefinition clinicallyConfirmedAndRegistered = df.getPatientsInAll(registered,clinicallyConfirmed);
-        CohortDefinition clinicallyConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,clinicallyConfirmedAndRegistered);
 
-        CohortDefinition EPTBConfirmedAndRegistered = df.getPatientsInAll(registered,EPTBConfirmed);
-        CohortDefinition EPTBConfirmedAndStartedOnTratment = df.getPatientsInAll(startedOnTBTreatmentDuringPeriod,EPTBConfirmedAndRegistered);
+        addIndicator(dsd1,"6a","6a",df.getPatientsInAll(bacteriologicallyConfirmedAndNew,females),"");
+        addIndicator(dsd1,"6b","6b",df.getPatientsInAll(bacteriologicallyConfirmedAndNew,males),"");
+        addIndicator(dsd1,"6c","6c",bacteriologicallyConfirmedAndNew,"");
+        addIndicator(dsd1,"6d","6d",df.getPatientsInAll(bacteriologicallyConfirmedAndPreviousOnFirstLine,females),"");
+        addIndicator(dsd1,"6e","6e",df.getPatientsInAll(bacteriologicallyConfirmedAndPreviousOnFirstLine,males),"");
+        addIndicator(dsd1,"6f","6f",bacteriologicallyConfirmedAndPreviousOnFirstLine,"");
+        addIndicator(dsd1,"6g","6g",df.getPatientsInAll(bacteriologicallyConfirmedAndPreviousOnSecondLine,females),"");
+        addIndicator(dsd1,"6h","6h",df.getPatientsInAll(bacteriologicallyConfirmedAndPreviousOnSecondLine,males),"");
+        addIndicator(dsd1,"6i","6i",bacteriologicallyConfirmedAndPreviousOnSecondLine,"");
 
-        CohortDefinition newAndRelapsedPatients = tbCohortDefinitionLibrary.getNewAndRelapsedPatientsDuringPeriod();
-        CohortDefinition newAndRelapsedRegisteredClients = df.getPatientsInAll(newAndRelapsedPatients,registered);
+        addIndicator(dsd1,"7a","7a",df.getPatientsInAll(presumptiveMDRXDRRAndNew,females),"");
+        addIndicator(dsd1,"7b","7b",df.getPatientsInAll(presumptiveMDRXDRRAndNew,males),"");
+        addIndicator(dsd1,"7c","7c",presumptiveMDRXDRRAndNew,"");
+        addIndicator(dsd1,"7d","7d",df.getPatientsInAll(presumptiveMDRXDRRAndPreviousOnFirstLine,females),"");
+        addIndicator(dsd1,"7e","7e",df.getPatientsInAll(presumptiveMDRXDRRAndPreviousOnFirstLine,males),"");
+        addIndicator(dsd1,"7f","7f",presumptiveMDRXDRRAndPreviousOnFirstLine,"");
+        addIndicator(dsd1,"7g","7g",df.getPatientsInAll(presumptiveMDRXDRRAndPreviousOnSecondLine,females),"");
+        addIndicator(dsd1,"7h","7h",df.getPatientsInAll(presumptiveMDRXDRRAndPreviousOnSecondLine,males),"");
+        addIndicator(dsd1,"7i","7i",presumptiveMDRXDRRAndPreviousOnSecondLine,"");
 
-        CohortDefinition HIVStatusNewlyDocumented = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyDocumented();
-        CohortDefinition newAndRelapsedPatientsWhoHaveHIVStatusNewlyDocumented= df.getPatientsInAll(newAndRelapsedRegisteredClients,HIVStatusNewlyDocumented);
+        addIndicator(dsd2,"8a","8a",df.getPatientsInAll(bacteriologicallyXDRMDRConfirmed,hivStatusInDRRegisterDuringPeriod),"");
+        addIndicator(dsd2,"9a","9a",df.getPatientsInAll(presumptiveMDRXDRR,hivStatusInDRRegisterDuringPeriod),"");
 
-        CohortDefinition newlyDiagnosedHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsNewlyPositive();
-        CohortDefinition knownHIVPositive = tbCohortDefinitionLibrary.getPatientsWhoseHIVStatusIsKnownPositive();
-        CohortDefinition newAndRelapsedPatientsWhoHaveKnownHIVPositive = df.getPatientsInAll(knownHIVPositive,newAndRelapsedRegisteredClients);
+        addIndicator(dsd2,"8b","8b",df.getPatientsInAll(bacteriologicallyXDRMDRConfirmed,hivStatusPositiveInDRRegisterDuringPeriod),"");
+        addIndicator(dsd2,"9b","9b",df.getPatientsInAll(presumptiveMDRXDRR,hivStatusPositiveInDRRegisterDuringPeriod),"");
 
-        CohortDefinition initiatedOnCPTDuringPeriod = tbCohortDefinitionLibrary.getPatientsOnCPTOnTBEnrollment();
-        CohortDefinition initiatedOnARTDuringPeriod = tbCohortDefinitionLibrary.getPatientsStartedOnARTOnTBEnrollment();
+        addIndicator(dsd2,"8c","8c",df.getPatientsInAll(bacteriologicallyXDRMDRConfirmed,startedonARTDuringPeriod),"");
+        addIndicator(dsd2,"9c","9c",df.getPatientsInAll(presumptiveMDRXDRR,startedonARTDuringPeriod),"");
 
-        CohortDefinition noOfPatientsWithTreatmentSupporters =tbCohortDefinitionLibrary.getPatientsWithTreatmentSupporters();
-        CohortDefinition patientsWhoAreHealthWorkers = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("5619AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreTBContacts = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("b5171d08-77bf-40a8-a864-51caa6cd2480")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreRefugees = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoArePrisoners = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreUniformedPeople = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("165125AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreFisherMen = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("159674AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreDiabetic = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("119481AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreMiners = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("952c6973-e163-4c0d-b6c8-a7071bd05e2a")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreSmokers = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1455AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWhoAreMentallyIll = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("134337AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition transferredInTheQuarter = hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod();
-
-        CohortDefinition havingArtStartDateDuringQuarter = hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod();
-        CohortDefinition havingArtStartDateBeforeQuarter = hivCohortDefinitionLibrary.getArtStartDateBeforePeriod();
-        CohortDefinition clientsStartedOnARTAtThisFacilityDuringPeriod = df.getPatientsNotIn(havingArtStartDateDuringQuarter,transferredInTheQuarter);
-        CohortDefinition clientsStartedOnARTAtThisFacilityBeforePeriod = df.getPatientsNotIn(havingArtStartDateBeforeQuarter,hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod());
-        CohortDefinition noSignsOfTBDuringPeriod =  hivCohortDefinitionLibrary.getScreenedForTBNegativeDuringPeriod();
-        CohortDefinition startedTPTDuringQuarter = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7"),hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWithTPTStartDate =  df.getPatientsWhoseObs(hivMetadata.getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7"),hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition patientsWithTPTEndDate =  df.getPatientsWhoseObs(hivMetadata.getConcept("813e21e7-4ccb-4fe9-aaab-3c0e40b6e356"),hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition patientsWithEitherTPTStartDateOrTPTEndDate = df.getPatientsInAny(patientsWithTPTStartDate,patientsWithTPTEndDate);
-        CohortDefinition patientsEverOnART = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition patientsWithOutBothTPTStartAndEndDates = df.getPatientsNotIn(patientsEverOnART,patientsWithEitherTPTStartDateOrTPTEndDate);
-
-        CohortDefinition eligibleForTPT = df.getPatientsInAny(startedTPTDuringQuarter,patientsWithOutBothTPTStartAndEndDates);
-
-        CohortDefinition newOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
-        CohortDefinition alreadyOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityBeforePeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
-
-        CohortDefinition bacteriallyConfirmedInPreviousQuarter = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()),"3m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition registeredInPreviousQuarter = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("3m");
-        CohortDefinition registeredAndBacteriallyConfirmedInPreviousQuarter = df.getPatientsInAll(bacteriallyConfirmedInPreviousQuarter,registeredInPreviousQuarter);
-        CohortDefinition patientsWithSmearTestDoneAfterIntensivePhase = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWithWithExaminationDateOfSmearTestDoneAfterIntensivePhase = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("d2f31713-aada-4d0d-9340-014b2371bdd8"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition registeredInPreviousAndSmearDoneAfter2MonthsIntensiveTreatment = df.getPatientsInAll(registeredAndBacteriallyConfirmedInPreviousQuarter,patientsWithSmearTestDoneAfterIntensivePhase,patientsWithWithExaminationDateOfSmearTestDoneAfterIntensivePhase);
-
-        CohortDefinition positiveSmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab74d-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabb4b-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getConcept("dcdabf68-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition negativeSmearResults  =df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("dce0532c-30ab-102d-86b0-7a5022ba4115"),tbMetadata.getEncounterTypeList("455bad1f-5e97-4ee9-9558-ff1df8808732"),Arrays.asList(tbMetadata.getConcept("dcdab32a-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition accessedGeneXpertTest = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162203AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("162204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),getConcept("1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition registeredAndAccessedGeneXpertTestDuringPeriod = df.getPatientsInAll(registered,accessedGeneXpertTest);
-
-        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifR = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162203AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifS = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("162204AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition geneXpertBaselineTestResultsMTBPositiveAndRifIndeterminate = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition MTBTraceDetectedRRIndeterminate = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("164104AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition MTBNotDetected  = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(getConcept("1138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition registeredAYearAgo = df.getPatientsNotIn(df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),null,"12m", BaseObsCohortDefinition.TimeModifier.ANY),TBTransferInAYearAgo);
-
-       CohortDefinition transferredto2ndLineTreatment = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(tbMetadata.getTransferredTo2ndLineTreatmentDate(),tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-       CohortDefinition curedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeCured()));
-       CohortDefinition diedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeDied()));
-       CohortDefinition treatmentCompletedOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeTreatmentCompleted()));
-       CohortDefinition treatmentFailureOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeTreatmentFailure()));
-       CohortDefinition LTFPOutcome = getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram(Arrays.asList(tbMetadata.getTBOutcomeLTFP()));
-
-        add1AIndicators(dsd,"a","bacteria and registered ",bacteriologicallyConfirmedAndRegistered);
-            add1AIndicators(dsd,"b","bacteria and on treatment",bacteriologicallyConfirmedAndStartedOnTratment);
-            add1AIndicators(dsd,"c","clinicallyConfirmedAndRegistered",clinicallyConfirmedAndRegistered);
-            add1AIndicators(dsd,"d","clinicallyConfirmedAndStartedOnTratment",clinicallyConfirmedAndStartedOnTratment);
-            add1AIndicators(dsd,"e","EPTBConfirmedAndRegistered",EPTBConfirmedAndRegistered);
-            add1AIndicators(dsd,"f","EPTBConfirmedAndStartedOnTratment",EPTBConfirmedAndStartedOnTratment);
-            add1AIndicators(dsd,"g","assigned treatment supporter", noOfPatientsWithTreatmentSupporters);
-
+        add1AIndicators(dsd,"a","DR 01 ",registerd9to12MonthsAgo);
+        add1AIndicators(dsd,"b","DR 02",RifampicinResistant);
+        add1AIndicators(dsd,"c","DR 03",IsonaizidSus_ceptibility);
+        add1AIndicators(dsd,"d","DR04 ",MDRPatients);
+        add1AIndicators(dsd,"e","DR05 ",RR_MDRPatients);
+        add1AIndicators(dsd,"f","DR06 ",RR_WithFQResistanceAndSL_InjectablePatients);
+        add1AIndicators(dsd,"g","DR07 ",RR_WithFQResistancePatients);
+        add1AIndicators(dsd,"h","DR08 ",RR_WithSL_InjectableResistancePatients);
+        add1AIndicators(dsd,"i","DR09 ",MDR_WithFQResistance);
+        add1AIndicators(dsd,"j","DR10 ",MDR_WithSLResistance);
+        add1AIndicators(dsd,"k","DR11 ",MDR_WithFQResistanceAndSLResistance);
 
 
         return rd;
@@ -269,14 +234,12 @@ public class SetupHMIS106A3_2Report extends UgandaEMRDataExportManager {
 
 
     public void add1AIndicators(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        addIndicator(dsd, "1"+key , label + " new  ", cohortDefinition, "type=newPatients");
-        addIndicator(dsd, "2"+key , label + " relapsed ", cohortDefinition, "type=relapsedPatients");
-        addIndicator(dsd, "3"+key , label + " treatedAfterLTFP", cohortDefinition, "type=treatedAfterLTFP");
-        addIndicator(dsd, "4"+key , label + " treatedAfterFailure ", cohortDefinition, "type=treatedAfterFailure");
-        addIndicator(dsd, "5"+key , label + " treatementHistoryUnknown", cohortDefinition, "type=treatementHistoryUnknown");
-        addIndicator(dsd, "6"+key , label + " overall", cohortDefinition, "");
-        addIndicator(dsd, "7"+key , label + " Referred from Community activities", cohortDefinition, "type=referred");
-    }
+        addIndicator(dsd, "1"+key , label + " new ", cohortDefinition, "type=newPatients");
+        addIndicator(dsd, "2"+key , label + " previouslyTreated", cohortDefinition, "type=previouslyTreated");
+        addIndicator(dsd, "3"+key , label + " DRTBContacts", cohortDefinition, "type=DRTBContacts");
+        addIndicator(dsd, "4"+key , label + " HealthWorker", cohortDefinition, "type=HealthWorker");
+        addIndicator(dsd, "5"+key , label + " HIVPositive", cohortDefinition, "type=HIVPositive");
+        }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition, String dimensionOptions) {
         CohortIndicator ci = new CohortIndicator();
@@ -287,140 +250,29 @@ public class SetupHMIS106A3_2Report extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
+    public CohortDefinitionDimension getDimension(){
+        CohortDefinitionDimension patientTypeDimension= new CohortDefinitionDimension();
 
+        CohortDefinition newCaseTypePatients9to12MonthsAgo = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("b3c43c5e-1987-42c1-a7b3-2c71dc58c126")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition treatedPreviouslyCaseTypePatients9to12MonthsAgo = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("e077f196-c19a-417f-adc6-b175a3343bfd"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("8b00c885-edec-47bf-8700-69913741f71c"),getConcept("8ad53c8c-e136-41e3-aab8-eace935a3bbe"),getConcept("a37462b6-1f47-4efb-8df5-2bdc742efc17"),getConcept("ce983c0e-cdea-42e2-b93f-5ad26fe05fba"),getConcept("11522b1b-59d3-4c1f-8a9a-5d780127e84f")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsWhoAreHealthWorkers9monthsAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("5619AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsWhoAreTBContacts9monthsAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getRiskGroup(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("b5171d08-77bf-40a8-a864-51caa6cd2480")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition HIVPositive9MonthsAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getConcept("29c47b5c-b27d-499c-b52c-7be676a0a78f"),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")),"9m", BaseObsCohortDefinition.TimeModifier.ANY);
 
-    public void addGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
-        if (key == "n") {
-            addIndicator(dsd, "2n", label, cohortDefinition, "age=below1female");
-            addIndicator(dsd, "3n", label, cohortDefinition, "age=between1and4female");
-            addIndicator(dsd, "4n", label, cohortDefinition, "age=between5and9female");
-            addIndicator(dsd, "5n", label, cohortDefinition, "age=between10and14female");
-            addIndicator(dsd, "6n", label, cohortDefinition, "age=between15and19female");
-            addIndicator(dsd, "7n", label, cohortDefinition, "age=between20and24female");
-            addIndicator(dsd, "8n", label, cohortDefinition, "age=between25and29female");
-            addIndicator(dsd, "9n", label, cohortDefinition, "age=between30and34female");
-            addIndicator(dsd, "10n", label, cohortDefinition, "age=between35and39female");
-            addIndicator(dsd, "11n", label, cohortDefinition, "age=between40and44female");
-            addIndicator(dsd, "12n", label, cohortDefinition, "age=between45and49female");
-            addIndicator(dsd, "13n", label, cohortDefinition, "age=above50female");
-        } else if (key == "m") {
-            addIndicator(dsd, "2m", label, cohortDefinition, "age=below1male");
-            addIndicator(dsd, "3m", label, cohortDefinition, "age=between1and4male");
-            addIndicator(dsd, "4m", label, cohortDefinition, "age=between5and9male");
-            addIndicator(dsd, "5m", label, cohortDefinition, "age=between10and14male");
-            addIndicator(dsd, "6m", label, cohortDefinition, "age=between15and19male");
-            addIndicator(dsd, "7m", label, cohortDefinition, "age=between20and24male");
-            addIndicator(dsd, "8m", label, cohortDefinition, "age=between25and29male");
-            addIndicator(dsd, "9m", label, cohortDefinition, "age=between30and34male");
-            addIndicator(dsd, "10m", label, cohortDefinition, "age=between35and39male");
-            addIndicator(dsd, "11m", label, cohortDefinition, "age=between40and44male");
-            addIndicator(dsd, "12m", label, cohortDefinition, "age=between45and49male");
-            addIndicator(dsd, "13m", label, cohortDefinition, "age=above50male");
-        }
-    }
+        patientTypeDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
+        patientTypeDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
 
-    public void addOtherDimensionWithKey(CohortIndicatorDataSetDefinition dsd,String dimensionKey, String key, String label, CohortDefinition cohortDefinition) {
-        if (key == "n") {
-            addIndicator(dsd, dimensionKey+"2n", label, cohortDefinition, "age=below1female");
-            addIndicator(dsd, dimensionKey+"3n", label, cohortDefinition, "age=between1and4female");
-            addIndicator(dsd, dimensionKey+"4n", label, cohortDefinition, "age=between5and9female");
-            addIndicator(dsd, dimensionKey+"5n", label, cohortDefinition, "age=between10and14female");
-            addIndicator(dsd, dimensionKey+"6n", label, cohortDefinition, "age=between15and19female");
-            addIndicator(dsd, dimensionKey+"7n", label, cohortDefinition, "age=between20and24female");
-            addIndicator(dsd, dimensionKey+"8n", label, cohortDefinition, "age=between25and29female");
-            addIndicator(dsd, dimensionKey+"9n", label, cohortDefinition, "age=between30and34female");
-            addIndicator(dsd, dimensionKey+"10n", label, cohortDefinition, "age=between35and39female");
-            addIndicator(dsd, dimensionKey+"11n", label, cohortDefinition, "age=between40and44female");
-            addIndicator(dsd, dimensionKey+"12n", label, cohortDefinition, "age=between45and49female");
-            addIndicator(dsd, dimensionKey+"13n", label, cohortDefinition, "age=above50female");
-        } else if (key == "m") {
-            addIndicator(dsd, dimensionKey+"2m", label, cohortDefinition, "age=below1male");
-            addIndicator(dsd, dimensionKey+"3m", label, cohortDefinition, "age=between1and4male");
-            addIndicator(dsd, dimensionKey+"4m", label, cohortDefinition, "age=between5and9male");
-            addIndicator(dsd, dimensionKey+"5m", label, cohortDefinition, "age=between10and14male");
-            addIndicator(dsd, dimensionKey+"6m", label, cohortDefinition, "age=between15and19male");
-            addIndicator(dsd, dimensionKey+"7m", label, cohortDefinition, "age=between20and24male");
-            addIndicator(dsd, dimensionKey+"8m", label, cohortDefinition, "age=between25and29male");
-            addIndicator(dsd, dimensionKey+"9m", label, cohortDefinition, "age=between30and34male");
-            addIndicator(dsd, dimensionKey+"10m", label, cohortDefinition, "age=between35and39male");
-            addIndicator(dsd, dimensionKey+"11m", label, cohortDefinition, "age=between40and44male");
-            addIndicator(dsd, dimensionKey+"12m", label, cohortDefinition, "age=between45and49male");
-            addIndicator(dsd, dimensionKey+"13m", label, cohortDefinition, "age=above50male");
-        }
-    }
+        patientTypeDimension.addCohortDefinition("newPatients", Mapped.mapStraightThrough(newCaseTypePatients9to12MonthsAgo));
+        patientTypeDimension.addCohortDefinition("previouslyTreated", Mapped.mapStraightThrough(treatedPreviouslyCaseTypePatients9to12MonthsAgo));
+        patientTypeDimension.addCohortDefinition("DRTBContacts", Mapped.mapStraightThrough(patientsWhoAreTBContacts9monthsAgo));
+        patientTypeDimension.addCohortDefinition("HealthWorker", Mapped.mapStraightThrough(patientsWhoAreHealthWorkers9monthsAgo));
+        patientTypeDimension.addCohortDefinition("HIVPositive", Mapped.mapStraightThrough(HIVPositive9MonthsAgo));
 
-    public void splitGenderKeyAssigning(CohortIndicatorDataSetDefinition dsd,String dimensionKey,String label,CohortDefinition cohortDefinition){
-        addOtherDimensionWithKey(dsd,dimensionKey,"n",label+" females",cohortDefinition);
-        addOtherDimensionWithKey(dsd,dimensionKey,"m",label+" males",cohortDefinition);
-
-    }
-
-    private CohortDefinition getFirstTBOutComeAfterStartOfTBProgramForPreviousProgram( List<Concept> codedValues){
-        CodedObsCohortDefinition cd = new CodedObsCohortDefinition();
-        cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.FIRST);
-        cd.setQuestion(tbMetadata.getTreatmentOutcome());
-        cd.setEncounterTypeList(tbMetadata.getTBFollowupEncounterType());
-        cd.setOperator(SetComparator.IN);
-        cd.setValueList(codedValues);
-        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
-        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate-12m"));
-    }
-
-    private void addCohortAnalysisIndicatorColumns(CohortIndicatorDataSetDefinition dsd, String dimensionKey,String label, CohortDefinition cohortDefinition){
-        addIndicator(dsd, "1"+dimensionKey, label, cohortDefinition, "indicator=19a");
-        addIndicator(dsd, "2"+dimensionKey, label, cohortDefinition, "indicator=19b");
-        addIndicator(dsd, "3"+dimensionKey, label, cohortDefinition, "indicator=19c");
-        addIndicator(dsd, "4"+dimensionKey, label, cohortDefinition, "indicator=total");
-        addIndicator(dsd, "5"+dimensionKey, label, cohortDefinition, "indicator=19d");
-        addIndicator(dsd, "6"+dimensionKey, label, cohortDefinition, "indicator=19e");
-        addIndicator(dsd, "7"+dimensionKey, label, cohortDefinition, "indicator=19f");
-        addIndicator(dsd, "8"+dimensionKey, label, cohortDefinition, "indicator=20a");
-        addIndicator(dsd, "9"+dimensionKey, label, cohortDefinition, "indicator=20b");
-        addIndicator(dsd, "10"+dimensionKey, label, cohortDefinition, "indicator=20c");
-
-    }
-
-    public CohortDefinitionDimension getTBCohortAnalysisIndicators(){
-        CohortDefinitionDimension indicatorDimension= new CohortDefinitionDimension();
-
-        CohortDefinition TBTransferInAYearAgo = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(getConcept("34c5cbad-681a-4aca-bcc3-c7ddd2a88db8"), tbMetadata.getTBEnrollmentEncounterType(),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition registeredAYearAgo = df.getPatientsNotIn( tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("12m"),TBTransferInAYearAgo);
-        CohortDefinition newAndRelapsedPatientsAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewPatientType(),tbMetadata.getRelapsedPatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition registeredAndNewAndRelapsedPatientsAYearAgo = df.getPatientsInAll(registeredAYearAgo,newAndRelapsedPatientsAYearAgo);
-
-        CohortDefinition bacteriologicallyConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition clinicallyConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getClinicallyDiagnosed()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition EPTBConfirmedAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getEPTB()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-
-
-        CohortDefinition treatmentAfterLostToFollowupOrTreatmentAfterFailureAyearAgo =  df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentAfterLTFPPatientType(),tbMetadata.getTreatmentAfterFailurePatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition treatmentHistoryUnknownAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTypeOfPatient(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getTreatmentHistoryUnknownPatientType()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition communityDOTSAYearAgo = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getTreatmentModel(),null,Arrays.asList(tbMetadata.getDigitalCommunityDOTsTreatmentModel(),tbMetadata.getNonDigitalCommunityDOTsTreatmentModel()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-
-        CohortDefinition allKnownHIVPositiveAtEndOfTreatment = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getHIVStatusCategory(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getNewlyPositiveHIVStatus(),tbMetadata.getKnownPositiveHIVStatus()),"12m", BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition childrenNewAndRelapsePatients = df.getPatientsInAll(cohortDefinitionLibrary.agedAtMost(14,"12m"),newAndRelapsedPatientsAYearAgo);
-        CohortDefinition childrenKnownHIVPositivePatients = df.getPatientsInAll(cohortDefinitionLibrary.agedAtMost(14,"12m"),allKnownHIVPositiveAtEndOfTreatment);
-
-        indicatorDimension.addParameter(ReportingConstants.START_DATE_PARAMETER);
-        indicatorDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
-
-        indicatorDimension.addCohortDefinition("19a", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,bacteriologicallyConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("19b", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,clinicallyConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("19c", Mapped.mapStraightThrough(df.getPatientsInAll(registeredAndNewAndRelapsedPatientsAYearAgo,EPTBConfirmedAYearAgo)));
-        indicatorDimension.addCohortDefinition("total", Mapped.mapStraightThrough(registeredAndNewAndRelapsedPatientsAYearAgo));
-        indicatorDimension.addCohortDefinition("19d", Mapped.mapStraightThrough(treatmentAfterLostToFollowupOrTreatmentAfterFailureAyearAgo));
-        indicatorDimension.addCohortDefinition("19e", Mapped.mapStraightThrough(treatmentHistoryUnknownAYearAgo));
-        indicatorDimension.addCohortDefinition("19f", Mapped.mapStraightThrough(communityDOTSAYearAgo));
-        indicatorDimension.addCohortDefinition("20a", Mapped.mapStraightThrough(allKnownHIVPositiveAtEndOfTreatment));
-        indicatorDimension.addCohortDefinition("20b", Mapped.mapStraightThrough(childrenNewAndRelapsePatients));
-        indicatorDimension.addCohortDefinition("20c", Mapped.mapStraightThrough(childrenKnownHIVPositivePatients));
-
-        return indicatorDimension;
+        return patientTypeDimension;
     }
 
         @Override
     public String getVersion() {
-        return "0.1";
+        return "0.1.4";
     }
 }

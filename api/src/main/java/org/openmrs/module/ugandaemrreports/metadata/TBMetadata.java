@@ -214,6 +214,10 @@ public class TBMetadata extends Metadata {
 
     public Concept getDSTTest(){ return getConcept("159956AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"); }
 
+    public Concept getReasonForEnteringInThe2ndLineTreatment(){ return getConcept("be45bb4a-eaf3-4727-9358-a3e5bc3924cb"); }
+    public Concept getPresumptiveMDRXDRRR(){ return getConcept("c2519882-5047-4692-8148-85f956e02323"); }
+    public Concept getBacteriallyConfirmedMDRXDRRR(){ return getConcept("b219e3e4-275b-469e-85c9-4088f4b05779"); }
+
 
 
 

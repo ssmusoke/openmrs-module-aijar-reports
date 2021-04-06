@@ -185,9 +185,8 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
     public CohortDefinition getPatientWithRifampicinResitance(String periodInMonths){
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
                 "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=767 and p.concept_id=159984 and p.value_coded=159956\n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -196,10 +195,9 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     public CohortDefinition getPatientWithIsonaizidSus_ceptibility(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
-                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded =159958 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                " inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded =159958 \n" +
+                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -207,10 +205,9 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     public CohortDefinition getPatientWithIsonaizidResistant(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
-                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded =in 159956 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                " inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=78280 and p.concept_id=159984 and p.value_coded = 159956 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -219,9 +216,8 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
     public CohortDefinition getPatientWithAmikacinSus_ceptibility(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
                 "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=71060 and p.concept_id=159984 and p.value_coded =159958 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -229,10 +225,9 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     public CohortDefinition getPatientWithAmikacinResistant(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
-                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=71060 and p.concept_id=159984 and p.value_coded =in 159956 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded=71060 and p.concept_id=159984 and p.value_coded = 159956 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -240,10 +235,19 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     public CohortDefinition getPatientWithFQSus_ceptibility(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
-                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,80122,71060,72794,78385) and p.concept_id=159984 and p.value_coded =159958 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,76835) and p.concept_id=159984 and p.value_coded =159958 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
+
+    public CohortDefinition getPatientWithSL_InjectableSus_ceptibility(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (71060,72794,78385) and p.concept_id=159984 and p.value_coded =159958 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
@@ -251,13 +255,29 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
 
     public CohortDefinition getPatientWithFQResistant(String periodInMonths) {
         String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
-                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,80122,71060,72794,78385) and p.concept_id=159984 and p.value_coded =in 159956 \n" +
-                "and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f'and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
-        SqlCohortDefinition cd = new SqlCohortDefinition();
-        cd.setQuery(query);
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (78788,80133,76835) and p.concept_id=159984 and p.value_coded = 159956 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
         cd.addParameter(new Parameter("startDate", "startDate", Date.class));
         cd.addParameter(new Parameter("endDate", "endDate", Date.class));
         return  cd;
     }
 
+    public CohortDefinition getPatientWithSl_InjectableResistant(String periodInMonths) {
+        String query = "select p.person_id from obs o inner  join obs p on o.obs_group_id = p.obs_group_id inner join encounter e on o.encounter_id = e.encounter_id\n" +
+                "    inner join encounter_type et on e.encounter_type = et.encounter_type_id where o.concept_id=159956 and o.value_coded in (71060,72794,78385) and p.concept_id=159984 and p.value_coded = 159956 \n" +
+                " and et.uuid='0271ee3d-f274-49d1-b376-c842f075413f' and e.encounter_datetime between date_sub(:startDate, interval " + periodInMonths + " MONTH) AND date_sub(:endDate, interval " + periodInMonths + " MONTH)";
+        SqlCohortDefinition cd = new SqlCohortDefinition(query);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return  cd;
+    }
+
+    public CohortDefinition getPatientsWithBacteriallyConfirmedMDRXDRRRDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getReasonForEnteringInThe2ndLineTreatment(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriallyConfirmedMDRXDRRR()), BaseObsCohortDefinition.TimeModifier.FIRST);
+    }
+
+    public CohortDefinition getPatientsWithPresumptiveMDRXDRRRDuringPeriod(){
+        return df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getReasonForEnteringInThe2ndLineTreatment(),tbMetadata.getDRTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getPresumptiveMDRXDRRR()), BaseObsCohortDefinition.TimeModifier.FIRST);
+    }
 }
