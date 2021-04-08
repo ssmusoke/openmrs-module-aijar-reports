@@ -54,7 +54,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"\t\t\t IFNULL(PA.address4,'')\tAS Parish,\n" +
 				"\t\t\t IFNULL(PA.address3,'')\tAS SubCounty,\n" +
 				"\t\t\t IFNULL(PA.county_district,'')\tAS District,\n" +
-				"             DISEASE_CLASS.name disease_classification,\n" +
+				"             DISEASE_CLASS.name AS disease_classification,\n" +
 				"             1stLineSatrtDate.value_datetime AS DATE_STARTED_1ST_LINE,\n" +
 				"             1ST_REGIMEN.name AS DRUG_1ST_LINE,\n" +
 				"             PATIENT_TYPE.name AS patient_type,\n" +
@@ -72,13 +72,17 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             MONTH_6_TEST.value_coded AS Month_6_Results,\n" +
 				"             MONTH_6_TEST.value_datetime AS Month_6_date,\n" +
 				"             WEIGHT.weight as weight,\n" +
-				"             HEIGHT.height as height,\n" +
+				"             HEIGHT.height as bmi,\n" +
 				"             MUAC.muac ,\n" +
 				"             MUACCODE.muac_code,\n" +
 				"             ZSCORE.score,\n" +
 				"             NUTRITION_STATUS.status,\n" +
 				"             NUTRITION.support,\n" +
-				"             INR.INRNo \n" +
+				"             INR.INRNo, \n" +
+				"			  TRANSFER_IN.value_text AS transferred_in_from,\n" +
+				"             TRANSFER_IN_TB_NO.value_text AS transfer_in_Unit_TB_No,\n" +
+				"             REFFERAL_TYPE.name AS refferal,\n" +
+				"             REFFERAL_DATE.value_datetime AS refferal_Date" +
 				"             from (SELECT\t    e.encounter_id,\n" +
 				"\t\t\t    e.patient_id,\n" +
 				"\t\t\t    e.encounter_datetime\n" +
@@ -101,7 +105,7 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"             LEFT JOIN (SELECT\n" +
 				"\t\t\t\to.encounter_id, cn.name\n" +
 				"\t\t\t     FROM obs o\n" +
-				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99336 AND o.voided = 0\n" +
+				"\t\t\t     INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 99379 AND o.voided = 0\n" +
 				"\t\t\t     GROUP BY o.encounter_id ) DISEASE_CLASS ON DISEASE_CLASS.encounter_id = A.encounter_id\n" +
 				"             LEFT JOIN obs 1stLineSatrtDate ON 1stLineSatrtDate.encounter_id = A.encounter_id AND 1stLineSatrtDate.concept_id = 165838 AND 1stLineSatrtDate.voided = 0\n" +
 				"             LEFT JOIN  (SELECT\n" +
@@ -180,7 +184,15 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"                 group by o.person_id order by encounter_datetime ASC ) NUTRITION ON NUTRITION.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,value_numeric INRNo, min(encounter_datetime) from obs o join encounter e2 on o.encounter_id = e2.encounter_id\n" +
 				"                 inner  join encounter_type t on e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' AND o.voided = 0 WHERE o.concept_id=99733\n" +
-				"                 group by o.person_id order by encounter_datetime ASC ) INR ON INR.person_id = A.patient_id";
+				"                 group by o.person_id order by encounter_datetime ASC ) INR ON INR.person_id = A.patient_id " +
+                " LEFT JOIN (SELECT o.encounter_id,value_text FROM obs o  WHERE o.concept_id = 90211 AND o.voided = 0 GROUP BY o.encounter_id )TRANSFER_IN ON TRANSFER_IN.encounter_id = A.encounter_id\n" +
+                "                            LEFT JOIN (SELECT o.encounter_id,value_text FROM obs o  WHERE o.concept_id = 165826 AND o.voided = 0 GROUP BY o.encounter_id )TRANSFER_IN_TB_NO ON TRANSFER_IN_TB_NO.encounter_id = A.encounter_id\n" +
+                "                            LEFT JOIN (SELECT o.encounter_id, cn.name FROM obs o INNER JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 WHERE o.concept_id = 165855 AND o.voided = 0\n" +
+                "\t\t\t\t                 GROUP BY o.encounter_id ) REFFERAL_TYPE ON REFFERAL_TYPE.encounter_id = A.encounter_id\n" +
+                "                            LEFT JOIN (SELECT o.encounter_id,value_datetime FROM obs o  WHERE o.concept_id = 166160 AND o.voided = 0 GROUP BY o.encounter_id ) REFFERAL_DATE ON REFFERAL_DATE.encounter_id = A.encounter_id\n"+
+				"             INNER JOIN (SELECT patient_id,cn.name outcome, date_completed outcome_date from patient_program pp inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741'\n" +
+				"               LEFT JOIN concept_name cn ON pp.outcome_concept_id = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 where pp.date_enrolled between\n" +
+				String.format(		"\t\t\t    '%s' and '%s' group by patient_id ) PROGRAM on PROGRAM.patient_id = A.patient_id\n",startDate,endDate);
 
 		String ecounterAndProgranQuery = "SELECT   A.patient_id patient_id,\n" +
 				"             HIVSTATUS.status as  HIVSTATUS,\n" +
@@ -400,13 +412,17 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 			pdh.addCol(row, "Month 6 results", r[31]);
 			pdh.addCol(row, "Month 6 date", r[32]);
 			pdh.addCol(row, "weight", r[33]);
-			pdh.addCol(row, "height", r[34]);
+			pdh.addCol(row, "bmi", r[34]);
 			pdh.addCol(row, "muac", r[35]);
 			pdh.addCol(row, "muac code", r[36]);
 			pdh.addCol(row, "z score", r[37]);
 			pdh.addCol(row, "nutrition status", r[38]);
 			pdh.addCol(row, "nutrition support", r[39]);
 			pdh.addCol(row, "INR No", r[40]);
+			pdh.addCol(row, "Transfer_From", r[41]);
+			pdh.addCol(row, "Transfer_Tb_No", r[42]);
+			pdh.addCol(row, "Referral_From", r[43]);
+			pdh.addCol(row, "Referral_Date", r[44]);
 
 			if(encounterObjects !=null){
 			EncounterObject enc= encounterObjects.stream().filter(p->r[0].equals(p.var1)).findAny().orElse(null);
