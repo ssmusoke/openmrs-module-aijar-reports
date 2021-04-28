@@ -517,6 +517,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
+        "id": "HMIS 105 Section 2: ANC 2019",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2: ANC 2019",
+        "url": "reportingui/runReport.page?reportDefinition=ab8a7376-ce75-49ac-910c-dffe9a38d445",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
         "id": "UgandaEMR Metrics Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
