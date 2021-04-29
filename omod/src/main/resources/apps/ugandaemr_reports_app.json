@@ -483,6 +483,22 @@
         "order": 130,
         "requiredPrivilege": "App: ugandaemrreports.transitionedToDTGReport"
       },{
+        "id": "Patients with Unknown ART Regimen",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients with Unknown ART Regimen",
+        "url": "reportingui/runReport.page?reportDefinition=1fdcdee6-69eb-4c5c-9cad-4aa9b7bafb52",
+        "order": 135,
+        "requiredPrivilege": "App: ugandaemrreports.patientWithUnknownARTRegimen"
+      },{
+        "id": "Patients on First Line ART Regimen",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on First Line ART Regimen",
+        "url": "reportingui/runReport.page?reportDefinition=2fc0da7b-c297-48b2-857e-113da2a3b357",
+        "order": 140,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnFirstLineARTRegimen"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
