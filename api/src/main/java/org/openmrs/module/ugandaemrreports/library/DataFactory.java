@@ -169,6 +169,14 @@ public class DataFactory {
         return new PropertyConverter(DSDMModel.class, "progId");
     }
 
+    public DataConverter getWorkflowStateName() {
+        return new ChainedConverter(new PropertyConverter(PatientState.class, "state"), new ObjectFormatter());
+    }
+
+    public DataConverter getWorkflowStateStartDate() {
+        return new PropertyConverter(PatientState.class, "startDate");
+    }
+
     public DataConverter getPatientUUIDConverter() {
         return new PropertyConverter(Person.class, "uuid");
     }
