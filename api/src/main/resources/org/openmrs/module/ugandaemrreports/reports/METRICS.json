@@ -1,5 +1,6 @@
 {
   "facility_id": "#S.dhis_uuid#",
+  "facility_name": "#H.facilityName#",
   "emr_software": "UgandaEMR",
   "emr_version": "#aijar.version#",
   "start_date": "#parameter.startDate|YYYY-MM-dd#",
@@ -7,13 +8,41 @@
   "date_run": "#date.today|YYYY-MM-dd#",
   "encounters": {
     "hiv": {
-        "art_summary": #METRIC.l#,
-        "art_encounter": #METRIC.a#,
-        "art_health_education": #METRIC.m#,
-        "hts": #METRIC.b#,
-        "eid_summary": #METRIC.c#,
-        "eid_encounter": #METRIC.d#,
-        "missed_appointment_followup": #METRIC.e#
+        "art_summary": {
+          "community_visits": #METRIC.o#,
+          "facility_visits": #METRIC.p#,
+          "total": #METRIC.l#
+        },
+        "art_encounter":{
+          "community_visits": #METRIC.q#,
+          "facility_visits": #METRIC.r#,
+          "total": #METRIC.a#
+        },
+        "art_health_education":{
+          "community_visits": #METRIC.s#,
+          "facility_visits": #METRIC.t#,
+          "total":#METRIC.m#
+        },
+        "hts":{
+          "community_visits": #METRIC.u#,
+          "facility_visits": #METRIC.v#,
+          "total": #METRIC.b#
+        },
+        "eid_summary":{
+          "community_visits": #METRIC.w#,
+          "facility_visits": #METRIC.x#,
+          "total": #METRIC.c#
+        },
+        "eid_encounter": {
+          "community_visits": #METRIC.y#,
+          "facility_visits": #METRIC.z#,
+          "total": #METRIC.d#
+        },
+        "missed_appointment_followup": {
+          "community_visits": #METRIC.a1#,
+          "facility_visits": #METRIC.a2#,
+          "total": #METRIC.e#
+        }
       }
   },
   "poc_service_metrics": {
@@ -22,6 +51,7 @@
     "counselor":#METRIC.h#,
     "clinician":#METRIC.i#,
     "lab":#METRIC.j#,
-    "pharmacy":#METRIC.k#
+    "pharmacy":#METRIC.k#,
+    "community": #METRIC.n#
   }
 }
