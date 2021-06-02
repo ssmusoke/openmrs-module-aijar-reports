@@ -195,6 +195,50 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"a1", "missedAppointment from community",  getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getMissedAppointmentEncounterType(),null),"");
         addIndicator(dsd,"a2", "missedAppointment from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getMissedAppointmentEncounterType(),null),"");
 
+        addIndicator(dsd,"b1", "smc encounter from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getSMCEncounterType(),null),"");
+        addIndicator(dsd,"b2", "smc encounter from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getSMCEncounterType(),null),"");
+        addIndicator(dsd,"b3", "smc encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getSMCEncounterType(),null),"");
+
+        addIndicator(dsd,"c1", "smc followup from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getSMCFollowupEncounterType(),null),"");
+        addIndicator(dsd,"c2", "smc followup from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getSMCFollowupEncounterType(),null),"");
+        addIndicator(dsd,"c3", "smc followup", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getSMCFollowupEncounterType(),null),"");
+
+        addIndicator(dsd,"d1", "ds tb enrollment from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getTBEnrollmentEncounterType(),null),"");
+        addIndicator(dsd,"d2", "ds tb enrollment from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getTBEnrollmentEncounterType(),null),"");
+        addIndicator(dsd,"d3", "ds tb enrollment", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getTBEnrollmentEncounterType(),null),"");
+
+        addIndicator(dsd,"e1", "ds tb followup from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getTBFollowupEncounterType(),null),"");
+        addIndicator(dsd,"e2", "ds tb followup from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getTBFollowupEncounterType(),null),"");
+        addIndicator(dsd,"e3", "ds tb followup", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getTBFollowupEncounterType(),null),"");
+
+        addIndicator(dsd,"f1", "dr tb enrollment from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getDRTBEnrollmentEncounterType(),null),"");
+        addIndicator(dsd,"f2", "dr tb enrollment from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getDRTBEnrollmentEncounterType(),null),"");
+        addIndicator(dsd,"f3", "dr tb enrollment", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getDRTBEnrollmentEncounterType(),null),"");
+
+        addIndicator(dsd,"g1", "dr tb followup from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getDRTBFollowupEncounterType(),null),"");
+        addIndicator(dsd,"g2", "dr tb followup from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getDRTBFollowupEncounterType(),null),"");
+        addIndicator(dsd,"g3", "dr tb followup", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getDRTBFollowupEncounterType(),null),"");
+
+        addIndicator(dsd,"h1", "anc encounter from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getANCEncounterType(),null),"");
+        addIndicator(dsd,"h2", "anc encounter from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getANCEncounterType(),null),"");
+        addIndicator(dsd,"h3", "anc encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getANCEncounterType(),null),"");
+
+        addIndicator(dsd,"j1", "maternity from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getMaternityEncounterType(),null),"");
+        addIndicator(dsd,"j2", "maternity from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getMaternityEncounterType(),null),"");
+        addIndicator(dsd,"j3", "maternity encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getMaternityEncounterType(),null),"");
+
+        addIndicator(dsd,"k1", "PNC from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getPNCEncounterType(),null),"");
+        addIndicator(dsd,"k2", "PNC from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getPNCEncounterType(),null),"");
+        addIndicator(dsd,"k3", "PNC encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getPNCEncounterType(),null),"");
+
+        addIndicator(dsd,"l1", "COVID Initiation from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getCovidInitiationEncounterType(),null),"");
+        addIndicator(dsd,"l2", "COVID Initiation from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getCovidInitiationEncounterType(),null),"");
+        addIndicator(dsd,"l3", "COVID Initiation encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getCovidInitiationEncounterType(),null),"");
+
+        addIndicator(dsd,"m1", "COVID Followup from community", getNumbersEncountersDuringPeriodBy(Arrays.asList(community),hivMetadata.getCovidFollowupEncounterType(),null),"");
+        addIndicator(dsd,"m2", "COVID Followup from facility", getNumbersEncountersDuringPeriodBy(Arrays.asList(facility),hivMetadata.getCovidFollowupEncounterType(),null),"");
+        addIndicator(dsd,"m3", "COVID Followup encounter", getNumbersEncountersDuringPeriodBy(null,hivMetadata.getCovidFollowupEncounterType(),null),"");
+
         return rd;
     }
 
@@ -257,6 +301,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3.2";
+        return "0.3.8.1";
     }
 }

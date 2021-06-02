@@ -7,7 +7,7 @@
   "end_date": "#parameter.endDate|YYYY-MM-dd#",
   "date_run": "#date.today|YYYY-MM-dd#",
   "encounters": {
-    "hiv": {
+    "HIV": {
         "art_summary": {
           "community_visits": #METRIC.o#,
           "facility_visits": #METRIC.p#,
@@ -43,7 +43,70 @@
           "facility_visits": #METRIC.a2#,
           "total": #METRIC.e#
         }
+      },
+    "SMC": {
+        "smc_encounter": {
+          "community_visits": #METRIC.b1#,
+          "facility_visits": #METRIC.b2#,
+          "total": #METRIC.b3#
+        },
+      "smc_followup": {
+        "community_visits": #METRIC.c1#,
+        "facility_visits": #METRIC.c2#,
+        "total": #METRIC.c3#
       }
+    },
+    "TB": {
+      "DS_TB_Enrollment": {
+        "community_visits": #METRIC.d1#,
+        "facility_visits": #METRIC.d2#,
+        "total": #METRIC.d3#
+      },
+      "DS_TB_Followup": {
+        "community_visits": #METRIC.e1#,
+        "facility_visits": #METRIC.e2#,
+        "total": #METRIC.e3#
+      },
+      "DR_TB_Enrollment": {
+        "community_visits": #METRIC.f1#,
+        "facility_visits": #METRIC.f2#,
+        "total": #METRIC.f3#
+      },
+      "DR_TB_Followup": {
+        "community_visits": #METRIC.g1#,
+        "facility_visits": #METRIC.g2#,
+        "total": #METRIC.g3#
+      }
+    },
+    "MCH": {
+      "ANC_Encounter": {
+        "community_visits": #METRIC.h1#,
+        "facility_visits": #METRIC.h2#,
+        "total": #METRIC.h3#
+      },
+      "Maternity": {
+        "community_visits": #METRIC.j1#,
+        "facility_visits": #METRIC.j2#,
+        "total": #METRIC.j3#
+      },
+      "PNC_Encounter": {
+        "community_visits": #METRIC.k1#,
+        "facility_visits": #METRIC.k2#,
+        "total": #METRIC.k3#
+      }
+    },
+    "COVID": {
+      "Initiation": {
+        "community_visits": #METRIC.l1#,
+        "facility_visits": #METRIC.l2#,
+        "total": #METRIC.l3#
+      },
+      "Followup": {
+        "community_visits": #METRIC.m1#,
+        "facility_visits": #METRIC.m2#,
+        "total": #METRIC.m3#
+      }
+    }
   },
   "poc_service_metrics": {
     "reception":#METRIC.f#,
