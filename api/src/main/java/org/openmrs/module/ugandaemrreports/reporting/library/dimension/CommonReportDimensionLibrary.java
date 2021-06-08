@@ -172,6 +172,17 @@ public class CommonReportDimensionLibrary {
         ageDisaggregation.addCohortDefinition("GreaterThan50yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
         return ageDisaggregation;
     }
+
+    public CohortDefinitionDimension ANCAgeGroups() {
+        CohortDefinitionDimension ageDisaggregation = new CohortDefinitionDimension();
+        ageDisaggregation.setName("age groups (Below15,15-19years,20-24yrs,25-49yrs,>50yrs)");
+        ageDisaggregation.addCohortDefinition("Below15", map(commonCohortLibrary.agedAtLeastAgedAtMost(0, 14), "effectiveDate=${endDate}"));
+        ageDisaggregation.addCohortDefinition("Between15And19yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 19), "effectiveDate=${endDate}"));
+        ageDisaggregation.addCohortDefinition("Between20And24yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(20, 24), "effectiveDate=${endDate}"));
+        ageDisaggregation.addCohortDefinition("Between25And49yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(25, 49), "effectiveDate=${endDate}"));
+        ageDisaggregation.addCohortDefinition("GreaterThan50yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
+        return ageDisaggregation;
+    }
 	
 	/**
      * Dimension for age using 5 age group for smc

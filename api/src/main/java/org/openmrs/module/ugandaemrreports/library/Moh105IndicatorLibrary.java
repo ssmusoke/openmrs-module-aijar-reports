@@ -46,29 +46,33 @@ public class Moh105IndicatorLibrary {
     /**
      * Number of female patients with ANC 1st visit
      */
-    public CohortIndicator anc1stVisit(){
+    public CohortIndicator ANCFirstContact(){
         return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.femaleAndHasAncVisit(0.0, 1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Number of female patients with ANC 4th visit
      */
-    public CohortIndicator anc4thVisit(){
+    public CohortIndicator ANCFourthVisit(){
         return cohortIndicator("Patients who have ANC 4th Visit", map(cohortLibrary.femaleAndHasAncVisit(3.0, 4.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Number of female patients with ANC 4th visit and above
      */
-    public CohortIndicator anc4thPlusVisit(){
-        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(4.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    public CohortIndicator ANCVisitFourthPlus(){
+        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(4.0, 7.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator ANCEighthVisit(){
+        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(8.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Total number of patients with ANC visits
      * @return CohortIndicator
      */
-    public CohortIndicator totalAncVisits() {
+    public CohortIndicator totalANCVisits() {
         return cohortIndicator("Patients who have ANC Visits", map(cohortLibrary.femaleAndHasAncVisit(0.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
@@ -99,7 +103,7 @@ public class Moh105IndicatorLibrary {
      * Referral from ANC unit FSG
      * @return CohortIndicator
      */
-    public CohortIndicator referalFromAncUniFsg(){
+    public CohortIndicator referalFromAncUnitFSG(){
         return cohortIndicator("Referral from ANC unit FSG", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("cd27f0ac-0fd3-4f40-99a3-57742106f5fd"), Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
@@ -133,6 +137,10 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator pregnantAndTestedForSyphilis() {
         return cohortIndicator("Pregnant women tested for syphilis", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator pregnantAndTestedforTB() {
+        return cohortIndicator("ANC Visit and tested for TB", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("275a6f72-b8a4-4038-977a-727552f69cb8")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**

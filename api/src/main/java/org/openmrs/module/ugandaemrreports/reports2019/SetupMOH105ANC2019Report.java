@@ -23,30 +23,14 @@ import java.util.List;
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.period;
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
-/**
- * Daily Appointments List report
- */
+
 @Component
 
-public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
+public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
 
-    @Autowired
-    ARTClinicCohortDefinitionLibrary hivCohorts;
-
-    @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
-
-    @Autowired
-    private HIVPatientDataLibrary hivPatientData;
-
-    @Autowired
-    private BasePatientDataLibrary basePatientData;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
 
     @Autowired
     private CommonReportDimensionLibrary dimensionLibrary;
@@ -64,13 +48,11 @@ public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
     public String getExcelDesignUuid() {
         return "aa23c2b1-ca83-47fb-9846-b16294fc03d6";
     }
-    public String getJSONDesignUuid() {
-        return "f78a54c7-dd5b-4b36-8b9d-c77847c16118";
-    }
+
 
     @Override
     public String getUuid() {
-        return "ab8a7376-ce75-49ac-910c-dffe9a38d445";
+        return "caec6908-72e1-4978-8007-13c551d23e5f";
     }
 
     @Override
@@ -114,11 +96,6 @@ public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
         return rd;
     }
 
-//    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
-//        ReportDesign rd = createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "HMIS105Section4_2019.json");
-//        return rd;
-//    }
-
 
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding
@@ -150,19 +127,28 @@ public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
     protected DataSetDefinition antentalDataSetDefinition() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.MCHAgeGroups(), "effectiveDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.ANCAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 
-        addRowWithColumns(dsd, "AN01","Number of females below the age of 15", indicatorLibrary.individualsWithWardHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "AN01","HT1B-Number of individuals with Ward as  HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithWardHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "AN01","HT1C-Number of individuals with Ward as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWardHCTEntryPointandLinkedToCare());
-        addRowWithColumns(dsd, "AN01","HT1A-Number of individuals with Ward as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWardHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "AN01","HT1B-Number of individuals with Ward as  HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithWardHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "AN01","HT1C-Number of individuals with Ward as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWardHCTEntryPointandLinkedToCare());
+//        addRowWithColumns(dsd, "AN01","Number of females with a first ANC Visit ",indicatorLibrary.ANCFirstContact() );
+//        addRowWithColumns(dsd, "AN02","Number of females with a fourth contact  ANC Visit ",indicatorLibrary.ANCFourthVisit());
+//        addRowWithColumns(dsd, "AN03","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCVisitFourthPlus());
+//        addRowWithColumns(dsd, "AN04","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCEighthVisit());
+//        addRowWithColumns(dsd, "AN05","Total Number of Visits for both old and new ",indicatorLibrary.totalANCVisits());
+//
+//        //Referals to ANC Unit
+//        addRowWithColumns(dsd, "AN06","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitTotal());
+//        addRowWithColumns(dsd, "AN07","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitFromCommunityServices());
+//
+//        //Referals from ANC Unit
+//        addRowWithColumns(dsd, "AN08","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitTotal());
+//        addRowWithColumns(dsd, "AN09","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitFSG());
+
+
 
 
 
@@ -171,15 +157,12 @@ public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "dF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
-        addIndicator(dsd, key + "eF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "gender=F|age=Between20And24yrs");
-        addIndicator(dsd, key + "mF", label + " (Between 25 and 29 Years) Female", cohortIndicator, "gender=F|age=Between25And29yrs");
-        addIndicator(dsd, key + "fF", label + " (Between 30 and 34 Years) Female", cohortIndicator, "gender=F|age=Between30And34yrs");
-        addIndicator(dsd, key + "gF", label + " (Between 35 and 39 Years) Female", cohortIndicator, "gender=F|age=Between35And39yrs");
-        addIndicator(dsd, key + "hF", label + " (Between 40 and 44 Years) Female", cohortIndicator, "gender=F|age=Between40And44yrs");
-        addIndicator(dsd, key + "jF", label + " (Between 45 and 49 Years) Female", cohortIndicator, "gender=F|age=Between45And49yrs");
-        addIndicator(dsd, key + "kF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
-        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");
+        addIndicator(dsd, key + "aF", label + " (Below 15 Yeats) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
+        addIndicator(dsd, key + "bF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
+        addIndicator(dsd, key + "cF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "gender=F|age=Between20And24yrs");
+        addIndicator(dsd, key + "dF", label + " (Between 25 and 49 Years) Female", cohortIndicator, "gender=F|age=Between25And49yrs");
+        addIndicator(dsd, key + "eF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
+        addIndicator(dsd, key + "fF", label + " (Total) ", cohortIndicator, "");
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
@@ -189,6 +172,6 @@ public class SetupMOH105_ANC_2019_Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.4";
     }
 }

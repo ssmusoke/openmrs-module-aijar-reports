@@ -508,20 +508,20 @@
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },
       {
+        "id": "HMIS 105 Section 2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2: ANTENANTAL",
+        "url": "reportingui/runReport.page?reportDefinition=caec6908-72e1-4978-8007-13c551d23e5f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
         "label": "HMIS 105 Section 4: HTS 2019",
         "url": "reportingui/runReport.page?reportDefinition=27f4804f-ec6f-466e-b4ea-21f9ca584880",
-        "order": 5,
-        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
-      },
-      {
-        "id": "HMIS 105 Section 2: ANC 2019",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 Section 2: ANC 2019",
-        "url": "reportingui/runReport.page?reportDefinition=ab8a7376-ce75-49ac-910c-dffe9a38d445",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
