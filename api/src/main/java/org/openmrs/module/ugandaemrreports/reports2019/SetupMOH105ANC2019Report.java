@@ -134,19 +134,19 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 
-//        addRowWithColumns(dsd, "AN01","Number of females with a first ANC Visit ",indicatorLibrary.ANCFirstContact() );
-//        addRowWithColumns(dsd, "AN02","Number of females with a fourth contact  ANC Visit ",indicatorLibrary.ANCFourthVisit());
-//        addRowWithColumns(dsd, "AN03","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCVisitFourthPlus());
-//        addRowWithColumns(dsd, "AN04","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCEighthVisit());
-//        addRowWithColumns(dsd, "AN05","Total Number of Visits for both old and new ",indicatorLibrary.totalANCVisits());
-//
-//        //Referals to ANC Unit
-//        addRowWithColumns(dsd, "AN06","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitTotal());
-//        addRowWithColumns(dsd, "AN07","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitFromCommunityServices());
-//
-//        //Referals from ANC Unit
-//        addRowWithColumns(dsd, "AN08","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitTotal());
-//        addRowWithColumns(dsd, "AN09","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitFSG());
+        addRowWithColumns(dsd, "AN01","Number of females with a first ANC Visit ",indicatorLibrary.ANCFirstContact() );
+        addRowWithColumns(dsd, "AN02","Number of females with a fourth contact  ANC Visit ",indicatorLibrary.ANCFourthVisit());
+        addRowWithColumns(dsd, "AN03","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCVisitFourthPlus());
+        addRowWithColumns(dsd, "AN04","Number of females with a fourth plus contact  ANC Visit ",indicatorLibrary.ANCEighthVisit());
+        addRowWithColumns(dsd, "AN05","Total Number of Visits for both old and new ",indicatorLibrary.totalANCVisits());
+
+        //Referals to ANC Unit
+        addRowWithColumns(dsd, "AN06","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitTotal());
+        addRowWithColumns(dsd, "AN07","Total Referals to ANC Unit ",indicatorLibrary.referalToAncUnitFromCommunityServices());
+
+        //Referals from ANC Unit
+        addRowWithColumns(dsd, "AN08","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitTotal());
+        addRowWithColumns(dsd, "AN09","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitFSG());
 
 
 
