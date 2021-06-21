@@ -56,16 +56,16 @@ public class SetUpPatientsOnThirdLineRegimenReport extends UgandaEMRDataExportMa
      */
     @Override
     public String getExcelDesignUuid() {
-        return "a8fa38a2-921c-474e-b899-f323bb29f471";
+        return "8cc238d5-c7c1-4260-b1d8-b8d0823bf862";
     }
 
     public String getCSVDesignUuid() {
-        return "40c4b347-954a-4630-9747-fd2c2169de62";
+        return "8a2d2891-bea2-4c8e-b569-8362d16749a4";
     }
 
     @Override
     public String getUuid() {
-        return "864b1e53-eb4c-4d74-bfbd-331f95554150";
+        return "d0647d6a-8dea-4536-b502-0a1a53a3d18e";
     }
 
     @Override

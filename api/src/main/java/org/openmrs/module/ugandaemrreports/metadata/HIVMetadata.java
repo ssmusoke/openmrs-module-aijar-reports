@@ -603,10 +603,6 @@ public class HIVMetadata extends ReportMetadata {
         return getConcept("dca16e53-30ab-102d-86b0-7a5022ba4115");
     }
 
-    public ProgramWorkflowState getUnknownState() {
-        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_UNKNOWN);
-    }
-
     public ProgramWorkflowState getFirstLineRegimenState() {
         return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_FIRST_LINE_REGIMEN);
     }
