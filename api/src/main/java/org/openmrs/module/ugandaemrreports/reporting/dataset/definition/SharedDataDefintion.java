@@ -150,7 +150,7 @@ public class SharedDataDefintion {
 
     public DataSetDefinition healthFacilityName() {
         NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
-        dsd.setFacilityName("aijar.healthCenterName");
+        dsd.setFacilityName("ugandaemr.healthCenterName");
         return dsd;
     }
 }
