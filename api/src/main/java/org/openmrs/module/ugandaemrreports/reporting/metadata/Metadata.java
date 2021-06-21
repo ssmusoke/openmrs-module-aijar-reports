@@ -271,11 +271,12 @@ public class Metadata {
         public static final String DATE_OF_SECOND_PCR_TEST = "1f627527-2f97-4f21-9b61-2b79d887950f";
         public static final String DATE_OF_18_MONTH_RAPID_PCR_TEST = "7065b181-abb0-4ad6-8082-62e99398f735";
         public static final String EMTCT_CODES = "d5b0394c-424f-41db-bc2f-37180dcdbe74";
-
+        public static final String HIV_PROHYLAXIS="f42e40f3-7f76-4c0d-b9cc-f66acbb092c4";
         public static final String PREGNANCY_OUTCOME = "161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String HIV_STATUS = "dce0e886-30ab-102d-86b0-7a5022ba4115";
         public static final String ARV_FOR_BABY = "9e825e42-be00-4d4d-8774-257ddb29581b";
         public static final String NVP_SYRUP = "04711d8f-c60d-4b1c-9451-0b32debbb8b0";
+        public static final String NEVERAPINE = "dc800d9d-30ab-102d-86b0-7a5022ba4115";
 
         public static final String TETANUS_DOSE_GIVEN = "39217e3d-6a39-4679-bf56-f0954a7ffdb8";
         public static final String FIRST_DOSE = "0192ca59-b647-4f88-b07e-8fda991ba6d6";
@@ -286,7 +287,9 @@ public class Metadata {
         public static final String EMTCT_CODE_TRRK = "1f177240-85f6-4f10-964a-cfc7722408b3";
         public static final String ARV_REGIMEN = "35ae2043-a3b0-48de-8e22-05f377ac39a2";
         public static final String EMTCT_CODE_TRRP = "a08d9331-b437-485c-8eff-1923f3d43630";
-        public static final String EMTCT_CODE_TRP = "60155e4d-1d49-4e97-9689-758315967e0f";
+        public static final String EMTCT_CODE_TRRPLUS = "8dcaefaa-aa91-4c24-aaeb-122cff549ab3";
+        public static final String EMTCT_CODE_TRP = "0155e4d-1d49-4e97-9689-758315967e0f";
+        public static final String EMTCT_CODE_TRRTICK = "60155e4d-1d49-4e97-9689-758315967e0f";
         public static final String EMTCT_CODE_T = "05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7";
         public static final String EMTCT_CODE_TR = "86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a";
         public static final String EMTCT_CODE_TRR = "25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465";

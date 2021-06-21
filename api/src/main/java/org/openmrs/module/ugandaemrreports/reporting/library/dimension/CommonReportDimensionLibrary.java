@@ -175,6 +175,7 @@ public class CommonReportDimensionLibrary {
 
     public CohortDefinitionDimension ANCAgeGroups() {
         CohortDefinitionDimension ageDisaggregation = new CohortDefinitionDimension();
+        ageDisaggregation.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         ageDisaggregation.setName("age groups (Below15,15-19years,20-24yrs,25-49yrs,>50yrs)");
         ageDisaggregation.addCohortDefinition("Below15", map(commonCohortLibrary.agedAtLeastAgedAtMost(0, 14), "effectiveDate=${endDate}"));
         ageDisaggregation.addCohortDefinition("Between15And19yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(15, 19), "effectiveDate=${endDate}"));

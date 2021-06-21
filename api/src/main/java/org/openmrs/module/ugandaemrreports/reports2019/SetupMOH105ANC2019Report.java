@@ -1,6 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports2019;
 
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -9,7 +8,6 @@ import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
@@ -92,18 +90,10 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
     @Override
 
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign("04c3d0f2-fd33-4b48-ada7-fc7838566917b3", reportDefinition, "HMOH105MCHSection_2019.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MOH105ANCSection_2019.xls");
         return rd;
     }
 
-
-    /**
-     * Build the report design for the specified report, this allows a user to override the report design by adding
-     * properties and other metadata to the report design
-     *
-     * @param reportDefinition
-     * @return The report design
-     */
 
 
 
@@ -148,6 +138,80 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "AN08","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitTotal());
         addRowWithColumns(dsd, "AN09","Total Referals to ANC Unit ",indicatorLibrary.referalFromAncUnitFSG());
 
+        //Pregnant Mothers on IPT treatement
+        addRowWithColumns(dsd, "AN10","Pregnant Mothers on IPT First Dose",indicatorLibrary.iptFirstDosage());
+        addRowWithColumns(dsd, "AN11","Pregnant Mothers on IPT Second Dose ",indicatorLibrary.iptSecondDosage());
+        addRowWithColumns(dsd, "AN12","Pregnant Mothers on IPT third Dose ",indicatorLibrary.iptThirdDosage());
+        addRowWithColumns(dsd, "AN13","Pregnant Mothers on IPT fourth Dose ",indicatorLibrary.iptFourthDosage());
+
+        //Clients screened for TB
+        addRowWithColumns(dsd, "AN14","Pregnant Mothers Screened for TB",indicatorLibrary.pregnantAndTestedforTB());
+        addRowWithColumns(dsd, "AN15","Pregnant Mothers Diagonised  for TB",indicatorLibrary.tbPresumptive());
+        addRowWithColumns(dsd, "AN16","Pregnant Mothers Diagonised  for TB",indicatorLibrary.pregnantandDiagnisedWithTB());
+
+        //Clients Blood Group
+        addRowWithColumns(dsd, "AN17","Pregnant Mothers with Blood Group O",indicatorLibrary.totalBloodGroupO());
+        addRowWithColumns(dsd, "AN18","Pregnant Mothers with Blood Group O+",indicatorLibrary.bloodGroupOPositive());
+        addRowWithColumns(dsd, "AN19","Pregnant Mothers with Blood Group A",indicatorLibrary.totalBloodGroupA());
+        addRowWithColumns(dsd, "AN20","Pregnant Mothers with Blood Group A+",indicatorLibrary.bloodGroupAPositive());
+        addRowWithColumns(dsd, "AN21","Pregnant Mothers with Blood Group B",indicatorLibrary.totalBloodGroupB());
+        addRowWithColumns(dsd, "AN22","Pregnant Mothers with Blood Group B+",indicatorLibrary.bloodGroupBPositive());
+        addRowWithColumns(dsd, "AN23","Pregnant Mothers with Blood Group AB",indicatorLibrary.totalBloodGroupAB());
+        addRowWithColumns(dsd, "AN24","Pregnant Mothers with Blood Group AB+",indicatorLibrary.bloodGroupABPositive());
+
+        //Tested for syphillis
+        addRowWithColumns(dsd, "AN36","Pregnant Mothers with  Syphillis test",indicatorLibrary.pregnantAndTestedForSyphilis());
+        addRowWithColumns(dsd, "AN37","Pregnant Mothers with Positive Syphillis test",indicatorLibrary.pregnantAndTestedPositiveforSyphillis());
+        addRowWithColumns(dsd, "AN38","Pregnant Mothers with Positive Syphillis test and started treatment",indicatorLibrary.pregnantAndTestedPositiveforSyphillisAndStartedTreatment());
+
+        addRowWithColumns(dsd, "AN39","Partner with  Syphillis test",indicatorLibrary.partnerTestedForSyphilis());
+        addRowWithColumns(dsd, "AN40","Partner with Positive Syphillis test",indicatorLibrary.patnerTestedPositiveforSyphillis());
+        addRowWithColumns(dsd, "AN41","Partner with Positive Syphillis test and started treatment",indicatorLibrary.partnerTestedPositiveforSyphillisAndStartedTreatment());
+
+        //
+        addRowWithColumns(dsd, "AN46","Pregnant women who tested ",indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR());
+        addRowWithColumns(dsd, "AN47","Pregnant women who testing for the first time  ",indicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyTRR());
+        addRowWithColumns(dsd, "AN48","Pregnant women assessed by CD4 ",indicatorLibrary.hivPositiveIndividualsTestedAtAnEarlyStage());
+
+        addRowWithColumns(dsd, "AN49","Pregnant women with known HIV Status ",indicatorLibrary.pregnantWomenwithKnownHIVStatus());
+        addRowWithColumns(dsd, "AN50","Pregnant women with known HIV Status before first ANC visit ",indicatorLibrary.pregnantWomenWithKnownHIVStatusBeforeFirstANCVisit());
+
+
+
+        addRowWithColumns(dsd, "AN71","Pregnant women who retested laster in the pregancy total ",indicatorLibrary.totalPregnantWomenTestedLater());
+        addRowWithColumns(dsd, "AN72","Pregnant women who retested laster in the pregancy ",indicatorLibrary.pregnantWomenTestedLater());
+        addRowWithColumns(dsd, "AN73","Pregnant women given infant HIV Prophylaxis ",indicatorLibrary.pregnantWomenHIVProhylaxis());
+
+        addRowWithColumns(dsd, "AN77","Male partners received HIV test results in eMTCT - Totals",indicatorLibrary.malePatinersRecievedHivResultTotal());
+        addRowWithColumns(dsd, "AN78","Male partners received HIV test results in eMTCT ",indicatorLibrary.malePatinersRecievedHivResult());
+        addRowWithColumns(dsd, "AN79","Male partners with known HIV Status total ",indicatorLibrary.malePatinersWithKnownHivResultTotal());
+        addRowWithColumns(dsd, "AN80","Male partners with known HIV Status  ",indicatorLibrary.malePatinersWithKnownHivResult());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -157,7 +221,7 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "aF", label + " (Below 15 Yeats) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
+        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
         addIndicator(dsd, key + "bF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
         addIndicator(dsd, key + "cF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "gender=F|age=Between20And24yrs");
         addIndicator(dsd, key + "dF", label + " (Between 25 and 49 Years) Female", cohortIndicator, "gender=F|age=Between25And49yrs");
@@ -172,6 +236,6 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.4";
+        return "2.0.2";
     }
 }

@@ -89,7 +89,7 @@ public class SetupWeeklyOptionBPlusSMSReport extends UgandaEMRDataExportManager 
 						.map(moh105IndicatorLibrary.pregnantWomenNewlyTestedForHivThisPregnancyAndTestedHIVPositive(),
 								params),
 				(String) null);
-		dsd.addColumn("4d","Total No ANC Known Positive",  ReportUtils.map(moh105IndicatorLibrary.pregnantTrkTrrk(),
+		dsd.addColumn("4d","Total No ANC Known Positive",  ReportUtils.map(moh105IndicatorLibrary.pregnantWomenWithKnownHIVStatusBeforeFirstANCVisit(),
                 params),
 				(String) null);
 		dsd.addColumn("5e","Total Initiating OptionB+",

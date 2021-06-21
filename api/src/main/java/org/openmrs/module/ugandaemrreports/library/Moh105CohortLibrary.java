@@ -84,7 +84,7 @@ public class Moh105CohortLibrary {
         cd.setName("Anc visit between "+lower+" and "+upper);
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setQuestion(Dictionary.getConcept("801b8959-4b2a-46c0-a28f-f7d3fc8b98bb"));
+        cd.setQuestion(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"));
         cd.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         cd.setOperator1(RangeComparator.GREATER_THAN);
         cd.setValue1(lower);
@@ -123,6 +123,23 @@ public class Moh105CohortLibrary {
         cd.addSearch("takingFolic", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("8c346216-c444-4528-a174-5139922218ed"), Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("(ancEncounter AND femaleAndHasAncVisit) AND (takingIron OR takingFolic)");
+        return cd;
+    }
+
+    public CohortDefinition pregnantAndDiagnisedWithTB(){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Pregnant women Diagnosed with TB");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("femaleAndHasAncVisit", ReportUtils.map(femaleAndHasAncVisit(0.0, 1.0), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("clinicalDiagnosis", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("1435dcb2-9470-4b69-8d05-199e5f13044c")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("genexpert", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("36cd82a6-370d-4188-bf69-ad8ebbc86d37")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("tbLAM", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("d941bfbc-7546-464b-90ff-b8e28d247d47")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("tbMicroscopy", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("d5a86db5-3e7f-4344-85d7-572c8bb6b966")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("chestXray", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("e2fd439a-619e-4067-a2f1-8e2454120a58")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("otherDiagnosis", ReportUtils.map(definitionLibrary.hasObs(Dictionary.getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("ff246b26-f2d1-45f6-9e33-385eb8d19d3f")), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("ancEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("(ancEncounter AND femaleAndHasAncVisit) AND (clinicalDiagnosis OR genexpert OR tbLAM OR tbMicroscopy OR chestXray OR otherDiagnosis)");
         return cd;
     }
     
