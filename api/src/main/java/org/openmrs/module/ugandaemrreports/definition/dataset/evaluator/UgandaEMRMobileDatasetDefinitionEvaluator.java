@@ -66,7 +66,7 @@ public class UgandaEMRMobileDatasetDefinitionEvaluator implements DataSetEvaluat
         Cohort c = context.getBaseCohort();
 
         // getting cohorts based on the program passed
-        if(!dsd.getPrograms().isEmpty()&& dsd!=null){
+        if(dsd.getPrograms()!=null&& dsd!=null){
             CurrentlyInProgramCohortDefinition cd = new CurrentlyInProgramCohortDefinition();
             cd.setPrograms(dsd.getPrograms());
 

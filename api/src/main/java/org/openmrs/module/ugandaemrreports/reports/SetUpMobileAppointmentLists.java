@@ -70,7 +70,7 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
 
     @Override
     public String getName() {
-        return "Appointments List";
+        return "Mobile Appointments List";
     }
 
     @Override
@@ -83,7 +83,7 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
-        l.add(new Parameter("programs", "programs", Program.class, List.class, Arrays.asList(hivMetadata.getFBIMProgram(),hivMetadata.getFBGProgram(),hivMetadata.getFTRProgram(),hivMetadata.getCCLADProgram(),hivMetadata.getCDDPProgram())));
+        l.add(new Parameter("programs", "programs", Program.class, List.class, null,null,false));
         return l;
     }
 
@@ -157,6 +157,6 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.1";
+        return "2.1.2";
     }
 }
