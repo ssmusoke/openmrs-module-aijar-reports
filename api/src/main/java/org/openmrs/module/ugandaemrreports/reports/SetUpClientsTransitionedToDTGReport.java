@@ -18,6 +18,8 @@ import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -141,7 +143,8 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         CohortDefinition patientsOnDTGInPeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenInPeriod(), df.getDeadPatientsDuringPeriod(), hivCohortDefinitionLibrary.getTransferredOut());
         CohortDefinition patientsOnDTGBeforePeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenBeforePeriod(), df.getDeadPatientsByEndOfPreviousDate("1d"));
-        CohortDefinition transitionedToDTGCohort =  df.getPatientsNotIn(patientsOnDTGInPeriod, patientsOnDTGBeforePeriod);
+        CohortDefinition patientsStartedOnDTGDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtStartRegimen(),hivMetadata.getARTSummaryPageEncounterType(),Dictionary.getConceptList(Metadata.Concept.DTG_TLD_REGIMEN_LIST), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition transitionedToDTGCohort =  df.getPatientsNotIn(patientsOnDTGInPeriod, patientsOnDTGBeforePeriod,patientsStartedOnDTGDuringPeriod);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -176,7 +179,7 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
 
     @Override
     public String getVersion() {
-        return "3.0.0";
+        return "3.0.1";
     }
 }
 

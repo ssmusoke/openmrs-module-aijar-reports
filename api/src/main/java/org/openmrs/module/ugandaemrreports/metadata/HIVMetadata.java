@@ -614,4 +614,137 @@ public class HIVMetadata extends ReportMetadata {
     public ProgramWorkflowState getThirdLineRegimenState() {
         return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_THIRD_LINE_REGIMEN);
     }
+
+    public List<EncounterType> getSMCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"));
+        return l;
+    }
+
+    public List<EncounterType> getSMCFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "d0f9e0b7-f336-43bd-bf50-0a7243857fa6"));
+        return l;
+    }
+
+    public List<EncounterType> getTBEnrollmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "334bf97e-28e2-4a27-8727-a5ce31c7cd66"));
+        return l;
+    }
+
+    public List<EncounterType> getTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "455bad1f-5e97-4ee9-9558-ff1df8808732"));
+        return l;
+    }
+
+    public List<EncounterType> getDRTBEnrollmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "0271ee3d-f274-49d1-b376-c842f075413f"));
+        return l;
+    }
+
+    public List<EncounterType> getDRTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "41f8609d-e13b-4dff-8379-47ac5876512e"));
+        return l;
+    }
+
+    public List<EncounterType> getANCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "044daI6d-f80e-48fe-aba9-037f241905Pe"));
+        return l;
+    }
+
+    public List<EncounterType> getMaternityEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "a9f11592-22e7-45fc-904d-dfe24cb1fc67"));
+        return l;
+    }
+
+    public List<EncounterType> getPNCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"));
+        return l;
+    }
+
+    public List<EncounterType> getCovidInitiationEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "422ee220-9e83-451d-9b25-79a688a0413a"));
+        return l;
+    }
+
+    public List<EncounterType> getCovidFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "95d334b0-c322-46ee-856a-4f503c8979ee"));
+        return l;
+    }
+
+
+    public List<EncounterType> getSMCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"));
+        return l;
+    }
+
+    public List<EncounterType> getSMCFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "d0f9e0b7-f336-43bd-bf50-0a7243857fa6"));
+        return l;
+    }
+
+    public List<EncounterType> getTBEnrollmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "334bf97e-28e2-4a27-8727-a5ce31c7cd66"));
+        return l;
+    }
+
+    public List<EncounterType> getTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "455bad1f-5e97-4ee9-9558-ff1df8808732"));
+        return l;
+    }
+
+    public List<EncounterType> getDRTBEnrollmentEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "0271ee3d-f274-49d1-b376-c842f075413f"));
+        return l;
+    }
+
+    public List<EncounterType> getDRTBFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "41f8609d-e13b-4dff-8379-47ac5876512e"));
+        return l;
+    }
+
+    public List<EncounterType> getANCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "044daI6d-f80e-48fe-aba9-037f241905Pe"));
+        return l;
+    }
+
+    public List<EncounterType> getMaternityEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "a9f11592-22e7-45fc-904d-dfe24cb1fc67"));
+        return l;
+    }
+
+    public List<EncounterType> getPNCEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "fa6f3ff5-b784-43fb-ab35-a08ab7dbf074"));
+        return l;
+    }
+
+    public List<EncounterType> getCovidInitiationEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "422ee220-9e83-451d-9b25-79a688a0413a"));
+        return l;
+    }
+
+    public List<EncounterType> getCovidFollowupEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "95d334b0-c322-46ee-856a-4f503c8979ee"));
+        return l;
+    }
 }
