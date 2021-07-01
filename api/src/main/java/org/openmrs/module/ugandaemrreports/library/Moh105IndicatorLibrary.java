@@ -78,6 +78,47 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("Patients who have ANC Visits", map(cohortLibrary.femaleAndHasAncVisit(0.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+    public CohortIndicator testedForAnaemiaAndFirstANCVisit() {
+        return cohortIndicator("Pregnant Women tested for Anaemia", map(cohortLibrary.testedForAneamiaAndANCVisit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator testedPositiveForAnaemiaAndFirstANCVisit() {
+        return cohortIndicator("Pregnant Women tested for Anaemia", map(cohortLibrary.testedPositiveAneamiaAndANCVisit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pregnantWomengivenFreeLLIN() {
+        return cohortIndicator("Pregnant Women recieved free LLIN", map(cohortLibrary.recievedFreeLLNonANCVisit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator testedForAnaemiaat36Weeks() {
+        return cohortIndicator("Pregnant Women recieved free LLIN", map(cohortLibrary.pregnantWomenTestedForAneamiaat36(36.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator testedPositiveForAnaemiaAfter36Weeks() {
+        return cohortIndicator("Pregnant Women recieved free LLIN", map(cohortLibrary.pregnantWomenTestedPositiveForAneamiaat36(36.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator recievingIronANDFollicAcidAtFirstVisit() {
+        return cohortIndicator("Pregnant Women Iron and Follic Acid on first visit", map(cohortLibrary.pregnantAndRecievedIronandFollicAcidGreaterthan30(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator recievingIronANDFollicAcidAt36Weeks() {
+        return cohortIndicator("Pregnant Women Iron and Follic Acid after 36 weeks", map(cohortLibrary.pregnantAndRecievedIronandFollicAcidGreaterthan30After36Weeks(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator numberOfUltraSoundScan() {
+        return cohortIndicator("US Done", map(cohortLibrary.numericObservations("fbea6522-78f5-4d3d-a695-aaedfef7a76a",0.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator numberOfUltraSoundScanbefore24weeks() {
+        return cohortIndicator("US Done", map(cohortLibrary.numericObservations("fbea6522-78f5-4d3d-a695-aaedfef7a76a",0.0,24.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pregnantWomenRecievingMabendazole() {
+        return cohortIndicator("Pregnant women recieving mabendazole ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept("9d6abbc4-707a-4ec7-a32a-4090b1c3af87"),Dictionary.getConcept("a7a9d632-b266-4085-9a5e-57fc8dd56f0c")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pregnantWomenRecievingMabendazoleAfter24weeks() {
+        return cohortIndicator("Pregnant women recieving mabendazole after 24 weeks", map(cohortLibrary.pregnantAndRecievedMabendazoleAfter28Weeks(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
+    public CohortIndicator gestationAge24() {
+        return cohortIndicator("Pregnant Women recieved free LLIN", map(cohortLibrary.gestationAge(24.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
     /**
      * Referral to ANC unit from community services
      * @return CohortIndicator
@@ -308,13 +349,28 @@ public class Moh105IndicatorLibrary {
     }
 
     public CohortIndicator totalPregnantWomenTestedLater() {
-        return cohortIndicator("Pregnant women who retested laster in the pregancy total (TR+TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant women who retested later in the pregancy total (TR+TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator pregnantWomenTestedLater() {
-        return cohortIndicator("Pregnant women who retested laster in the pregancy total (TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Pregnant women who retested later in the pregancy total (TRR+)", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator pregnantWomenHIVProhylaxis() {
         return cohortIndicator("Pregnant women given infant HIV Prophylaxis", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept(Metadata.Concept.HIV_PROHYLAXIS),Dictionary.getConcept(Metadata.Concept.NEVERAPINE)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
+
+    public CohortIndicator pregnantWomenGivenSTKs() {
+        return cohortIndicator("Pregnant women given STKs", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("609c9aee-92b3-4e17-828a-efc7933f2ecf"),Dictionary.getConcept(Metadata.Concept.YES_CIEL)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+    public CohortIndicator positiveSTKResult() {
+        return cohortIndicator("Positive STK Results", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("e47d9ead-5b33-4315-9ea0-42669e4491b6"),Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+    public CohortIndicator negativeSTKResult() {
+        return cohortIndicator("Negative STK Results", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("e47d9ead-5b33-4315-9ea0-42669e4491b6"),Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
     }
 
     /**
@@ -384,6 +440,10 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator malePatinersWithKnownHivResult() {
         return cohortIndicator("Male partners with known HIV status ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator malePartnersInitiatedOnART() {
+        return cohortIndicator("Male partners initiated on ART ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("62a37075-fc2a-4729-8950-b9fae9b22cfb"),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -688,7 +748,7 @@ public class Moh105IndicatorLibrary {
     }
 
     /**
-<<<<<<< HEAD
+
      *M16: Maternal deaths
      * @return CohortIndicator
      */
@@ -914,8 +974,27 @@ public class Moh105IndicatorLibrary {
      */
     public CohortIndicator couplesWithDiscordantResults() {
         return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.couplesWithDiscordantResults(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }    
-    
+    }
+    public CohortIndicator discordantResults() {
+        return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.discordantCouples(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator maternalNutrition() {
+        return cohortIndicator("Pregnant women recieved Maternal nutrition counselling ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator infantFeedingCounselling() {
+        return cohortIndicator("Pregnant women who recieved Infant feeding and counselling ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator maternalNutritionAndHIVPositive() {
+        return cohortIndicator("Maternal Nutrition and Counselling", map(cohortLibrary.marternalCounsellingandPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator infantFeedingCounsellingAndHIVPositive() {
+        return cohortIndicator("Infant feeding and Counselling", map(cohortLibrary.infantCounsellingAndPositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
     /**
      * H13-Individuals counseled and tested for PEP
      * @return CohortIndicator

@@ -158,12 +158,21 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "AN22","Pregnant Mothers with Blood Group B+",indicatorLibrary.bloodGroupBPositive());
         addRowWithColumns(dsd, "AN23","Pregnant Mothers with Blood Group AB",indicatorLibrary.totalBloodGroupAB());
         addRowWithColumns(dsd, "AN24","Pregnant Mothers with Blood Group AB+",indicatorLibrary.bloodGroupABPositive());
-
+        addRowWithColumns(dsd, "AN25","Pregnant Women Tested for Aneamia",indicatorLibrary.testedForAnaemiaAndFirstANCVisit());
+        addRowWithColumns(dsd, "AN26","Pregnant Women Tested Positive for Aneamia",indicatorLibrary.testedPositiveForAnaemiaAndFirstANCVisit());
+        addRowWithColumns(dsd, "AN27","Pregnant women tested for anaemia at 36 Weeks",indicatorLibrary.testedForAnaemiaat36Weeks());
+        addRowWithColumns(dsd, "AN28","Pregnant Mothers with Aneamia after 36 weeks",indicatorLibrary.testedPositiveForAnaemiaAfter36Weeks());
+        addRowWithColumns(dsd, "AN29","Pregnant Mothers recieving Iron and Follic Acid on first ANC",indicatorLibrary.recievingIronANDFollicAcidAtFirstVisit());
+        addRowWithColumns(dsd, "AN30","Pregnant Mothers recieving Iron and Follic Acid after 36 weeks",indicatorLibrary.recievingIronANDFollicAcidAt36Weeks());
+        addRowWithColumns(dsd, "AN31","Pregnant Mothers recieved free LLIN",indicatorLibrary.pregnantWomengivenFreeLLIN());
+        addRowWithColumns(dsd, "AN32","Ultra sound scan done",indicatorLibrary.numberOfUltraSoundScan());
+        addRowWithColumns(dsd, "AN33","Ultra sound scan done before 24 weeks",indicatorLibrary.numberOfUltraSoundScanbefore24weeks());
+        addRowWithColumns(dsd, "AN34"," Number of Pregnant Women Recieving Mabendazole",indicatorLibrary.pregnantWomenRecievingMabendazole());
+        addRowWithColumns(dsd, "AN35"," Number of Pregnant Women Recieving Mabendazole at 24 weeks",indicatorLibrary.pregnantWomenRecievingMabendazoleAfter24weeks());
         //Tested for syphillis
         addRowWithColumns(dsd, "AN36","Pregnant Mothers with  Syphillis test",indicatorLibrary.pregnantAndTestedForSyphilis());
         addRowWithColumns(dsd, "AN37","Pregnant Mothers with Positive Syphillis test",indicatorLibrary.pregnantAndTestedPositiveforSyphillis());
         addRowWithColumns(dsd, "AN38","Pregnant Mothers with Positive Syphillis test and started treatment",indicatorLibrary.pregnantAndTestedPositiveforSyphillisAndStartedTreatment());
-
         addRowWithColumns(dsd, "AN39","Partner with  Syphillis test",indicatorLibrary.partnerTestedForSyphilis());
         addRowWithColumns(dsd, "AN40","Partner with Positive Syphillis test",indicatorLibrary.patnerTestedPositiveforSyphillis());
         addRowWithColumns(dsd, "AN41","Partner with Positive Syphillis test and started treatment",indicatorLibrary.partnerTestedPositiveforSyphillisAndStartedTreatment());
@@ -178,41 +187,25 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
 
 
-        addRowWithColumns(dsd, "AN71","Pregnant women who retested laster in the pregancy total ",indicatorLibrary.totalPregnantWomenTestedLater());
+        //addRowWithColumns(dsd, "AN71","Pregnant women who retested laster in the pregancy total ",indicatorLibrary.totalPregnantWomenTestedLater());
         addRowWithColumns(dsd, "AN72","Pregnant women who retested laster in the pregancy ",indicatorLibrary.pregnantWomenTestedLater());
         addRowWithColumns(dsd, "AN73","Pregnant women given infant HIV Prophylaxis ",indicatorLibrary.pregnantWomenHIVProhylaxis());
+        addRowWithColumns(dsd, "AN74","Pregnant women given STKs ",indicatorLibrary.pregnantWomenGivenSTKs());
+        addRowWithColumns(dsd, "AN75","STK result is positive",indicatorLibrary.positiveSTKResult());
+        addRowWithColumns(dsd, "AN76","STK result is negative ",indicatorLibrary.negativeSTKResult());
+
 
         addRowWithColumns(dsd, "AN77","Male partners received HIV test results in eMTCT - Totals",indicatorLibrary.malePatinersRecievedHivResultTotal());
         addRowWithColumns(dsd, "AN78","Male partners received HIV test results in eMTCT ",indicatorLibrary.malePatinersRecievedHivResult());
         addRowWithColumns(dsd, "AN79","Male partners with known HIV Status total ",indicatorLibrary.malePatinersWithKnownHivResultTotal());
         addRowWithColumns(dsd, "AN80","Male partners with known HIV Status  ",indicatorLibrary.malePatinersWithKnownHivResult());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        addRowWithColumns(dsd, "AN81","Male partners initiated on ART  ",indicatorLibrary.malePartnersInitiatedOnART());
+        //addRowWithColumns(dsd, "AN82","Discordant Couples",indicatorLibrary.discordantResults());
+        addRowWithColumns(dsd, "AN83","Maternal Nutrition total  ",indicatorLibrary.maternalNutrition());
+        addRowWithColumns(dsd, "AN84","Maternal Nutrition and Positive ",indicatorLibrary.maternalNutritionAndHIVPositive());
+        addRowWithColumns(dsd, "AN85","Infant Counselling ",indicatorLibrary.infantFeedingCounselling());
+        addRowWithColumns(dsd, "AN86","Infant Counselling and Positive ",indicatorLibrary.infantFeedingCounsellingAndHIVPositive());
 
 
 
@@ -236,6 +229,6 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.2";
+        return "2.0.8.9";
     }
 }

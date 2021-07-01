@@ -271,7 +271,9 @@ public class Metadata {
         public static final String DATE_OF_SECOND_PCR_TEST = "1f627527-2f97-4f21-9b61-2b79d887950f";
         public static final String DATE_OF_18_MONTH_RAPID_PCR_TEST = "7065b181-abb0-4ad6-8082-62e99398f735";
         public static final String EMTCT_CODES = "d5b0394c-424f-41db-bc2f-37180dcdbe74";
-        public static final String HIV_PROHYLAXIS="f42e40f3-7f76-4c0d-b9cc-f66acbb092c4";
+            public static final String EMTCT_CODESP = "62a37075-fc2a-4729-8950-b9fae9b22cfb";
+
+            public static final String HIV_PROHYLAXIS="f42e40f3-7f76-4c0d-b9cc-f66acbb092c4";
         public static final String PREGNANCY_OUTCOME = "161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String HIV_STATUS = "dce0e886-30ab-102d-86b0-7a5022ba4115";
         public static final String ARV_FOR_BABY = "9e825e42-be00-4d4d-8774-257ddb29581b";
