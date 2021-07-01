@@ -1,14 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reports2019;
 
-import org.openmrs.module.reporting.ReportingConstants;
+
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -123,10 +121,10 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
 
-        CohortDefinition onArtDuringQuarter = hivCohortDefinitionLibrary.getPatientsHavingRegimenDuringPeriod();
+        CohortDefinition tc_curr = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
-        CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod = df.getPatientsInAll(onArtDuringQuarter,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
-        CohortDefinition returnToCareClients = df.getPatientsInAny(getLostPatientsDuringPeriodAndReturnToCareWithinSamePeriod(),patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod);
+        CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod = df.getPatientsInAll(tc_curr,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
+        CohortDefinition returnToCareClients = patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod;
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
                 Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -180,28 +178,23 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
 
 
     public CohortDefinition getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod() {
-        String query = "select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o left join \n" +
-                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime <=:startDate group by patient_id) last_encounter \n" +
-                "on o.person_id=patient_id where o.concept_id=5096 and o.value_datetime <= :startDate group by person_id)t1 \n " +
-                "where next_visit > last_enc_date and datediff(:startDate,next_visit)> 28 ";
-        SqlCohortDefinition cd = new SqlCohortDefinition(query);
-        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
-        return  cd;
+        String query = "select person_id from  obs o inner join\n" +
+                "                (select e.patient_id, e.encounter_id from\n" +
+                "(select patient_id, max(encounter_datetime) date_time from encounter inner join encounter_type t on\n" +
+                "    t.encounter_type_id =encounter_type where encounter_datetime <:startDate and voided=0 and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f'  group by patient_id)A\n" +
+                "    inner join encounter e on A.patient_id=e.patient_id inner join encounter_type t on\n" +
+                "    t.encounter_type_id =e.encounter_type where e.voided=0 and e.encounter_datetime = date_time and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' group by A.patient_id) last_encounter\n" +
+                "                on o.encounter_id=last_encounter.encounter_id where o.voided=0 and o.concept_id=5096 and o.value_datetime < :startDate\n" +
+                "            and datediff(:startDate,o.value_datetime)> 28;";
+        SqlCohortDefinition noClinicalContact = new SqlCohortDefinition(query);
+        noClinicalContact.addParameter(new Parameter("startDate", "startDate", Date.class));
+        CohortDefinition excludedCohorts = df.getPatientsInAny(df.getDeadPatientsByEndOfPreviousDate(),hivCohortDefinitionLibrary.getPatientsTransferredOutByStartDate());
+        return df.getPatientsNotIn(noClinicalContact,excludedCohorts);
     }
 
-    public CohortDefinition getLostPatientsDuringPeriodAndReturnToCareWithinSamePeriod() {
-        String query = "select patient_id from\n" +
-                "(select patient_id,max(encounter_datetime)last_enc_date from encounter where encounter_datetime between :startDate and :endDate group by patient_id)enc inner join\n" +
-                "(select person_id,max(o.value_datetime)appt_date from obs o where concept_id=5096 and value_datetime between :startDate and :endDate group by person_id)obs  on enc.patient_id=obs.person_id\n" +
-                "where obs.appt_date < date_sub(last_enc_date,INTERVAL 28 DAY) ";
-        SqlCohortDefinition cd = new SqlCohortDefinition(query);
-        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
-        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
-        return  cd;
-    }
 
     @Override
     public String getVersion() {
-        return "0.0.1.4";
+        return "0.0.2";
     }
 }

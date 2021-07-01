@@ -1,11 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.Concept;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.GenderCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
@@ -236,6 +232,17 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsHavingTransferInRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtTransferInRegimen(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+
+    public CohortDefinition getPatientsTransferredOutByStartDate() {
+        DateObsCohortDefinition transferredOutByStartOfPeriod = new DateObsCohortDefinition();
+        transferredOutByStartOfPeriod.setTimeModifier(BaseObsCohortDefinition.TimeModifier.LAST);
+        transferredOutByStartOfPeriod.setQuestion(hivMetadata.getTransferredOutDate());
+        transferredOutByStartOfPeriod.setEncounterTypeList(null);
+        transferredOutByStartOfPeriod.setOperator1(RangeComparator.LESS_THAN);
+        transferredOutByStartOfPeriod.addParameter(new Parameter("value1", "value1", Date.class));
+        return  df.convert(transferredOutByStartOfPeriod, ObjectUtil.toMap("value1=startDate"));
+    }
+
 
     public CohortDefinition getPatientsTransferredOutBetweenStartAndEndDate() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
