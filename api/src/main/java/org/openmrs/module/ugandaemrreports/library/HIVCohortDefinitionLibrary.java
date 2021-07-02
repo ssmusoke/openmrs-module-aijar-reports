@@ -621,7 +621,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public static SqlCohortDefinition getPatientsWithEncountersBeforeEndDateThatHaveReturnVisitDatesByStartDate() {
-        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <= :endDate and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0;");
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select distinct patient_id from encounter e inner  join obs o on e.encounter_id = o.encounter_id  inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <= :endDate and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 and o.voided=0;");
         cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
         cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
 
@@ -635,7 +635,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getPatientsTxLostToFollowupByDays(String days) {
         SqlCohortDefinition cohortDefinition = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(:endDate,max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <=:endDate " +
-                "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;");
+                "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= :startDate and e.voided=0 and o.voided=0 group by patient_id) as t  where ltfp_days >=" + days +" ;");
         cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
         cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
 
