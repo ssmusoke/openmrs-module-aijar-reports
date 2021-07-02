@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.EIDCohortDefinitionLibrary;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -40,7 +41,7 @@ public class SetupCBSEIDReport extends UgandaEMRDataExportManager {
 	private EIDCohortDefinitionLibrary eidCohorts;
 
 	@Autowired
-	private BuiltInCohortDefinitionLibrary builtInCohorts;
+	private CommonCohortDefinitionLibrary commonCohortDefinitionLibrary;
 
 	public SetupCBSEIDReport() {
 	}
@@ -90,8 +91,8 @@ public class SetupCBSEIDReport extends UgandaEMRDataExportManager {
 		CohortDefinition netCurrentCohort = df.getPatientsInAny(allEIDPatients,
 				df.getPatientsNotIn(getTransferIns, getTransferOuts));
 
-		CohortDefinition males = builtInCohorts.getMales();
-		CohortDefinition females = builtInCohorts.getFemales();
+		CohortDefinition males = commonCohortDefinitionLibrary.males();
+		CohortDefinition females =commonCohortDefinitionLibrary.females();
 
 		CohortDefinition givenNVPAtBirth = eidCohorts.getEIDPatientsGivenNVP();
 		CohortDefinition initiatedOnCPT = eidCohorts.getEIDPatientsInitiatedOnCPT();
@@ -231,6 +232,6 @@ public class SetupCBSEIDReport extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.1.1";
 	}
 }
