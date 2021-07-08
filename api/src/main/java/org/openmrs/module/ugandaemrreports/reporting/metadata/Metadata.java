@@ -288,15 +288,18 @@ public class Metadata {
         public static final String FIFTH_DOSE = "18f11bf4-c986-4cdd-b31c-fb189ea39333";
         public static final String EMTCT_CODE_TRRK = "1f177240-85f6-4f10-964a-cfc7722408b3";
         public static final String ARV_REGIMEN = "35ae2043-a3b0-48de-8e22-05f377ac39a2";
-        public static final String EMTCT_CODE_TRRP = "a08d9331-b437-485c-8eff-1923f3d43630";
-        public static final String EMTCT_CODE_TRRPLUS = "8dcaefaa-aa91-4c24-aaeb-122cff549ab3";
-        public static final String EMTCT_CODE_TRP = "0155e4d-1d49-4e97-9689-758315967e0f";
+        public static final String EMTCT_CODE_TRP = "a08d9331-b437-485c-8eff-1923f3d43630";
+        public static final String EMTCT_CODE_TRRP = "8dcaefaa-aa91-4c24-aaeb-122cff549ab3";
         public static final String EMTCT_CODE_TRRTICK = "60155e4d-1d49-4e97-9689-758315967e0f";
         public static final String EMTCT_CODE_T = "05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7";
         public static final String EMTCT_CODE_TR = "86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a";
         public static final String EMTCT_CODE_TRR = "25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465";
         public static final String EMTCT_CODE_TRK = "81bd3e58-9389-41e7-be1a-c6723f899e56";
         public static final String ASPHYXIA = "121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        public static final String SYPHILLS_TEST = "275a6f72-b8a4-4038-977a-727552f69cb8";
+        public static final String SYPHILLS_TEST_PARTNER = "d8bc9915-ed4b-4df9-9458-72ca1bc2cd06";
+
+        public static final String HEPB_TEST = "eeab75e4-dd7b-4a8f-81e5-b50b819042c4";
 
         public static final String TRANSFER_IN_REGIMEN_START_DATE = "f363f153-f659-438b-802f-9cc1828b5fa9";
         public static final String TRANSFER_IN_REGIMEN = "9a9314ed-0756-45d0-b37c-ace720ca439c";

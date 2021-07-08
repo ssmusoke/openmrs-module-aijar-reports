@@ -415,8 +415,8 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Discordant Couples");
-        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("negativeMales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("negativeMales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("positiveFemales AND negativeMales");
         return cd;
     }
@@ -426,9 +426,9 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Discordant Couples");
-        cd.addSearch("negativeFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("positiveMales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.setCompositionString("positiveFemales AND negativeMales");
+        cd.addSearch("negativeFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveMales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveMales AND negativeFemales");
         return cd;
     }
 
@@ -438,7 +438,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Maternal Counselling and Positive");
-        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("maternalCounselling", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("positiveFemales AND maternalCounselling");
         return cd;
@@ -449,7 +449,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Infant Counselling and Positive");
-        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRPLUS)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("positiveFemales AND infantCounselling");
         return cd;
