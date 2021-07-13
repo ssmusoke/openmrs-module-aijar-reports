@@ -2,7 +2,6 @@ package org.openmrs.module.ugandaemrreports.reports2019;
 
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -49,6 +47,9 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
 
     @Autowired
     private BasePatientDataLibrary basePatientData;
+
+    @Autowired
+    private SetupTxRTT2019Report setupTxRTT2019Report;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -130,7 +131,7 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_RTT_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition returnToCareClients= df.getPatientsInAll(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"), getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod());
+        CohortDefinition returnToCareClients= df.getPatientsInAll(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"), setupTxRTT2019Report.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod());
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -162,21 +163,6 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
 
         return rd;
-    }
-
-    public CohortDefinition getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod() {
-        String query = "select person_id from  obs o inner join\n" +
-                "                (select e.patient_id, e.encounter_id from\n" +
-                "(select patient_id, max(encounter_datetime) date_time from encounter inner join encounter_type t on\n" +
-                "    t.encounter_type_id =encounter_type where encounter_datetime <:startDate and voided=0 and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f'  group by patient_id)A\n" +
-                "    inner join encounter e on A.patient_id=e.patient_id inner join encounter_type t on\n" +
-                "    t.encounter_type_id =e.encounter_type where e.voided=0 and e.encounter_datetime = date_time and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' group by A.patient_id) last_encounter\n" +
-                "                on o.encounter_id=last_encounter.encounter_id where o.voided=0 and o.concept_id=5096 and o.value_datetime < :startDate\n" +
-                "            and datediff(:startDate,o.value_datetime)> 28;";
-        SqlCohortDefinition noClinicalContact = new SqlCohortDefinition(query);
-        noClinicalContact.addParameter(new Parameter("startDate", "startDate", Date.class));
-        CohortDefinition excludedCohorts = df.getPatientsInAny(df.getDeadPatientsByEndOfPreviousDate(),hivCohortDefinitionLibrary.getPatientsTransferredOutByStartDate());
-        return df.getPatientsNotIn(noClinicalContact,excludedCohorts);
     }
 
     @Override
