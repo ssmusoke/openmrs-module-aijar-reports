@@ -155,9 +155,9 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
-        addColumn(dsd, "Last Visit Date", hivPatientData.getLastEncounterByEndDate());
-        addColumn(dsd, "Expected Return Date", hivPatientData.getExpectedReturnDateDuringPeriod());
-        addColumn(dsd, "RTT Visit Date", hivPatientData.getLastARTEncounter());
+        addColumn(dsd, "Last Visit Date", hivPatientData.getLastARTVisitEncounterByEndOfPreviousPeriod(df.getEncounterDatetimeConverter()));
+        addColumn(dsd, "Expected Return Date", hivPatientData.getLatestExpectedReturnDateBeforeStartDate());
+        addColumn(dsd, "RTT Visit Date", hivPatientData.getLastEncounterByEndDate());
 
         rd.addDataSetDefinition("TX_RTT_PatientList", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
@@ -167,6 +167,6 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.0.1";
+        return "0.0.2";
     }
 }
