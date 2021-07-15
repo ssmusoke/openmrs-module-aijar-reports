@@ -373,6 +373,12 @@ public class DataFactory {
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
+    public PatientDataDefinition getLastEncounterOfTypeByEndOfPreviousPeriod(List<EncounterType> types, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(types, "onOrBefore");
+        def.setWhich(TimeQualifier.LAST);
+        return createPatientDataDefinition(def, converter, "onOrBefore=startDate-1d");
+    }
+
     public PatientDataDefinition getLastEncounterOfTypeBeforeDate(EncounterType type, DataConverter converter) {
         EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(type), "onOrBefore");
         def.setWhich(TimeQualifier.LAST);
@@ -719,6 +725,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("diedOnOrBefore=endDate-" + olderThan));
+    }
+
+    public CohortDefinition getDeadPatientsByEndOfPreviousDate() {
+        BirthAndDeathCohortDefinition cd = new BirthAndDeathCohortDefinition();
+        cd.addParameter(new Parameter("diedOnOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("diedOnOrBefore", "On or Before", Date.class));
+        return convert(cd, ObjectUtil.toMap("diedOnOrBefore=startDate"));
     }
 
     public CohortDefinition getDeadPatientsByEndOfPreviousDate(String olderThan) {

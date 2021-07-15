@@ -33,6 +33,11 @@
         "id": "org.openmrs.module.ugandaemr.mer",
         "description": "Links to available MER Reports 2019",
         "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "description": "Patient Lists for MER Reports",
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -287,6 +292,14 @@
         "label": "TX_ML Report",
         "url": "reportingui/runReport.page?reportDefinition=5b922f62-f844-4962-9465-61cf8f52f4b7",
         "order": 55
+      },{
+        "id": "MER_TX_RTT_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX RTT Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=5803a894-5bb6-4d33-976d-bc074b5f5a26",
+        "order": 45,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport_PatientList"
       },
       {
         "id": "Appointments List",
@@ -378,8 +391,6 @@
         "order": 60,
         "requiredPrivilege": "App: ugandaemrreports.transferOutList"
       },
-
-
       {
         "id": "Transfer In List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
@@ -532,6 +543,38 @@
         "label": "HMIS 106A Section 1A",
         "url": "reportingui/runReport.page?reportDefinition=5718901d-3dae-4a0d-9847-df345bf0de39",
         "order": 5
+      },
+      {
+        "id": "HMIS 106A1A Sections HC01 To HC15 ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A1A Sections HC01 To HC15",
+        "url": "reportingui/runReport.page?reportDefinition=072b526a-4140-4c43-9f5c-6d1fa74d7c42",
+        "order": 1
+      },
+      {
+        "id": "HMIS 106A1A  Sections HC16 To HC28 ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A1A Sections HC16 To HC28",
+        "url": "reportingui/runReport.page?reportDefinition=0e3bdfde-3ee0-4f94-b105-bff844feba30",
+        "order": 2
+      },
+      {
+        "id": "HMIS 106A1A Sections HC29 To HC48 ",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A1A Sections HC29 To HC48",
+        "url": "reportingui/runReport.page?reportDefinition=a2d6170e-1930-4f21-920c-6106e39058e8",
+        "order": 3
+      },
+      {
+        "id": "HMIS 106A1A Sections HC49 To HC52",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A1A Sections HC49 To HC52",
+        "url": "reportingui/runReport.page?reportDefinition=ac1b2145-54aa-4ed8-9590-db7c47fe51e4",
+        "order": 4
       },
       {
         "id": "Transitioning Children and Viral Load Monitoring  in PMTCT",
