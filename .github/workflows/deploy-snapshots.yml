@@ -36,4 +36,4 @@ jobs:
         run: mvn -B deploy --file pom.xml
         env:
           BINTRAY_USERNAME: ugandaemr-ci
-          BINTRAY_PASSWORD: aGJUeZZbGSy3aGbZc49aEf
+          BINTRAY_PASSWORD: ${{ secrets.BINTRAY_ACCESS_PASSWORD }}
