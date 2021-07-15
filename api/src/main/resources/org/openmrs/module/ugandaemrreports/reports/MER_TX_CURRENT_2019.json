@@ -1,11 +1,11 @@
 {
     "resourceType": "MeasureReport",
-    "id": "MER-TX-Indicators",
+    "id": "MER-TX-CURRENT",
     "status": "complete",
     "type": "summary",
     "measure": "https://ugisl.mets.or.ug/Measure/mer-tx-indicators",
     "reporter": {
-        "reference": "Organisation/MK"
+        "reference": "Organisation/UgandaEMR"
     },
     "period": {
         "start": "#parameter.startDate|YYYY-MM-dd#",
@@ -80,7 +80,7 @@
                                 "coding": [
                                     {
                                         "code": "P1Y--P5Y:M",
-                                        "display": "1­-4 years Male"
+                                        "display": "1-4 years Male"
                                     }
                                 ]
                             },

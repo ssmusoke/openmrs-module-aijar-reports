@@ -1,11 +1,11 @@
 {
     "resourceType": "MeasureReport",
-    "id": "MER-TX-Indicators",
+    "id": "MER-TX-NEW",
     "status": "complete",
     "type": "summary",
     "measure": "https://ugisl.mets.or.ug/Measure/mer-tx-indicators",
     "reporter": {
-        "reference": "Organisation/MK"
+        "reference": "Organisation/UgandaEMR"
     },
     "period": {
         "start": "#parameter.startDate|YYYY-MM-dd#",
