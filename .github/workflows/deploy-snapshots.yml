@@ -36,4 +36,4 @@ jobs:
         run: mvn -B deploy --file pom.xml
         env:
           secret_BINTRAY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
-          secret_BINTRAY_PASSWORD: ${{ secrets.BINTRAY_ACCESS_PASSWORD }}
+          secret_BINTRAY_PASSWORD: ${{ secrets.BINTRAY_PASSWORD }}
