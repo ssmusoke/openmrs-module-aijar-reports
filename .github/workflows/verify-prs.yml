@@ -28,4 +28,4 @@
 #
 #        # Execute the Maven verify command to compile, package, test, verify
 #      - name: Build with Maven
-#        run: mvn -B verify --file pom.xml
+#        run: mvn clean install
