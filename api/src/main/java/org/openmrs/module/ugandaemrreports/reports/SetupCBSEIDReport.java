@@ -91,7 +91,7 @@ public class SetupCBSEIDReport extends UgandaEMRDataExportManager {
 				df.getPatientsNotIn(getTransferIns, getTransferOuts));
 
 		CohortDefinition males = commonCohortDefinitionLibrary.males();
-		CohortDefinition females = commonCohortDefinitionLibrary.females();
+		CohortDefinition females =commonCohortDefinitionLibrary.females();
 
 		CohortDefinition givenNVPAtBirth = eidCohorts.getEIDPatientsGivenNVP();
 		CohortDefinition initiatedOnCPT = eidCohorts.getEIDPatientsInitiatedOnCPT();

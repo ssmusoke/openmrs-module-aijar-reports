@@ -669,7 +669,7 @@ public class HIVMetadata extends Metadata {
 
     public List<EncounterType> getCovidFollowupEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
-        l.add(MetadataUtils.existing(EncounterType.class, "95d334b0-c322-46ee-856a-4f503c8979ee"));
+        l.add(MetadataUtils.existing(EncounterType.class, "cd9a2698-206f-44f3-a888-f824544413b4"));
         return l;
     }
 

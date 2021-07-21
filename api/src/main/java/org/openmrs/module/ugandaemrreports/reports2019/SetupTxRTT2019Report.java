@@ -123,8 +123,7 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
 
         CohortDefinition tc_curr = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
-        CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod = df.getPatientsInAll(tc_curr,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
-        CohortDefinition returnToCareClients = patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod;
+        CohortDefinition returnToCareClients= df.getPatientsInAll(tc_curr,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
                 Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -195,6 +194,6 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.2";
+        return "0.0.3";
     }
 }
