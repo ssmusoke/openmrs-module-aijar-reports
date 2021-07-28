@@ -19,6 +19,9 @@ import java.util.List;
 @Component("hivMetadata")
 public class HIVMetadata extends ReportMetadata {
 
+    @Autowired
+    CommonDimensionLibrary commonDimensionLibrary;
+
     public Concept getReturnVisitDate() {
         return getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115");
     }
@@ -677,7 +680,23 @@ public class HIVMetadata extends ReportMetadata {
 
     public List<EncounterType> getCovidFollowupEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
-        l.add(MetadataUtils.existing(EncounterType.class, "95d334b0-c322-46ee-856a-4f503c8979ee"));
+        l.add(MetadataUtils.existing(EncounterType.class, "cd9a2698-206f-44f3-a888-f824544413b4"));
         return l;
+    }
+
+    public Program getFBIMProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getFTRProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getFBGProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getCDDPProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getCCLADProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459");
     }
 }
