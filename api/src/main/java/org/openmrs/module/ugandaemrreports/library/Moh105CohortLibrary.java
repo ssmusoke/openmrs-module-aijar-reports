@@ -2611,9 +2611,16 @@ public class Moh105CohortLibrary {
      * @return Cohort Definition
      */
 	public CohortDefinition liveBirths() {
-		return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01"));
-	}    
-    
+        return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01,3de8af5d-ab86-4262-a1a3-b4c958ae2de3,7ca3dddc-b55e-46fb-b15e-40df4724bcfd"));
+    }
+    public CohortDefinition freshStillbirth() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("7a15616a-c12a-44fc-9a11-553639128b69"));
+    }
+    public CohortDefinition maceratedStillBirths() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("7a15616a-c12a-44fc-9a11-553639128b69"));
+    }
+
+
     /**
      * Live Birth Deliveries to HIV+ women
      * @return CohortDefinition
@@ -2629,6 +2636,32 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("hivPositive AND deliveries AND liveBirths");
         return cd;
     }
+
+    /**
+     * Live births and below normal weigh
+     */
+    public CohortDefinition liveBirthDeliveriesAndBelowNormalWeight() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies below normal weight");
+        cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("liveBirths AND belownormalweight");
+        return cd;
+    }
+
+    public CohortDefinition freshStillBirthsAndBelowNormalWeight() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Fresh still births and below normal weight");
+        cd.addSearch("freshStillBirths", ReportUtils.map(freshStillbirth(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("freshStillBirths AND belownormalweight");
+        return cd;
+    }
+
 
     /**
      * No. of mothers who initiated breastfeeding within the 1st hour after delivery - Total

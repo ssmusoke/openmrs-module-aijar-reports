@@ -601,6 +601,22 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator maternityAdmissions() {
         return cohortIndicator("Maternity admissions", map(cohortLibrary.maternityAdmissions(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator totalNumberofDeliveries() {
+        return cohortIndicator("NUmber of Deliveries ", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("dcc3ac63-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+    public CohortIndicator totalNumberofBabiesBornAlive() {
+        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01,3de8af5d-ab86-4262-a1a3-b4c958ae2de3,7ca3dddc-b55e-46fb-b15e-40df4724bcfd")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator liveBirthDeliveriesAndBelowNormalWeight() {
+        return cohortIndicator("Live Babies below Normal Weight", map(cohortLibrary.liveBirthDeliveriesAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator freshStillBirth() {
+        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.freshStillbirth(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator freshStillBirthsAndBelowNormalWeight() {
+        return cohortIndicator("Fresh Still Births  below Normal Weight", map(cohortLibrary.freshStillBirthsAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     
     /**
      *Referrals to Maternity Unit

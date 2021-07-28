@@ -528,6 +528,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
+        "id": "HMIS 105 Section 2.2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.2: MATERNITY",
+        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
