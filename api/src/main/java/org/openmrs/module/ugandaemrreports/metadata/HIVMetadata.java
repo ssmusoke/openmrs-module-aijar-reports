@@ -666,4 +666,10 @@ public class HIVMetadata extends Metadata {
         l.add(MetadataUtils.existing(EncounterType.class, "cd9a2698-206f-44f3-a888-f824544413b4"));
         return l;
     }
+
+    public List<EncounterType> getIACEncounters() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "38cb2232-30fc-4b1f-8df1-47c795771ee9"));
+        return l;
+    }
 }
