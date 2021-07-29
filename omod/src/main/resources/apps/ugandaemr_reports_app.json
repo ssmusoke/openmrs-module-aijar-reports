@@ -592,6 +592,14 @@
         "label": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "url": "reportingui/runReport.page?reportDefinition=639026cd-1cb9-46c1-9a06-81208e9ed412",
         "order": 10
+      },
+      {
+        "id": "HIVDR Tool Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HIVDR Tool Report",
+        "url": "reportingui/runReport.page?reportDefinition=8c029f5e-4467-482c-9ca5-6c32982286dd",
+        "order": 15
       }
     ]
   }

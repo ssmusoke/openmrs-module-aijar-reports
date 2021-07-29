@@ -431,6 +431,12 @@ public class DataFactory {
         return convert(def, ObjectUtil.toMap("startDate=startDate"), converter);
     }
 
+    public PatientDataDefinition hasEncounterDuringPeriod(EncounterType encounterType, DataConverter converter) {
+        EncountersForPatientDataDefinition def = PatientColumns.createEncountersForPatientDataDefinition(Arrays.asList(encounterType), "onOrAfter");
+        def.setWhich(TimeQualifier.ANY);
+        return createPatientDataDefinition(def, converter, Parameters.ON_OR_AFTER_START_DATE);
+    }
+
     public PatientDataDefinition havingEncounterDuringPeriod(Enums.Period period, Integer periodToAdd, DataConverter converter) {
         FUStatusPatientDataDefinition def = new FUStatusPatientDataDefinition();
         def.setPeriod(period);
