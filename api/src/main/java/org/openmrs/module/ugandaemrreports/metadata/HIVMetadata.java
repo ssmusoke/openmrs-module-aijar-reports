@@ -3,10 +3,13 @@ package org.openmrs.module.ugandaemrreports.metadata;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Program;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
