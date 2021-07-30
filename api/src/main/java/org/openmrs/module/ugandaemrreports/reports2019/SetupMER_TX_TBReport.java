@@ -1,6 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports2019;
 
-import org.openmrs.Concept;
+
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -10,20 +10,23 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reports.SetupTxNewReport;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- *  PMTCT STAT Report
+ *  TX_TB Report
  */
 @Component
 public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
@@ -181,6 +184,6 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.5";
+        return "0.1.6";
     }
 }
