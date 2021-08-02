@@ -133,19 +133,19 @@
         "requiredPrivilege": "App: ugandaemrreports.earlyWarningIndicatorReport"
       },
       {
-        "id": "HCA Annual Report",
+        "id": "HCA Annual Cohort Analysis Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HCA Annual Report",
+        "label": "HCA Annual Cohort Analysis Report",
         "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
         "order": 45,
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
       },
       {
-        "id": "HCA 12 and 24 Months Report",
+        "id": "HCA 12 and 24 Months Cohort Analysis Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HCA 12 and 24 Months Report",
+        "label": "HCA 12 and 24 Months Cohort Analysis Report",
         "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
         "order": 50,
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
@@ -300,6 +300,14 @@
         "url": "reportingui/runReport.page?reportDefinition=5803a894-5bb6-4d33-976d-bc074b5f5a26",
         "order": 45,
         "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport_PatientList"
+      },
+      {
+        "id": "MER TX_TB Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "TX_TB Report",
+        "url": "reportingui/runReport.page?reportDefinition=d055029b-655f-4adb-84a0-405351892e09",
+        "order": 60
       },
       {
         "id": "Appointments List",
@@ -578,34 +586,34 @@
         "order": 5
       },
       {
-        "id": "HMIS 106A1A Sections HC01 To HC15 ",
+        "id": "HMIS 106A Section 1A HC01 To HC15 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC01 To HC15",
+        "label": "HMIS 106A Section 1A HC01 To HC15",
         "url": "reportingui/runReport.page?reportDefinition=072b526a-4140-4c43-9f5c-6d1fa74d7c42",
         "order": 1
       },
       {
-        "id": "HMIS 106A1A  Sections HC16 To HC28 ",
+        "id": "HMIS 106A Section 1A HC16 To HC28 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC16 To HC28",
+        "label": "HMIS 106A Section 1A HC16 To HC28",
         "url": "reportingui/runReport.page?reportDefinition=0e3bdfde-3ee0-4f94-b105-bff844feba30",
         "order": 2
       },
       {
-        "id": "HMIS 106A1A Sections HC29 To HC48 ",
+        "id": "HMIS 106A Section 1A HC29 To HC48 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC29 To HC48",
+        "label": "HMIS 106A Section 1A HC29 To HC48",
         "url": "reportingui/runReport.page?reportDefinition=a2d6170e-1930-4f21-920c-6106e39058e8",
         "order": 3
       },
       {
-        "id": "HMIS 106A1A Sections HC49 To HC52",
+        "id": "HMIS 106A Section 1A HC49 To HC52",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC49 To HC52",
+        "label": "HMIS 106A Section 1A HC49 To HC52",
         "url": "reportingui/runReport.page?reportDefinition=ac1b2145-54aa-4ed8-9590-db7c47fe51e4",
         "order": 4
       },
@@ -616,6 +624,14 @@
         "label": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "url": "reportingui/runReport.page?reportDefinition=639026cd-1cb9-46c1-9a06-81208e9ed412",
         "order": 10
+      },
+      {
+        "id": "HIVDR Tool Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HIVDR Tool Report",
+        "url": "reportingui/runReport.page?reportDefinition=8c029f5e-4467-482c-9ca5-6c32982286dd",
+        "order": 15
       }
     ]
   }

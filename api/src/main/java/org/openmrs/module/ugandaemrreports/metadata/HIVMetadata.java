@@ -702,4 +702,10 @@ public class HIVMetadata extends ReportMetadata {
     public Program getCCLADProgram(){
         return commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459");
     }
+
+    public List<EncounterType> getIACEncounters() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "38cb2232-30fc-4b1f-8df1-47c795771ee9"));
+        return l;
+    }
 }

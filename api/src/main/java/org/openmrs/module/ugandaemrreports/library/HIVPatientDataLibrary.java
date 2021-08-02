@@ -228,6 +228,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return convert(def, df.getWorkflowStateStartDate());
     }
 
+    public PatientDataDefinition getCurrentRegimenStartDate() {
+        RegimenStartDateDataDefinition def = new  RegimenStartDateDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(def, df.getObsDatetimeConverter());
+    }
+
     public PatientDataDefinition getPatientUUID() {
         PersonUUIDDataDefinition def = new PersonUUIDDataDefinition();
         return convert(def, df.getPatientUUIDConverter());
@@ -595,7 +602,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDate() {
-        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDatePlusMonths(String plusMonths) {
