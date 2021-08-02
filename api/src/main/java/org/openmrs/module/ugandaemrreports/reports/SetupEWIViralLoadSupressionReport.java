@@ -203,7 +203,7 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
     private DataSetDefinition healthFacilityName() {
         NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
-        dsd.setFacilityName("aijar.healthCenterName");
+        dsd.setFacilityName("ugandaemr.healthCenterName");
         return dsd;
     }
 

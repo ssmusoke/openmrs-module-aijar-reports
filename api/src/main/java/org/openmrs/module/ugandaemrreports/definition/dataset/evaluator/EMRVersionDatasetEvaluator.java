@@ -45,13 +45,13 @@ public class EMRVersionDatasetEvaluator implements DataSetEvaluator{
 
         EMRVersionDatasetDefinition dsd = (EMRVersionDatasetDefinition) dataSetDefinition;
 
-        String aijar_version = Context.getMessageSourceService().getMessage("aijar.build.info");
-
+        String ugandaemr_version = Context.getMessageSourceService().getMessage("ugandaemr.build.info");
+System.out.println(ugandaemr_version);
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 
-                context.addContextValue("version", aijar_version.substring(4,aijar_version.length()));
+                context.addContextValue("version", ugandaemr_version.substring(4,ugandaemr_version.length()));
                 DataSetRow row = new DataSetRow();
-                row.addColumnValue(new DataSetColumn("version", "version", String.class),aijar_version.substring(4,aijar_version.length()));
+                row.addColumnValue(new DataSetColumn("version", "version", String.class),ugandaemr_version.substring(4,ugandaemr_version.length()));
                 dataSet.addRow(row);
 
         return dataSet;

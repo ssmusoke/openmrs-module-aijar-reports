@@ -1,20 +1,112 @@
 {
   "facility_id": "#S.dhis_uuid#",
+  "facility_name": "#H.facilityName#",
   "emr_software": "UgandaEMR",
   "emr_version": "#aijar.version#",
   "start_date": "#parameter.startDate|YYYY-MM-dd#",
   "end_date": "#parameter.endDate|YYYY-MM-dd#",
   "date_run": "#date.today|YYYY-MM-dd#",
   "encounters": {
-    "hiv": {
-        "art_summary": #METRIC.l#,
-        "art_encounter": #METRIC.a#,
-        "art_health_education": #METRIC.m#,
-        "hts": #METRIC.b#,
-        "eid_summary": #METRIC.c#,
-        "eid_encounter": #METRIC.d#,
-        "missed_appointment_followup": #METRIC.e#
+    "HIV": {
+        "art_summary": {
+          "community_visits": #METRIC.o#,
+          "facility_visits": #METRIC.p#,
+          "total": #METRIC.l#
+        },
+        "art_encounter":{
+          "community_visits": #METRIC.q#,
+          "facility_visits": #METRIC.r#,
+          "total": #METRIC.a#
+        },
+        "art_health_education":{
+          "community_visits": #METRIC.s#,
+          "facility_visits": #METRIC.t#,
+          "total":#METRIC.m#
+        },
+        "hts":{
+          "community_visits": #METRIC.u#,
+          "facility_visits": #METRIC.v#,
+          "total": #METRIC.b#
+        },
+        "eid_summary":{
+          "community_visits": #METRIC.w#,
+          "facility_visits": #METRIC.x#,
+          "total": #METRIC.c#
+        },
+        "eid_encounter": {
+          "community_visits": #METRIC.y#,
+          "facility_visits": #METRIC.z#,
+          "total": #METRIC.d#
+        },
+        "missed_appointment_followup": {
+          "community_visits": #METRIC.a1#,
+          "facility_visits": #METRIC.a2#,
+          "total": #METRIC.e#
+        }
+      },
+    "SMC": {
+        "smc_encounter": {
+          "community_visits": #METRIC.b1#,
+          "facility_visits": #METRIC.b2#,
+          "total": #METRIC.b3#
+        },
+      "smc_followup": {
+        "community_visits": #METRIC.c1#,
+        "facility_visits": #METRIC.c2#,
+        "total": #METRIC.c3#
       }
+    },
+    "TB": {
+      "DS_TB_Enrollment": {
+        "community_visits": #METRIC.d1#,
+        "facility_visits": #METRIC.d2#,
+        "total": #METRIC.d3#
+      },
+      "DS_TB_Followup": {
+        "community_visits": #METRIC.e1#,
+        "facility_visits": #METRIC.e2#,
+        "total": #METRIC.e3#
+      },
+      "DR_TB_Enrollment": {
+        "community_visits": #METRIC.f1#,
+        "facility_visits": #METRIC.f2#,
+        "total": #METRIC.f3#
+      },
+      "DR_TB_Followup": {
+        "community_visits": #METRIC.g1#,
+        "facility_visits": #METRIC.g2#,
+        "total": #METRIC.g3#
+      }
+    },
+    "MCH": {
+      "ANC_Encounter": {
+        "community_visits": #METRIC.h1#,
+        "facility_visits": #METRIC.h2#,
+        "total": #METRIC.h3#
+      },
+      "Maternity": {
+        "community_visits": #METRIC.j1#,
+        "facility_visits": #METRIC.j2#,
+        "total": #METRIC.j3#
+      },
+      "PNC_Encounter": {
+        "community_visits": #METRIC.k1#,
+        "facility_visits": #METRIC.k2#,
+        "total": #METRIC.k3#
+      }
+    },
+    "COVID": {
+      "Initiation": {
+        "community_visits": #METRIC.l1#,
+        "facility_visits": #METRIC.l2#,
+        "total": #METRIC.l3#
+      },
+      "Followup": {
+        "community_visits": #METRIC.m1#,
+        "facility_visits": #METRIC.m2#,
+        "total": #METRIC.m3#
+      }
+    }
   },
   "poc_service_metrics": {
     "reception":#METRIC.f#,
@@ -22,6 +114,7 @@
     "counselor":#METRIC.h#,
     "clinician":#METRIC.i#,
     "lab":#METRIC.j#,
-    "pharmacy":#METRIC.k#
+    "pharmacy":#METRIC.k#,
+    "community": #METRIC.n#
   }
 }

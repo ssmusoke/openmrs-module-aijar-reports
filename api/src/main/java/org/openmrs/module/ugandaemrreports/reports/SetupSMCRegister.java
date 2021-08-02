@@ -244,7 +244,7 @@ public class SetupSMCRegister extends UgandaEMRDataExportManager {
     
     private DataSetDefinition healthFacilityName() {
     	NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
-    	dsd.setFacilityName("aijar.healthCenterName");
+    	dsd.setFacilityName("ugandaemr.healthCenterName");
     	return dsd;
     }
 

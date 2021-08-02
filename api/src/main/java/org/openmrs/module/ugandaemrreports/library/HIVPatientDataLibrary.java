@@ -112,6 +112,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
+    public PatientDataDefinition getLatestExpectedReturnDateBeforeStartDate() {
+        return df.getObsBeforeDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
     public PatientDataDefinition getExpectedReturnDateDuringPeriod() {
         return df.getValueDatetimeObsDuringPeriod(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
@@ -149,6 +153,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     protected PatientDataDefinition getLastARTVisitEncounterByEndDate(DataConverter converter) {
         EncounterType arvInitial = hivMetadata.getARTEncounterPageEncounterType().get(0);
         return df.getLastEncounterOfTypeByEndDate(Arrays.asList(arvInitial), converter);
+    }
+
+    public PatientDataDefinition getLastARTVisitEncounterByEndOfPreviousPeriod(DataConverter converter) {
+        return df.getLastEncounterOfTypeByEndOfPreviousPeriod(hivMetadata.getARTEncounterPageEncounterType(), converter);
     }
 
 
@@ -202,6 +210,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
         def.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(def, df.getDSDMProgramConverter());
+    }
+
+    public PatientDataDefinition getCurrentRegimenStartDate() {
+        RegimenStartDateDataDefinition def = new  RegimenStartDateDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(def, df.getObsDatetimeConverter());
     }
 
     public PatientDataDefinition getPatientUUID() {
@@ -571,7 +586,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDate() {
-        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDatePlusMonths(String plusMonths) {
