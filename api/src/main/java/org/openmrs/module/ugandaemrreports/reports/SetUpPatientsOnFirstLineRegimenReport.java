@@ -133,10 +133,10 @@ public class SetUpPatientsOnFirstLineRegimenReport extends UgandaEMRDataExportMa
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition patientsWithoutRegimenLinesCohortDefinition = df.getWorkFlowStateCohortDefinition(hivMetadata.getFirstLineRegimenState());
+        CohortDefinition patientsOnFirstLineRegimen = df.getWorkFlowStateCohortDefinition(hivMetadata.getFirstLineRegimenState());
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithoutRegimenLinesCohortDefinition));
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsOnFirstLineRegimen));
         addColumn(dsd, "Clinic number", hivPatientData.getClinicNumber());
         addColumn(dsd, "Middle Name", builtInPatientData.getPreferredMiddleName());
         addColumn(dsd, "Surname", builtInPatientData.getPreferredFamilyName());
@@ -154,7 +154,7 @@ public class SetUpPatientsOnFirstLineRegimenReport extends UgandaEMRDataExportMa
         addColumn(dsd,"RegimenLine", hivPatientData.getRegimenLine());
         addColumn(dsd,"RegimenLineStartDate", hivPatientData.getRegimenLineStartDate());
         rd.addDataSetDefinition("ARTREGIMENSTATUS", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsWithoutRegimenLinesCohortDefinition));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(patientsOnFirstLineRegimen));
 
         return rd;
     }
