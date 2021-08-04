@@ -1530,16 +1530,6 @@ public class DataFactory {
         return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + olderThan +",onOrBefore=endDate"));
     }
 
-    /**
-     * Cohort definitions for new ART Regimen Lines implementation
-     */
-    public CohortDefinition getPatientsWithoutRegimenLines() {
-        CurrentPatientDSDMModelCohortDefinition cd = new CurrentPatientDSDMModelCohortDefinition();
-        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
-        cd.addParameter(new Parameter("endDate", "Ending", Date.class));
-        return convert(cd, ObjectUtil.toMap("startDate=startDate,endDate=endDate"));
-    }
-
     public CohortDefinition getWorkFlowStateCohortDefinition(ProgramWorkflowState programWorkflowState) {
         InStateCohortDefinition icsd = new InStateCohortDefinition();
         icsd.addState(programWorkflowState);
