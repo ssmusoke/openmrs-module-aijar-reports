@@ -17,6 +17,9 @@ import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.TBCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.TBPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,7 +48,16 @@ public class SetupTB_ARTPatientListReport extends UgandaEMRDataExportManager {
     private HIVPatientDataLibrary hivPatientData;
 
     @Autowired
+    private HIVMetadata hivMetadata;
+
+    @Autowired
+    private TBPatientDataLibrary tbPatientData;
+
+    @Autowired
     private BasePatientDataLibrary basePatientData;
+
+    @Autowired
+    private TBCohortDefinitionLibrary tbCohortDefinitionLibrary;
 
     /**
      * @return the uuid for the report design for exporting to Excel
@@ -125,11 +137,18 @@ public class SetupTB_ARTPatientListReport extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TB_ART_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition returnToCareClients= hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
+        CohortDefinition newAndRelapsedPatients = tbCohortDefinitionLibrary.getNewAndRelapsedPatientsDuringPeriod();
+        CohortDefinition withDocumentedHIVPostiveStatus = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
+
+        CohortDefinition patientsHIVPositiveWIthARTEncounterAndOnTBTrtment =df.getPatientsInAll(newAndRelapsedPatients,withDocumentedHIVPostiveStatus);
+        CohortDefinition testedPositiveDuringPeriod =hivCohortDefinitionLibrary.getPatientsWhoTestedHIVPositiveDuringPeriod();
+        CohortDefinition newHivPOSAndTBPatientsDuringPeriod =df.getPatientsInAll(testedPositiveDuringPeriod,newAndRelapsedPatients);
+
+        CohortDefinition ARTPatientsWithTB =  df.getPatientsInAny(newHivPOSAndTBPatientsDuringPeriod,patientsHIVPositiveWIthARTEncounterAndOnTBTrtment);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(returnToCareClients));
+        dsd.addRowFilter(Mapped.mapStraightThrough(ARTPatientsWithTB));
 
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
@@ -147,15 +166,19 @@ public class SetupTB_ARTPatientListReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "VL Copies",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastARTVisitEncounterByEndOfPreviousPeriod(df.getEncounterDatetimeConverter()));
         addColumn(dsd, "Expected Return Date", hivPatientData.getLatestExpectedReturnDateBeforeStartDate());
         addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
         addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+        addColumn(dsd,"Patient Type",tbPatientData.getPatientType());
+        addColumn(dsd,"TB Status",tbPatientData.getTBStatus());
+        addColumn(dsd,"TB RX Start Date",hivPatientData.getTBStartDate());
+        addColumn(dsd,"TB RX End Date",hivPatientData.getTBStopDate());
 
         rd.addDataSetDefinition("TB_ART_PatientList", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(ARTPatientsWithTB));
 
         return rd;
     }

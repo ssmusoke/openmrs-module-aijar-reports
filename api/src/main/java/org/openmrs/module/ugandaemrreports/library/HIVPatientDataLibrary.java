@@ -45,7 +45,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     @Override
     public String getKeyPrefix() {
-        return "ugemr.patientdata.";
+        return "ugemr.hivpatientdata.";
     }
 
     public PatientDataDefinition getClinicNumber() {
