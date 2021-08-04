@@ -74,7 +74,7 @@ public class SetUpTPTStatusReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getDescription() {
-        return "Lists Patients With Their TPT Status";
+        return "Lists Patients that had a TPT status during the selected period";
     }
 
     @Override
