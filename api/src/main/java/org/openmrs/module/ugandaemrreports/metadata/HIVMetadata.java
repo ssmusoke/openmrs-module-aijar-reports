@@ -589,6 +589,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("813e21e7-4ccb-4fe9-aaab-3c0e40b6e356");
     }
 
+    public Concept getTPTStatus() {
+        return getConcept("37d4ac43-b3b4-4445-b63b-e3acf47c8910");
+    }
+
     public Concept getHepBScreeningDate() {
         return getConcept("53df33eb-4060-4300-8b7e-0f0784947767");
     }
