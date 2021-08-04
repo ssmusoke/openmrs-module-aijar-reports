@@ -143,9 +143,10 @@ public class SetUpPatientsOnSecondLineRegimenReport extends UgandaEMRDataExportM
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
         addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
-        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
+        addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
+        addColumn(dsd, "VL Quantitative",  hivPatientData.getViralLoadQualitativeByEndDate());
+        addColumn(dsd, "VL Copies",  hivPatientData.getViralLoadByEndDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
         addColumn(dsd,"RegimenLine", hivPatientData.getRegimenLine());
         addColumn(dsd,"RegimenLineStartDate", hivPatientData.getRegimenLineStartDate());
@@ -157,6 +158,6 @@ public class SetUpPatientsOnSecondLineRegimenReport extends UgandaEMRDataExportM
 
     @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.1";
     }
 }
