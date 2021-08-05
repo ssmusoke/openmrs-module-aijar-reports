@@ -1,10 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Cohort;
 import org.openmrs.Program;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -19,12 +21,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 /**
- * Daily Appointments List report
+ * TPT Status  report
  */
 @Component
-public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
+public class SetUpTPTStatusReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -56,26 +59,22 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
      */
     @Override
     public String getExcelDesignUuid() {
-        return "651dda6c-4cf4-4ad1-826c-e0f4a5f1118b";
-    }
-
-    public String getCSVDesignUuid() {
-        return "c6bea515-a558-4da8-bcc2-02e7cc8b3ab5";
+        return "378f5f5b-d65a-48a6-8d56-90ce3692f01c";
     }
 
     @Override
     public String getUuid() {
-        return "794e735e-20e7-40be-9c79-7f9361ca8fc9";
+        return "f9096e93-fae7-45a6-b2f7-7883d09f66e5";
     }
 
     @Override
     public String getName() {
-        return "Mobile Appointments List";
+        return "TPT Status Report";
     }
 
     @Override
     public String getDescription() {
-        return "Lists Patients With Appointments in a particular period";
+        return "Lists Patients that had a TPT status during the selected period";
     }
 
     @Override
@@ -83,7 +82,6 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
-        l.add(new Parameter("programs", "programs", Program.class, List.class, null,null,false));
         return l;
     }
 
@@ -95,9 +93,14 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
     }
 
     @Override
-    public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        return createCSVDesign(getCSVDesignUuid(), reportDefinition);
 
+    public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "TPTStatusList.xls");
+        Properties props = new Properties();
+        props.put("repeatingSections", "sheet:1,row:8,dataset:TPT_LIST");
+        props.put("sortWeight", "5000");
+        rd.setProperties(props);
+        return rd;
     }
 
     /**
@@ -118,45 +121,41 @@ public class SetUpMobileAppointmentLists extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        UgandaEMRMobileDatasetDefinition dsd = new UgandaEMRMobileDatasetDefinition();
+        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition appointmentList = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition missedAppointmentLists = df.getMissedAppointment();
-        CohortDefinition combinedCohort = df.getPatientsInAny(appointmentList,missedAppointmentLists);
-        CohortDefinition patientsDeadAndTransferredOut = hivCohortDefinitionLibrary.getDeadAndTransferredOutPatientsDuringPeriod();
-        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
-        CohortDefinition cohortstoExclude =df.getPatientsInAny(hadEncounterInPeriod,patientsDeadAndTransferredOut);
-        CohortDefinition patientsWithAppointmentsAndMissedAppointments =df.getPatientsNotIn(combinedCohort,cohortstoExclude);
+        CohortDefinition completedTPTDuringPeriod = hivCohortDefinitionLibrary.getTPTStopDateBetweenPeriod();
+        CohortDefinition startedTPTDuringPeriod = hivCohortDefinitionLibrary.getTPTStartDateBetweenPeriod();
+        CohortDefinition cohortDefinition =df.getPatientsInAny(completedTPTDuringPeriod,startedTPTDuringPeriod);
 
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithAppointmentsAndMissedAppointments));
-        addColumn(dsd,"Person UUID",hivPatientData.getPatientUUID());
+        dsd.addRowFilter(Mapped.mapStraightThrough(cohortDefinition));
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         addColumn(dsd, "Sex", builtInPatientData.getGender());
+        addColumn(dsd,"Age",hivPatientData.getAgeDuringPeriod());
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "Current Regimen UUID", hivPatientData.getCurrentRegimenUuid() );
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
+        addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+        addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+        addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
         addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
-        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
-        rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("TPT_LIST", Mapped.mapStraightThrough(dsd));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "2.1.2";
+        return "0.0.3";
     }
 }

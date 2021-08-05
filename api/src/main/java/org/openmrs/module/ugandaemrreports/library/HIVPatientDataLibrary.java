@@ -212,6 +212,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return convert(def, df.getDSDMProgramConverter());
     }
 
+    public PatientDataDefinition getCurrentRegimenStartDate() {
+        RegimenStartDateDataDefinition def = new  RegimenStartDateDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return convert(def, df.getObsDatetimeConverter());
+    }
+
     public PatientDataDefinition getPatientUUID() {
         PersonUUIDDataDefinition def = new PersonUUIDDataDefinition();
         return convert(def, df.getPatientUUIDConverter());
@@ -579,7 +586,7 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDate() {
-        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getViralLoadDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLastViralLoadDateByEndDatePlusMonths(String plusMonths) {
@@ -610,11 +617,15 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
 
     public PatientDataDefinition getTPTInitiationDate() {
-        return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter(),hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getTPTCompletionDate() {
-        return df.getObsByEndDate(hivMetadata.getTPTCompletionDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getTPTCompletionDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter(),hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getTPTLastTPTStatus() {
+        return df.getObsByEndDate(hivMetadata.getTPTStatus(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
     public PatientDataDefinition getLastHepBScreeningDate() {
