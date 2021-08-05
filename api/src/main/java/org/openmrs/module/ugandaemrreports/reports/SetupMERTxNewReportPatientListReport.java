@@ -24,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+
 /**
  *  TX New Patient Listing Report
  */
 @Component
-public class SetupTxNewReportPatientListReport extends UgandaEMRDataExportManager {
+public class SetupMERTxNewReportPatientListReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -125,11 +127,11 @@ public class SetupTxNewReportPatientListReport extends UgandaEMRDataExportManage
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_NEW_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition returnToCareClients= hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
+        CohortDefinition havingArtStartDateDuringQuarter = df.getPatientsNotIn(hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(),transferIn());
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(returnToCareClients));
+        dsd.addRowFilter(Mapped.mapStraightThrough(havingArtStartDateDuringQuarter));
 
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
@@ -153,13 +155,13 @@ public class SetupTxNewReportPatientListReport extends UgandaEMRDataExportManage
         addColumn(dsd, "Expected Return Date", hivPatientData.getLatestExpectedReturnDateBeforeStartDate());
 
         rd.addDataSetDefinition("TX_NEW_PatientList", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(havingArtStartDateDuringQuarter));
 
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "0.0.3";
+        return "0.1.0";
     }
 }

@@ -3,37 +3,31 @@ package org.openmrs.module.ugandaemrreports.reports2019;
 import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.Moh105CohortLibrary;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reports.SetupTxNewReport;
+import org.openmrs.module.ugandaemrreports.reports.Helper;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
- *  PMTCT STAT Report
+ *  TX_ML Report
  */
 @Component
 public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
-
-    @Autowired
-    private SetupTxNewReport setupTxNewReport;
 
     @Autowired
     private DataFactory df;
@@ -103,7 +97,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public ReportDefinition constructReportDefinition() {
-        String params = "startDate=${startDate},endDate=${endDate}";
         ReportDefinition rd = new ReportDefinition();
         rd.setUuid(getUuid());
         rd.setName(getName());
@@ -164,32 +157,31 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     public void addAgeAndGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         /**          females age and gender mapping **/
-        setupTxNewReport.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=below1female");
-        setupTxNewReport.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between1and4female");
-        setupTxNewReport.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between5and9female");
-        setupTxNewReport.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between10and14female");
-        setupTxNewReport.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between15and19female");
-        setupTxNewReport.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between20and24female");
-        setupTxNewReport.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between25and29female");
-        setupTxNewReport.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between30and34female");
-        setupTxNewReport.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between35and39female");
-        setupTxNewReport.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between40and44female");
-        setupTxNewReport.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between45and49female");
-        setupTxNewReport.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=above50female");
+        Helper.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=below1female");
+        Helper.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between1and4female");
+        Helper.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between5and9female");
+        Helper.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between10and14female");
+        Helper.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between15and19female");
+        Helper.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between20and24female");
+        Helper.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between25and29female");
+        Helper.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between30and34female");
+        Helper.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between35and39female");
+        Helper.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between40and44female");
+        Helper.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between45and49female");
+        Helper.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=above50female");
         /**         males age and gender mapping **/
-        setupTxNewReport.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=below1male");
-        setupTxNewReport.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between1and4male");
-        setupTxNewReport.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between5and9male");
-        setupTxNewReport.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=between10and14male");
-        setupTxNewReport.addIndicator(dsd, "17" + key, label, cohortDefinition, "age=between15and19male");
-        setupTxNewReport.addIndicator(dsd, "18" + key, label, cohortDefinition, "age=between20and24male");
-        setupTxNewReport.addIndicator(dsd, "19" + key, label, cohortDefinition, "age=between25and29male");
-        setupTxNewReport.addIndicator(dsd, "20" + key, label, cohortDefinition, "age=between30and34male");
-        setupTxNewReport.addIndicator(dsd, "21" + key, label, cohortDefinition, "age=between35and39male");
-        setupTxNewReport.addIndicator(dsd, "22" + key, label, cohortDefinition, "age=between40and44male");
-        setupTxNewReport.addIndicator(dsd, "23" + key, label, cohortDefinition, "age=between45and49male");
-        setupTxNewReport.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
-
+        Helper.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=below1male");
+        Helper.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between1and4male");
+        Helper.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between5and9male");
+        Helper.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=between10and14male");
+        Helper.addIndicator(dsd, "17" + key, label, cohortDefinition, "age=between15and19male");
+        Helper.addIndicator(dsd, "18" + key, label, cohortDefinition, "age=between20and24male");
+        Helper.addIndicator(dsd, "19" + key, label, cohortDefinition, "age=between25and29male");
+        Helper.addIndicator(dsd, "20" + key, label, cohortDefinition, "age=between30and34male");
+        Helper.addIndicator(dsd, "21" + key, label, cohortDefinition, "age=between35and39male");
+        Helper.addIndicator(dsd, "22" + key, label, cohortDefinition, "age=between40and44male");
+        Helper.addIndicator(dsd, "23" + key, label, cohortDefinition, "age=between45and49male");
+        Helper.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
     }
 
 
@@ -200,6 +192,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.1.1";
+        return "3.2.0";
     }
 }
