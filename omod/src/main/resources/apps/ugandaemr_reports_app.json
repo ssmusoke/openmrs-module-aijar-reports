@@ -556,6 +556,15 @@
         "url": "reportingui/runReport.page?reportDefinition=e38117c0-9ddd-4d51-b3b7-a39e38fd85a1",
         "order": 130,
         "requiredPrivilege": "App: ugandaemrreports.transitionedToDTGReport"
+      },
+      {
+        "id": "TPT Status Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "TPT Status Report",
+        "url": "reportingui/runReport.page?reportDefinition=f9096e93-fae7-45a6-b2f7-7883d09f66e5",
+        "order": 135,
+        "requiredPrivilege": "App: ugandaemrreports.tptStatusReport"
       },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",

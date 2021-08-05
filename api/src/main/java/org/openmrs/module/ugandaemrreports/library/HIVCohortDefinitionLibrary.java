@@ -726,4 +726,13 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         CohortDefinition excludedCohorts = df.getPatientsInAny(df.getDeadPatientsByEndOfPreviousDate(), getPatientsTransferredOutByStartDate());
         return df.getPatientsNotIn(noClinicalContact,excludedCohorts);
     }
+
+    public CohortDefinition getTPTStartDateBetweenPeriod() {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTPTInitiationDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTPTStopDateBetweenPeriod() {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTPTCompletionDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
 }

@@ -617,11 +617,15 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
 
     public PatientDataDefinition getTPTInitiationDate() {
-        return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getTPTInitiationDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter(),hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getTPTCompletionDate() {
-        return df.getObsByEndDate(hivMetadata.getTPTCompletionDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+        return df.getObsByEndDate(hivMetadata.getTPTCompletionDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter(),hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getTPTLastTPTStatus() {
+        return df.getObsByEndDate(hivMetadata.getTPTStatus(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
     public PatientDataDefinition getLastHepBScreeningDate() {
