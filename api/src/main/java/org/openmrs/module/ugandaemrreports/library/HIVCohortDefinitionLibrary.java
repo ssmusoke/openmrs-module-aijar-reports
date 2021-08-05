@@ -711,4 +711,13 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
         return activeExcludingDeadLostAndTransfferedOut;
     }
+
+    public CohortDefinition getTPTStartDateBetweenPeriod() {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTPTInitiationDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTPTStopDateBetweenPeriod() {
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTPTCompletionDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
 }
