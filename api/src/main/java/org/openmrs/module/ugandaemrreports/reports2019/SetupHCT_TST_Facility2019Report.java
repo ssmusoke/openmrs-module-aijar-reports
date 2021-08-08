@@ -186,7 +186,7 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         addAgeAndGender(dsd,"s","tested positive through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"t","tested negative through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedNegativeDuringPeriod));
 
-        org.openmrs.module.ugandaemrreports.reports.Helper.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
         Helper.addIndicator(dsd,"PIPb","PIPb positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
         Helper.addIndicator(dsd,"PIPc","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
         Helper.addIndicator(dsd,"PIPd","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
