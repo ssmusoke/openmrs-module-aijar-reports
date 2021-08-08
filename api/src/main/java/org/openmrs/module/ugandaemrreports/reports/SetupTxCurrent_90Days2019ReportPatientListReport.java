@@ -125,11 +125,11 @@ public class SetupTxCurrent_90Days2019ReportPatientListReport extends UgandaEMRD
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_CUR_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition returnToCareClients= hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
+        CohortDefinition activePatientsWithUpto90DaysLost= hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(returnToCareClients));
+        dsd.addRowFilter(Mapped.mapStraightThrough(activePatientsWithUpto90DaysLost));
 
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
@@ -153,7 +153,7 @@ public class SetupTxCurrent_90Days2019ReportPatientListReport extends UgandaEMRD
         addColumn(dsd, "Expected Return Date", hivPatientData.getLatestExpectedReturnDateBeforeStartDate());
 
         rd.addDataSetDefinition("TX_CUR_PatientList", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activePatientsWithUpto90DaysLost));
 
         return rd;
     }
