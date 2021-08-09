@@ -10,13 +10,13 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reports.SetupTxNewReport;
+import org.openmrs.module.ugandaemrreports.reports.Helper;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,9 +30,6 @@ import java.util.List;
  */
 @Component
 public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
-
-    @Autowired
-    private SetupTxNewReport setupTxNewReport;
 
     @Autowired
     private DataFactory df;
@@ -176,14 +173,14 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
     }
 
     public void addGender(CohortIndicatorDataSetDefinition dsd, String key,String label, CohortDefinition cohortDefinition){
-        setupTxNewReport.addIndicator(dsd,  key+"a", label, cohortDefinition, "gender=female");
-        setupTxNewReport.addIndicator(dsd,  key+"b", label, cohortDefinition, "gender=male");
+        Helper.addIndicator(dsd,  key+"a", label, cohortDefinition, "gender=female");
+        Helper.addIndicator(dsd,  key+"b", label, cohortDefinition, "gender=male");
     }
 
 
 
     @Override
     public String getVersion() {
-        return "0.1.6";
+        return "0.2.0";
     }
 }
