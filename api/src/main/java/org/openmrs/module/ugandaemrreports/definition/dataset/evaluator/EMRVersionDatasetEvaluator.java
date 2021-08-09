@@ -46,7 +46,7 @@ public class EMRVersionDatasetEvaluator implements DataSetEvaluator{
         EMRVersionDatasetDefinition dsd = (EMRVersionDatasetDefinition) dataSetDefinition;
 
         String ugandaemr_version = Context.getMessageSourceService().getMessage("ugandaemr.build.info");
-System.out.println(ugandaemr_version);
+
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 
                 context.addContextValue("version", ugandaemr_version.substring(4,ugandaemr_version.length()));

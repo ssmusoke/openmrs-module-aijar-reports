@@ -33,6 +33,11 @@
         "id": "org.openmrs.module.ugandaemr.mer",
         "description": "Links to available MER Reports 2019",
         "supportedExtensionTypes": [ "link" ]
+      },
+      {
+        "id": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "description": "Patient Lists for MER Reports",
+        "supportedExtensionTypes": [ "link" ]
       }
     ],
     "extensions": [
@@ -128,19 +133,19 @@
         "requiredPrivilege": "App: ugandaemrreports.earlyWarningIndicatorReport"
       },
       {
-        "id": "HCA Annual Report",
+        "id": "HCA Annual Cohort Analysis Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HCA Annual Report",
+        "label": "HCA Annual Cohort Analysis Report",
         "url": "reportingui/runReport.page?reportDefinition=209094d4-d8b1-11e6-bf26-cec0c932ce01",
         "order": 45,
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
       },
       {
-        "id": "HCA 12 and 24 Months Report",
+        "id": "HCA 12 and 24 Months Cohort Analysis Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HCA 12 and 24 Months Report",
+        "label": "HCA 12 and 24 Months Cohort Analysis Report",
         "url": "reportingui/runReport.page?reportDefinition=cd1d3857-c408-4d6c-be90-af81611d5192",
         "order": 50,
         "requiredPrivilege": "App: ugandaemrreports.HCAReport"
@@ -289,6 +294,77 @@
         "order": 55
       },
       {
+        "id": "MER TX_TB Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer",
+        "type": "link",
+        "label": "TX_TB Report",
+        "url": "reportingui/runReport.page?reportDefinition=d055029b-655f-4adb-84a0-405351892e09",
+        "order": 60
+      },
+      {
+        "id": "MER_TX_NEW_days_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX NEW Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=e115af45-c06a-4a30-ba85-37b448547c77",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXNEWReport_PatientList"
+      },
+      {
+        "id": "MER_TX_CUR_28_days_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX CURR (28 days) Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=28cc02a3-800d-4638-bfb2-a56971355502",
+        "order": 10,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXCUR28DaysReport_PatientList"
+      },
+      {
+        "id": "MER_TX_CUR_90_days_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX CURR (90 days) Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=0d297c01-73d7-42f1-95a1-7cb4a163f322",
+        "order": 15,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXCUR90DaysReport_PatientList"
+      },
+      {
+        "id": "MER_TX_TB_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX TB Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=69162ab2-6d60-4e31-8c1b-89b8bb2f28c2",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXTBReport_PatientList"
+      },
+      {
+        "id": "MER_TB_ART_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TB ART Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=a7810d12-7eac-4e83-a78a-7110fd4bc4d3",
+        "order": 20,
+        "requiredPrivilege": "App: ugandaemrreports.MERTBARTReport_PatientList"
+      },
+      {
+        "id": "MER_TX_ML_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX ML Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=984e1acf-e982-4019-818b-f23683b79ebc",
+        "order": 25,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXMLReport_PatientList"
+      },
+      {
+        "id": "MER_TX_RTT_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER TX RTT Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=5803a894-5bb6-4d33-976d-bc074b5f5a26",
+        "order": 30,
+        "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport_PatientList"
+      },
+      {
         "id": "Appointments List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
@@ -378,8 +454,6 @@
         "order": 60,
         "requiredPrivilege": "App: ugandaemrreports.transferOutList"
       },
-
-
       {
         "id": "Transfer In List",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
@@ -482,6 +556,15 @@
         "url": "reportingui/runReport.page?reportDefinition=e38117c0-9ddd-4d51-b3b7-a39e38fd85a1",
         "order": 130,
         "requiredPrivilege": "App: ugandaemrreports.transitionedToDTGReport"
+      },
+      {
+        "id": "TPT Status Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "TPT Status Report",
+        "url": "reportingui/runReport.page?reportDefinition=f9096e93-fae7-45a6-b2f7-7883d09f66e5",
+        "order": 135,
+        "requiredPrivilege": "App: ugandaemrreports.tptStatusReport"
       },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
@@ -506,6 +589,15 @@
         "url": "reportingui/runReport.page?reportDefinition=22a58e5e-2535-44f3-a710-3856154ca29f",
         "order":15,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },
+      {
+        "id": "HMIS 105 Section 2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2: ANTENANTAL",
+        "url": "reportingui/runReport.page?reportDefinition=caec6908-72e1-4978-8007-13c551d23e5f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
         "id": "HMIS 105 Section 4",
@@ -534,34 +626,34 @@
         "order": 5
       },
       {
-        "id": "HMIS 106A1A Sections HC01 To HC15 ",
+        "id": "HMIS 106A Section 1A HC01 To HC15 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC01 To HC15",
+        "label": "HMIS 106A Section 1A HC01 To HC15",
         "url": "reportingui/runReport.page?reportDefinition=072b526a-4140-4c43-9f5c-6d1fa74d7c42",
         "order": 1
       },
       {
-        "id": "HMIS 106A1A  Sections HC16 To HC28 ",
+        "id": "HMIS 106A Section 1A HC16 To HC28 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC16 To HC28",
+        "label": "HMIS 106A Section 1A HC16 To HC28",
         "url": "reportingui/runReport.page?reportDefinition=0e3bdfde-3ee0-4f94-b105-bff844feba30",
         "order": 2
       },
       {
-        "id": "HMIS 106A1A Sections HC29 To HC48 ",
+        "id": "HMIS 106A Section 1A HC29 To HC48 ",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC29 To HC48",
+        "label": "HMIS 106A Section 1A HC29 To HC48",
         "url": "reportingui/runReport.page?reportDefinition=a2d6170e-1930-4f21-920c-6106e39058e8",
         "order": 3
       },
       {
-        "id": "HMIS 106A1A Sections HC49 To HC52",
+        "id": "HMIS 106A Section 1A HC49 To HC52",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
-        "label": "HMIS 106A1A Sections HC49 To HC52",
+        "label": "HMIS 106A Section 1A HC49 To HC52",
         "url": "reportingui/runReport.page?reportDefinition=ac1b2145-54aa-4ed8-9590-db7c47fe51e4",
         "order": 4
       },
@@ -588,6 +680,14 @@
         "label": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "url": "reportingui/runReport.page?reportDefinition=639026cd-1cb9-46c1-9a06-81208e9ed412",
         "order": 10
+      },
+      {
+        "id": "HIVDR Tool Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HIVDR Tool Report",
+        "url": "reportingui/runReport.page?reportDefinition=8c029f5e-4467-482c-9ca5-6c32982286dd",
+        "order": 15
       }
     ]
   }
