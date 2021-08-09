@@ -376,7 +376,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         addIndicator(dsd, "3"+key , label + " treatedAfterLTFP", cohortDefinition, "type=treatedAfterLTFP");
         addIndicator(dsd, "4"+key , label + " treatedAfterFailure ", cohortDefinition, "type=treatedAfterFailure");
         addIndicator(dsd, "5"+key , label + " treatementHistoryUnknown", cohortDefinition, "type=treatementHistoryUnknown");
-        addIndicator(dsd, "6"+key , label + " overall", cohortDefinition, "");
         addIndicator(dsd, "7"+key , label + " Referred from Community activities", cohortDefinition, "type=referred");
     }
 
@@ -523,6 +522,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
         @Override
     public String getVersion() {
-        return "1.2.0";
+        return "1.2.1";
     }
 }
