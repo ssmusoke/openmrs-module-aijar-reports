@@ -89,7 +89,10 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition),buildJSONReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**

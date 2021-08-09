@@ -369,6 +369,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      */
     public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
         return hasNumericObs(question, operator1, value1, null, null);
-    }    
+    }
+
     
 }

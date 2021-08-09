@@ -15,7 +15,7 @@ import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
-import org.openmrs.module.ugandaemrreports.reports.SetupTxNewReport;
+import org.openmrs.module.ugandaemrreports.reports.Helper;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,9 +41,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Autowired
     private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
-
-    @Autowired
-    private SetupTxNewReport setupTxNewReport;
 
     @Autowired
     private Moh105CohortLibrary moh105CohortLibrary;
@@ -189,15 +186,15 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         addAgeAndGender(dsd,"s","tested positive through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"t","tested negative through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedNegativeDuringPeriod));
 
-        setupTxNewReport.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PIPb","PIPb positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PIPc","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PIPd","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPb","PIPb positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPc","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPd","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
 
-        setupTxNewReport.addIndicator(dsd,"PWIDSa","PWIDSa positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSb","PWIDSb positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSc","PWIDSc negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSd","PWIDSd negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PWIDSa","PWIDSa positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PWIDSb","PWIDSb positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PWIDSc","PWIDSc negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PWIDSd","PWIDSd negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
 
         /** community level mappings**/
         addAgeAndGender(dsd,"a","tested positive through the Mobile point",df.getPatientsInAll(patientThroughMobilePoints,testedPositiveDuringPeriod));
@@ -209,15 +206,15 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         addAgeAndGender(dsd,"u","tested positive through the Other points",df.getPatientsInAll(patientThroughOtherCommunityTestingPoints,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"v","tested negative through the Other point",df.getPatientsInAll(patientThroughOtherCommunityTestingPoints,testedNegativeDuringPeriod));
 
-        setupTxNewReport.addIndicator(dsd,"PIPe","PIPe positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PIPf","PIPf positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PIPg","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PIPh","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PIPe","PIPe positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PIPf","PIPf positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PIPg","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PIPh","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
 
-        setupTxNewReport.addIndicator(dsd,"PWIDSe","PWIDSe positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSf","PWIDSf positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSg","PWIDSg negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSh","PWIDSh negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PWIDSe","PWIDSe positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PWIDSf","PWIDSf positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PWIDSg","PWIDSg negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"PWIDSh","PWIDSh negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
 
 
         return rd;
@@ -225,31 +222,31 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     public void addAgeAndGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
         /**          females age and gender mapping **/
-        setupTxNewReport.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=below1female");
-        setupTxNewReport.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between1and4female");
-        setupTxNewReport.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between5and9female");
-        setupTxNewReport.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between10and14female");
-        setupTxNewReport.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between15and19female");
-        setupTxNewReport.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between20and24female");
-        setupTxNewReport.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between25and29female");
-        setupTxNewReport.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between30and34female");
-        setupTxNewReport.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between35and39female");
-        setupTxNewReport.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between40and44female");
-        setupTxNewReport.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between45and49female");
-        setupTxNewReport.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=above50female");
+        Helper.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=below1female");
+        Helper.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between1and4female");
+        Helper.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between5and9female");
+        Helper.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between10and14female");
+        Helper.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between15and19female");
+        Helper.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between20and24female");
+        Helper.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between25and29female");
+        Helper.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=between30and34female");
+        Helper.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between35and39female");
+        Helper.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between40and44female");
+        Helper.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between45and49female");
+        Helper.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=above50female");
         /**         males age and gender mapping **/
-        setupTxNewReport.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=below1male");
-        setupTxNewReport.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between1and4male");
-        setupTxNewReport.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between5and9male");
-        setupTxNewReport.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=between10and14male");
-        setupTxNewReport.addIndicator(dsd, "17" + key, label, cohortDefinition, "age=between15and19male");
-        setupTxNewReport.addIndicator(dsd, "18" + key, label, cohortDefinition, "age=between20and24male");
-        setupTxNewReport.addIndicator(dsd, "19" + key, label, cohortDefinition, "age=between25and29male");
-        setupTxNewReport.addIndicator(dsd, "20" + key, label, cohortDefinition, "age=between30and34male");
-        setupTxNewReport.addIndicator(dsd, "21" + key, label, cohortDefinition, "age=between35and39male");
-        setupTxNewReport.addIndicator(dsd, "22" + key, label, cohortDefinition, "age=between40and44male");
-        setupTxNewReport.addIndicator(dsd, "23" + key, label, cohortDefinition, "age=between45and49male");
-        setupTxNewReport.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
+        Helper.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=below1male");
+        Helper.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between1and4male");
+        Helper.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between5and9male");
+        Helper.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=between10and14male");
+        Helper.addIndicator(dsd, "17" + key, label, cohortDefinition, "age=between15and19male");
+        Helper.addIndicator(dsd, "18" + key, label, cohortDefinition, "age=between20and24male");
+        Helper.addIndicator(dsd, "19" + key, label, cohortDefinition, "age=between25and29male");
+        Helper.addIndicator(dsd, "20" + key, label, cohortDefinition, "age=between30and34male");
+        Helper.addIndicator(dsd, "21" + key, label, cohortDefinition, "age=between35and39male");
+        Helper.addIndicator(dsd, "22" + key, label, cohortDefinition, "age=between40and44male");
+        Helper.addIndicator(dsd, "23" + key, label, cohortDefinition, "age=between45and49male");
+        Helper.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
 
     }
 
@@ -261,6 +258,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.1.8";
+        return "0.3.0";
     }
 }
