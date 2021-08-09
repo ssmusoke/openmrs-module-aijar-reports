@@ -41,7 +41,7 @@ public class SetupTBRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.1.5";
 	}
 	
 	/**
