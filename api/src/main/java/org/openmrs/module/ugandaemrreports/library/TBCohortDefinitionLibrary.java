@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.library;
 
+import org.openmrs.Program;
 import org.openmrs.ProgramWorkflowState;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.ObjectUtil;
@@ -7,6 +8,7 @@ import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.TBMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +57,10 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
     public CohortDefinition getEnrolledTBDuringPeriod(){
         ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
         cd.setName("Enrolled in program During Period");
-        cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
-        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
-        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
+        cd.addParameter(new Parameter("enrolledOnOrAfter", "After Date", Date.class));
+        cd.addParameter(new Parameter("enrolledOnOrBefore", "Before Date", Date.class));
+        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("9dc21a72-0971-11e7-8037-507b9dc4c741")));
+        return df.convert(cd, ObjectUtil.toMap("enrolledOnOrAfter=startDate,enrolledOnOrBefore=endDate"));
 
     }
 
