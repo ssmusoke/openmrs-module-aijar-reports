@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Handler(supports = {TB009DatasetDefinition.class })
 public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
@@ -269,89 +270,89 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between pp.date_enrolled \n" +
-				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 2 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK1_2 ON WEEK1_2.person_id = A.patient_id\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 2 WEEK) group by o.obs_group_id order by encounter_datetime DESC ) WEEK1_2 ON WEEK1_2.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 15 DAY)\n" +
-				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 4 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK3_4 ON WEEK3_4.person_id = A.patient_id\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 4 WEEK) group by o.obs_group_id order by encounter_datetime DESC ) WEEK3_4 ON WEEK3_4.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 29 DAY)\n" +
-				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 6 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK5_6 ON WEEK5_6.person_id = A.patient_id\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 6 WEEK) group by o.obs_group_id order by encounter_datetime DESC ) WEEK5_6 ON WEEK5_6.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                 inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 43 DAY)\n" +
-				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 8 WEEK) group by o.obs_group_id order by encounter_datetime DESC limit 1) WEEK7_8 ON WEEK7_8.person_id = A.patient_id\n" +
+				"                    AND DATE_ADD(pp.date_enrolled,INTERVAL 8 WEEK) group by o.obs_group_id order by encounter_datetime DESC ) WEEK7_8 ON WEEK7_8.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 3 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 4 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_3 ON MONTH_3.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 4 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_3 ON MONTH_3.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 4 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 5 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_4 ON MONTH_4.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 5 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_4 ON MONTH_4.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 5 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 6 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_5 ON MONTH_5.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 6 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_5 ON MONTH_5.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 6 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 7 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_6 ON MONTH_6.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 7 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_6 ON MONTH_6.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 7 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 8 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_7 ON MONTH_7.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 8 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_7 ON MONTH_7.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 8 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 9 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_8 ON MONTH_8.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 9 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_8 ON MONTH_8.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 9 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 10 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_9 ON MONTH_9.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 10 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_9 ON MONTH_9.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 10 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 11 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_10 ON MONTH_10.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 11 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_10 ON MONTH_10.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 11 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 12 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_11 ON MONTH_11.person_id = A.patient_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 12 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_11 ON MONTH_11.person_id = A.patient_id\n" +
 				"             LEFT JOIN (SELECT o.person_id,encounter_datetime, days.value_numeric from encounter e2 INNER JOIN obs days on e2.encounter_id = days.encounter_id join obs o on o.encounter_id=e2.encounter_id\n" +
 				"                    inner  join encounter_type t on  e2.encounter_type = t.encounter_type_id and t.uuid='455bad1f-5e97-4ee9-9558-ff1df8808732' inner join patient_program pp on e2.patient_id = pp.patient_id " +
 				" 					 inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741' \n" +
 				String.format("                    WHERE o.obs_group_id in (SELECT obs_id from obs o  where o.concept_id= 165305  and o.voided=0) and days.obs_group_id=o.obs_group_id and pp.date_enrolled between '%s' and '%s'\n",startDate,endDate) +
 				"                    and days.concept_id= 159368 and days.voided=0 AND e2.encounter_datetime between DATE_ADD(pp.date_enrolled,INTERVAL 12 MONTH )\n" +
-				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 13 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC limit 1) MONTH_12 ON MONTH_12.person_id = A.patient_id\n" +
-				"             LEFT JOIN (SELECT person_id, value_datetime,encounter_id from obs where concept_id=165854 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DATE on T_OUT_DATE.encounter_id= A.encounter_id\n" +
-				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=90211 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_HF on T_OUT_HF.encounter_id= A.encounter_id\n" +
-				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=165853 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_DISTRICT on T_OUT_DISTRICT.encounter_id= A.encounter_id\n" +
-				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=159635 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id limit 1)T_OUT_TEL on T_OUT_TEL.encounter_id= A.encounter_id\n" +
+				"                    AND DATE_SUB(DATE_ADD(pp.date_enrolled,INTERVAL 13 MONTH),INTERVAL 1 DAY) group by o.obs_group_id order by encounter_datetime DESC ) MONTH_12 ON MONTH_12.person_id = A.patient_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_datetime,encounter_id from obs where concept_id=165854 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id )T_OUT_DATE on T_OUT_DATE.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=90211 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id )T_OUT_HF on T_OUT_HF.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=165853 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id )T_OUT_DISTRICT on T_OUT_DISTRICT.encounter_id= A.encounter_id\n" +
+				"             LEFT JOIN (SELECT person_id, value_text,encounter_id from obs where concept_id=159635 and obs_group_id in (SELECT obs_group_id from obs groupid where concept_id=165855 and value_coded=160036 and voided=0) and voided=0  order by obs_group_id )T_OUT_TEL on T_OUT_TEL.encounter_id= A.encounter_id\n" +
 				"             INNER JOIN (SELECT patient_id,cn.name outcome, date_completed outcome_date from patient_program pp inner join program p on pp.program_id = p.program_id and p.uuid='9dc21a72-0971-11e7-8037-507b9dc4c741'\n" +
 				"               LEFT JOIN concept_name cn ON pp.outcome_concept_id = cn.concept_id AND cn.locale = 'en' AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.voided = 0 where pp.date_enrolled between\n" +
 		String.format(		"\t\t\t    '%s' and '%s' group by patient_id ) PROGRAM on PROGRAM.patient_id = A.patient_id\n",startDate,endDate) +
@@ -372,13 +373,13 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 		List<Object[]> results = evaluationService.evaluateToList(q, context);
 		List<Object[]> results1 = evaluationService.evaluateToList(encounterQuery, context);
 
-		List<EncounterObject> encounterObjects = convert(results1);
 		PatientDataHelper pdh = new PatientDataHelper();
 
 		for (Object[] r : results) {
 			DataSetRow row = new DataSetRow();
+			int patientId = Integer.valueOf(String.valueOf(r[0]));
 
-			pdh.addCol(row, "patientid",r[0]);
+			pdh.addCol(row, "patientid",patientId);
 			pdh.addCol(row, "DOA", r[1]);
 			pdh.addCol(row, "District No", r[2]);
 			pdh.addCol(row, "Unit_No", r[3]);
@@ -424,60 +425,61 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 			pdh.addCol(row, "Referral_From", r[43]);
 			pdh.addCol(row, "Referral_Date", r[44]);
 
-			if(encounterObjects !=null){
-			EncounterObject enc= encounterObjects.stream().filter(p->r[0].equals(p.var1)).findAny().orElse(null);
+			if(results1 !=null){
+				List<Object[]> objectList= results1.stream().filter(Object->Object[0].equals(r[0])).collect(Collectors.toList());
+				Object[] enc = objectList.get(0);
 			if(enc!=null) {
-				pdh.addCol(row, "hiv status", enc.var2);
-				pdh.addCol(row, "hiv status date", enc.var3);
-				pdh.addCol(row, "cpt date", enc.var4);
-				pdh.addCol(row, "cpt status", enc.var5);
-				pdh.addCol(row, "ART status", enc.var6);
-				pdh.addCol(row, "ART start Date", enc.var7);
-				pdh.addCol(row, "ART No", enc.var8);
-				pdh.addCol(row, "Treatment Model", enc.var9);
-				pdh.addCol(row, "Week 1 date",enc.var10);
-				pdh.addCol(row, "Week 1 days", enc.var11);
-				pdh.addCol(row, "Week 3 date", enc.var12);
-				pdh.addCol(row, "Week 3 days", enc.var13);
-				pdh.addCol(row, "Week 5 date", enc.var14);
-				pdh.addCol(row, "Week 5 days", enc.var15);
-				pdh.addCol(row, "Week 7 date", enc.var16);
-				pdh.addCol(row, "Week 7 days", enc.var17);
-				pdh.addCol(row, "Month 3 date", enc.var18);
-				pdh.addCol(row, "Month 3 days", enc.var19);
-				pdh.addCol(row, "Month 4 date", enc.var20);
-				pdh.addCol(row, "Month 4 days", enc.var21);
-				pdh.addCol(row, "Month 5 date", enc.var22);
-				pdh.addCol(row, "Month 5 days", enc.var23);
-				pdh.addCol(row, "Month 6 date", enc.var24);
-				pdh.addCol(row, "Month 6 days", enc.var25);
-				pdh.addCol(row, "Month 7 date", enc.var26);
-				pdh.addCol(row, "Month 7 days", enc.var27);
-				pdh.addCol(row, "Month 8 date", enc.var28);
-				pdh.addCol(row, "Month 8 days", enc.var29);
-				pdh.addCol(row, "Month 9 date", enc.var30);
-				pdh.addCol(row, "Month 9 days", enc.var31);
-				pdh.addCol(row, "Month 10 date", enc.var32);
-				pdh.addCol(row, "Month 10 days", enc.var33);
-				pdh.addCol(row, "Month 11 date", enc.var34);
-				pdh.addCol(row, "Month 11 days", enc.var35);
-				pdh.addCol(row, "Month 12 date", enc.var36);
-				pdh.addCol(row, "Month 12 days", enc.var37);
-				pdh.addCol(row, "Transfer out date", enc.var38);
-				pdh.addCol(row, "Transfer out Facility", enc.var39);
-				pdh.addCol(row, "Transfer out District", enc.var40);
-				pdh.addCol(row, "Transfer out Tel", enc.var41);
-				pdh.addCol(row, "outcome results", enc.var42);
-				pdh.addCol(row, "outcome date", enc.var43);
-				pdh.addCol(row, "DR diagnosed", enc.var44);
-				pdh.addCol(row, "DR diagnosed date", enc.var45);
-			if(enc.var46 !=null &&Integer.valueOf(String.valueOf(enc.var46))==1){
+				pdh.addCol(row, "hiv status", enc[1]);
+				pdh.addCol(row, "hiv status date",null);
+				pdh.addCol(row, "cpt date", enc[3]);
+				pdh.addCol(row, "cpt status", enc[4]);
+				pdh.addCol(row, "ART status", enc[5]);
+				pdh.addCol(row, "ART start Date", enc[6]);
+				pdh.addCol(row, "ART No", enc[7]);
+				pdh.addCol(row, "Treatment Model", enc[8]);
+				pdh.addCol(row, "Week 1 date",enc[9]);
+				pdh.addCol(row, "Week 1 days", enc[10]);
+				pdh.addCol(row, "Week 3 date", enc[11]);
+				pdh.addCol(row, "Week 3 days", enc[12]);
+				pdh.addCol(row, "Week 5 date", enc[13]);
+				pdh.addCol(row, "Week 5 days", enc[14]);
+				pdh.addCol(row, "Week 7 date", enc[15]);
+				pdh.addCol(row, "Week 7 days", enc[16]);
+				pdh.addCol(row, "Month 3 date", enc[17]);
+				pdh.addCol(row, "Month 3 days", enc[18]);
+				pdh.addCol(row, "Month 4 date", enc[19]);
+				pdh.addCol(row, "Month 4 days", enc[20]);
+				pdh.addCol(row, "Month 5 date", enc[21]);
+				pdh.addCol(row, "Month 5 days", enc[22]);
+				pdh.addCol(row, "Month 6 date", enc[23]);
+				pdh.addCol(row, "Month 6 days", enc[24]);
+				pdh.addCol(row, "Month 7 date", enc[25]);
+				pdh.addCol(row, "Month 7 days", enc[26]);
+				pdh.addCol(row, "Month 8 date", enc[27]);
+				pdh.addCol(row, "Month 8 days", enc[28]);
+				pdh.addCol(row, "Month 9 date", enc[29]);
+				pdh.addCol(row, "Month 9 days", enc[30]);
+				pdh.addCol(row, "Month 10 date", enc[31]);
+				pdh.addCol(row, "Month 10 days", enc[32]);
+				pdh.addCol(row, "Month 11 date", enc[33]);
+				pdh.addCol(row, "Month 11 days", enc[34]);
+				pdh.addCol(row, "Month 12 date", enc[35]);
+				pdh.addCol(row, "Month 12 days", enc[36]);
+				pdh.addCol(row, "Transfer out date", enc[37]);
+				pdh.addCol(row, "Transfer out Facility", enc[38]);
+				pdh.addCol(row, "Transfer out District", enc[39]);
+				pdh.addCol(row, "Transfer out Tel", enc[40]);
+				pdh.addCol(row, "outcome results", enc[41]);
+				pdh.addCol(row, "outcome date", enc[42]);
+				pdh.addCol(row, "DR diagnosed", enc[43]);
+				pdh.addCol(row, "DR diagnosed date", enc[44]);
+			if(enc[45] !=null &&Integer.valueOf(String.valueOf(enc[45]))==1){
 				pdh.addCol(row, "startedOn2ndLine", 'Y');
 			}else{
 				pdh.addCol(row, "startedOn2ndLine", "");
 			}
-				pdh.addCol(row, "startedOn2ndLine date", enc.var47);
-				pdh.addCol(row, "DRTBNO", enc.var48);
+				pdh.addCol(row, "startedOn2ndLine date", enc[46]);
+				pdh.addCol(row, "DRTBNO", enc[47]);
 
 
 			}
@@ -488,123 +490,6 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 
 		return dataSet;
 		
-	}
-
-	public List<EncounterObject> convert(List<Object[]> results){
-		List<EncounterObject> list = new ArrayList<>();
-		for (Object[] r:results) {
-			EncounterObject encounterObject = new EncounterObject(r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8],r[9],r[10],r[11],r[12],r[13],r[14],r[15],r[16],r[17],r[18],
-					r[19],r[20],r[21],r[22],r[23],r[24],r[25],r[26],r[27],r[28],
-					r[29],r[30],r[31],r[32],r[33],r[34],r[35],r[36],r[37],r[38],
-					r[39],r[40],r[41],r[42],r[43],r[44],r[45],r[46],r[47]);
-		list.add(encounterObject);
-		}
-		return list;
-	}
-
-	class EncounterObject{
-		Object var1;
-		Object var2;
-		Object var3;
-		Object var4;
-		Object var5;
-		Object var6;
-		Object var7;
-		Object var8;
-		Object var9;
-		Object var10;
-		Object var11;
-		Object var12;
-		Object var13;
-		Object var14;
-		Object var15;
-		Object var16;
-		Object var17;
-		Object var18;
-		Object var19;
-		Object var20;
-		Object var21;
-		Object var22;
-		Object var23;
-		Object var24;
-		Object var25;
-		Object var26;
-		Object var27;
-		Object var28;
-		Object var29;
-		Object var30;
-		Object var31;
-		Object var32;
-		Object var33;
-		Object var34;
-		Object var35;
-		Object var36;
-		Object var37;
-		Object var38;
-		Object var39;
-		Object var40;
-		Object var41;
-		Object var42;
-		Object var43;
-		Object var44;
-		Object var45;
-		Object var46;
-		Object var47;
-		Object var48;
-
-		public EncounterObject() {
-		}
-
-		public EncounterObject(Object var1, Object var2, Object var3, Object var4, Object var5, Object var6, Object var7, Object var8, Object var9, Object var10, Object var11, Object var12, Object var13, Object var14, Object var15, Object var16, Object var17, Object var18, Object var19, Object var20, Object var21, Object var22, Object var23, Object var24, Object var25, Object var26, Object var27, Object var28, Object var29, Object var30, Object var31, Object var32, Object var33, Object var34, Object var35, Object var36, Object var37, Object var38, Object var39, Object var40, Object var41, Object var42, Object var43, Object var44, Object var45, Object var46, Object var47, Object var48) {
-			this.var1 = var1;
-			this.var2 = var2;
-			this.var3 = var3;
-			this.var4 = var4;
-			this.var5 = var5;
-			this.var6 = var6;
-			this.var7 = var7;
-			this.var8 = var8;
-			this.var9 = var9;
-			this.var10 = var10;
-			this.var11 = var11;
-			this.var12 = var12;
-			this.var13 = var13;
-			this.var14 = var14;
-			this.var15 = var15;
-			this.var16 = var16;
-			this.var17 = var17;
-			this.var18 = var18;
-			this.var19 = var19;
-			this.var20 = var20;
-			this.var21 = var21;
-			this.var22 = var22;
-			this.var23 = var23;
-			this.var24 = var24;
-			this.var25 = var25;
-			this.var26 = var26;
-			this.var27 = var27;
-			this.var28 = var28;
-			this.var29 = var29;
-			this.var30 = var30;
-			this.var31 = var31;
-			this.var32 = var32;
-			this.var33 = var33;
-			this.var34 = var34;
-			this.var35 = var35;
-			this.var36 = var36;
-			this.var37 = var37;
-			this.var38 = var38;
-			this.var39 = var39;
-			this.var40 = var40;
-			this.var41 = var41;
-			this.var42 = var42;
-			this.var43 = var43;
-			this.var44 = var44;
-			this.var45 = var45;
-			this.var46 = var46;
-			this.var47 = var47;
-			this.var48 = var48;
-		}
 	}
 	
 }

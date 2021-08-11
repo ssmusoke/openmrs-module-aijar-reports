@@ -98,7 +98,7 @@ public class SetupHMISTB009Register extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "1.3.9";
+		return "1.4.3";
 	}
 
 }
