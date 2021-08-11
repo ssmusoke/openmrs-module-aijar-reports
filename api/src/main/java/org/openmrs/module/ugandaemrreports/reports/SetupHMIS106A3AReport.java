@@ -230,9 +230,9 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition clientsStartedOnARTAtThisFacilityDuringPeriod = df.getPatientsNotIn(havingArtStartDateDuringQuarter,transferredInTheQuarter);
         CohortDefinition clientsStartedOnARTAtThisFacilityBeforePeriod = df.getPatientsNotIn(havingArtStartDateBeforeQuarter,hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod());
         CohortDefinition noSignsOfTBDuringPeriod =  hivCohortDefinitionLibrary.getScreenedForTBNegativeDuringPeriod();
-        CohortDefinition startedTPTDuringQuarter = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7"),hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
-        CohortDefinition patientsWithTPTStartDate =  df.getPatientsWhoseObs(hivMetadata.getConcept("483939c7-79ba-4ca4-8c3e-346488c97fc7"),hivMetadata.getARTSummaryPageEncounterType());
-        CohortDefinition patientsWithTPTEndDate =  df.getPatientsWhoseObs(hivMetadata.getConcept("813e21e7-4ccb-4fe9-aaab-3c0e40b6e356"),hivMetadata.getARTSummaryPageEncounterType());
+        CohortDefinition startedTPTDuringQuarter = hivCohortDefinitionLibrary.getTPTStartDateBetweenPeriod();
+        CohortDefinition patientsWithTPTStartDate =  df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTPTInitiationDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition patientsWithTPTEndDate =  df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTPTCompletionDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition patientsWithEitherTPTStartDateOrTPTEndDate = df.getPatientsInAny(patientsWithTPTStartDate,patientsWithTPTEndDate);
         CohortDefinition patientsEverOnART = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
         CohortDefinition patientsWithOutBothTPTStartAndEndDates = df.getPatientsNotIn(patientsEverOnART,patientsWithEitherTPTStartDateOrTPTEndDate);
@@ -522,6 +522,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
         @Override
     public String getVersion() {
-        return "1.3.3";
+        return "1.3.4";
     }
 }
