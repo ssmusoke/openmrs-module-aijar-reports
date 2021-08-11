@@ -5,6 +5,7 @@ import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.common.TimeQualifier;
@@ -237,10 +238,12 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         CohortDefinition patientsEverOnART = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getARTSummaryPageEncounterType());
         CohortDefinition patientsWithOutBothTPTStartAndEndDates = df.getPatientsNotIn(patientsEverOnART,patientsWithEitherTPTStartDateOrTPTEndDate);
 
-        CohortDefinition eligibleForTPT = df.getPatientsInAny(startedTPTDuringQuarter,patientsWithOutBothTPTStartAndEndDates);
+        CohortDefinition withOutTPTDataOrJustStarted = df.getPatientsInAny(startedTPTDuringQuarter,patientsWithOutBothTPTStartAndEndDates);
+        CohortDefinition eligibleForTPT = df.getPatientsInAll(withOutTPTDataOrJustStarted,noSignsOfTBDuringPeriod);
+        CohortDefinition eligible = df.getPatientsInAny(eligibleForTPT,getOtherEligibleClientsForIPT());
 
-        CohortDefinition newOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
-        CohortDefinition alreadyOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityBeforePeriod,noSignsOfTBDuringPeriod,eligibleForTPT);
+        CohortDefinition newOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityDuringPeriod,eligible);
+        CohortDefinition alreadyOnARTEligbleForTPT = df.getPatientsInAll(clientsStartedOnARTAtThisFacilityBeforePeriod,eligible);
 
         CohortDefinition bacteriallyConfirmedInPreviousQuarter = df.getPatientsWithCodedObsDuringPeriod(tbMetadata.getPatientType(),tbMetadata.getTBEnrollmentEncounterType(),Arrays.asList(tbMetadata.getBacteriologicallyConfirmed()),"3m", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition registeredInPreviousQuarter = tbCohortDefinitionLibrary.getEnrolledOnDSTBDuringPeriod("3m");
@@ -520,8 +523,21 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
         return indicatorDimension;
     }
 
+    private CohortDefinition getOtherEligibleClientsForIPT(){
+        SqlCohortDefinition cd = new SqlCohortDefinition("select o.person_id from\n" +
+                "                (select e.patient_id, e.encounter_id from\n" +
+                "(select patient_id, max(encounter_datetime) date_time,encounter_id from encounter inner join encounter_type t on\n" +
+                "    t.encounter_type_id =encounter_type where encounter_datetime <:startDate and voided=0 and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f'  group by patient_id)A\n" +
+                "    inner join encounter e on A.patient_id=e.patient_id inner join encounter_type t on\n" +
+                "    t.encounter_type_id =e.encounter_type where e.voided=0 and e.encounter_datetime = date_time and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' group by A.patient_id) last_encounter\n" +
+                "     inner join obs o  on o.encounter_id=last_encounter.encounter_id inner join obs o2 on o2.encounter_id=last_encounter.encounter_id  where o.voided=0 and o2.voided=0\n" +
+                "     and o2.concept_id=90216 and o2.value_coded=90079 and o.concept_id=5096 and o.value_datetime >= :startDate");
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return cd;
+    }
+
         @Override
     public String getVersion() {
-        return "1.3.4";
+        return "1.3.5";
     }
 }
