@@ -89,10 +89,10 @@ public class TB009DatasetDefinitionEvaluator implements DataSetEvaluator {
 				"\t\t\t    e.encounter_datetime\n" +
 				"\t\t\t  FROM   encounter e\n" +
 				"\t\t\t  INNER JOIN encounter_type et ON et.encounter_type_id = e.encounter_type AND et.uuid = '334bf97e-28e2-4a27-8727-a5ce31c7cd66'\n" +
-	String.format(			"\t\t              WHERE e.encounter_datetime between '%s' and '%s') A\n",startDate,endDate) +
+	String.format(			"\t\t              WHERE e.encounter_datetime between '%s' and '%s' and e.voided=0) A\n",startDate,endDate) +
 				"INNER JOIN person P\n" +
-				"\t\t\t   ON (P.person_id = A.patient_id)\n" +
-				"\t\t\t LEFT JOIN person_name PN ON (P.person_id = PN.person_id)\n" +
+				"\t\t\t   ON (P.person_id = A.patient_id AND P.voided=0)\n" +
+				"\t\t\t LEFT JOIN person_name PN ON (P.person_id = PN.person_id AND PN.voided=0)\n" +
 				"\t\t\t LEFT JOIN person_address PA ON (P.person_id = PA.person_id AND PA.preferred = 1 AND PA.voided = 0)\n" +
 				"\t\t\t LEFT JOIN person_attribute PAT ON (P.person_id = PAT.person_id AND PAT.person_attribute_type_id = 8 AND PAT.voided = 0)\n" +
 				"\t\t\t LEFT JOIN (select patient_id,identifier from patient_identifier PI inner join patient_identifier_type pit on\n" +
