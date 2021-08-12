@@ -538,6 +538,6 @@ public class SetupHMIS106A3AReport extends UgandaEMRDataExportManager {
 
         @Override
     public String getVersion() {
-        return "1.3.5";
+        return "1.4.0";
     }
 }

@@ -71,10 +71,10 @@ public class TBCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefin
     public CohortDefinition getEnrolledOnDSTBDuringPeriod(String olderThan){
         ProgramEnrollmentCohortDefinition cd = new ProgramEnrollmentCohortDefinition();
         cd.setName("Enrolled in program During Period");
-        cd.addParameter(new Parameter("onOrBefore", "Enrolled on or before", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "Enrolled on or after", Date.class));
-        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459")));
-        CohortDefinition cd1= df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate-"+olderThan+",onOrBefore=endDate-"+olderThan));
+        cd.addParameter(new Parameter("enrolledOnOrBefore", "Enrolled on or before", Date.class));
+        cd.addParameter(new Parameter("enrolledOnOrAfter", "Enrolled on or after", Date.class));
+        cd.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("9dc21a72-0971-11e7-8037-507b9dc4c741")));
+        CohortDefinition cd1= df.convert(cd, ObjectUtil.toMap("enrolledOnOrAfter=startDate-"+olderThan+",enrolledOnOrBefore=endDate-"+olderThan));
 
 
         InStateCohortDefinition cd2 = new InStateCohortDefinition();
