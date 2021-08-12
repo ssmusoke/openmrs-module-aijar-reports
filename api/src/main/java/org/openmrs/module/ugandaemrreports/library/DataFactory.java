@@ -169,6 +169,14 @@ public class DataFactory {
         return new PropertyConverter(DSDMModel.class, "progId");
     }
 
+    public DataConverter getWorkflowStateName() {
+        return new ChainedConverter(new PropertyConverter(PatientState.class, "state"), new ObjectFormatter());
+    }
+
+    public DataConverter getWorkflowStateStartDate() {
+        return new PropertyConverter(PatientState.class, "startDate");
+    }
+
     public DataConverter getPatientUUIDConverter() {
         return new PropertyConverter(Person.class, "uuid");
     }
@@ -1520,5 +1528,13 @@ public class DataFactory {
         cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(cd, ObjectUtil.toMap("onOrAfter=endDate-" + olderThan +",onOrBefore=endDate"));
+    }
+
+    public CohortDefinition getWorkFlowStateCohortDefinition(ProgramWorkflowState programWorkflowState) {
+        InStateCohortDefinition icsd = new InStateCohortDefinition();
+        icsd.addState(programWorkflowState);
+        icsd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        icsd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return convert(icsd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
     }
 }

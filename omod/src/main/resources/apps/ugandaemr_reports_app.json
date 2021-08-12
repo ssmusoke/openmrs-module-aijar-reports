@@ -566,6 +566,30 @@
         "order": 135,
         "requiredPrivilege": "App: ugandaemrreports.tptStatusReport"
       },{
+        "id": "Patients on First Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on First Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=2fc0da7b-c297-48b2-857e-113da2a3b357",
+        "order": 135,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnFirstLineARTRegimen"
+      },{
+        "id": "Patients on Second Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on Second Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=864b1e53-eb4c-4d74-bfbd-331f95554150",
+        "order": 140,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnSecondLineARTRegimen"
+      },{
+        "id": "Patients on Third Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on Third Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=d0647d6a-8dea-4536-b502-0a1a53a3d18e",
+        "order": 145,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnThirdLineARTRegimen"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
