@@ -35,11 +35,11 @@ public class TBPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefin
     }
 
     public PatientDataDefinition getPatientType() {
-        return df.getObsByEndDate(tbMetadata.getTypeOfPatient(), tbMetadata.getTBFormEncounterType(), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObsByEndDate(tbMetadata.getTypeOfPatient(), tbMetadata.getTBFollowupEncounterType(), TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
     public PatientDataDefinition getTBStatus() {
-        return df.getObsByEndDate(tbMetadata.getTBStatus(), tbMetadata.getTBFormEncounterType(), TimeQualifier.LAST, df.getObsDatetimeConverter());
+        return df.getObsByEndDate(tbMetadata.getTBStatus(), tbMetadata.getTBFollowupEncounterType(), TimeQualifier.LAST, df.getObsDatetimeConverter());
     }
 
 

@@ -682,6 +682,14 @@
         "order": 4
       },
       {
+        "id": "HMIS 106A Sections 3.1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A Sections 3.1",
+        "url": "reportingui/runReport.page?reportDefinition=dc69d1a2-2f2e-4512-896e-44c6bf7d1c42",
+        "order": 20
+      },
+      {
         "id": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
