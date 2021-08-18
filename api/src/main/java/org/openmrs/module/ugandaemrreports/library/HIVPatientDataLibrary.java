@@ -4,6 +4,7 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifier;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.TimeQualifier;
@@ -20,6 +21,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.CodedConceptUUIDValueC
 import org.openmrs.module.ugandaemrreports.definition.data.converter.*;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -210,6 +212,20 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         def.addParameter(new Parameter("startDate", "startDate", Date.class));
         def.addParameter(new Parameter("endDate", "endDate", Date.class));
         return convert(def, df.getDSDMProgramConverter());
+    }
+
+    public PatientDataDefinition getRegimenLine() {
+        CurrentPatientStateDataDefinition def = new CurrentPatientStateDataDefinition();
+        def.setWorkflow(Context.getProgramWorkflowService().getWorkflowByUuid(Metadata.ProgramWorkflow.HIV_PROGRAM_WORKFLOW_REGIMEN_LINES));
+        def.addParameter(new Parameter("effectiveDate", "effectiveDate", Date.class));
+        return convert(def, df.getWorkflowStateName());
+    }
+
+    public PatientDataDefinition getRegimenLineStartDate() {
+        CurrentPatientStateDataDefinition def = new CurrentPatientStateDataDefinition();
+        def.setWorkflow(Context.getProgramWorkflowService().getWorkflowByUuid(Metadata.ProgramWorkflow.HIV_PROGRAM_WORKFLOW_REGIMEN_LINES));
+        def.addParameter(new Parameter("effectiveDate", "effectiveDate", Date.class));
+        return convert(def, df.getWorkflowStateStartDate());
     }
 
     public PatientDataDefinition getCurrentRegimenStartDate() {
@@ -503,6 +519,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     }
     public PatientDataDefinition getViralLoadQualitative() {
         return df.getObs(hivMetadata.getViralLoadQualitative(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+
+    }
+    public PatientDataDefinition getViralLoadQualitativeByEndDate() {
+        return df.getObsByEndDate(hivMetadata.getViralLoadQualitative(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
 
     }
     public PatientDataDefinition getViralLoad() {

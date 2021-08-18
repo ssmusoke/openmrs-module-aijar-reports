@@ -566,6 +566,30 @@
         "order": 135,
         "requiredPrivilege": "App: ugandaemrreports.tptStatusReport"
       },{
+        "id": "Patients on First Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on First Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=2fc0da7b-c297-48b2-857e-113da2a3b357",
+        "order": 135,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnFirstLineARTRegimen"
+      },{
+        "id": "Patients on Second Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on Second Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=864b1e53-eb4c-4d74-bfbd-331f95554150",
+        "order": 140,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnSecondLineARTRegimen"
+      },{
+        "id": "Patients on Third Line Regimens",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patients on Third Line Regimens",
+        "url": "reportingui/runReport.page?reportDefinition=d0647d6a-8dea-4536-b502-0a1a53a3d18e",
+        "order": 145,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnThirdLineARTRegimen"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
@@ -667,12 +691,27 @@
         "order": 4
       },
       {
+        "id": "HMIS 106A Sections 3.1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "type": "link",
+        "label": "HMIS 106A Sections 3.1",
+        "url": "reportingui/runReport.page?reportDefinition=dc69d1a2-2f2e-4512-896e-44c6bf7d1c42",
+        "order": 20
+      },
+      {
         "id": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.quarterly",
         "type": "link",
         "label": "Transitioning Children and Viral Load Monitoring  in PMTCT",
         "url": "reportingui/runReport.page?reportDefinition=639026cd-1cb9-46c1-9a06-81208e9ed412",
         "order": 10
+      },{
+        "id": "HMIS 009 TB Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "HMIS 009 TB Register",
+        "url": "reportingui/runReport.page?reportDefinition=3b9d317f-ac87-4141-b4c2-d93c8419b324",
+        "order":25
       },
       {
         "id": "HIVDR Tool Report",
