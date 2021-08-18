@@ -30,13 +30,10 @@ public class SetupMERHTSRecency2019Report extends UgandaEMRDataExportManager {
     private DataFactory df;
 
     @Autowired
-    private SetupTxNewReport setupTxNewReport;
-
-    @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
+
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
 
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
@@ -192,50 +189,48 @@ public class SetupMERHTSRecency2019Report extends UgandaEMRDataExportManager {
         addAgeAndGender(dsd, "i", "Patients with recent infection through other community sites",patientWithRecentInfectionTestedFromCommunity );
         addAgeAndGender(dsd, "j", "Patients with long term infection through other community sites", patientWithLongTermInfectionTestedFromCommunity);
 
+        Helper.addIndicator(dsd, "aa", "PIPS and with recent infection females at facility", femalesPIPsWithRecentInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "bb", "PIPS and with recent infection males at facility", malesPIPsWithRecentInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "cc", "PIPs and with Long term infection females at facility", femalesPIPsWithLongTermInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "dd", "PIPs and with Long term infection males at facility", malesPIPsWithLongTermInfectionTestedAtFacilityLevel, "");
 
+        Helper.addIndicator(dsd, "ee", "PWIDS and with recent infection females at facility", femalesPWIDsWithRecentInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "ff", "PWIDS and with recent infection males at facility", malesPWIDsWithRecentInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "gg", "PWIDS and with long term infection females at facility", femalesPWIDsWithLongTermInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "hh", "PWIDS and with long term infection males at facility", malesPWIDsWithLongTermInfectionTestedAtFacilityLevel, "");
 
-        setupTxNewReport.addIndicator(dsd, "aa", "PIPS and with recent infection females at facility", femalesPIPsWithRecentInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "bb", "PIPS and with recent infection males at facility", malesPIPsWithRecentInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "cc", "PIPs and with Long term infection females at facility", femalesPIPsWithLongTermInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "dd", "PIPs and with Long term infection males at facility", malesPIPsWithLongTermInfectionTestedAtFacilityLevel, "");
+        Helper.addIndicator(dsd, "ii", "PIPS and with recent infection females at community", femalesPIPsWithRecentInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "jj", "PIPS and with recent infection males at community", malesPIPsWithRecentInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "kk", "PIPs and with Long term infection females at community", femalesPIPsWithLongTermInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "ll", "PIPs and with Long term infection males at community", malesPIPsWithLongTermInfectionTestedAtCommunityLevel, "");
 
-        setupTxNewReport.addIndicator(dsd, "ee", "PWIDS and with recent infection females at facility", femalesPWIDsWithRecentInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "ff", "PWIDS and with recent infection males at facility", malesPWIDsWithRecentInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "gg", "PWIDS and with long term infection females at facility", femalesPWIDsWithLongTermInfectionTestedAtFacilityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "hh", "PWIDS and with long term infection males at facility", malesPWIDsWithLongTermInfectionTestedAtFacilityLevel, "");
-
-        setupTxNewReport.addIndicator(dsd, "ii", "PIPS and with recent infection females at community", femalesPIPsWithRecentInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "jj", "PIPS and with recent infection males at community", malesPIPsWithRecentInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "kk", "PIPs and with Long term infection females at community", femalesPIPsWithLongTermInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "ll", "PIPs and with Long term infection males at community", malesPIPsWithLongTermInfectionTestedAtCommunityLevel, "");
-
-        setupTxNewReport.addIndicator(dsd, "mm", "PWIDS and with recent infection females at community", femalesPWIDssWithRecentInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "nn", "PWIDS and with recent infection males at community", malesPWIDssWithRecentInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "oo", "PWIDS and with long term infection females at community", femalesPWIDsWithLongTermInfectionTestedAtCommunityLevel, "");
-        setupTxNewReport.addIndicator(dsd, "pp", "PWIDS and with long term infection males at community", malesPWIDsWithLongTermInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "mm", "PWIDS and with recent infection females at community", femalesPWIDssWithRecentInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "nn", "PWIDS and with recent infection males at community", malesPWIDssWithRecentInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "oo", "PWIDS and with long term infection females at community", femalesPWIDsWithLongTermInfectionTestedAtCommunityLevel, "");
+        Helper.addIndicator(dsd, "pp", "PWIDS and with long term infection males at community", malesPWIDsWithLongTermInfectionTestedAtCommunityLevel, "");
 
         return rd;
     }
 
     public void addAgeAndGender(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortDefinition cohortDefinition) {
           /**          females age and gender mapping **/
-           setupTxNewReport.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=between15and19female");
-           setupTxNewReport.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between20and24female");
-           setupTxNewReport.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between25and29female");
-           setupTxNewReport.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between30and34female");
-           setupTxNewReport.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between35and39female");
-           setupTxNewReport.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between40and44female");
-           setupTxNewReport.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between45and49female");
-           setupTxNewReport.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=above50female");
+           Helper.addIndicator(dsd, "1" + key, label, cohortDefinition, "age=between15and19female");
+           Helper.addIndicator(dsd, "2" + key, label, cohortDefinition, "age=between20and24female");
+           Helper.addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between25and29female");
+           Helper.addIndicator(dsd, "4" + key, label, cohortDefinition, "age=between30and34female");
+           Helper.addIndicator(dsd, "5" + key, label, cohortDefinition, "age=between35and39female");
+           Helper.addIndicator(dsd, "6" + key, label, cohortDefinition, "age=between40and44female");
+           Helper.addIndicator(dsd, "7" + key, label, cohortDefinition, "age=between45and49female");
+           Helper.addIndicator(dsd, "8" + key, label, cohortDefinition, "age=above50female");
          /**         males age and gender mapping **/
-           setupTxNewReport.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between15and19male");
-           setupTxNewReport.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between20and24male");
-           setupTxNewReport.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between25and29male");
-           setupTxNewReport.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between30and34male");
-           setupTxNewReport.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=between35and39male");
-           setupTxNewReport.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between40and44male");
-           setupTxNewReport.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between45and49male");
-           setupTxNewReport.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=above50male");
+           Helper.addIndicator(dsd, "9" + key, label, cohortDefinition, "age=between15and19male");
+           Helper.addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between20and24male");
+           Helper.addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between25and29male");
+           Helper.addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between30and34male");
+           Helper.addIndicator(dsd, "13" + key, label, cohortDefinition, "age=between35and39male");
+           Helper.addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between40and44male");
+           Helper.addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between45and49male");
+           Helper.addIndicator(dsd, "16" + key, label, cohortDefinition, "age=above50male");
     }
 
     public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
@@ -250,6 +245,6 @@ public class SetupMERHTSRecency2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.3";
+        return "0.2.0";
     }
 }

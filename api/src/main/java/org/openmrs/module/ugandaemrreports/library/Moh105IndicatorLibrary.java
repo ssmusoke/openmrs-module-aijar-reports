@@ -606,7 +606,7 @@ public class Moh105IndicatorLibrary {
 
     }
     public CohortIndicator totalNumberofBabiesBornAlive() {
-        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01,3de8af5d-ab86-4262-a1a3-b4c958ae2de3,7ca3dddc-b55e-46fb-b15e-40df4724bcfd")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01,3de8af5d-ab86-4262-a1a3-b4c958ae2de3,7ca3dddc-b55e-46fb-b15e-40df4724bcfd")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator liveBirthDeliveriesAndBelowNormalWeight() {
         return cohortIndicator("Live Babies below Normal Weight", map(cohortLibrary.liveBirthDeliveriesAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
@@ -616,6 +616,30 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator freshStillBirthsAndBelowNormalWeight() {
         return cohortIndicator("Fresh Still Births  below Normal Weight", map(cohortLibrary.freshStillBirthsAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator marceratedStillBirth() {
+        return cohortIndicator("Total Macerated Still births", map(cohortLibrary.maceratedStillBirths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator marceratedStillBirthAndBelowNormalWeight() {
+        return cohortIndicator("Total Macerated Still births and below normal weight", map(cohortLibrary.marceratedStillBirthsAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator totalPretermBirths() {
+        return cohortIndicator("Preterm Births in the unit", map(cohortLibrary.preTermBirths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pretermLiveBriths() {
+        return cohortIndicator("Pre Term Live Births", map(cohortLibrary.pretermLiveBabies(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pretermBrithsBelowNormalWeight() {
+        return cohortIndicator("Pre Term Live Births below Normal Weight", map(cohortLibrary.pretermBabiesBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator lowBirthWeightInitiatedOnKangaroo() {
+        return cohortIndicator("Low Birth Weight Initiated on Kangaroo", map(cohortLibrary.lowBirthWeightInitiatedOnKangaroo(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesBornWithDefects() {
+        return cohortIndicator("Total number of babies born with a defect",map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator longLastingInsecticideTreatedNetGiven() {
+        return cohortIndicator("Received Long Lasting Insecticide Treated Net",map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("165025AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**

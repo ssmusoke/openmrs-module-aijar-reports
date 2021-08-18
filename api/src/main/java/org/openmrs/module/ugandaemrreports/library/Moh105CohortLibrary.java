@@ -2617,8 +2617,15 @@ public class Moh105CohortLibrary {
         return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("7a15616a-c12a-44fc-9a11-553639128b69"));
     }
     public CohortDefinition maceratedStillBirths() {
-        return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("7a15616a-c12a-44fc-9a11-553639128b69"));
+        return definitionLibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"), Dictionary.getConceptList("135436AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
     }
+    public CohortDefinition preTermBirths() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), Dictionary.getConceptList("129218AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+    public CohortDefinition kangarooSourceOfWarmth() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("921aed8f-bfc4-481d-a7cb-70a91a3cc733"), Dictionary.getConceptList("164173AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+
 
 
     /**
@@ -2662,6 +2669,46 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortDefinition marceratedStillBirthsAndBelowNormalWeight() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Fresh still births and below normal weight");
+        cd.addSearch("marceratedStillBirths", ReportUtils.map(maceratedStillBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("marceratedStillBirths AND belownormalweight");
+        return cd;
+    }
+    public CohortDefinition pretermLiveBabies() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies Born Preterm but still Alive");
+        cd.addSearch("preterm", ReportUtils.map(preTermBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("liveBabies", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("preterm AND liveBabies");
+        return cd;
+    }
+    public CohortDefinition pretermBabiesBelowNormalWeight() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies Born Preterm below normal weight");
+        cd.addSearch("preterm", ReportUtils.map(preTermBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("preterm AND belownormalweight");
+        return cd;
+    }
+    public CohortDefinition lowBirthWeightInitiatedOnKangaroo() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Low birth weight initiated on kangaroo");
+        cd.addSearch("kangaroo", ReportUtils.map(kangarooSourceOfWarmth(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("kangaroo AND belownormalweight");
+        return cd;
+    }
 
     /**
      * No. of mothers who initiated breastfeeding within the 1st hour after delivery - Total

@@ -9,7 +9,11 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.CommonCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *  TX Current Report
+ *  TX Current 90 days Report
  */
 @Component
 public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager {
@@ -34,8 +38,6 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
-    @Autowired
-    private SetupTxNewReport setupTxNewReport;
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
 
@@ -52,6 +54,10 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
     @Override
     public String getExcelDesignUuid() {
         return "0b5d6aad-ca33-49a7-9a5c-718941d1c02d";
+    }
+
+    public String getJSONDesignUuid() {
+        return "97083915-435e-4a26-8230-689d485e89da";
     }
 
     @Override
@@ -80,7 +86,7 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        return Arrays.asList(buildReportDesign(reportDefinition),buildJSONReportDesign(reportDefinition));
     }
 
     /**
@@ -93,6 +99,10 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_CURRENT_2019.xls");
+    }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_TX_CURRENT_2019.json");
     }
 
     @Override
@@ -142,42 +152,44 @@ public class SetupTxCurrent_90Days2019Report extends UgandaEMRDataExportManager 
 
 
 
-        setupTxNewReport.addGender(dsd,"a","TX Curr on ART female",beenOnArtDuringQuarter);
-        setupTxNewReport.addGender(dsd,"b","TX Curr on ART male",beenOnArtDuringQuarter);
+        Helper.addGender(dsd,"a","TX Curr on ART female",beenOnArtDuringQuarter);
+        Helper.addGender(dsd,"b","TX Curr on ART male",beenOnArtDuringQuarter);
 
-        setupTxNewReport.addIndicator(dsd,"PWIDSf","PWIDs TX Curr on ART female",df.getPatientsInAll(females,PWIDS,beenOnArtDuringQuarter),"");
-        setupTxNewReport.addIndicator(dsd,"PWIDSm","PWIDs TX Curr on ART male",df.getPatientsInAll(males,PWIDS,beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"TOTAL","TX Curr TOTAL",beenOnArtDuringQuarter,"");
 
-        setupTxNewReport.addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,beenOnArtDuringQuarter),"");
-        setupTxNewReport.addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"PWIDSf","PWIDs TX Curr on ART female",df.getPatientsInAll(females,PWIDS,beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"PWIDSm","PWIDs TX Curr on ART male",df.getPatientsInAll(males,PWIDS,beenOnArtDuringQuarter),"");
 
-        setupTxNewReport.addIndicator(dsd,"14a","<3 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"14b","<3 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"TOTAL_KP","PWIDs and PIP Tx Curr ",df.getPatientsInAll(df.getPatientsInAny(PWIDS,PIPS),beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"PWIDS","PWIDs TX Curr on ART ",df.getPatientsInAll(PWIDS,beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"PIPS","PWIDs TX Curr on ART ",df.getPatientsInAll(PIPS,beenOnArtDuringQuarter),"");
 
-        setupTxNewReport.addIndicator(dsd,"15a","<3 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"15b","<3 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,beenOnArtDuringQuarter),"");
+        Helper.addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,beenOnArtDuringQuarter),"");
 
-        setupTxNewReport.addIndicator(dsd,"16a","3-5 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"16b","3-5 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"14a","<3 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"14b","<3 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
 
-        setupTxNewReport.addIndicator(dsd,"17a","3-5 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"17b","3-5 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"15a","<3 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"15b","<3 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
 
-        setupTxNewReport.addIndicator(dsd,"18a","6 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"18b","6 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"16a","3-5 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"16b","3-5 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
 
-        setupTxNewReport.addIndicator(dsd,"19a","6 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
-        setupTxNewReport.addIndicator(dsd,"19b","6 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"17a","3-5 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"17b","3-5 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWith3To5MonthsOfARVDrugsDispensed),"");
+
+        Helper.addIndicator(dsd,"18a","6 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"18b","6 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
+
+        Helper.addIndicator(dsd,"19a","6 mnths ARV dispensing female more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsFemales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
+        Helper.addIndicator(dsd,"19b","6 mnths ARV dispensing male more than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsAbove15YearsMales,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed),"");
 
         return rd;
     }
 
-
-
-
-
     @Override
     public String getVersion() {
-        return "0.3.3";
+        return "0.4.0";
     }
 }

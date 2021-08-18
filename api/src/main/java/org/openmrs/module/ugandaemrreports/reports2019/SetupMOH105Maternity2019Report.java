@@ -126,6 +126,21 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "MA07","Total Number live babies below normal weight  ",indicatorLibrary.liveBirthDeliveriesAndBelowNormalWeight());
         addRowWithColumns(dsd, "MA08","Total Number of fresh still births  ",indicatorLibrary.freshStillBirth());
         addRowWithColumns(dsd, "MA09","Total Number of fresh still births below normal weight  ",indicatorLibrary.freshStillBirthsAndBelowNormalWeight());
+        addRowWithColumns(dsd, "MA10","Total Number of Marcerated ",indicatorLibrary.marceratedStillBirth());
+        addRowWithColumns(dsd, "MA11","Total Number of Marcerated still births below normal weight  ",indicatorLibrary.marceratedStillBirthAndBelowNormalWeight());
+        addRowWithColumns(dsd, "MA12","Total Preterm Births  ",indicatorLibrary.totalPretermBirths());
+        addRowWithColumns(dsd, "MA13","Total Preterm Births and Alive  ",indicatorLibrary.pretermLiveBriths());
+        addRowWithColumns(dsd, "MA14","Preterm Births Below Normal Weight",indicatorLibrary.pretermBrithsBelowNormalWeight());
+        addRowWithColumns(dsd, "MA18","Preterm Births Below Normal Weight",indicatorLibrary.lowBirthWeightInitiatedOnKangaroo());
+        addRowWithColumns(dsd, "MA19","Live Babies discharged ",indicatorLibrary.totalNumberofBabiesBornAlive());
+        addRowWithColumns(dsd, "MA20","Babies born with defects ",indicatorLibrary.babiesBornWithDefects());
+        addRowWithColumns(dsd, "MA21","Received Long Lasting Insecticide Treated Net",indicatorLibrary.longLastingInsecticideTreatedNetGiven());
+
+
+
+
+
+
 
 
 
@@ -150,6 +165,6 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.1";
     }
 }

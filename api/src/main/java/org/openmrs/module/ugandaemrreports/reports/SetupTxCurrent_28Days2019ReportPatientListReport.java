@@ -1,4 +1,4 @@
-package org.openmrs.module.ugandaemrreports.reports2019;
+package org.openmrs.module.ugandaemrreports.reports;
 
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -17,7 +17,6 @@ import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +25,10 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- *  TX RTT Patient Listing Report
+ *  TX Current 28 Days Patient Listing Report
  */
 @Component
-public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager {
+public class SetupTxCurrent_28Days2019ReportPatientListReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -52,32 +51,30 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
      * @return the uuid for the report design for exporting to Excel
      */
     @Override
-    public String getExcelDesignUuid() {
-        return "1d5404c7-50d6-46cd-afed-82bf7c6fb2a0";
-    }
+    public String getExcelDesignUuid() {return "37e50e55-1cef-4f80-933d-006f49a3141f";}
 
     public String getCSVDesignUuid() {
-        return "4bff2f65-4d4b-4d65-942e-1f997770c5f9";
+        return "f6e7fe18-b5e2-470b-be29-f3d883f56feb";
     }
 
     @Override
     public String getUuid() {
-        return "5803a894-5bb6-4d33-976d-bc074b5f5a26";
+        return "28cc02a3-800d-4638-bfb2-a56971355502";
     }
 
     @Override
     public String getName() {
-        return "Patient List for Tx_RTT MER Indicator Report";
+        return "Patient List for Tx Current 28 days MER Indicator Report";
     }
 
     @Override
     public String getDescription() {
-        return "Tx_RTT Patient List Report";
+        return "TX_Current 28 days Patient List Report";
     }
 
     @Override
     public List<Parameter> getParameters() {
-        List<Parameter> l = new ArrayList<Parameter>();
+        List<Parameter> l = new ArrayList<>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
         return l;
@@ -86,7 +83,7 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        List<ReportDesign> l = new ArrayList<>();
         l.add(buildReportDesign(reportDefinition));
         l.add(buildCSVReportDesign(reportDefinition));
         return l;
@@ -101,9 +98,9 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
      */
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_RTT_PatientList.xls");
+        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_CUR_PatientList.xls");
         Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:TX_RTT_PatientList");
+        props.put("repeatingSections", "sheet:1,row:8,dataset:TX_CUR_PatientList");
         props.put("sortWeight", "5000");
         rd.setProperties(props);
         return rd;
@@ -126,16 +123,13 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("TX_RTT_PatientList", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("TX_CUR_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition returnToCareClients= df.getPatientsInAll(
-                hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),
-                hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod()
-        );
+        CohortDefinition activePatientsWithUpTo28DaysLost = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28");
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(returnToCareClients));
+        dsd.addRowFilter(Mapped.mapStraightThrough(activePatientsWithUpTo28DaysLost ));
 
         addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
         addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
@@ -157,10 +151,9 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         addColumn(dsd,"Directions",hivPatientData.getDirectionsToPatientAddress());
         addColumn(dsd, "Last Visit Date", hivPatientData.getLastARTVisitEncounterByEndOfPreviousPeriod(df.getEncounterDatetimeConverter()));
         addColumn(dsd, "Expected Return Date", hivPatientData.getLatestExpectedReturnDateBeforeStartDate());
-        addColumn(dsd, "RTT Visit Date", hivPatientData.getLastEncounterByEndDate());
 
-        rd.addDataSetDefinition("TX_RTT_PatientList", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(returnToCareClients));
+        rd.addDataSetDefinition("TX_CUR_PatientList", Mapped.mapStraightThrough(dsd));
+        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(activePatientsWithUpTo28DaysLost ));
 
         return rd;
     }
