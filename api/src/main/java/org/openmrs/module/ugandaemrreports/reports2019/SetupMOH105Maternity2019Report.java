@@ -121,6 +121,9 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
         addRowWithColumns(dsd, "MA01","Total Number of Maternity Visits ",indicatorLibrary.maternityAdmissions());
+        addRowWithColumns(dsd, "MA02","Total Number of Maternity Referrals ",indicatorLibrary.maternityReferrals());
+        addRowWithColumns(dsd, "MA03"," Maternity Referrals from Community ",indicatorLibrary.maternityReferralsFromCommunity());
+        addRowWithColumns(dsd, "MA04"," Maternity Referrals Out ",indicatorLibrary.maternityReferralsOut());
         addRowWithColumns(dsd, "MA05","Total Number of Maternity Deliveries by age group ",indicatorLibrary.totalNumberofDeliveries());
         addRowWithColumns(dsd, "MA06","Total Number of babies born live  ",indicatorLibrary.totalNumberofBabiesBornAlive());
         addRowWithColumns(dsd, "MA07","Total Number live babies below normal weight  ",indicatorLibrary.liveBirthDeliveriesAndBelowNormalWeight());
@@ -131,20 +134,44 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "MA12","Total Preterm Births  ",indicatorLibrary.totalPretermBirths());
         addRowWithColumns(dsd, "MA13","Total Preterm Births and Alive  ",indicatorLibrary.pretermLiveBriths());
         addRowWithColumns(dsd, "MA14","Preterm Births Below Normal Weight",indicatorLibrary.pretermBrithsBelowNormalWeight());
+        addRowWithColumns(dsd, "MA15","Total Born before arrival",indicatorLibrary.babiesBornBeforeArrival());
+        addRowWithColumns(dsd, "MA16","Total Born before arrival and are alive",indicatorLibrary.babiesBornBeforeArrivalandAlive());
+        addRowWithColumns(dsd, "MA17","Total Born before arrival and below normal weight",indicatorLibrary.babiesBornBeforeArrivalandBelowNormalWeight());
         addRowWithColumns(dsd, "MA18","Preterm Births Below Normal Weight",indicatorLibrary.lowBirthWeightInitiatedOnKangaroo());
         addRowWithColumns(dsd, "MA19","Live Babies discharged ",indicatorLibrary.totalNumberofBabiesBornAlive());
         addRowWithColumns(dsd, "MA20","Babies born with defects ",indicatorLibrary.babiesBornWithDefects());
         addRowWithColumns(dsd, "MA21","Received Long Lasting Insecticide Treated Net",indicatorLibrary.longLastingInsecticideTreatedNetGiven());
-
-
-
-
-
-
-
-
-
-
+        addRowWithColumns(dsd, "MA22","New Born Deaths (0 - 7 days)",indicatorLibrary.newBornDeaths());
+        addRowWithColumns(dsd, "MA23","New Born Deaths (8 - 28 days)",indicatorLibrary.neonantalBornDeaths());
+        addRowWithColumns(dsd, "MA24","Maternal Deaths",indicatorLibrary.maternalDeaths());
+        addRowWithColumns(dsd, "MA25","Mothers who breastfed within an hour after delivery",indicatorLibrary.mothersWhoBreastFedWithinAnHour());
+        addRowWithColumns(dsd, "MA26","Mothers who breastfed within an hour after delivery and HIV Positive.",indicatorLibrary.mothersWhoBreastFedWithinAnHourAndHIVPositive());
+        addRowWithColumns(dsd, "MA27","Mothers  who tested ",indicatorLibrary.mothersTestedForHIVfortheFirstitme());
+        addRowWithColumns(dsd, "MA28","Mothers  who tested positive on the first time testing",indicatorLibrary.mothersTestedForHIVPositivefortheFirstitme());
+        addRowWithColumns(dsd, "MA29","Mothers  who retested for HIV in the Labour ward",indicatorLibrary.mothersRetestedforHIV());
+        addRowWithColumns(dsd, "MA30","Mothers  who retested positive for HIV in the Labour ward",indicatorLibrary.mothersRetestedPositiveforHIV());
+        addRowWithColumns(dsd, "MA31","Mothers initiating ART in the maternity ward",indicatorLibrary.mothersInitiatedOnARTinMaternity());
+        addRowWithColumns(dsd, "MA32","Male Partners recieved HIV testing results ",indicatorLibrary.malePartnersTestedOnMaternityVisit());
+        addRowWithColumns(dsd, "MA33","Male Partners recieved positive HIV testing results ",indicatorLibrary.malePartnersTestedPositiiveOnMaternityVisit());
+        addRowWithColumns(dsd, "MA34","Male Partners initiated on ART ",indicatorLibrary.malePartnersInitiatedOnARTinMaternity());
+        addRowWithColumns(dsd, "MA35","Discordant Couples",indicatorLibrary.discordantResultsinMaternity());
+        addRowWithColumns(dsd, "MA36","Maternal Nutritional Counselling",indicatorLibrary.maternalNutritioninMaternity());
+        addRowWithColumns(dsd, "MA37","Maternal Nutritional Counselling and Positive",indicatorLibrary.maternalNutritionAndHIVPositiveinMaternity());
+        addRowWithColumns(dsd, "MA38","Infant feeding",indicatorLibrary.infantFeedingInMaternity());
+        addRowWithColumns(dsd, "MA39","Infant feeding and tested positive",indicatorLibrary.infantFeedingCounsellingAndHIVPositiveinMaternity());
+        addRowWithColumns(dsd, "MA40","Deliveries to HIV+ Mothers",indicatorLibrary.deliveriesInUnit());
+        addRowWithColumns(dsd, "MA41","Live Births in Delivery Unit",indicatorLibrary.liveBirthsDeliveriesInUnit());
+        addRowWithColumns(dsd, "MA42"," Number of babies given NVP Syrup",indicatorLibrary.hivExposedInfantsStartARV());
+        addRowWithColumns(dsd, "MA43"," Number of high Risk baboes",indicatorLibrary.hivExposedInfantsatHighRisk());
+        addRowWithColumns(dsd, "MA44"," Number of Babies with Asyphyxia",indicatorLibrary.hivExposedInfantsatHighRisk());
+        addRowWithColumns(dsd, "MA45"," Live babies Resuscitated",indicatorLibrary.livebabiesResuscitated());
+        addRowWithColumns(dsd, "MA46","Babbies that recieved PNC at 6 hours",indicatorLibrary.babiesRecievedPNCatSixHours());
+        addRowWithColumns(dsd, "MA47","Mothers that recieved PNC at 6 hours",indicatorLibrary.mothersRecievedPNCatSixHours());
+        addRowWithColumns(dsd, "MA48","Babies that recieved PNC at 24 hours",indicatorLibrary.babiesRecievedPNCat24Hours());
+        addRowWithColumns(dsd, "MA49","Mothers that recieved PNC at 24 hours",indicatorLibrary.mothersRecievedPNCat24Hours());
+        addRowWithColumns(dsd, "MA50","Oxytoncin used in management of 3rd stage of labour",indicatorLibrary.oxytocinUsedInManagementofThirdStageLabour());
+        addRowWithColumns(dsd, "MA51","Misoprostol used in management of 3rd stage of labour",indicatorLibrary.misoprostolUsedInManagementofThirdStageLabour());
+        addRowWithColumns(dsd, "MA52","Egometrine used in management of 3rd stage of labour",indicatorLibrary.egometrineUsedInManagementofThirdStageLabour());
         return dsd;
     }
 
@@ -165,6 +192,6 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.2.5";
     }
 }

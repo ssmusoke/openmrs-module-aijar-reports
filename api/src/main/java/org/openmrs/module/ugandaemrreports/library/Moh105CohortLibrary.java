@@ -20,6 +20,7 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptyProcedureMethods;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmptySiteType;
@@ -35,6 +36,9 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
+import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
 
 /**
  * 
@@ -376,6 +380,8 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+
+
     /**
      * Deliveries in unit
      * @return CohortDefinition
@@ -403,9 +409,19 @@ public class Moh105CohortLibrary {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Discordant Couples");
+        cd.setName("Discordant Couples in ANC");
         cd.addSearch("positiveFemaleNegativePartner", ReportUtils.map(positiveFemaleNegativePartner(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("negativeFemalePositivePartner", ReportUtils.map(negativeFemalePositivePartner(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveFemaleNegativePartner AND negativeFemalePositivePartner");
+        return cd;
+    }
+    public CohortDefinition discordantCouplesMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples in Maternity");
+        cd.addSearch("positiveFemaleNegativePartner", ReportUtils.map(positiveFemaleNegativePartnerMaternity(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("negativeFemalePositivePartner", ReportUtils.map(negativeFemalePositivePartnerMarternity(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("positiveFemaleNegativePartner AND negativeFemalePositivePartner");
         return cd;
     }
@@ -432,6 +448,28 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortDefinition positiveFemaleNegativePartnerMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("negativeMales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveFemales AND negativeMales");
+        return cd;
+    }
+
+    public CohortDefinition negativeFemalePositivePartnerMarternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples");
+        cd.addSearch("negativeFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveMales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveMales AND negativeFemales");
+        return cd;
+    }
+
 
     public CohortDefinition marternalCounsellingandPositive() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -451,6 +489,28 @@ public class Moh105CohortLibrary {
         cd.setName("Infant Counselling and Positive");
         cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("positiveFemales AND infantCounselling");
+        return cd;
+    }
+
+    public CohortDefinition marternalCounsellingandPositiveinMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Maternal Counselling and Positive");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("maternalCounselling", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("positiveFemales AND maternalCounselling");
+        return cd;
+    }
+
+    public CohortDefinition infantCounsellingAndPositiveinMaternity() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Infant Counselling and Positive");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasMATERNITYObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("positiveFemales AND infantCounselling");
         return cd;
     }
@@ -705,6 +765,9 @@ public class Moh105CohortLibrary {
      */
     public CohortDefinition pregnantWomenNewlyTestedForHivThisPregnancyAt1stVisitTRR(){
         return pregnantWomenThisPregnancyAt1stANCVisit(Dictionary.getConcept("25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465"),"trr");
+    }
+    public CohortIndicator pregnantWomenNewlyTestedForHivThisPregnancyTRAndTRR(String encounterUUID) {
+        return cohortIndicator("Pregnant Women newly tested for HIV this pregnancy (TR & TRR)", map(hasObsAndEncounter(encounterUUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -2625,6 +2688,12 @@ public class Moh105CohortLibrary {
     public CohortDefinition kangarooSourceOfWarmth() {
         return definitionLibrary.hasObs(Dictionary.getConcept("921aed8f-bfc4-481d-a7cb-70a91a3cc733"), Dictionary.getConceptList("164173AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
     }
+    public CohortDefinition bornBeforeArrival() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("29253d22-531f-42c2-a4e9-a597d4a9308b"), Dictionary.getConceptList("59e7d413-9a7f-4e69-9566-3d0ab18a6ac7"));
+    }
+    public CohortDefinition mothersBreastFedWithingAnHour() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("a4063d62-a936-4a26-9c1c-a0fb279a71b1"), Dictionary.getConceptList("dcd695dc-30ab-102d-86b0-7a5022ba4115"));
+    }
 
 
 
@@ -2643,6 +2712,37 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("hivPositive AND deliveries AND liveBirths");
         return cd;
     }
+    public CohortDefinition breastFedWithinganHourAndHIVpositive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("HIV+ Women Deliveries");
+        cd.addSearch("hivPositive", ReportUtils.map(hivPositiveWomen(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("breastfedWithinAnHour", ReportUtils.map(mothersBreastFedWithingAnHour(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("hivPositive  AND breastfedWithinAnHour");
+        return cd;
+    }
+
+    public CohortDefinition bornBeforeArrivalandLive() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies Born before ");
+        cd.addSearch("bornBeforeArrival", ReportUtils.map(bornBeforeArrival(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("bornBeforeArrival AND liveBirths");
+        return cd;
+    }
+    public CohortDefinition bornBeforeArrivalandBelowNormalWeight() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies Born before ");
+        cd.addSearch("bornBeforeArrival", ReportUtils.map(bornBeforeArrival(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("bornBeforeArrival AND belownormalweight");
+        return cd;
+    }
 
     /**
      * Live births and below normal weigh
@@ -2655,6 +2755,17 @@ public class Moh105CohortLibrary {
         cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("belownormalweight", ReportUtils.map(babiesBornWithLowBirthWeight(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("liveBirths AND belownormalweight");
+        return cd;
+    }
+
+    public CohortDefinition liveBirthDeliveriesinUnit() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Live Births Deliveries in Unit");
+        cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveryUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("liveBirths AND deliveryUnit");
         return cd;
     }
 
