@@ -601,7 +601,136 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator maternityAdmissions() {
         return cohortIndicator("Maternity admissions", map(cohortLibrary.maternityAdmissions(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
-    
+
+    public CohortIndicator maternityReferrals() {
+        return cohortIndicator("Maternity Referrals total", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID,Dictionary.getConcept("67ea4375-0f4f-4e67-b8b0-403942753a4d")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator maternityReferralsFromCommunity() {
+        return cohortIndicator("Maternity Referrals from Community", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID,Dictionary.getConcept("67ea4375-0f4f-4e67-b8b0-403942753a4d"),Dictionary.getConcept("1ca0db4a-c5c6-48ed-9e17-84905f4487eb")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator totalNumberofDeliveries() {
+        return cohortIndicator("NUmber of Deliveries ", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("dcc3ac63-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+    public CohortIndicator totalNumberofBabiesBornAlive() {
+        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConceptList("eb7041a0-02e6-4e9a-9b96-ff65dd09a416,23ac7575-f0ea-49a5-855e-b3348ad1da01,3de8af5d-ab86-4262-a1a3-b4c958ae2de3,7ca3dddc-b55e-46fb-b15e-40df4724bcfd")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator liveBirthDeliveriesAndBelowNormalWeight() {
+        return cohortIndicator("Live Babies below Normal Weight", map(cohortLibrary.liveBirthDeliveriesAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator freshStillBirth() {
+        return cohortIndicator("NUmber of Babies whose condition at discharge is live", map(cohortLibrary.freshStillbirth(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator freshStillBirthsAndBelowNormalWeight() {
+        return cohortIndicator("Fresh Still Births  below Normal Weight", map(cohortLibrary.freshStillBirthsAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator marceratedStillBirth() {
+        return cohortIndicator("Total Macerated Still births", map(cohortLibrary.maceratedStillBirths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator marceratedStillBirthAndBelowNormalWeight() {
+        return cohortIndicator("Total Macerated Still births and below normal weight", map(cohortLibrary.marceratedStillBirthsAndBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator totalPretermBirths() {
+        return cohortIndicator("Preterm Births in the unit", map(cohortLibrary.preTermBirths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pretermLiveBriths() {
+        return cohortIndicator("Pre Term Live Births", map(cohortLibrary.pretermLiveBabies(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator pretermBrithsBelowNormalWeight() {
+        return cohortIndicator("Pre Term Live Births below Normal Weight", map(cohortLibrary.pretermBabiesBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesBornBeforeArrival() {
+        return cohortIndicator("Total Babies Born before arrival", map(cohortLibrary.bornBeforeArrival(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesBornBeforeArrivalandAlive() {
+        return cohortIndicator("Total Babies Born before arrival and Alive", map(cohortLibrary.bornBeforeArrivalandLive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesBornBeforeArrivalandBelowNormalWeight() {
+        return cohortIndicator("Total Babies Born before arrival and Alive", map(cohortLibrary.bornBeforeArrivalandBelowNormalWeight(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator lowBirthWeightInitiatedOnKangaroo() {
+        return cohortIndicator("Low Birth Weight Initiated on Kangaroo", map(cohortLibrary.lowBirthWeightInitiatedOnKangaroo(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesBornWithDefects() {
+        return cohortIndicator("Total number of babies born with a defect",map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("23ac7575-f0ea-49a5-855e-b3348ad1da01")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator longLastingInsecticideTreatedNetGiven() {
+        return cohortIndicator("Received Long Lasting Insecticide Treated Net",map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("165025AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator newBornDeaths() {
+        return cohortIndicator("Neonantal Deaths between 0-7 days",map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886"),Dictionary.getConcept("811ff634-8d81-454f-9b9d-2850345796d6")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator neonantalBornDeaths() {
+        return cohortIndicator("Neonantal Deaths between 8-28 days",map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("dd8a2ad9-16f6-44db-82d7-87d6eef14886"),Dictionary.getConcept("95121db8-6c2a-48e0-b281-cf2dc8229dd1")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator maternalDeaths() {
+        return cohortIndicator("Maternal deaths", map(cohortLibrary.maternalDeaths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersWhoBreastFedWithinAnHour() {
+        return cohortIndicator("Mothers who breastfed within an hour after delivery", map(cohortLibrary.mothersBreastFedWithingAnHour(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersWhoBreastFedWithinAnHourAndHIVPositive() {
+        return cohortIndicator("Mothers who breastfed within an hour after delivery and HIV Positive.", map(cohortLibrary.breastFedWithinganHourAndHIVpositive(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersTestedForHIVfortheFirstitme() {
+        return cohortIndicator("Mothers newly tested for HIV this pregnancy (TR & TRR)", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersTestedForHIVPositivefortheFirstitme() {
+        return cohortIndicator("Mothers newly tested for HIV this pregnancy TRR)", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersRetestedforHIV() {
+        return cohortIndicator("Mothers who retested in the maternity ward (TR+ & TRR+)", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersRetestedPositiveforHIV() {
+        return cohortIndicator("Mothers who retested positve in the maternity ward  TRR+)", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersInitiatedOnARTinMaternity() {
+        return cohortIndicator("Mothers initiated ART in the maternity Ward)", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.ART_CODE),Dictionary.getConcept(Metadata.Concept.INITIATED_ON_ART)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator malePartnersTestedOnMaternityVisit() {
+        return cohortIndicator("Male Partners tested on Maternity Visit", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator malePartnersTestedPositiiveOnMaternityVisit() {
+        return cohortIndicator("Male Partners tested on Maternity Visit", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator malePartnersInitiatedOnARTinMaternity() {
+        return cohortIndicator("Male Partners initiated on ART", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept(Metadata.Concept.ART_CODE_PARTNER),Dictionary.getConcept(Metadata.Concept.INITIATED_ON_ART)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator discordantResultsinMaternity() {
+        return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.discordantCouplesMaternity(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator maternalNutritioninMaternity() {
+        return cohortIndicator("Pregnant women recieved Maternal nutrition counselling ", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator maternalNutritionAndHIVPositiveinMaternity() {
+        return cohortIndicator("Maternal Nutrition and Counselling in Maternity", map(cohortLibrary.marternalCounsellingandPositiveinMaternity(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator infantFeedingInMaternity() {
+        return cohortIndicator("Mothers who recieved Infant feeding and counselling ", map(cohortLibrary.hasObsAndEncounter(ANC_UUID, Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+
+    }
+
+    public CohortIndicator infantFeedingCounsellingAndHIVPositiveinMaternity() {
+        return cohortIndicator("Infant feeding and Counselling in Maternity", map(cohortLibrary.infantCounsellingAndPositiveinMaternity(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator liveBirthsDeliveriesInUnit() {
+        return cohortIndicator("Live Births to babies in Unit", map(cohortLibrary.liveBirthDeliveriesinUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator oxytocinUsedInManagementofThirdStageLabour() {
+        return cohortIndicator("Oxytoncin used in management of 3rd stage of labour", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("425458af-d1f7-40e4-a672-7d9e38aedb3c"),Dictionary.getConcept("eca9da28-31d3-4e6f-828d-441e9237b7a5")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator misoprostolUsedInManagementofThirdStageLabour() {
+        return cohortIndicator("Misoprostol used in management of 3rd stage of labour", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("425458af-d1f7-40e4-a672-7d9e38aedb3c"),Dictionary.getConcept("1c4323a3-6cc6-44d0-81ee-839014bca19c")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator egometrineUsedInManagementofThirdStageLabour() {
+        return cohortIndicator("Egometrine used in management of 3rd stage of labour", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("425458af-d1f7-40e4-a672-7d9e38aedb3c"),Dictionary.getConcept("e123d685-812a-43c3-bc05-db4e14d8c05c")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
     /**
      *Referrals to Maternity Unit
      * @return CohortIndicator
@@ -615,7 +744,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator maternityReferralsOut() {
-        return cohortIndicator("Maternity referrals Out", map(cclibrary.hasObs(Dictionary.getConcept("e87431db-b49e-4ab6-93ee-a3bd6c616a94"), Dictionary.getConcept("6e4f1db1-1534-43ca-b2a8-5c01bc62e7ef")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Maternity referrals Out", map(cclibrary.hasObs(Dictionary.getConcept("67ea4375-0f4f-4e67-b8b0-403942753a4d"), Dictionary.getConcept("160036AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -766,20 +895,10 @@ public class Moh105IndicatorLibrary {
      *M15: Newborn deaths (0-7 days)
      * @return CohortIndicator
      */
-    public CohortIndicator newBornDeaths() {
-        return cohortIndicator("New born deaths", map(cclibrary.hasObs(Dictionary.getConcept("a5638850-0cb4-4ce8-8e87-96fc073de25d"),Dictionary.getConcept("ab3a7679-f5ee-48d6-b690-f55a1dfe95ea")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }
+
 
     /**
 
-     *M16: Maternal deaths
-     * @return CohortIndicator
-     */
-    public CohortIndicator maternalDeaths() {
-        return cohortIndicator("Maternal deaths", map(cohortLibrary.maternalDeaths(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-    }    
-    
-    /**
      *M18: Birth asphyxia
      * @return CohortIndicator
      */
@@ -3296,7 +3415,32 @@ public class Moh105IndicatorLibrary {
 		    map(cohortLibrary.hasObsAndEncounter(EID_UUID, Dictionary.getConcept(Metadata.Concept.STARTED_ON_CPT)),
 		        "onOrAfter=${startDate},onOrBefore=${endDate}"));
 	}
-	
+
+
+    public CohortIndicator hivExposedInfantsStartARV() {
+        return cohortIndicator("HIV exposed infants started on ART", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("1e4dbd48-e261-417c-a360-831c99982c56"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator hivExposedInfantsatHighRisk() {
+        return cohortIndicator("HIV exposed infants at High Risk", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a6037516-7c28-48ac-83c4-98ab4a032fa3"),Dictionary.getConcept("1408AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesWithBrithAsyphxia() {
+        return cohortIndicator("Babies Born with Asyphyxia", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("164122AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator livebabiesResuscitated() {
+        return cohortIndicator("Live babies Resuscitated", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("dc958e5c-ab9b-4c0c-b02d-d136b7505754"),Dictionary.getConceptList("911808cd-f455-4a63-9e18-aeee1f74adf0","e6004c96-2eaf-41f4-874e-6c3203bc1c40")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesRecievedPNCatSixHours() {
+        return cohortIndicator("Babbies that recieved PNC at 6 hours", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("1d3dc226-d6df-49d6-b0a9-12cc5b10cfd0"),Dictionary.getConcept("c08f764d-07d6-436f-aa5d-afdca9e12ae0")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersRecievedPNCatSixHours() {
+        return cohortIndicator("Mothers that recieved PNC at 6 hours", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("c7700c4f-3dc6-4270-ba0d-dd42c0557027"),Dictionary.getConcept("c08f764d-07d6-436f-aa5d-afdca9e12ae0")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator babiesRecievedPNCat24Hours() {
+        return cohortIndicator("Babbies that recieved PNC at 24 hours", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("1d3dc226-d6df-49d6-b0a9-12cc5b10cfd0"),Dictionary.getConcept("abf95a81-d34a-4b3a-8323-f3edc6da542b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersRecievedPNCat24Hours() {
+        return cohortIndicator("Mothers that recieved PNC at 24 hours", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("c7700c4f-3dc6-4270-ba0d-dd42c0557027"),Dictionary.getConcept("abf95a81-d34a-4b3a-8323-f3edc6da542b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 	/**
 	 * Tetanus Immunization dose
 	 * 
