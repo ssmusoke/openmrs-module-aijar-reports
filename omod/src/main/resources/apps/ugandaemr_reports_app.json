@@ -623,6 +623,17 @@
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
+
+
+      {
+        "id": "HMIS 105 Section 2.3",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.3: POSTNATAL",
+        "url": "reportingui/runReport.page?reportDefinition=ea0cc959-d7a4-4fe8-a85a-a684da5a836f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
       {
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
