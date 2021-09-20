@@ -311,6 +311,13 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         
         return cd;
     }
+
+    public CohortDefinition hasPNCObs(Concept question, Concept... answers) {
+        CodedObsCohortDefinition cd = (CodedObsCohortDefinition) hasObs(question, answers);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.PNC_ENCOUNTER)));
+
+        return cd;
+    }
 /**
  * Patients who have a text ANCobs between ${onOrAfter} and ${onOrBefore}
  *      * @param question the question concept

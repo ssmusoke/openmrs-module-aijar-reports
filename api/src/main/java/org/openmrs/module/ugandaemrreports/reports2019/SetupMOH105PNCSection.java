@@ -118,14 +118,40 @@ public class SetupMOH105PNCSection extends UgandaEMRDataExportManager {
     protected DataSetDefinition postNatalDataSetDefinition() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.ANCAgeGroups(), "effectiveDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.MCHAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
-
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
-
-
+        addRowWithColumns(dsd, "PN01","Total Number of Postnatal Visits by age groups",indicatorLibrary.postnatalAdmissions());
+        addRowWithColumns(dsd, "PN02","PNC Timinng at 24 hours",indicatorLibrary.pncRecievedat24Hours());
+        addRowWithColumns(dsd, "PN03","PNC Timing at 6 days",indicatorLibrary.pncRecievedat6Days());
+        addRowWithColumns(dsd, "PN04","PNC Timing at 6 weeks",indicatorLibrary.pncRecievedat6Weeks());
+        addRowWithColumns(dsd, "PN05","PNC Timing at 6 months",indicatorLibrary.pncRecievedat6Months());
+        addRowWithColumns(dsd, "PN06","Total PNC Referrals",indicatorLibrary.totalPNCReferrals());
+        addRowWithColumns(dsd, "PN07","PNC referrals from Community",indicatorLibrary.pncReferralsFromCommunity());
+        addRowWithColumns(dsd, "PN08","Mothers  who tested ",indicatorLibrary.mothersTestedForHIVfortheFirstitmeonPNC());
+        addRowWithColumns(dsd, "PN09","Mothers  who tested positive on the first time testing",indicatorLibrary.mothersTestedForHIVPositivefortheFirstitmeonPNC());
+        addRowWithColumns(dsd, "PN10","Breast feeding Mothers  who retested for HIV on PNC Visit",indicatorLibrary.mothersRetestedforHIVonPNC());
+        addRowWithColumns(dsd, "PN11","Mothers  who retested positive for HIV on PNC Visit",indicatorLibrary.mothersRetestedPositiveforHIVonPNC());
+        addRowWithColumns(dsd, "PN12","Mothers  who retested positive for HIV on PNC Visit",indicatorLibrary.mothersRetestedPositiveforHIVonPNC());
+        addRowWithColumns(dsd, "PN16","Mothers  newly enrolled on FSG ",indicatorLibrary.newlyEnrolledOnFSG());
+        addRowWithColumns(dsd, "PN17","Mothers Baby Pair  enrolled at MBCP ",indicatorLibrary.enrolledAtMBCP());
+        addRowWithColumns(dsd, "PN18","Male partners received HIV test results in the postnatal setting - Totals",indicatorLibrary.malePatinersRecievedHivResultatPNC());
+        addRowWithColumns(dsd, "PN19","Male partners received HIV test results in the postnatal setting",indicatorLibrary.malePatinersRecievedHiPositivevResultatPNC());
+        addRowWithColumns(dsd, "PN20","HIV+ male partners initiated on ART in the postnatal setting",indicatorLibrary.malePartnersInitiatedonART());
+        addRowWithColumns(dsd, "PN21","Breast feeding mothers given self-testing kits for their male partners",indicatorLibrary.breastFeedingWomenGivenSTKs());
+        addRowWithColumns(dsd, "PN22","STK result is positive",indicatorLibrary.positiveSTKResultforPartner());
+        addRowWithColumns(dsd, "PN23","STK result is negative ",indicatorLibrary.negativeSTKResultPartner());
+//        addRowWithColumns(dsd, "PN24","Discordant Couples",indicatorLibrary.discordantResults());
+        addRowWithColumns(dsd, "PN25","Clients screened for Cancer of the Breast",indicatorLibrary.breastScreening());
+        addRowWithColumns(dsd, "PN26","Clients with pre-malignant conditions of breast",indicatorLibrary.clientsWithPreMalignantConditions());
+        addRowWithColumns(dsd, "PN27","Clients screened for Cancer of the Cervix",indicatorLibrary.clientsScreenedForCervicalCancer());
+        addRowWithColumns(dsd, "PN28","Clients with pre-malignant conditions of the Cervix",indicatorLibrary.clientsWithPreMalignantCervicalConditions());
+        addRowWithColumns(dsd, "PN31","Postnatal mothers who recieved Maternal Nutrition Counselling",indicatorLibrary.manternalCounsellingDone());
+        addRowWithColumns(dsd, "PN32","Maternal Nutrition and Positive ",indicatorLibrary.maternalNutritionAndHIVPositiveatPNC());
+        addRowWithColumns(dsd, "PN33","Infant Counselling ",indicatorLibrary.infantFeedingCounsellingatPNC());
+        addRowWithColumns(dsd, "PN34","Infant Counselling and Positive ",indicatorLibrary.infantFeedingCounsellingAndHIVPositiveatPNC());
 
         return dsd;
     }
@@ -147,6 +173,6 @@ public class SetupMOH105PNCSection extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.0.1";
+        return "1.0.1";
     }
 }

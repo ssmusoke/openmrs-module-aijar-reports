@@ -54,6 +54,8 @@ public class Moh105CohortLibrary {
     
     @Autowired
     private DataFactory df;
+    String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
+
 
     public CohortDefinition femaleAndHasAncVisit(double lower, double upper){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -355,9 +357,17 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         return cd;
-    }    
+    }
 
-	/**
+    public CohortDefinition postnatalAdmissions() {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(Arrays.asList(CoreUtils.getEncounterType(Metadata.EncounterType.PNC_ENCOUNTER)));
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        return cd;
+    }
+
+    /**
 	 * HIV Positive Persons
 	 * @return CohortDefinition 
 	 */
@@ -380,6 +390,12 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortIndicator mothersInitiatedOnARTinPNC() {
+        return cohortIndicator("Mothers initiated ART in the PNC Ward)", map(hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.ART_CODE),Dictionary.getConcept(Metadata.Concept.INITIATED_ON_ART)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator totalNumberHIVPositive() {
+        return cohortIndicator("Mothers initiated ART in the PNC Ward)", map(hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.ART_CODE),Dictionary.getConcept(Metadata.Concept.INITIATED_ON_ART)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
     /**
@@ -481,6 +497,16 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("positiveFemales AND maternalCounselling");
         return cd;
     }
+    public CohortDefinition marternalCounsellingandPositiveATPNC() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Maternal Counselling and Positive");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("maternalCounselling", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("positiveFemales AND maternalCounselling");
+        return cd;
+    }
 
     public CohortDefinition infantCounsellingAndPositive() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -489,6 +515,16 @@ public class Moh105CohortLibrary {
         cd.setName("Infant Counselling and Positive");
         cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        cd.setCompositionString("positiveFemales AND infantCounselling");
+        return cd;
+    }
+    public CohortDefinition infantCounsellingAndPositiveatPNC() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Infant Counselling and Positive");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept("5d993591-9334-43d9-a208-11b10adfad85"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         cd.setCompositionString("positiveFemales AND infantCounselling");
         return cd;
     }
