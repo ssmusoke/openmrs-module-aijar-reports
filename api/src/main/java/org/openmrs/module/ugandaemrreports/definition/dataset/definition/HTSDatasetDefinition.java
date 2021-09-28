@@ -5,7 +5,7 @@ import org.openmrs.module.reporting.definition.configuration.ConfigurationProper
 
 import java.util.Date;
 
-public class HCTDatasetDefinition extends BaseDataSetDefinition {
+public class HTSDatasetDefinition extends BaseDataSetDefinition {
     /**
      *
      */
@@ -15,11 +15,11 @@ public class HCTDatasetDefinition extends BaseDataSetDefinition {
     @ConfigurationProperty
     private Date endDate;
 
-    public HCTDatasetDefinition() {
+    public HTSDatasetDefinition() {
         super();
     }
 
-    public HCTDatasetDefinition(String name, String description) {
+    public HTSDatasetDefinition(String name, String description) {
         super(name, description);
     }
 

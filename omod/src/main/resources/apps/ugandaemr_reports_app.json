@@ -79,10 +79,10 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS177ViralLoadAddendumQuarterlyReport"
       },
       {
-        "id": "HMIS 055-HCT Register",
+        "id": "HMIS ACP 019: HTS REGISTER",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "HMIS 055 : HCT Register",
+        "label": "HMIS ACP 019: HTS REGISTER",
         "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
         "order": 20,
         "requiredPrivilege": "App: ugandaemrreports.HMIS055-HCTRegister"
