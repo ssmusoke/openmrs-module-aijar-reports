@@ -768,6 +768,20 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator mothersRetestedPositiveforHIVonPNC() {
         return cohortIndicator("Breast feedingMothers who retested positve on PNC Visit  TRR+)", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+
+    public CohortIndicator totalMOthersInitiatingARTinPNC() {
+        return cohortIndicator("Mothers Initiated on ART in PNC)", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConceptList(Metadata.Concept.EMTCT_CODE_TRRP+","+ Metadata.Concept.EMTCT_CODE_TRR+","+ Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator NewMOthersInitiatingARTinPNC() {
+        return cohortIndicator("New Mothers Initiated on ART in PNC)", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator mothersPositiveONRetest() {
+        return cohortIndicator("New Mothers  Positive on Retest)", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator positveButNeverInitiated() {
+        return cohortIndicator("Positve Mothers But never Initiated)", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     public CohortIndicator newlyEnrolledOnFSG() {
         return cohortIndicator("Mothers newly enrolled on FSG", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("7e8e0ef3-2fda-4c76-8cf6-c7a6f1584ff2"),Dictionary.getConcept("3af0aae4-4ea7-489d-a5be-c5339f7c5a77")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -795,6 +809,10 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator negativeSTKResultPartner() {
         return cohortIndicator("Negative STK Results", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("e47d9ead-5b33-4315-9ea0-42669e4491b6"),Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+
+    public CohortIndicator discordantResultsPNC() {
+        return cohortIndicator("Number of couples with Disconcordant results", map(cohortLibrary.discordantCouplesPNC(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     public CohortIndicator breastScreening() {
         return cohortIndicator("Clients screened for Cancer of the Breast", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("07c10f5c-17fd-4a7e-8d72-c2252f589da0")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -806,6 +824,13 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator clientsWithPreMalignantCervicalConditions() {
         return cohortIndicator("Clients with pre-malignant conditions of the cervix", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("d858f8cb-fe9e-4131-8d91-cd9929cc53de"),Dictionary.getConcept("ec3a0208-0261-450a-a13b-b524e160b8fd")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator nutritionalAssessmentDone() {
+        return cohortIndicator("Nutritional Assessment Done", map(cohortLibrary.numericObservations("1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator nutritionalAssessmentDoneAndHIVPositive() {
+        return cohortIndicator("Pregnant Women Iron and Follic Acid on first visit", map(cohortLibrary.nutritonalAssessmentDoneandHIVpositve(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator manternalCounsellingDone() {
         return cohortIndicator("Postnatal mothers who recieved Maternal Nutrition Counselling", map(cohortLibrary.hasObsAndEncounter(PNC_UUID, Dictionary.getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"),Dictionary.getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));

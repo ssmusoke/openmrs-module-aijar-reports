@@ -135,6 +135,10 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortIndicator numberOfUltraSoundScan() {
+        return cohortIndicator("US Done", map(numericObservations("fbea6522-78f5-4d3d-a695-aaedfef7a76a",0.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
     /**
      * Total ANC visits - including new clients and re-attendances
      * @return CohortDefinition
@@ -259,6 +263,18 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("femaleAndHasAncVisit AND (iron OR follicacid OR combined )");
         return cd;
     }
+
+    public CohortDefinition nutritonalAssessmentDoneandHIVpositve() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Lactating Mothers who are positve with nutritional Assessment");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("nutritionalAssessment",ReportUtils.map(numericObservations("1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",1.0)));
+        cd.addSearch("positvieMothers",ReportUtils.map(hasObsAndEncounter(PNC_UUID, Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConceptList(Metadata.Concept.EMTCT_CODE_TRRP+","+ Metadata.Concept.EMTCT_CODE_TRR+","+ Metadata.Concept.EMTCT_CODE_TRRK))));
+        cd.setCompositionString("nutritionalAssessment AND positvieMothers");
+        return cd;
+    }
+
     public CohortDefinition pregnantAndRecievedIronandFollicAcidGreaterthan30After36Weeks() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("Pregnant women receiving iron/folic acid after 36 weeks");
@@ -442,6 +458,17 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+    public CohortDefinition discordantCouplesPNC() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples in PNC");
+        cd.addSearch("positiveFemaleNegativePartner", ReportUtils.map(positiveFemaleNegativePartnerPNC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("negativeFemalePositivePartner", ReportUtils.map(negativeFemalePositivePartnerPNC(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveFemaleNegativePartner AND negativeFemalePositivePartner");
+        return cd;
+    }
+
     public CohortDefinition positiveFemaleNegativePartner() {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
@@ -450,6 +477,27 @@ public class Moh105CohortLibrary {
         cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("negativeMales", ReportUtils.map(definitionLibrary.hasANCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("positiveFemales AND negativeMales");
+        return cd;
+    }
+
+    public CohortDefinition positiveFemaleNegativePartnerPNC() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples");
+        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("negativeMales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveFemales AND negativeMales");
+        return cd;
+    }
+    public CohortDefinition negativeFemalePositivePartnerPNC() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Discordant Couples");
+        cd.addSearch("negativeFemales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("positiveMales", ReportUtils.map(definitionLibrary.hasPNCObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODESP),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("positiveMales AND negativeFemales");
         return cd;
     }
 
