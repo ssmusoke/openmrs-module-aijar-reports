@@ -606,6 +606,14 @@
         "order":10,
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },{
+        "id": "ART Access Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "type": "link",
+        "label": "ART Access Register",
+        "url": "reportingui/runReport.page?reportDefinition=9ec815ed-e3ac-4710-a480-360e2777c7d1",
+        "order":15,
+        "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },{
         "id": "HMIS PHAR 003:Dispensing Log",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
