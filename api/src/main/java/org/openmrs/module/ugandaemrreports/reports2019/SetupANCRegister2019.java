@@ -150,7 +150,7 @@ public class SetupANCRegister2019 extends UgandaEMRDataExportManager {
         //start adding columns here
         dsd.addColumn("Visit Date", sdd.getEncounterDate("Visit Date",new ANCEncounterDateCalculation()), "onDate=${endDate}", new CalculationResultDataConverter());
         dsd.addColumn("Serial No", sdd.definition("Serial No",  sdd.getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("Client No", sdd.definition("Client No",  sdd.getConcept("38460266-6bcd-47e8-844c-649d34323810")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("Client No", sdd.definition("Client No",  sdd.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("NIN", sdd.getNationalIDNumber(), "");
         dsd.addColumn("Name of Client", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Village", basePatientDataLibrary.getVillage(),(String)null);

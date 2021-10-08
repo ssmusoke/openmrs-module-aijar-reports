@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.openmrs.module</groupId>
 		<artifactId>ugandaemrreports</artifactId>
-		<version>2.0.26-SNAPSHOT</version>
+		<version>2.0.28-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ugandaemrreports-omod</artifactId>
