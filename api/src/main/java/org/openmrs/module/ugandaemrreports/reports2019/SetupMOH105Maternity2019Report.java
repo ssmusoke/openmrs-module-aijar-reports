@@ -163,7 +163,7 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "MA41","Live Births in Delivery Unit",indicatorLibrary.liveBirthsDeliveriesInUnit());
         addRowWithColumns(dsd, "MA42"," Number of babies given NVP Syrup",indicatorLibrary.hivExposedInfantsStartARV());
         addRowWithColumns(dsd, "MA43"," Number of high Risk baboes",indicatorLibrary.hivExposedInfantsatHighRisk());
-        addRowWithColumns(dsd, "MA44"," Number of Babies with Asyphyxia",indicatorLibrary.hivExposedInfantsatHighRisk());
+        addRowWithColumns(dsd, "MA44"," Number of Babies with Asyphyxia",indicatorLibrary.babiesWithBrithAsyphxia());
         addRowWithColumns(dsd, "MA45"," Live babies Resuscitated",indicatorLibrary.livebabiesResuscitated());
         addRowWithColumns(dsd, "MA46","Babbies that recieved PNC at 6 hours",indicatorLibrary.babiesRecievedPNCatSixHours());
         addRowWithColumns(dsd, "MA47","Mothers that recieved PNC at 6 hours",indicatorLibrary.mothersRecievedPNCatSixHours());
@@ -177,7 +177,7 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "age=Between15And19yrs");
+        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "age=Below15");
         addIndicator(dsd, key + "bF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "age=Between15And19yrs");
         addIndicator(dsd, key + "cF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "age=Between20And24yrs");
         addIndicator(dsd, key + "dF", label + " (Between 25 and 49 Years) Female", cohortIndicator, "age=Between25And49yrs");
@@ -192,6 +192,6 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.2.5";
+        return "1.0.2.7";
     }
 }

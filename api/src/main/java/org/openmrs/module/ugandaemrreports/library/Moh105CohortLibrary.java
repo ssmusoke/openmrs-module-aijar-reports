@@ -363,8 +363,12 @@ public class Moh105CohortLibrary {
 	 */
     public CohortDefinition hivPositivePersons() {
     	return definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
-    }    
-    
+    }
+
+    public CohortDefinition hivPositiveMothers() {
+      return definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP));
+    }
+
     /**
      * HIV+ women
      * @return CohortDefinition
@@ -381,6 +385,17 @@ public class Moh105CohortLibrary {
     }
 
 
+
+    public CohortDefinition deliveriesInUnitForHIVPositiveMothers() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Mothers who gave birth when they where HIV Positive");
+        cd.addSearch("deliveriesinUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("hivPositiveMothers", ReportUtils.map(hivPositiveMothers(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("deliveriesinUnit AND hivPositiveMothers");
+        return cd;
+    }
 
     /**
      * Deliveries in unit
@@ -2764,7 +2779,7 @@ public class Moh105CohortLibrary {
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
         cd.setName("Live Births Deliveries in Unit");
         cd.addSearch("liveBirths", ReportUtils.map(liveBirths(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("deliveryUnit", ReportUtils.map(deliveriesInUnit(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deliveryUnit", ReportUtils.map(deliveriesInUnitForHIVPositiveMothers(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("liveBirths AND deliveryUnit");
         return cd;
     }

@@ -291,7 +291,7 @@ public class Metadata {
         public static final String ARV_REGIMEN = "35ae2043-a3b0-48de-8e22-05f377ac39a2";
         public static final String EMTCT_CODE_TRP = "a08d9331-b437-485c-8eff-1923f3d43630";
         public static final String EMTCT_CODE_TRRP = "8dcaefaa-aa91-4c24-aaeb-122cff549ab3";
-        public static final String EMTCT_CODE_TRRTICK = "60155e4d-1d49-4e97-9689-758315967e0f";
+        public static final String EMTCT_CODE_TRRTICK = "4d301db0-c517-4556-9f7c-d837bac90144";
         public static final String EMTCT_CODE_T = "05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7";
         public static final String EMTCT_CODE_TR = "86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a";
         public static final String EMTCT_CODE_TRR = "25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465";

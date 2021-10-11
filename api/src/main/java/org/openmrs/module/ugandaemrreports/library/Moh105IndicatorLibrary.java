@@ -752,7 +752,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator deliveriesInUnit() {
-        return cohortIndicator("Deliveries in unit", map(cohortLibrary.deliveriesInUnit(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Deliveries in unit", map(cohortLibrary.deliveriesInUnitForHIVPositiveMothers(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     
     /**
