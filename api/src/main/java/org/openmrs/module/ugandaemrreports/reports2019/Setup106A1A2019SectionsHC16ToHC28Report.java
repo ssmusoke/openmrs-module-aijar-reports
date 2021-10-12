@@ -115,13 +115,7 @@ public class Setup106A1A2019SectionsHC16ToHC28Report extends UgandaEMRDataExport
 
         CohortDefinition baseCD4L200 = df.getPatientsWithNumericObsDuringPeriod(hivMetadata.getBaselineCD4(), hivMetadata.getARTSummaryPageEncounterType(),RangeComparator.LESS_EQUAL, 200.0, BaseObsCohortDefinition.TimeModifier.FIRST);
 
-        CohortDefinition childrenOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnFirstLineRegimenDuringPeriod());
-        CohortDefinition childrenOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHChildren(), hivCohortDefinitionLibrary.getChildrenOnSecondLineRegimenDuringPeriod());
-
-        CohortDefinition adultsOnFirstLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(), hivCohortDefinitionLibrary.getAdultsOnFirstLineRegimenDuringPeriod());
-        CohortDefinition adultsOnSecondLineDuringQuarter = df.getPatientsInAll(commonCohortDefinitionLibrary.MoHAdult(), hivCohortDefinitionLibrary.getAdultsOnSecondLineRegimenDuringPeriod());
-
-        CohortDefinition onThirdLineRegimenDuringQuarter = hivCohortDefinitionLibrary.getPatientsOnThirdLineRegimenDuringPeriod();
+        CohortDefinition onThirdLineRegimenDuringQuarter = df.getWorkFlowStateCohortDefinition(hivMetadata.getThirdLineRegimenState());
 
 
         CohortDefinition everEnrolledByEndQuarter = df.getPatientsNotIn(enrolledBeforeQuarter, enrolledInTheQuarter);
@@ -131,8 +125,8 @@ public class Setup106A1A2019SectionsHC16ToHC28Report extends UgandaEMRDataExport
 
          CohortDefinition activePatientsInCareDuringPeriod = hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("90");
 
-        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnFirstLineDuringQuarter, adultsOnFirstLineDuringQuarter));
-        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getPatientsInAny(childrenOnSecondLineDuringQuarter, adultsOnSecondLineDuringQuarter));
+        CohortDefinition onFirstLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getWorkFlowStateCohortDefinition(hivMetadata.getFirstLineRegimenState()));
+        CohortDefinition onSecondLineRegimen = df.getPatientsInAll(activePatientsInCareDuringPeriod, df.getWorkFlowStateCohortDefinition(hivMetadata.getSecondLineRegimenState()));
 
 
         CohortDefinition clientsStartedOnARTAtThisFacilityBeforePeriod = df.getPatientsNotIn(havingArtStartDateBeforeQuarter,transferredInBeforeQuarter);
@@ -277,6 +271,6 @@ public class Setup106A1A2019SectionsHC16ToHC28Report extends UgandaEMRDataExport
 
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return "1.0.3";
     }
 }
