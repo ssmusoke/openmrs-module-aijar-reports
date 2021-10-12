@@ -192,6 +192,6 @@ public class SetupMOH105Maternity2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.2.7";
+        return "1.0.2.8";
     }
 }

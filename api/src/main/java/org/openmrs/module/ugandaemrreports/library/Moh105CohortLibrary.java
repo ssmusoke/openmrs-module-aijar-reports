@@ -365,9 +365,24 @@ public class Moh105CohortLibrary {
     	return definitionLibrary.hasObs(Dictionary.getConcept("dce0e886-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept("dcdf4241-30ab-102d-86b0-7a5022ba4115"));
     }
 
-    public CohortDefinition hivPositiveMothers() {
-      return definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP));
+    public CohortDefinition hivExposedInfantsStartARV() {
+        return definitionLibrary.hasMATERNITYObs(Dictionary.getConcept("1e4dbd48-e261-417c-a360-831c99982c56"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
     }
+    public CohortDefinition babiesAtHighRisk() {
+        return definitionLibrary.hasMATERNITYObs(Dictionary.getConcept("a6037516-7c28-48ac-83c4-98ab4a032fa3"),Dictionary.getConcept("1408AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+    }
+    public CohortDefinition babiesAtHighRiskandOntreatemet() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Babies at hight risk and have taken HIV Pills");
+        cd.addSearch("exposedInfants", ReportUtils.map(hivExposedInfantsStartARV(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("babiesAtHighRisk", ReportUtils.map(babiesAtHighRisk(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("exposedInfants AND babiesAtHighRisk");
+        return cd;
+    }
+
+
 
     /**
      * HIV+ women
@@ -384,6 +399,14 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
+
+    /**
+     * EIDS Highly exposed to HIV
+     * @return
+     */
+    public CohortDefinition hivPositiveMothers() {
+        return definitionLibrary.hasMATERNITYObs(Dictionary.getConcept(Metadata.Concept.EMTCT_CODES),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRR),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRK),Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_TRRP));
+    }
 
 
     public CohortDefinition deliveriesInUnitForHIVPositiveMothers() {

@@ -3421,7 +3421,7 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("HIV exposed infants started on ART", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("1e4dbd48-e261-417c-a360-831c99982c56"),Dictionary.getConcept("1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator hivExposedInfantsatHighRisk() {
-        return cohortIndicator("HIV exposed infants at High Risk", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("a6037516-7c28-48ac-83c4-98ab4a032fa3"),Dictionary.getConcept("1408AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("HIV exposed infants at High Risk", map(cohortLibrary.babiesAtHighRiskandOntreatemet(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator babiesWithBrithAsyphxia() {
         return cohortIndicator("Babies Born with Asyphyxia", map(cohortLibrary.hasObsAndEncounter(MATERNITY_UUID, Dictionary.getConcept("164122AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
