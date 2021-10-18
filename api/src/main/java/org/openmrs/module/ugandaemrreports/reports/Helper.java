@@ -86,9 +86,9 @@ public class Helper {
                 "   FROM person_address pas\n" +
                 "   WHERE e.patient_id = pas.person_id)                     AS 'addresses',\n" +
                 "  (SELECT group_concat(\n" +
-                "      concat_ws(':', o.concept_id, concat_ws('', DATE(o.value_datetime), o.value_text, o.value_coded, o.value_numeric),\n" +
+                "      concat_ws(':', o.concept_id, concat_ws('', DATE(o.value_datetime), o.value_text, cn.name, o.value_numeric),\n" +
                 "                DATE(o.obs_datetime),COALESCE(o.obs_group_id, '')))\n" +
-                "   FROM obs o\n";
+                "   FROM obs o LEFT JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n";
         if (obs != null) {
             sql += String.format("   WHERE o.encounter_id = e.encounter_id AND o.voided = 0 AND concept_id IN(%s)) AS obs\n", obs);
         } else {
