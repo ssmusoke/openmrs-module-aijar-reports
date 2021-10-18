@@ -51,13 +51,6 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
     @Autowired
     private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
 
-
-    @Autowired
-    private SetupTxRTT2019Report setupTxRTT2019Report;
-
-
-
-
     /**
      * @return the uuid for the report design for exporting to Excel
      */
@@ -185,7 +178,7 @@ public class SetupPediatricDataCallReport extends UgandaEMRDataExportManager {
 
 
 
-        CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = setupTxRTT2019Report.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
+        CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod();
         CohortDefinition patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriodAndBackToCareDuringPeriod = df.getPatientsInAll(activeWithinReportingPeriod,patientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod);
 
         setupTxNewReport.addIndicator(dsd, "d","Active Children in the quarter Before the Reporting Quarter",activePatientsinPreviousQuarterBelow15Years,"");

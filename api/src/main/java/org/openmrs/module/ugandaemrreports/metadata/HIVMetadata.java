@@ -3,7 +3,13 @@ package org.openmrs.module.ugandaemrreports.metadata;
 import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
+import org.openmrs.Program;
+import org.openmrs.ProgramWorkflowState;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
+import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,7 +20,10 @@ import java.util.List;
  * Metadata definitions for the HIV related reporting
  */
 @Component("hivMetadata")
-public class HIVMetadata extends Metadata {
+public class HIVMetadata extends ReportMetadata {
+
+    @Autowired
+    CommonDimensionLibrary commonDimensionLibrary;
 
     public Concept getReturnVisitDate() {
         return getConcept("dcac04cf-30ab-102d-86b0-7a5022ba4115");
@@ -583,6 +592,10 @@ public class HIVMetadata extends Metadata {
         return getConcept("813e21e7-4ccb-4fe9-aaab-3c0e40b6e356");
     }
 
+    public Concept getTPTStatus() {
+        return getConcept("37d4ac43-b3b4-4445-b63b-e3acf47c8910");
+    }
+
     public Concept getHepBScreeningDate() {
         return getConcept("53df33eb-4060-4300-8b7e-0f0784947767");
     }
@@ -600,6 +613,17 @@ public class HIVMetadata extends Metadata {
         return getConcept("dca16e53-30ab-102d-86b0-7a5022ba4115");
     }
 
+    public ProgramWorkflowState getFirstLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_FIRST_LINE_REGIMEN);
+    }
+
+    public ProgramWorkflowState getSecondLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_SECOND_LINE_REGIMEN);
+    }
+
+    public ProgramWorkflowState getThirdLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_THIRD_LINE_REGIMEN);
+    }
 
     public List<EncounterType> getSMCEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
@@ -664,6 +688,28 @@ public class HIVMetadata extends Metadata {
     public List<EncounterType> getCovidFollowupEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();
         l.add(MetadataUtils.existing(EncounterType.class, "cd9a2698-206f-44f3-a888-f824544413b4"));
+        return l;
+    }
+
+    public Program getFBIMProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getFTRProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5896-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getFBGProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5b34-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getCDDPProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d6034-c304-11e8-9ad0-529269fb1459");
+    }
+    public Program getCCLADProgram(){
+        return commonDimensionLibrary.getProgramByUuid("de5d5da0-c304-11e8-9ad0-529269fb1459");
+    }
+
+    public List<EncounterType> getIACEncounters() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "38cb2232-30fc-4b1f-8df1-47c795771ee9"));
         return l;
     }
 }

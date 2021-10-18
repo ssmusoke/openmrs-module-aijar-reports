@@ -89,6 +89,16 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
     }
 
+    public CohortDefinition agedAtMost(int maxAge, String olderThan) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged at most " + maxAge);
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(maxAge);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate-"+olderThan));
+    }
+
     public AgeCohortDefinition agedAtMost(int maxAge, Date effectiveDate) {
         AgeCohortDefinition cd = new AgeCohortDefinition();
         cd.setEffectiveDate(effectiveDate);
@@ -369,6 +379,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
      */
     public CohortDefinition hasNumericObs(Concept question, RangeComparator operator1, Double value1) {
         return hasNumericObs(question, operator1, value1, null, null);
-    }    
+    }
+
     
 }
