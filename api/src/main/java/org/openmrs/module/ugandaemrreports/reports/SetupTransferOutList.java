@@ -159,6 +159,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 }
