@@ -285,7 +285,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     }
 
     public CohortDefinition getScreenedForTBNegativeDuringPeriod() {
-        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusNoSignsOrSymptoms()), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), Arrays.asList(hivMetadata.getTBStatusNoSignsOrSymptoms()), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
     public CohortDefinition getStartedTBRxBeforePeriod() {
@@ -721,10 +721,15 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
                 "    t.encounter_type_id =e.encounter_type where e.voided=0 and e.encounter_datetime = date_time and t.uuid='8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' group by A.patient_id) last_encounter\n" +
                 "                on o.encounter_id=last_encounter.encounter_id where o.voided=0 and o.concept_id=5096 and o.value_datetime < :startDate\n" +
                 "            and datediff(:startDate,o.value_datetime)> 28;";
-        SqlCohortDefinition noClinicalContact = new SqlCohortDefinition(query);
-        noClinicalContact.addParameter(new Parameter("startDate", "startDate", Date.class));
+        SqlCohortDefinition noClinicalContactByBeginningOfPeriod = new SqlCohortDefinition(query);
+        noClinicalContactByBeginningOfPeriod.addParameter(new Parameter("startDate", "startDate", Date.class));
         CohortDefinition excludedCohorts = df.getPatientsInAny(df.getDeadPatientsByEndOfPreviousDate(), getPatientsTransferredOutByStartDate());
-        return df.getPatientsNotIn(noClinicalContact,excludedCohorts);
+
+        SqlCohortDefinition lostInPrevious2Years = new SqlCohortDefinition("select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff(DATE_SUB(:startDate, INTERVAL 1 DAY ),max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <=DATE_SUB(:startDate, INTERVAL 1 DAY ) " +
+                "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= DATE_SUB(:startDate, INTERVAL 24 MONTH) and e.voided=0 and o.voided=0 group by patient_id) as t  where ltfp_days >=28;");
+        lostInPrevious2Years.addParameter(new Parameter("startDate", "startDate", Date.class));
+       CohortDefinition lost = df.getPatientsInAll(noClinicalContactByBeginningOfPeriod,lostInPrevious2Years);
+        return df.getPatientsNotIn(lost,excludedCohorts);
     }
 
     public CohortDefinition getTPTStartDateBetweenPeriod() {

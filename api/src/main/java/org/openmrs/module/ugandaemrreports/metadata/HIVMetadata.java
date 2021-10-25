@@ -4,8 +4,11 @@ import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.PatientIdentifierType;
 import org.openmrs.Program;
+import org.openmrs.ProgramWorkflowState;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +20,7 @@ import java.util.List;
  * Metadata definitions for the HIV related reporting
  */
 @Component("hivMetadata")
-public class HIVMetadata extends Metadata {
+public class HIVMetadata extends ReportMetadata {
 
     @Autowired
     CommonDimensionLibrary commonDimensionLibrary;
@@ -610,6 +613,17 @@ public class HIVMetadata extends Metadata {
         return getConcept("dca16e53-30ab-102d-86b0-7a5022ba4115");
     }
 
+    public ProgramWorkflowState getFirstLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_FIRST_LINE_REGIMEN);
+    }
+
+    public ProgramWorkflowState getSecondLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_SECOND_LINE_REGIMEN);
+    }
+
+    public ProgramWorkflowState getThirdLineRegimenState() {
+        return Context.getProgramWorkflowService().getStateByUuid(Metadata.ProgramState.HIV_PROGRAM_STATE_THIRD_LINE_REGIMEN);
+    }
 
     public List<EncounterType> getSMCEncounterType() {
         List<EncounterType> l = new ArrayList<EncounterType>();

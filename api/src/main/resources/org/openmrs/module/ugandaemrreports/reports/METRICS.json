@@ -1,113 +1,168 @@
 {
-  "facility_id": "#S.dhis_uuid#",
-  "facility_name": "#H.facilityName#",
-  "emr_software": "UgandaEMR",
-  "emr_version": "#aijar.version#",
-  "start_date": "#parameter.startDate|YYYY-MM-dd#",
-  "end_date": "#parameter.endDate|YYYY-MM-dd#",
-  "date_run": "#date.today|YYYY-MM-dd#",
-  "encounters": {
-    "HIV": {
-        "art_summary": {
-          "community_visits": #METRIC.o#,
-          "facility_visits": #METRIC.p#,
-          "total": #METRIC.l#
-        },
-        "art_encounter":{
-          "community_visits": #METRIC.q#,
-          "facility_visits": #METRIC.r#,
-          "total": #METRIC.a#
-        },
-        "art_health_education":{
-          "community_visits": #METRIC.s#,
-          "facility_visits": #METRIC.t#,
-          "total":#METRIC.m#
-        },
-        "hts":{
-          "community_visits": #METRIC.u#,
-          "facility_visits": #METRIC.v#,
-          "total": #METRIC.b#
-        },
-        "eid_summary":{
-          "community_visits": #METRIC.w#,
-          "facility_visits": #METRIC.x#,
-          "total": #METRIC.c#
-        },
-        "eid_encounter": {
-          "community_visits": #METRIC.y#,
-          "facility_visits": #METRIC.z#,
-          "total": #METRIC.d#
-        },
-        "missed_appointment_followup": {
-          "community_visits": #METRIC.a1#,
-          "facility_visits": #METRIC.a2#,
-          "total": #METRIC.e#
-        }
-      },
-    "SMC": {
-        "smc_encounter": {
-          "community_visits": #METRIC.b1#,
-          "facility_visits": #METRIC.b2#,
-          "total": #METRIC.b3#
-        },
-      "smc_followup": {
-        "community_visits": #METRIC.c1#,
-        "facility_visits": #METRIC.c2#,
-        "total": #METRIC.c3#
+  "metatdata": {
+    "facility_id": "#S.dhis_uuid#",
+    "facility_name": "#H.facilityName#",
+    "emr_software": "UgandaEMR",
+    "emr_version": "#aijar.version#",
+    "start_date": "#parameter.startDate|YYYY-MM-dd#",
+    "end_date": "#parameter.endDate|YYYY-MM-dd#",
+    "date_run": "#date.today|YYYY-MM-dd#"
+  },
+
+  "encounters":[
+    {
+      "type": "HIV",
+      "visits": {
+        "facility": [
+          {
+            "art_summary": #METRIC.p#
+          },
+          {
+            "art_encounter": #METRIC.r#
+          },
+          {
+            "art_health_education": #METRIC.t#
+          },
+          {
+            "hts": #METRIC.v#
+          },
+          {
+            "eid_summary": #METRIC.x#
+          },
+          {
+            "eid_encounter": #METRIC.z#
+          },
+          {
+            "missed_appointment_followup": #METRIC.a2#
+          }
+        ],
+        "community": [
+          {
+            "art_summary": #METRIC.o#
+          },
+          {
+            "art_encounter":#METRIC.q#
+          },
+          {
+            "art_health_education": #METRIC.s#
+          },
+          {
+            "hts": #METRIC.u#
+          },
+          {
+            "eid_summary": #METRIC.w#
+          },
+          {
+            "eid_encounter": #METRIC.y#
+          },
+          {
+            "missed_appointment_followup": #METRIC.a1#
+          }
+        ]
+      }
+    },{
+      "type": "SMC",
+      "visits": {
+        "facility": [
+          {
+            "smc_encounter": #METRIC.b2#
+          },
+          {
+            "smc_followup": #METRIC.c2#
+          }
+        ],
+        "community": [
+          {
+            "smc_encounter": #METRIC.b1#
+          },
+          {
+            "smc_followup": #METRIC.c1#
+          }
+        ]
       }
     },
-    "TB": {
-      "DS_TB_Enrollment": {
-        "community_visits": #METRIC.d1#,
-        "facility_visits": #METRIC.d2#,
-        "total": #METRIC.d3#
-      },
-      "DS_TB_Followup": {
-        "community_visits": #METRIC.e1#,
-        "facility_visits": #METRIC.e2#,
-        "total": #METRIC.e3#
-      },
-      "DR_TB_Enrollment": {
-        "community_visits": #METRIC.f1#,
-        "facility_visits": #METRIC.f2#,
-        "total": #METRIC.f3#
-      },
-      "DR_TB_Followup": {
-        "community_visits": #METRIC.g1#,
-        "facility_visits": #METRIC.g2#,
-        "total": #METRIC.g3#
+    {
+      "type": "TB",
+      "visits": {
+        "facility": [
+          {
+            "DS_TB_Enrollment": #METRIC.d2#
+          },
+          {
+            "DS_TB_Followup": #METRIC.e2#
+          },
+          {
+            "DR_TB_Enrollment": #METRIC.f2#
+          },
+          {
+            "DR_TB_Followup": #METRIC.g2#
+          }
+        ],
+        "community": [
+          {
+            "DS_TB_Enrollment": #METRIC.d1#
+          },
+          {
+            "DS_TB_Followup": #METRIC.e1#
+          },
+          {
+            "DR_TB_Enrollment": #METRIC.f1#
+          },
+          {
+            "DR_TB_Followup": #METRIC.g1#
+          }
+        ]
       }
     },
-    "MCH": {
-      "ANC_Encounter": {
-        "community_visits": #METRIC.h1#,
-        "facility_visits": #METRIC.h2#,
-        "total": #METRIC.h3#
-      },
-      "Maternity": {
-        "community_visits": #METRIC.j1#,
-        "facility_visits": #METRIC.j2#,
-        "total": #METRIC.j3#
-      },
-      "PNC_Encounter": {
-        "community_visits": #METRIC.k1#,
-        "facility_visits": #METRIC.k2#,
-        "total": #METRIC.k3#
+    {
+      "type": "MCH",
+      "visits": {
+        "facility": [
+          {
+            "ANC_Encounter": #METRIC.h2#
+          },
+          {
+            "Maternity": #METRIC.j2#
+          },
+          {
+            "PNC_Encounter": #METRIC.k2#
+          }
+        ],
+        "community": [
+          {
+            "ANC_Encounter": #METRIC.h1#
+          },
+          {
+            "Maternity": #METRIC.j1#
+          },
+          {
+            "PNC_Encounter": #METRIC.k1#
+          }
+        ]
       }
     },
-    "COVID": {
-      "Initiation": {
-        "community_visits": #METRIC.l1#,
-        "facility_visits": #METRIC.l2#,
-        "total": #METRIC.l3#
-      },
-      "Followup": {
-        "community_visits": #METRIC.m1#,
-        "facility_visits": #METRIC.m2#,
-        "total": #METRIC.m3#
+    {
+      "type": "COVID",
+      "visits": {
+        "facility": [
+          {
+            "Initiation": #METRIC.l2#
+          },
+          {
+            "Followup": #METRIC.m2#
+          }
+        ],
+        "community": [
+          {
+            "Initiation": #METRIC.l1#
+          },
+          {
+            "Followup": #METRIC.m1#
+          }
+        ]
       }
     }
-  },
+  ],
   "poc_service_metrics": {
     "reception":#METRIC.f#,
     "triage":#METRIC.g#,
