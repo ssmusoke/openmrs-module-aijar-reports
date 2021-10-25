@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.*;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.*;
@@ -1536,5 +1537,11 @@ public class DataFactory {
         icsd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
         icsd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(icsd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
+    }
+    public CohortDefinition getClientOfNationality(List<Concept> concepts) {
+        PersonAttributeCohortDefinition cd = new PersonAttributeCohortDefinition();
+        cd.setAttributeType(Context.getPersonService().getPersonAttributeTypeByUuid("dec484be-1c43-416a-9ad0-18bd9ef28929"));
+        cd.setValueConcepts(concepts);
+        return cd;
     }
 }

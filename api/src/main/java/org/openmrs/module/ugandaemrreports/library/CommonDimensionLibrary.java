@@ -613,6 +613,43 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         return ageGenderDimension;
     }
 
+    public CohortDefinitionDimension getCovidAgeGenderGroup() {
+        CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
+
+        CohortDefinition below5Years = cohortDefinitionLibrary.agedAtMost(4);
+        CohortDefinition between5And19Years = cohortDefinitionLibrary.agedBetween(5,19);
+        CohortDefinition between20And49Years = cohortDefinitionLibrary.agedBetween(20,49);
+        CohortDefinition atleast50Years = cohortDefinitionLibrary.above50Years();
+
+        CohortDefinition males = cohortDefinitionLibrary.males();
+        CohortDefinition females = cohortDefinitionLibrary.females();
+
+
+        CohortDefinition a = df.getPatientsInAll(below5Years, males);
+        CohortDefinition b = df.getPatientsInAll(below5Years, females);
+        CohortDefinition c = df.getPatientsInAll(between5And19Years, males);
+        CohortDefinition d = df.getPatientsInAll(between5And19Years, females);
+        CohortDefinition e = df.getPatientsInAll(between20And49Years, males);
+        CohortDefinition f = df.getPatientsInAll(between20And49Years, females);
+        CohortDefinition g = df.getPatientsInAll(atleast50Years, males);
+        CohortDefinition h = df.getPatientsInAll(atleast50Years, females);
+
+
+
+        ageGenderDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
+        ageGenderDimension.addCohortDefinition("below5male", Mapped.mapStraightThrough(a));
+        ageGenderDimension.addCohortDefinition("below5female", Mapped.mapStraightThrough(b));
+        ageGenderDimension.addCohortDefinition("btn5and19male", Mapped.mapStraightThrough(c));
+        ageGenderDimension.addCohortDefinition("btn5and19female", Mapped.mapStraightThrough(d));
+        ageGenderDimension.addCohortDefinition("btn20and49male", Mapped.mapStraightThrough(e));
+        ageGenderDimension.addCohortDefinition("btn20and49female", Mapped.mapStraightThrough(f));
+        ageGenderDimension.addCohortDefinition("above50male", Mapped.mapStraightThrough(g));
+        ageGenderDimension.addCohortDefinition("above50female", Mapped.mapStraightThrough(h));
+
+        return ageGenderDimension;
+    }
+
+
 
     public CohortDefinitionDimension getTB_STATAndTB_ARTAgeGenderGroup(){
         CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
