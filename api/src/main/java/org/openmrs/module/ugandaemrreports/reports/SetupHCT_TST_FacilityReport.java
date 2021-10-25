@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.reports;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -38,12 +39,6 @@ public class SetupHCT_TST_FacilityReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private TBCohortDefinitionLibrary tbCohortDefinitionLibrary;
-
-    @Autowired
-    private Moh105CohortLibrary moh105CohortLibrary;
 
     @Autowired
     private CommonDimensionLibrary commonDimensionLibrary;
@@ -122,50 +117,43 @@ public class SetupHCT_TST_FacilityReport extends UgandaEMRDataExportManager {
 
         CohortDefinition testedForHIVAndReceivedResultsAndPositive = df.getPatientsInAll(testedForHIVAndReceivedResults,testedPositiveDuringPeriod);
         CohortDefinition testedForHIVAndReceivedResultsAndNegative = df.getPatientsInAll(testedForHIVAndReceivedResults,testedNegativeDuringPeriod);
-        CohortDefinition patientThroughSTIClinicEntryPoint = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("dcd98f72-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
-        CohortDefinition patientThroughTBClinicEntryPoint = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientThroughSNS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("43eae374-df77-464c-ad3c-3deb5bfe2447")), BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition ANC1Only = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"), hivMetadata.getHCTEncounterType(), RangeComparator.EQUAL, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition ANC2AndAbove = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"), hivMetadata.getHCTEncounterType(), RangeComparator.GREATER_THAN, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition PIPS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition HIVPositiveAndThroughSTIClinic = df.getPatientsInAll( patientThroughSTIClinicEntryPoint, testedForHIVAndReceivedResultsAndPositive);
-        CohortDefinition HIVNegativeAndThroughSTIClinic = df.getPatientsInAll( patientThroughSTIClinicEntryPoint, testedForHIVAndReceivedResultsAndNegative);
+        CohortDefinition facilityDeliveryModel = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.HTC_DELIVERY_MODEL),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.FACILITY_BASED)), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition communityDeliveryModel = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.HTC_DELIVERY_MODEL),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.COMMUNITY_TESTING_POINT)), BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition HIVPositiveAndThroughTBClinic = df.getPatientsInAll( patientThroughTBClinicEntryPoint, testedForHIVAndReceivedResultsAndPositive);
-        CohortDefinition HIVNegativeAndThroughTBClinic = df.getPatientsInAll( patientThroughTBClinicEntryPoint, testedForHIVAndReceivedResultsAndNegative);
+        CohortDefinition patientThroughSNSFacilityEntryPoint = df.getPatientsInAll(patientThroughSNS,facilityDeliveryModel);
+        CohortDefinition patientThroughSNSCommunityEntryPoint = df.getPatientsInAll(patientThroughSNS,communityDeliveryModel);
 
-        CohortDefinition PIPAndPositive = df.getPatientsInAll(PIPS,testedForHIVAndReceivedResultsAndPositive);
-        CohortDefinition PIPAndNegative = df.getPatientsInAll(PIPS,testedForHIVAndReceivedResultsAndNegative);
+        CohortDefinition HIVPositiveAndThroughSNS = df.getPatientsInAll(patientThroughSNSFacilityEntryPoint, testedForHIVAndReceivedResultsAndPositive);
+        CohortDefinition HIVNegativeAndThroughSNS = df.getPatientsInAll(patientThroughSNSFacilityEntryPoint, testedForHIVAndReceivedResultsAndNegative);
 
-        CohortDefinition PWIDAndPositive = df.getPatientsInAll(PWIDS,testedForHIVAndReceivedResultsAndPositive);
-        CohortDefinition PWIDAndNegative = df.getPatientsInAll(PWIDS,testedForHIVAndReceivedResultsAndNegative);
+        CohortDefinition HIVPositiveAndThroughSNSCommunity = df.getPatientsInAll( patientThroughSNSCommunityEntryPoint, testedForHIVAndReceivedResultsAndPositive);
+        CohortDefinition HIVNegativeAndThroughNSCommunity = df.getPatientsInAll( patientThroughSNSCommunityEntryPoint, testedForHIVAndReceivedResultsAndNegative);
 
-        addGender(dsd,"e","testedHIV+AndThroughSTI female ",HIVPositiveAndThroughSTIClinic,"female");
-        addGender(dsd,"f","testedHIV+AndThroughSTI male", HIVPositiveAndThroughSTIClinic,"male");
 
-        addGender(dsd,"g","testedHIV-AndThroughSTI female ",  HIVNegativeAndThroughSTIClinic,"female");
-        addGender(dsd,"h","testedHIV-AndThroughSTI male",  HIVNegativeAndThroughSTIClinic,"male");
+        addGender(dsd,"a","ANC1 positive female ",df.getPatientsInAll(ANC1Only,testedForHIVAndReceivedResultsAndPositive),"female");
+        addGender(dsd,"b","ANC1 negative female", df.getPatientsInAll(ANC1Only,testedForHIVAndReceivedResultsAndNegative),"female");
 
-        addGender(dsd,"m","testedHIV+AndThroughTB female ",HIVPositiveAndThroughTBClinic,"female");
-        addGender(dsd,"n","testedHIV+AndThroughTB male", HIVPositiveAndThroughTBClinic,"male");
+        addGender(dsd,"c","ANC2andAbove positive female ",df.getPatientsInAll(ANC2AndAbove,testedForHIVAndReceivedResultsAndPositive),"female");
+        addGender(dsd,"d","ANC2andAbove negative female", df.getPatientsInAll(ANC2AndAbove,testedForHIVAndReceivedResultsAndNegative),"female");
 
-        addGender(dsd,"o","testedHIV-AndThroughTB female ", HIVNegativeAndThroughTBClinic,"female");
-        addGender(dsd,"p","testedHIV-AndThroughTB male",  HIVNegativeAndThroughTBClinic,"male");
+        addGender(dsd,"e","HIVPositiveAndThroughSNS female ",HIVPositiveAndThroughSNS,"female");
+        addGender(dsd,"f","HIVPositiveAndThroughSNS male", HIVPositiveAndThroughSNS,"male");
 
-        addIndicator(dsd, "PIPa", "PIP positive female",PIPAndPositive, "age=female");
-        addIndicator(dsd, "PIPb", "PIP positive male",PIPAndPositive, "age=male");
+        addGender(dsd,"g","HIVNegativeAndThroughSNS female ",  HIVNegativeAndThroughSNS,"female");
+        addGender(dsd,"h","HIVNegativeAndThroughSNS male",  HIVNegativeAndThroughSNS,"male");
 
-        addIndicator(dsd, "PIPc", "PIP negative female",PIPAndNegative, "age=female");
-        addIndicator(dsd, "PIPd", "PIP negative male",PIPAndNegative, "age=male");
+        addGender(dsd,"m","HIVPositiveAndThroughSNSCommunity female ",HIVPositiveAndThroughSNSCommunity,"female");
+        addGender(dsd,"n","HIVPositiveAndThroughSNSCommunity male", HIVPositiveAndThroughSNSCommunity,"male");
 
-        addIndicator(dsd, "PWIDSa", "PWID positive female",PWIDAndPositive, "age=female");
-        addIndicator(dsd, "PWIDSb", "PWID positive male",PWIDAndPositive, "age=male");
+        addGender(dsd,"o","HIVNegativeAndThroughNSCommunity female ", HIVNegativeAndThroughNSCommunity,"female");
+        addGender(dsd,"p","tHIVNegativeAndThroughNSCommunity male",  HIVNegativeAndThroughNSCommunity,"male");
 
-        addIndicator(dsd, "PWIDSc", "PWID negative female",PWIDAndNegative, "age=female");
-        addIndicator(dsd, "PWIDSd", "PWID negative male",PWIDAndNegative, "age=male");
 
         return rd;
     }
@@ -198,6 +186,6 @@ public class SetupHCT_TST_FacilityReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.0";
+        return "3.0.6";
     }
 }
