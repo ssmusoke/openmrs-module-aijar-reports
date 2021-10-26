@@ -641,28 +641,6 @@ public class Moh105CohortLibrary {
         return cd;
     }
 
-    public CohortDefinition marternalCounsellingandPositiveinMaternity() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Maternal Counselling and Positive");
-        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(getConcept(EMTCT_CODES), getConcept(Metadata.Concept.EMTCT_CODE_TRR), getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK), getConcept(Metadata.Concept.EMTCT_CODE_TRRK), getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("maternalCounselling", ReportUtils.map(definitionLibrary.hasMATERNITYObs(getConcept("af7dccfd-4692-4e16-bd74-5ac4045bb6bf"), getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("positiveFemales AND maternalCounselling");
-        return cd;
-    }
-
-    public CohortDefinition infantCounsellingAndPositiveinMaternity() {
-        CompositionCohortDefinition cd = new CompositionCohortDefinition();
-        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
-        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.setName("Infant Counselling and Positive");
-        cd.addSearch("positiveFemales", ReportUtils.map(definitionLibrary.hasMATERNITYObs(getConcept(EMTCT_CODES), getConcept(Metadata.Concept.EMTCT_CODE_TRR), getConcept(Metadata.Concept.EMTCT_CODE_TRRTICK), getConcept(Metadata.Concept.EMTCT_CODE_TRRK), getConcept(Metadata.Concept.EMTCT_CODE_TRRP)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
-        cd.addSearch("infantCounselling", ReportUtils.map(definitionLibrary.hasMATERNITYObs(getConcept("5d993591-9334-43d9-a208-11b10adfad85"), getConcept("dcd695dc-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
-        cd.setCompositionString("positiveFemales AND infantCounselling");
-        return cd;
-    }
-
 
 
 
