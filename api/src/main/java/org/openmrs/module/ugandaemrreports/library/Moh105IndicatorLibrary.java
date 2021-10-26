@@ -43,6 +43,9 @@ public class Moh105IndicatorLibrary {
     private Moh105CohortLibrary cohortLibrary;
 
     @Autowired
+    private EIDCohortDefinitionLibrary eidcohortLibrary;
+
+    @Autowired
     private CommonCohortDefinitionLibrary cclibrary;
 
     /**
@@ -68,6 +71,10 @@ public class Moh105IndicatorLibrary {
 
     public CohortIndicator ANCEighthVisit(){
         return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(8.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator getInfantsEnrolledInCare24MonthsAgo(){
+        return cohortIndicator("Clients that are enrolled to care 24 Months ago", map(eidcohortLibrary.enrolledinCareAtBirth(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**

@@ -1,6 +1,8 @@
 package org.openmrs.module.ugandaemrreports.library;
 
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
@@ -19,6 +21,7 @@ import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
 import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -38,6 +41,9 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     @Autowired
     private HIVMetadata hivMetadata;
+
+    @Autowired
+    CommonCohortDefinitionLibrary definitionLibrary;
 
     @Override
     public Class<? super CohortDefinition> getDefinitionType() {
@@ -235,8 +241,58 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         dateObsCohortDefinition.setTimeModifier(BaseObsCohortDefinition.TimeModifier.ANY);
         return dateObsCohortDefinition;
     }
-    
-    
+
+    /**
+     * Get Infants that where born 24 months ago
+     */
+    public CohortDefinition getInfantsBorn24MonthsAgo() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 24 Months old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(2);
+        cd.setMaxAge(2);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
+        return cd;
+    }
+
+    /**
+     * Infants in care and are 24 months
+     * @return
+     */
+    public CohortDefinition enrolledinCareAtBirth() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.setName("Enrolled in EID Care");
+        cd.addSearch("EIDSummaryEncounter", ReportUtils.map(getAllEIDPatients()));
+        cd.addSearch("Age2", ReportUtils.map(definitionLibrary.agedBetween(2,2), "endDate=${onOrBefore}"));
+        cd.setCompositionString("EIDSummaryEncounter AND Age2");
+        return cd;
+    }
+
+    public CohortDefinition getInfantsEnrolledInCare24MonthsAgo()
+    {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Children Born 24 Months away and enrolled in care");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("MonthsBaby", ReportUtils.map(definitionLibrary.agedBetween(2,2), "onOrBefore=${onOrBefore}"));
+        cd.addSearch("EIDSummaryEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.EID_SUMMARY_PAGE)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("MonthsBaby AND EIDSummaryEncounter");
+        return cd;
+    }
+
+    /**
+     * Initiated on HIV Prophylaxis 6 weeks after birth
+     */
+    public CohortDefinition initiatedonHIVSixWeeksAfterBrith() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("133d0cb7-53ce-460a-8826-e98a2bb99d73"),Dictionary.getConcept("da9308a0-6202-426c-9b32-eb3095a35ea0"));
+    }
+    public CohortDefinition initiatedonHIVTwelveWeeksWeeksAfterBrith() {
+        return definitionLibrary.hasObs(Dictionary.getConcept("133d0cb7-53ce-460a-8826-e98a2bb99d73"),Dictionary.getConcept("5c298370-0520-43f4-a7b8-d9749a26d15c"));
+    }
+
+
     /**
      * Infants who are 6 weeks and above
      * @return

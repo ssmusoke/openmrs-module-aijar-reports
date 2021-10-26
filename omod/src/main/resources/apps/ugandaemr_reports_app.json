@@ -631,6 +631,16 @@
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
+
+      {
+        "id": "HMIS 105 Section 2.4.1",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.4.1: HIV EXPOSED INFANTS",
+        "url": "reportingui/runReport.page?reportDefinition=209b94d4-d8b1-11e6-bf26-cec0c932ce01",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
       {
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
