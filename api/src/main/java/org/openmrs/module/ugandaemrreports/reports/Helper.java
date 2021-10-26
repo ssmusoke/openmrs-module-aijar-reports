@@ -68,8 +68,8 @@ public class Helper {
                 "  (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate) - (RIGHT(e.encounter_datetime, 5) < RIGHT(birthdate, 5))\n" +
                 "   FROM person p\n" +
                 "   WHERE p.person_id = e.patient_id)                       AS age,\n" +
-                "  (SELECT group_concat(concat_ws(':', o.concept_id, o.value_coded, DATE(o.obs_datetime)))\n" +
-                "   FROM obs o\n" +
+                "  (SELECT group_concat(concat_ws(':', o.concept_id, cn.name, DATE(o.obs_datetime)))\n" +
+                "   FROM obs o LEFT JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' \n" +
                 "   WHERE o.concept_id = 90244 AND o.person_id = e.patient_id) AS marital,\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pit.uuid, ''), COALESCE(identifier, '')))\n" +
                 "   FROM patient_identifier pi INNER JOIN patient_identifier_type pit\n" +

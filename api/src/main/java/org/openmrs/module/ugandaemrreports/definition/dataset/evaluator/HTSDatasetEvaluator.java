@@ -137,9 +137,9 @@ public class HTSDatasetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "sex", data.getGender());
 
                 if (maritalStatus1 != null) {
-                    pdh.addCol(row, "marital", convert(processString2(maritalStatus1).get(1)));
+                    pdh.addCol(row, "marital", processString2(maritalStatus1).get(1));
                 } else if (maritalStatus != null) {
-                    pdh.addCol(row, "marital", maritalStatus);
+                    pdh.addCol(row, "marital", convert(maritalStatus));
                 } else {
                     pdh.addCol(row, "marital", "");
                 }
