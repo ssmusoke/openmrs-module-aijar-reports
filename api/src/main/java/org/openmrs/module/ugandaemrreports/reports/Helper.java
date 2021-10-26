@@ -68,8 +68,8 @@ public class Helper {
                 "  (SELECT YEAR(e.encounter_datetime) - YEAR(birthdate) - (RIGHT(e.encounter_datetime, 5) < RIGHT(birthdate, 5))\n" +
                 "   FROM person p\n" +
                 "   WHERE p.person_id = e.patient_id)                       AS age,\n" +
-                "  (SELECT group_concat(concat_ws(':', o.concept_id, o.value_coded, DATE(o.obs_datetime)))\n" +
-                "   FROM obs o\n" +
+                "  (SELECT group_concat(concat_ws(':', o.concept_id, cn.name, DATE(o.obs_datetime)))\n" +
+                "   FROM obs o LEFT JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' \n" +
                 "   WHERE o.concept_id = 90244 AND o.person_id = e.patient_id) AS marital,\n" +
                 "  (SELECT GROUP_CONCAT(CONCAT_WS(':', COALESCE(pit.uuid, ''), COALESCE(identifier, '')))\n" +
                 "   FROM patient_identifier pi INNER JOIN patient_identifier_type pit\n" +
@@ -86,9 +86,9 @@ public class Helper {
                 "   FROM person_address pas\n" +
                 "   WHERE e.patient_id = pas.person_id)                     AS 'addresses',\n" +
                 "  (SELECT group_concat(\n" +
-                "      concat_ws(':', o.concept_id, concat_ws('', DATE(o.value_datetime), o.value_text, o.value_coded, o.value_numeric),\n" +
+                "      concat_ws(':', o.concept_id, concat_ws('', DATE(o.value_datetime), o.value_text, cn.name, o.value_numeric),\n" +
                 "                DATE(o.obs_datetime),COALESCE(o.obs_group_id, '')))\n" +
-                "   FROM obs o\n";
+                "   FROM obs o LEFT JOIN concept_name cn ON o.value_coded = cn.concept_id AND cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n";
         if (obs != null) {
             sql += String.format("   WHERE o.encounter_id = e.encounter_id AND o.voided = 0 AND concept_id IN(%s)) AS obs\n", obs);
         } else {
