@@ -176,6 +176,6 @@ public class SetupTxRTT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.4";
+        return "0.0.5";
     }
 }

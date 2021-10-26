@@ -13,7 +13,7 @@ import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Observation;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.common.PatientEncounterObs;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HTSDatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
@@ -25,8 +25,8 @@ import java.util.function.Predicate;
 
 import static org.openmrs.module.ugandaemrreports.reports.Helper.*;
 
-@Handler(supports = {HCTDatasetDefinition.class})
-public class HCTDatasetEvaluator implements DataSetEvaluator {
+@Handler(supports = {HTSDatasetDefinition.class})
+public class HTSDatasetEvaluator implements DataSetEvaluator {
 
     @Autowired
     private EvaluationService evaluationService;
@@ -34,7 +34,7 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
-        HCTDatasetDefinition definition = (HCTDatasetDefinition) dataSetDefinition;
+        HTSDatasetDefinition definition = (HTSDatasetDefinition) dataSetDefinition;
 
         Date startDate = definition.getStartDate();
         Date endDate = definition.getEndDate();
@@ -51,22 +51,32 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
                 String maritalStatus1 = data.getMaritalStatus();
                 List<String> addresses = processString2(data.getAddresses());
                 Map<String, String> attributes = processString(data.getAttributes());
+                Map<String, String> identifiers = processString(data.getIdentifiers());
                 String telephone = attributes.get("14d4f066-15f5-102d-96e4-000c29c2a5d7");
                 String maritalStatus = attributes.get("8d871f2a-c2cc-11de-8d13-0010c6dffd0f");
+                String NIN = identifiers.get("f0c16a6d-dc5f-4118-a803-616d0075d282");
 
-                Observation registrationNo = searchObservations(observations, concept(164985));
-                Observation testBe4 = searchObservations(observations, conceptValue(99464, "1065"));
+                Observation serialNo = searchObservations(observations, concept(1646));
+                Observation model = searchObservations(observations, concept(165171));
+                Observation approach = searchObservations(observations, concept(99462));
+                Observation community_testing_point = searchObservations(observations, concept(165160));
+                Observation testing_reason = searchObservations(observations, concept(165168));
+                Observation special_category = searchObservations(observations, concept(165169));
+                Observation testingForFirstTime = searchObservations(observations, concept(165180));
                 Observation testLast12Months = searchObservations(observations, concept(162965));
-                Observation counselled = searchObservations(observations, conceptValue(162918, "90003"));
-                Observation receivedResults = searchObservations(observations, conceptValue(99411, "1065"));
+                Observation counselled = searchObservations(observations, concept(162918));
+                Observation receivedResultsAsCouple = searchObservations(observations, concept(99494));
+                Observation receivedResultsAsIndividual = searchObservations(observations, concept(165183));
                 Observation hivResults = searchObservations(observations, concept(99493));
-                Observation counselledAsCouple = searchObservations(observations, conceptValue(99368, "99367"));
-                Observation resultAsCouple = searchObservations(observations, conceptValue(99494, "1065"));
-                Observation discordantResults = searchObservations(observations, conceptValue(99497, "6096"));
+                Observation recentInfection = searchObservations(observations, concept(141520));
+                Observation coupleResults = searchObservations(observations, concept(99497));
                 Observation hctEntry = searchObservations(observations, concept(162925));
-                Observation presumptiveTB = searchObservations(observations, conceptValue(99498, "1065"));
-                Observation cd4 = searchObservations(observations, concept(5497));
-                Observation linkedToCare = searchObservations(observations, conceptValue(162982, "1065"));
+                Observation presumptiveTB = searchObservations(observations, concept(99498));
+                Observation presumptiveTBRefferred = searchObservations(observations, concept(165178));
+
+                Observation linkedToCare = searchObservations(observations, concept(162982));
+                Observation previousTestResults = searchObservations(observations, concept(165181));
+                Observation counselledAsACouple = searchObservations(observations, concept(99368));
 
                 List<String> names = Splitter.on(" ").splitToList(Splitter.on(",").splitToList(data.getNames()).get(0));
 
@@ -84,78 +94,76 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
                 }
 
 
-                if (registrationNo != null) {
-                    pdh.addCol(row, "reg", registrationNo.getValue());
+                if (serialNo != null) {
+                    pdh.addCol(row, "reg", serialNo.getValue());
                 } else {
                     pdh.addCol(row, "reg", "");
+                }
+                if (model != null) {
+                    pdh.addCol(row, "model", model.getValue());
+                } else {
+                    pdh.addCol(row, "model", "");
+                }
+                if (approach != null) {
+                    pdh.addCol(row, "approach", approach.getValue());
+                } else {
+                    pdh.addCol(row, "approach", "");
+                }
+                if (community_testing_point != null) {
+                    pdh.addCol(row, "community_test_point", community_testing_point.getValue());
+                } else {
+                    pdh.addCol(row, "community_test_point", "");
+                }
+                if (testing_reason != null) {
+                    pdh.addCol(row, "testing_reason", testing_reason.getValue());
+                } else {
+                    pdh.addCol(row, "testing_reason", "");
+                }
+                if (special_category != null) {
+                    pdh.addCol(row, "special_category", special_category.getValue());
+                } else {
+                    pdh.addCol(row, "special_category", "");
+                }
+                if (NIN != null) {
+                    pdh.addCol(row, "NIN", NIN);
+                } else {
+                    pdh.addCol(row, "NIN", "");
                 }
 
                 Integer age = data.getAge();
 
-                if (age < 5) {
-                    pdh.addCol(row, "<5", age);
-                } else {
-                    pdh.addCol(row, "<5", "");
-                }
-
-                if (age < 10 && age >= 5) {
-                    pdh.addCol(row, "<10", age);
-                } else {
-                    pdh.addCol(row, "<10", "");
-                }
-
-                if (age < 15 && age >= 10) {
-                    pdh.addCol(row, "<15", age);
-                } else {
-                    pdh.addCol(row, "<15", "");
-                }
-
-                if (age < 19 && age >= 15) {
-                    pdh.addCol(row, "<19", age);
-                } else {
-                    pdh.addCol(row, "<19", "");
-                }
-
-                if (age < 49 && age >= 19) {
-                    pdh.addCol(row, "<49", age);
-                } else {
-                    pdh.addCol(row, "<49", "");
-                }
-
-                if (age >= 49) {
-                    pdh.addCol(row, ">49", age);
-                } else {
-                    pdh.addCol(row, ">49", "");
-                }
+                pdh.addCol(row, "age", age);
 
                 pdh.addCol(row, "sex", data.getGender());
 
                 if (maritalStatus1 != null) {
-                    pdh.addCol(row, "marital", convert(processString2(maritalStatus1).get(1)));
+                    pdh.addCol(row, "marital", processString2(maritalStatus1).get(1));
                 } else if (maritalStatus != null) {
-                    pdh.addCol(row, "marital", maritalStatus);
+                    pdh.addCol(row, "marital", convert(maritalStatus));
                 } else {
                     pdh.addCol(row, "marital", "");
                 }
 
                 if (addresses.size() == 6) {
                     pdh.addCol(row, "district", addresses.get(1));
-                    pdh.addCol(row, "sub-county", addresses.get(3) + " " + addresses.get(4));
+                    pdh.addCol(row, "sub-county", addresses.get(3));
+                    pdh.addCol(row, "parish" , addresses.get(4));
                     pdh.addCol(row, "village", addresses.get(5));
 
                 } else {
                     pdh.addCol(row, "district", "");
                     pdh.addCol(row, "sub-county", "");
+                    pdh.addCol(row, "parish", "");
                     pdh.addCol(row, "village", "");
                 }
 
                 pdh.addCol(row, "telephone", telephone);
 
 
-                if (testBe4 != null) {
-                    pdh.addCol(row, "first", "N");
+                if (testingForFirstTime != null&& testingForFirstTime.getValue().equals("YES")) {
+                    pdh.addCol(row, "first","Y" );
                 } else {
-                    pdh.addCol(row, "first", "Y");
+                    pdh.addCol(row, "first", "N");
                 }
 
                 if (testLast12Months != null && Integer.valueOf(testLast12Months.getValue()) > 2) {
@@ -164,69 +172,109 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "tested > 2", "N");
                 }
 
-                if (counselled != null) {
+                if (counselled != null && counselled.getValue().equals("YES")) {
                     pdh.addCol(row, "counselled", "Y");
                 } else {
                     pdh.addCol(row, "counselled", "N");
                 }
 
-                pdh.addCol(row, "tested", "-");
 
 
-                if (receivedResults != null) {
+                if ((receivedResultsAsIndividual != null &&  receivedResultsAsIndividual.getValue().equals("YES")) || (receivedResultsAsCouple !=null&&receivedResultsAsCouple.getValue().equals("YES"))) {
                     pdh.addCol(row, "received", "Y");
                 } else {
                     pdh.addCol(row, "received", "N");
                 }
 
                 if (hivResults != null) {
-                    pdh.addCol(row, "results", convert(hivResults.getValue()));
+                    pdh.addCol(row, "tested", "Y");
+                    pdh.addCol(row, "results", hivResults.getValue());
                 } else {
                     pdh.addCol(row, "results", "");
+                    pdh.addCol(row, "tested", "N");
                 }
 
-                if (counselledAsCouple != null) {
-                    pdh.addCol(row, "c-couple", "Y");
+                if (recentInfection != null) {
+                    pdh.addCol(row, "recent", recentInfection.getValue());
                 } else {
-                    pdh.addCol(row, "c-couple", "N");
+                    pdh.addCol(row, "recent", "");
                 }
 
-                if (resultAsCouple != null) {
-                    pdh.addCol(row, "r-couple", "Y");
-                } else {
-                    pdh.addCol(row, "r-couple", "N");
+                if(previousTestResults !=null){
+                    if (previousTestResults.getValue().equals("HIV+")) {
+                        pdh.addCol(row, "already_positive", "Y");
+                    } else {
+                        pdh.addCol(row, "already_positive", "N");
+                    }
+                }
+                else{
+                    pdh.addCol(row, "already_positive", "NA");
                 }
 
-                if (discordantResults != null) {
-                    pdh.addCol(row, "discordant", "Y");
+                if(counselledAsACouple !=null){
+                    if (counselledAsACouple.getValue().equals("Couple Counselling session")) {
+                        pdh.addCol(row, "c-couple", "Y");
+                    } else {
+                        pdh.addCol(row, "c-couple", "N");
+                    }
+                }else{
+                    pdh.addCol(row, "c-couple", "");
+                }
+
+                if (receivedResultsAsCouple != null) {
+                    if (receivedResultsAsCouple.getValue().equals("YES")) {
+                        pdh.addCol(row, "r-couple", "Y");
+                    } else {
+                        pdh.addCol(row, "r-couple", "N");
+                    }
                 } else {
+                    pdh.addCol(row, "r-couple", "");
+                }
+
+                if (coupleResults != null) {
+                    if(coupleResults.getValue().equals("DISCORDANT COUPLE"))
+                    {
+                     pdh.addCol(row, "discordant", "Y");
+                    } else {
                     pdh.addCol(row, "discordant", "N");
+                    }
+                }else{
+                    pdh.addCol(row, "discordant", "");
+                }
+
+                if (coupleResults != null) {
+                    if(coupleResults.getValue().equals("Concordant Positive"))
+                    {
+                     pdh.addCol(row, "concordant", "Y");
+                    } else {
+                    pdh.addCol(row, "concordant", "N");
+                    }
+                }else{
+                    pdh.addCol(row, "concordant", "");
                 }
 
                 if (hctEntry != null) {
-                    pdh.addCol(row, "entry", convert(hctEntry.getValue()));
+                    pdh.addCol(row, "entry", hctEntry.getValue());
                 } else {
                     pdh.addCol(row, "entry", "");
                 }
 
-                if (presumptiveTB != null) {
+                if (presumptiveTB != null && presumptiveTB.getValue().equals("YES")) {
                     pdh.addCol(row, "tb", "Y");
                 } else {
                     pdh.addCol(row, "tb", "N");
                 }
 
-                if (cd4 != null) {
-                    pdh.addCol(row, "cd4", cd4.getValue());
+                if (presumptiveTBRefferred != null && presumptiveTBRefferred.getValue().equals("YES")) {
+                    pdh.addCol(row, "tb_refferred", "Y");
                 } else {
-                    pdh.addCol(row, "cd4", "");
+                    pdh.addCol(row, "tb_refferred", "N");
                 }
 
-                if (linkedToCare != null) {
+                if (linkedToCare != null && linkedToCare.getValue().equals("YES")) {
                     pdh.addCol(row, "linked", "Y");
-                    pdh.addCol(row, "where", "-");
                 } else {
                     pdh.addCol(row, "linked", "N");
-                    pdh.addCol(row, "where", "-");
                 }
                 dataSet.addRow(row);
 
@@ -272,12 +320,15 @@ public class HCTDatasetEvaluator implements DataSetEvaluator {
 
         conceptsNames.put("90005", "SINGLE");
         conceptsNames.put("90006", "MARRIED");
+        conceptsNames.put("5555", "MARRIED");
         conceptsNames.put("90007", "DIVORCED");
         conceptsNames.put("90008", "SEPARATED");
         conceptsNames.put("90009", "WIDOWED");
         conceptsNames.put("90280", "CHILD");
         conceptsNames.put("1057", "NEVER MARRIED");
+        conceptsNames.put("1056", "SEPARATED");
         conceptsNames.put("1060", "LIVING WITH PARTNER");
+
 
 
         return conceptsNames.get(value);

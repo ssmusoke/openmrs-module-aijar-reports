@@ -137,6 +137,7 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(definition));
+        addColumn(dsd, "ID", hivPatientData.getClinicNumber());
         dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
         dsd.addColumn("Sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
@@ -163,6 +164,6 @@ public class SetUpLostReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.9";
+        return "1.2.0";
     }
 }

@@ -4,7 +4,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HTSDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Health Unit TB Register Report
+ * HTS Register Report
  * */
 
 @Component
-public class SetupHCTRegister extends UgandaEMRDataExportManager {
+public class SetupHTSRegister extends UgandaEMRDataExportManager {
 	
 	
 	@Autowired
@@ -26,12 +26,12 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getDescription() {
-		return "HIV COUNSELLING and Testing (HCT) Register" ;
+		return "HIV  Testing Services (HTS)Register" ;
 	}
 	
 	@Override
 	public String getName() {
-		return "HIV COUNSELLING and Testing (HCT) Register";
+		return "HIV  Testing Services (HTS)Register";
 	}
 	
 	@Override
@@ -41,7 +41,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	
 	@Override
 	public String getVersion() {
-		return "0.7";
+		return "0.8.5";
 	}
 	
 	/**
@@ -84,7 +84,7 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 	public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign("79a2e2c2-d744-4a56-bcc4-8b6718f99f28", reportDefinition, "HCTRegister.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:4,dataset:HCT");
+		props.put("repeatingSections", "sheet:1,row:4-8,dataset:HTS");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
@@ -100,10 +100,10 @@ public class SetupHCTRegister extends UgandaEMRDataExportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		HCTDatasetDefinition dsd = new HCTDatasetDefinition();
+		HTSDatasetDefinition dsd = new HTSDatasetDefinition();
 		dsd.setName(getName());
 		dsd.setParameters(getParameters());
-		rd.addDataSetDefinition("HCT", Mapped.mapStraightThrough(dsd));
+		rd.addDataSetDefinition("HTS", Mapped.mapStraightThrough(dsd));
 		return rd;
 	}
 }
