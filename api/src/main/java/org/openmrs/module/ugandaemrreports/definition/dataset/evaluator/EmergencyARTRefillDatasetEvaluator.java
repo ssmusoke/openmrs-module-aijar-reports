@@ -62,6 +62,7 @@ public class EmergencyARTRefillDatasetEvaluator implements DataSetEvaluator {
                 Observation parentDistrict = searchObservations(observations, concept(166454));
                 Observation reasonForVisit = searchObservations(observations, concept(160288));
                 Observation current_regimen = searchObservations(observations, concept(90315));
+                Observation parentFacilityRegimen = searchObservations(observations, concept(166039));
                 Observation weight = searchObservations(observations, concept(5089));
                 Observation temperature = searchObservations(observations, concept(5088));
                 Observation TBStatus = searchObservations(observations, concept(90216));
@@ -149,6 +150,11 @@ public class EmergencyARTRefillDatasetEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "current_regimen", current_regimen.getValue());
                 } else {
                     pdh.addCol(row, "current_regimen", "");
+                }
+                if (parentFacilityRegimen != null) {
+                    pdh.addCol(row, "parentFacilityRegimen", parentFacilityRegimen.getValue());
+                } else {
+                    pdh.addCol(row, "parentFacilityRegimen", "");
                 }
                 if (weight != null) {
                     pdh.addCol(row, "weight", weight.getValue());
