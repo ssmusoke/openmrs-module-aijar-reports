@@ -690,6 +690,11 @@ public class HIVMetadata extends ReportMetadata {
         l.add(MetadataUtils.existing(EncounterType.class, "cd9a2698-206f-44f3-a888-f824544413b4"));
         return l;
     }
+    public List<EncounterType> getCovidDischargeEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "482e4b17-fb9c-4937-a1cf-9052d3e3be68"));
+        return l;
+    }
 
     public Program getFBIMProgram(){
         return commonDimensionLibrary.getProgramByUuid("de5d54ae-c304-11e8-9ad0-529269fb1459");

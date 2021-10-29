@@ -2,11 +2,9 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.Cohort;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -154,7 +152,11 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
         dsd1.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition admissions = df.getAnyEncounterOfTypesBetweenDates(hivMetadata.getCovidInitiationEncounterType());
+        CohortDefinition admissions = getAnyEncounterOfTypesBetweenDates(hivMetadata.getCovidInitiationEncounterType());
+        CohortDefinition allAdmissionsByToday = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getCovidInitiationEncounterType());
+        CohortDefinition dischargedByToday = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getCovidDischargeEncounterType());
+        CohortDefinition confirmedCasesOnAdmissionsByToday = df.getPatientsNotIn(allAdmissionsByToday,dischargedByToday);
+
         Concept national = getConcept("dc47dd51-c509-44fd-ab2f-a2494f0d4726");
         Concept foreigner = getConcept("d7193894-2922-432a-9175-dde877090594");
         Concept refugee = getConcept("165127AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -169,6 +171,12 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
         addGender(dsd,"2","Refugees  Admitted today",df.getPatientsInAll(refugees,admissions));
         addGender(dsd,"3","Foreign residents  Admitted today",df.getPatientsInAll(foreignResidents,admissions));
         addGender(dsd,"4","non resident foreigners  Admitted today",df.getPatientsInAll(foreignNonResidents,admissions));
+
+        addGender(dsd1,"1","Ugandans  on admission as of today",df.getPatientsInAll(ugandans,confirmedCasesOnAdmissionsByToday));
+        addGender(dsd1,"2","Refugees  on admission as of today",df.getPatientsInAll(refugees,confirmedCasesOnAdmissionsByToday));
+        addGender(dsd1,"3","Foreign residents  on admission as of today",df.getPatientsInAll(foreignResidents,confirmedCasesOnAdmissionsByToday));
+        addGender(dsd1,"4","non resident foreigners  on admission as of today",df.getPatientsInAll(foreignNonResidents,confirmedCasesOnAdmissionsByToday));
+
 
 
 
@@ -189,7 +197,16 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
 
     }
 
-        @Override
+    public CohortDefinition getAnyEncounterOfTypesBetweenDates(List<EncounterType> types) {
+        EncounterCohortDefinition cd = new EncounterCohortDefinition();
+        cd.setEncounterTypeList(types);
+        cd.addParameter(new Parameter("onOrAfter", "On or After", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
+        return df.convert(cd, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=startDate"));
+    }
+
+
+    @Override
     public String getVersion() {
         return "2.0.1";
     }
