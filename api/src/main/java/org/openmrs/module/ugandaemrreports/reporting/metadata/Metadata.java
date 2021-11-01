@@ -299,6 +299,19 @@ public class Metadata {
         public static final String ASPHYXIA = "121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String SYPHILLS_TEST = "275a6f72-b8a4-4038-977a-727552f69cb8";
         public static final String SYPHILLS_TEST_PARTNER = "d8bc9915-ed4b-4df9-9458-72ca1bc2cd06";
+        public static final String ANC_VISIT_NUMBER = "c0b1b5f1-a692-49d1-9a69-ff901e07fa27";
+            public static final String FIRST_ANC_VISIT = "588ac57f-a4d0-47c2-9852-92502194ec4a";
+            public static final String SECOND_ANC_VISIT = "a3ff912e-8298-4743-84cb-62e267c91b58";
+            public static final String THIRD_ANC_VISIT = "6fd18b93-4c93-417c-9844-b53f467e9a13";
+            public static final String FOURTH_ANC_VISIT = "e4f09b29-061e-42b4-a142-68a4ceda373c";
+            public static final String FIFTH_ANC_VISIT = "6a6df844-565a-44cc-b0b9-d3f77e42c9cc";
+            public static final String SIXTH_ANC_VISIT = "ff8de97a-4279-470e-aae9-927bf2a45f27";
+            public static final String SEVENTH_ANC_VISIT = "badb383d-022c-40a5-9ddb-82e6653d9676";
+            public static final String EITH_ANC_VISIT = "e01e2533-6f3c-41e1-a67f-a1e5b84eaebf";
+            public static final String NINETH_ANC_VISIT = "cb56e6a2-4886-4a14-b232-accc37a1043e";
+
+
+
 
         public static final String HEPB_TEST = "eeab75e4-dd7b-4a8f-81e5-b50b819042c4";
 
