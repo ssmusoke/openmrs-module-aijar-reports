@@ -631,6 +631,26 @@
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
+
+
+      {
+        "id": "HMIS 105 Section 2.3",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.3: POSTNATAL",
+        "url": "reportingui/runReport.page?reportDefinition=ea0cc959-d7a4-4fe8-a85a-a684da5a836f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "HMIS 105 Section 2.2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.2: MATERNITY",
+        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
       {
         "id": "HMIS 105 Section 2.2",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
