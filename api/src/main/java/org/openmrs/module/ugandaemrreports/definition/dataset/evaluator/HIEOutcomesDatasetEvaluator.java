@@ -78,7 +78,7 @@ public class HIEOutcomesDatasetEvaluator implements DataSetEvaluator {
             cleintsEnrolledAt12Weeks=(evaluationService.evaluateToList(new SqlQueryBuilder(initiatedAt12Weeks), context)).size();
             String ctxprophylaxis = String.format("SELECT o.person_id FROM obs o INNER JOIN person p on(o.person_id = p.person_id) WHERE  o.concept_id = 99773 AND FLOOR(DATEDIFF(o.value_datetime, p.birthdate)/7) BETWEEN 6 AND 8 AND p.person_id IN ('%s') ",patientIDs);
             ctxProphylaxisat2Months=(evaluationService.evaluateToList(new SqlQueryBuilder(ctxprophylaxis), context)).size();
-            System.out.println(initiatedAt12Weeks);
+            System.out.println(cleintsEnrolledAt12Weeks);
             String firstDNAPCR=String.format("SELECT p.person_id AS number FROM obs o INNER JOIN person p on( o.person_id = p.person_id) WHERE o.concept_id = 99606 AND FLOOR(DATEDIFF(o.value_datetime, p.birthdate)/7) BETWEEN 6 AND 8 AND p.person_id IN ('%s')",patientIDs);
             firstDNAPCR2Months=(evaluationService.evaluateToList(new SqlQueryBuilder(firstDNAPCR), context)).size();
             String secondDNAPCR=String.format("SELECT p.person_id FROM person p INNER JOIN obs o ON (o.person_id = p.person_id AND o.concept_id IN (99436, 162876) AND TIMESTAMPDIFF(MONTH, p.birthdate, o.value_datetime) BETWEEN 9 AND 12) INNER JOIN obs r ON (o.encounter_id = r.encounter_id AND r.concept_id IN (99435, 99440, 162881) AND r.value_coded = 703) AND p.person_id IN ('%s') GROUP BY o.person_id",patientIDs);
