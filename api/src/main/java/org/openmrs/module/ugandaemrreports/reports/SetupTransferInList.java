@@ -143,6 +143,9 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
         addColumn(dsd, "TransferInRegimen", hivPatientData.getTransferInRegimen());
         addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
         addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
+        addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+        addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+        addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
 
         rd.addDataSetDefinition("TI", Mapped.mapStraightThrough(dsd));
         return rd;
