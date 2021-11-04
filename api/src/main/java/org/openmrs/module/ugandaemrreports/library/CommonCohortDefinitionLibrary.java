@@ -300,7 +300,7 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
 	}    
     
     /**
-     * Patients who have a text obs between ${onOrAfter} and ${onOrBefore}
+     * Patients who have a text ANCobs between ${onOrAfter} and ${onOrBefore}
      * @param question the question concept
      * @param answers the answers to include
      * @return the cohort definition
@@ -310,6 +310,30 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
         
         return cd;
+    }
+/**
+ * Patients who have a text ANCobs between ${onOrAfter} and ${onOrBefore}
+ *      * @param question the question concept
+ *      * @param answers the answers to include
+ *      * @return the cohort definition
+ */
+
+    public CohortDefinition hasPNCObs(Concept question, Concept... answers) {
+        CodedObsCohortDefinition cd = (CodedObsCohortDefinition) hasObs(question, answers);
+        cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.PNC_ENCOUNTER)));
+
+        return cd;
+    }
+/**
+ * Patients who have a text ANCobs between ${onOrAfter} and ${onOrBefore}
+ *      * @param question the question concept
+ *      * @param answers the answers to include
+ *      * @return the cohort definition
+ */
+    public CohortDefinition hasMATERNITYObs(Concept question, Concept... answers) {
+    CodedObsCohortDefinition cd = (CodedObsCohortDefinition) hasObs(question, answers);
+    cd.setEncounterTypeList(Arrays.asList(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.ANC_ENCOUNTER)));
+    return cd;
     }
 
     /**
