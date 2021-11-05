@@ -109,6 +109,6 @@ public class SetupHEIOutComes extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.14";
+        return "1.17";
     }
 }

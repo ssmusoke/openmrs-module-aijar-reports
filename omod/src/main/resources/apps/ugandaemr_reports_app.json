@@ -631,18 +631,15 @@
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
-
       {
-        "id": "HMIS 105 Section 2.4.1",
+        "id": "HMIS 105 Section 2.2",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HMIS 105 Section 2.4.1: HIV EXPOSED INFANTS",
-        "url": "reportingui/runReport.page?reportDefinition=209b94d4-d8b1-11e6-bf26-cec0c932ce01",
+        "label": "HMIS 105 Section 2.2: MATERNITY",
+        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
-
-
       {
         "id": "HMIS 105 Section 2.3",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
@@ -653,23 +650,15 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
       {
-        "id": "HMIS 105 Section 2.2",
+        "id": "HMIS 105 Section 2.4.1",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
-        "label": "HMIS 105 Section 2.2: MATERNITY",
-        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
+        "label": "HMIS 105 Section 2.4.1: HIE OUTCOMES",
+        "url": "reportingui/runReport.page?reportDefinition=209b94d4-d8b1-11e6-bf26-cec0c932ce01",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
-      {
-        "id": "HMIS 105 Section 2.2",
-        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
-        "type": "link",
-        "label": "HMIS 105 Section 2.2: MATERNITY",
-        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
-        "order": 5,
-        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
-      },
+
       {
         "id": "HMIS 105 Section 4",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
