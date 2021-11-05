@@ -23,6 +23,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -44,7 +45,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
     private DataFactory df;
 
     @Autowired
-    private HIVMetadata hivMetadata;
+    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
 
     @Autowired
     SharedDataDefintion sdd;
@@ -113,7 +114,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
         dsd.setName("TI");
         dsd.addParameters(getParameters());
-        dsd.addRowFilter(transferIn(), "startDate=${startDate},endDate=${endDate}");
+        dsd.addRowFilter(hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod(), "startDate=${startDate},endDate=${endDate}");
 
 
         //start constructing of the dataset
@@ -142,6 +143,9 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
         addColumn(dsd, "TransferInRegimen", hivPatientData.getTransferInRegimen());
         addColumn(dsd, "BaselineCd4", hivPatientData.getAnyBaselineCD4());
         addColumn(dsd, "BaselineRegimen", hivPatientData.getBaselineRegimen());
+        addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+        addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+        addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
 
         rd.addDataSetDefinition("TI", Mapped.mapStraightThrough(dsd));
         return rd;
@@ -149,7 +153,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.0";
+        return "1.1.3";
     }
 
     @Override
