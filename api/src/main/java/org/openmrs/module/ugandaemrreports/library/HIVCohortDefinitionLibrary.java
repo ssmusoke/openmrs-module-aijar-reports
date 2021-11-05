@@ -63,16 +63,34 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     }
 
+    public CohortDefinition getPatientsTransferredOutAfterBeingRecentelyTransferredInDuringPeriod(){
+        String query = "SELECT o.person_id FROM obs o INNER  JOIN concept ON o.concept_id = concept.concept_id AND concept.uuid='fc1b1e96-4afb-423b-87e5-bb80d451c967' INNER JOIN (SELECT person_id,value_datetime AS Transfer_In_Date FROM obs INNER JOIN concept ON obs.concept_id = concept.concept_id AND concept.uuid='f363f153-f659-438b-802f-9cc1828b5fa9' \n"+
+                " WHERE value_datetime BETWEEN :startDate AND :endDate AND obs.voided=0)T_I ON o.person_id=T_I.person_id WHERE o.value_datetime BETWEEN :startDate AND :endDate AND o.value_datetime > Transfer_In_Date AND o.voided=0";
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition(query);
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cohortDefinition;
+    }
+
     public CohortDefinition getTransferredInToCareDuringPeriod() {
-        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsNotIn(df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), null, BaseObsCohortDefinition.TimeModifier.ANY), getPatientsTransferredOutAfterBeingRecentelyTransferredInDuringPeriod());
     }
 
     public CohortDefinition getTransferredInToCarePreviousQuarter(String olderThan) {
-        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), hivMetadata.getARTSummaryPageEncounterType(),olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getArtRegimenTransferInDate(), null,olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getPatientsTransferredInAfterBeingRecentelyTransferredOutDuringPeriod(){
+        String query = "SELECT o.person_id FROM obs o INNER  JOIN concept ON o.concept_id = concept.concept_id AND concept.uuid='f363f153-f659-438b-802f-9cc1828b5fa9' INNER JOIN (SELECT person_id,value_datetime AS Transfer_Out_Date FROM obs INNER JOIN concept ON obs.concept_id = concept.concept_id AND concept.uuid='fc1b1e96-4afb-423b-87e5-bb80d451c967'\n" +
+                "WHERE value_datetime BETWEEN :startDate AND :endDate AND obs.voided=0)T_O ON o.person_id=T_O.person_id WHERE o.value_datetime BETWEEN :startDate AND :endDate AND o.value_datetime > T_O.Transfer_Out_Date AND o.voided=0\n";
+        SqlCohortDefinition cohortDefinition = new SqlCohortDefinition(query);
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cohortDefinition;
     }
 
     public CohortDefinition getPatientsTransferredOutDuringPeriod() {
-        return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);    }
+        return df.getPatientsNotIn( df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY),getPatientsTransferredInAfterBeingRecentelyTransferredOutDuringPeriod());    }
 
     public CohortDefinition getPatientsTransferredOutDuringPeriod(String olderThan) {
         return df.getPatientsWhoseObsValueDateIsByEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY,olderThan);    }
@@ -245,7 +263,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
 
     public CohortDefinition getPatientsTransferredOutBetweenStartAndEndDate() {
-        return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+        return df.getPatientsNotIn(df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTransferredOutDate(), null, BaseObsCohortDefinition.TimeModifier.ANY),getPatientsTransferredInAfterBeingRecentelyTransferredOutDuringPeriod());
     }
 
     public CohortDefinition getPatientsTransferredOutByEndOfPeriod() {
