@@ -241,6 +241,6 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.0.2";
+        return "2.1.0.3";
     }
 }
