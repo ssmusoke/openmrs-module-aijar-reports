@@ -49,25 +49,25 @@ public class Moh105IndicatorLibrary {
      * Number of female patients with ANC 1st visit
      */
     public CohortIndicator ANCFirstContact(){
-        return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.femaleAndHasAncVisit(0.0, 1.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 1st Visit", map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.ANC_VISIT_NUMBER),Dictionary.getConcept(Metadata.Concept.FIRST_ANC_VISIT)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Number of female patients with ANC 4th visit
      */
     public CohortIndicator ANCFourthVisit(){
-        return cohortIndicator("Patients who have ANC 4th Visit", map(cohortLibrary.femaleAndHasAncVisit(2.0, 4.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 4th Visit", map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.ANC_VISIT_NUMBER),Dictionary.getConcept(Metadata.Concept.FOURTH_ANC_VISIT)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
      * Number of female patients with ANC 4th visit and above
      */
     public CohortIndicator ANCVisitFourthPlus(){
-        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(4.0, 7.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 4th Visit and above",map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.ANC_VISIT_NUMBER),Dictionary.getConcept(Metadata.Concept.FOURTH_ANC_VISIT),Dictionary.getConcept(Metadata.Concept.FIFTH_ANC_VISIT),Dictionary.getConcept(Metadata.Concept.SIXTH_ANC_VISIT),Dictionary.getConcept(Metadata.Concept.SEVENTH_ANC_VISIT)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator ANCEighthVisit(){
-        return cohortIndicator("Patients who have ANC 4th Visit and above", map(cohortLibrary.femaleAndHasAncVisit(8.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC 8TH", map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.ANC_VISIT_NUMBER),Dictionary.getConcept(Metadata.Concept.EITH_ANC_VISIT)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -75,7 +75,7 @@ public class Moh105IndicatorLibrary {
      * @return CohortIndicator
      */
     public CohortIndicator totalANCVisits() {
-        return cohortIndicator("Patients who have ANC Visits", map(cohortLibrary.femaleAndHasAncVisit(0.0, 9.0), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Patients who have ANC Visits", map(cohortLibrary.hasObsAndEncounter(ANC_UUID,Dictionary.getConcept(Metadata.Concept.ANC_VISIT_NUMBER)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     public CohortIndicator testedForAnaemiaAndFirstANCVisit() {
