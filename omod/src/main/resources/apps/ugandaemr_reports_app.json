@@ -590,6 +590,14 @@
         "order": 145,
         "requiredPrivilege": "App: ugandaemrreports.patientsOnThirdLineARTRegimen"
       },{
+        "id": "Covid Daily Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Covid Daily Report",
+        "url": "reportingui/runReport.page?reportDefinition=439027c4-ca99-467b-9a45-e0884081c20d",
+        "order": 150,
+        "requiredPrivilege": "App: ugandaemrreports.patientsOnThirdLineARTRegimen"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",

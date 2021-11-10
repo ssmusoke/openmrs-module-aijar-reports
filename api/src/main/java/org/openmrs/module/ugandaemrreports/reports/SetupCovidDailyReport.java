@@ -7,6 +7,7 @@ import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.common.SetComparator;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -15,6 +16,7 @@ import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimensio
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.metadata.CovidMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.TBMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -54,6 +56,9 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
 
     @Autowired
     private HIVMetadata hivMetadata;
+
+    @Autowired
+    private CovidMetadata covidMetadata;
 
     @Autowired
     private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
@@ -146,11 +151,13 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
 
         rd.addDataSetDefinition("A1",Mapped.mapStraightThrough(dsd));
         rd.addDataSetDefinition("A2",Mapped.mapStraightThrough(dsd1));
+        rd.addDataSetDefinition("B2",Mapped.mapStraightThrough(dsd2));
         rd.addDataSetDefinition("HC", Mapped.mapStraightThrough(sdd.healthFacilityName()));
 
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.getCovidAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
         dsd1.addDimension("age", Mapped.mapStraightThrough(ageDimension));
+        dsd2.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition admissions = getAnyEncounterOfTypesBetweenDates(hivMetadata.getCovidInitiationEncounterType());
         CohortDefinition allAdmissionsByToday = df.getAnyEncounterOfTypesByEndOfDate(hivMetadata.getCovidInitiationEncounterType());
@@ -167,6 +174,19 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
         CohortDefinition foreignResidents = df.getPatientsInAll(foreigners,withPhysicalAddressInUganda);
         CohortDefinition foreignNonResidents = df.getPatientsNotIn(foreigners,withPhysicalAddressInUganda);
 
+        CohortDefinition HIVcomorbidities = df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getHIVCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), Arrays.asList(covidMetadata.getHIVAnswer()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition TBcomorbidities = df.getPatientsNotIn(df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), Arrays.asList(covidMetadata.getTBComorbidty()), BaseObsCohortDefinition.TimeModifier.ANY),HIVcomorbidities);
+        CohortDefinition Diabetescomorbidities = df.getPatientsNotIn(df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), Arrays.asList(covidMetadata.getDiabetesComorbidty()), BaseObsCohortDefinition.TimeModifier.ANY),TBcomorbidities);
+        CohortDefinition HyperTensioncomorbidities = df.getPatientsNotIn(df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), Arrays.asList(covidMetadata.getHyperTensionComorbidty() ), BaseObsCohortDefinition.TimeModifier.ANY),Diabetescomorbidities);
+
+        CohortDefinition allComorbidities = df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition otherComorbidities = df.getPatientsNotIn(allComorbidities,df.getPatientsInAny(HIVcomorbidities,TBcomorbidities,Diabetescomorbidities,HyperTensioncomorbidities));
+
+        CohortDefinition HIVRelatedcomorbidities = df.getPatientsWithCodedObsDuringPeriod(covidMetadata.getHIVCommobiityQuestion(),hivMetadata.getCovidInitiationEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition OtherHIVRelatedcomorbidities = df.getPatientsNotIn(HIVRelatedcomorbidities,HIVcomorbidities);
+
+        CohortDefinition noComorbidities = df.getPatientsNotIn(confirmedCasesOnAdmissionsByToday,df.getPatientsInAny(allComorbidities,HIVRelatedcomorbidities));
+
         addGender(dsd,"1","Ugandans  Admitted today",df.getPatientsInAll(ugandans,admissions));
         addGender(dsd,"2","Refugees  Admitted today",df.getPatientsInAll(refugees,admissions));
         addGender(dsd,"3","Foreign residents  Admitted today",df.getPatientsInAll(foreignResidents,admissions));
@@ -176,6 +196,13 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
         addGender(dsd1,"2","Refugees  on admission as of today",df.getPatientsInAll(refugees,confirmedCasesOnAdmissionsByToday));
         addGender(dsd1,"3","Foreign residents  on admission as of today",df.getPatientsInAll(foreignResidents,confirmedCasesOnAdmissionsByToday));
         addGender(dsd1,"4","non resident foreigners  on admission as of today",df.getPatientsInAll(foreignNonResidents,confirmedCasesOnAdmissionsByToday));
+
+        addGender(dsd2,"1","No comorbidities",noComorbidities);
+        addGender(dsd2,"2","HIV comorbidities",df.getPatientsInAll(confirmedCasesOnAdmissionsByToday,HIVcomorbidities));
+        addGender(dsd2,"3","TB comorbidities",df.getPatientsInAll(confirmedCasesOnAdmissionsByToday,TBcomorbidities));
+        addGender(dsd2,"5","Diabetes comorbidities",df.getPatientsInAll(confirmedCasesOnAdmissionsByToday,Diabetescomorbidities));
+        addGender(dsd2,"6","Hypertension comorbidities",df.getPatientsInAll(confirmedCasesOnAdmissionsByToday,HyperTensioncomorbidities));
+        addGender(dsd2,"9","Other comorbidities",df.getPatientsInAll(confirmedCasesOnAdmissionsByToday,df.getPatientsInAny(otherComorbidities,OtherHIVRelatedcomorbidities)));
 
 
 
@@ -208,6 +235,6 @@ public class SetupCovidDailyReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.1";
+        return "2.0.3";
     }
 }
