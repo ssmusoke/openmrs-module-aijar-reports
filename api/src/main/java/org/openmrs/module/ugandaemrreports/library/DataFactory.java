@@ -323,6 +323,18 @@ public class DataFactory {
 
     }
 
+    public PatientDataDefinition getExpectedReturnDateAtLocation(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, DataConverter converter) {
+        ReturnVisitDatePatientDataDefinition def = new ReturnVisitDatePatientDataDefinition();
+        def.setEncounterTypeList(encounterTypes);
+        def.setQuestion(question);
+        def.setWhich(timeQualifier);
+        def.addParameter(new Parameter("location","location",Location.class));
+        def.addParameter(new Parameter("valueDatetimeOrAfter","valueDatetimeOrAfter",Date.class));
+        def.addParameter(new Parameter("valueDatetimeOnOrBefore","valueDatetimeOnOrBefore",Date.class));
+        return createPatientDataDefinition( def, converter, Parameters.combineParameters(Parameters.VALUE_DATETIME_OR_AFTER_START_DATE, Parameters.VALUE_DATETIME_ON_OR_BEFORE_END_DATE));
+
+    }
+
     public PatientDataDefinition getObsDuringPeriod(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
         ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, Arrays.asList("onOrBefore", "onOrAfter"), timeQualifier);
         String startDate = Parameters.createParameterBeforeDuration("onOrAfter", "startDate", olderThan);
@@ -1077,6 +1089,19 @@ public class DataFactory {
         cd.setEncounterTypeList(types);
         cd.setOperator1(RangeComparator.GREATER_EQUAL);
         cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.setOperator2(RangeComparator.LESS_EQUAL);
+        cd.addParameter(new Parameter("value2", "value2", Date.class));
+        return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));
+    }
+
+    public CohortDefinition getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDateAtLocation(Concept dateConcept, List<EncounterType> types, BaseObsCohortDefinition.TimeModifier timeModifier) {
+        AppointmentDateAtLocationCohortDefinition cd = new AppointmentDateAtLocationCohortDefinition();
+        cd.setTimeModifier(timeModifier);
+        cd.setQuestion(dateConcept);
+        cd.setEncounterTypeList(types);
+        cd.setOperator1(RangeComparator.GREATER_EQUAL);
+        cd.addParameter(new Parameter("value1", "value1", Date.class));
+        cd.addParameter(new Parameter("location", "Locations", Location.class));
         cd.setOperator2(RangeComparator.LESS_EQUAL);
         cd.addParameter(new Parameter("value2", "value2", Date.class));
         return convert(cd, ObjectUtil.toMap("value1=startDate,value2=endDate"));

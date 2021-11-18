@@ -148,7 +148,9 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
         addColumn(dsd, "lastViralLoadDate", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "lastViralLoad", hivPatientData.getViralLoadByEndDate());
         addColumn(dsd, "lastVLQualitative", hivPatientData.getVLQualitativeByEndDate());
-
+        addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+        addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+        addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
 
 
         rd.addDataSetDefinition("TRANSFER_OUT", Mapped.mapStraightThrough(dsd));
@@ -159,6 +161,6 @@ public class SetupTransferOutList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.2";
+        return "1.3";
     }
 }

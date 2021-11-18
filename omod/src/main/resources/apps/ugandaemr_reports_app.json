@@ -79,10 +79,10 @@
         "requiredPrivilege": "App: ugandaemrreports.HMIS177ViralLoadAddendumQuarterlyReport"
       },
       {
-        "id": "HMIS 055-HCT Register",
+        "id": "HMIS ACP 019: HTS REGISTER",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
         "type": "link",
-        "label": "HMIS 055 : HCT Register",
+        "label": "HMIS ACP 019: HTS REGISTER",
         "url": "reportingui/runReport.page?reportDefinition=aa758901-000b-42b7-afee-bbb88854282b",
         "order": 20,
         "requiredPrivilege": "App: ugandaemrreports.HMIS055-HCTRegister"
@@ -628,6 +628,35 @@
         "type": "link",
         "label": "HMIS 105 Section 2: ANTENANTAL",
         "url": "reportingui/runReport.page?reportDefinition=caec6908-72e1-4978-8007-13c551d23e5f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+
+
+      {
+        "id": "HMIS 105 Section 2.3",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.3: POSTNATAL",
+        "url": "reportingui/runReport.page?reportDefinition=ea0cc959-d7a4-4fe8-a85a-a684da5a836f",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "HMIS 105 Section 2.2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.2: MATERNITY",
+        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
+        "order": 5,
+        "requiredPrivilege": "App: ugandaemrreports.HMIS105"
+      },
+      {
+        "id": "HMIS 105 Section 2.2",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
+        "type": "link",
+        "label": "HMIS 105 Section 2.2: MATERNITY",
+        "url": "reportingui/runReport.page?reportDefinition=2e24eed4-98a9-4143-af30-f4737df2282e",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },

@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Location;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
@@ -78,6 +79,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
+        l.add(new Parameter("location", "Location", Location.class));
         return l;
     }
 
@@ -122,7 +124,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
+        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDateAtLocation(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -142,7 +144,7 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
         addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
-        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
+        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateDuringPeriodAtLocation());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
@@ -153,6 +155,6 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "4.0.2";
+        return "4.1.0";
     }
 }

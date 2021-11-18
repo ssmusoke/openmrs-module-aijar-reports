@@ -271,15 +271,16 @@ public class Metadata {
         public static final String DATE_OF_SECOND_PCR_TEST = "1f627527-2f97-4f21-9b61-2b79d887950f";
         public static final String DATE_OF_18_MONTH_RAPID_PCR_TEST = "7065b181-abb0-4ad6-8082-62e99398f735";
         public static final String EMTCT_CODES = "d5b0394c-424f-41db-bc2f-37180dcdbe74";
-            public static final String EMTCT_CODESP = "62a37075-fc2a-4729-8950-b9fae9b22cfb";
-
-            public static final String HIV_PROHYLAXIS="f42e40f3-7f76-4c0d-b9cc-f66acbb092c4";
+        public static final String EMTCT_CODESP = "62a37075-fc2a-4729-8950-b9fae9b22cfb";
+        public static final String HIV_PROHYLAXIS="f42e40f3-7f76-4c0d-b9cc-f66acbb092c4";
         public static final String PREGNANCY_OUTCOME = "161033AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String HIV_STATUS = "dce0e886-30ab-102d-86b0-7a5022ba4115";
         public static final String ARV_FOR_BABY = "9e825e42-be00-4d4d-8774-257ddb29581b";
         public static final String NVP_SYRUP = "04711d8f-c60d-4b1c-9451-0b32debbb8b0";
         public static final String NEVERAPINE = "dc800d9d-30ab-102d-86b0-7a5022ba4115";
-
+        public static final String ART_CODE = "a615f932-26ee-449c-8e20-e50a15232763";
+            public static final String ART_CODE_PARTNER = "11dafd93-23c1-4b89-86e0-593e5f7ca386";
+            public static final String INITIATED_ON_ART = "026e31b7-4a26-44d0-8398-9a41c40ff7d3";
         public static final String TETANUS_DOSE_GIVEN = "39217e3d-6a39-4679-bf56-f0954a7ffdb8";
         public static final String FIRST_DOSE = "0192ca59-b647-4f88-b07e-8fda991ba6d6";
         public static final String SECOND_DOSE = "f1d5afce-8dfe-4d2d-b24b-051815d61848";
@@ -290,7 +291,7 @@ public class Metadata {
         public static final String ARV_REGIMEN = "35ae2043-a3b0-48de-8e22-05f377ac39a2";
         public static final String EMTCT_CODE_TRP = "a08d9331-b437-485c-8eff-1923f3d43630";
         public static final String EMTCT_CODE_TRRP = "8dcaefaa-aa91-4c24-aaeb-122cff549ab3";
-        public static final String EMTCT_CODE_TRRTICK = "60155e4d-1d49-4e97-9689-758315967e0f";
+        public static final String EMTCT_CODE_TRRTICK = "4d301db0-c517-4556-9f7c-d837bac90144";
         public static final String EMTCT_CODE_T = "05f16fc5-1d82-4ce8-9b44-a3125fbbf2d7";
         public static final String EMTCT_CODE_TR = "86e394fd-8d85-4cb3-86d7-d4b9bfc3e43a";
         public static final String EMTCT_CODE_TRR = "25c448ff-5fe4-4a3a-8c0a-b5aaea9d5465";
@@ -298,6 +299,19 @@ public class Metadata {
         public static final String ASPHYXIA = "121397AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
         public static final String SYPHILLS_TEST = "275a6f72-b8a4-4038-977a-727552f69cb8";
         public static final String SYPHILLS_TEST_PARTNER = "d8bc9915-ed4b-4df9-9458-72ca1bc2cd06";
+        public static final String ANC_VISIT_NUMBER = "c0b1b5f1-a692-49d1-9a69-ff901e07fa27";
+            public static final String FIRST_ANC_VISIT = "588ac57f-a4d0-47c2-9852-92502194ec4a";
+            public static final String SECOND_ANC_VISIT = "a3ff912e-8298-4743-84cb-62e267c91b58";
+            public static final String THIRD_ANC_VISIT = "6fd18b93-4c93-417c-9844-b53f467e9a13";
+            public static final String FOURTH_ANC_VISIT = "e4f09b29-061e-42b4-a142-68a4ceda373c";
+            public static final String FIFTH_ANC_VISIT = "6a6df844-565a-44cc-b0b9-d3f77e42c9cc";
+            public static final String SIXTH_ANC_VISIT = "ff8de97a-4279-470e-aae9-927bf2a45f27";
+            public static final String SEVENTH_ANC_VISIT = "badb383d-022c-40a5-9ddb-82e6653d9676";
+            public static final String EITH_ANC_VISIT = "e01e2533-6f3c-41e1-a67f-a1e5b84eaebf";
+            public static final String NINETH_ANC_VISIT = "cb56e6a2-4886-4a14-b232-accc37a1043e";
+
+
+
 
         public static final String HEPB_TEST = "eeab75e4-dd7b-4a8f-81e5-b50b819042c4";
 

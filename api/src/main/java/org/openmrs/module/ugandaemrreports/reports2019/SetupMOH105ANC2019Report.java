@@ -226,7 +226,7 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "age=Between15And19yrs");
+        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "age=Below15");
         addIndicator(dsd, key + "bF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "age=Between15And19yrs");
         addIndicator(dsd, key + "cF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "age=Between20And24yrs");
         addIndicator(dsd, key + "dF", label + " (Between 25 and 49 Years) Female", cohortIndicator, "age=Between25And49yrs");
@@ -241,6 +241,6 @@ public class SetupMOH105ANC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.0.1";
+        return "2.1.0.3";
     }
 }
