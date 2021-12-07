@@ -107,6 +107,6 @@ public class SetupARTAccessRegister extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.4";
+        return "0.1.5";
     }
 }
