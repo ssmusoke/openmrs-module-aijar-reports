@@ -382,6 +382,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "6.0.3";
+        return "6.0.4";
     }
 }
