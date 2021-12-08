@@ -57,7 +57,7 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Override
 	public String getName() {
-		return "Care Audit Tool";
+		return "HIV Care and Treatment Service Quality Assessment Tool";
 	}
 
 	@Override

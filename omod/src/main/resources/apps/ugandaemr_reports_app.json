@@ -761,6 +761,14 @@
         "label": "Care and Treatment Audit Tool",
         "url": "reportingui/runReport.page?reportDefinition=138140ef-1dd2-11b2-96d8-6cab73c93472",
         "order": 5
+      },
+      {
+        "id": "HIV Exposed Infant Audit Tool",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+        "type": "link",
+        "label": "HIV Exposed Infant Audit Tool",
+        "url": "reportingui/runReport.page?reportDefinition=13814069-1dd2-11b2-b6fe-eeb59a9a73fa",
+        "order": 10
       }
     ]
   }
