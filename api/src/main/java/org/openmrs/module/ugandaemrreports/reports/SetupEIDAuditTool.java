@@ -47,7 +47,7 @@ public class SetupEIDAuditTool extends UgandaEMRDataExportManager {
 	
 	@Autowired
 	private DataFactory df;
-	
+
 	@Autowired
 	SharedDataDefintion sdd;
 	
@@ -70,9 +70,9 @@ public class SetupEIDAuditTool extends UgandaEMRDataExportManager {
 	
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDDueForFirstPCR.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "EIDAuditTool.xls");
 		Properties props = new Properties();
-		props.put("repeatingSections", "sheet:1,row:8,dataset:PCR");
+		props.put("repeatingSections", "sheet:1,row:3,dataset:EIDAuditTool");
 		props.put("sortWeight", "5000");
 		rd.setProperties(props);
 		return rd;
