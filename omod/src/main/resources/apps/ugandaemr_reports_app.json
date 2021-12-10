@@ -740,6 +740,13 @@
         "label": "HMIS 009 TB Register",
         "url": "reportingui/runReport.page?reportDefinition=3b9d317f-ac87-4141-b4c2-d93c8419b324",
         "order":25
+      },{
+        "id": "Emergency ART Refill Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "Emergency ART Refill Register",
+        "url": "reportingui/runReport.page?reportDefinition=9f523291-3ddf-4286-aeee-db0f3687150a",
+        "order":30
       },
       {
         "id": "HIVDR Tool Report",
