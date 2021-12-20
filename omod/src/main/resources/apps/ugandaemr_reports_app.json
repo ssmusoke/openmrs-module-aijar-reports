@@ -590,6 +590,14 @@
         "order": 145,
         "requiredPrivilege": "App: ugandaemrreports.patientsOnThirdLineARTRegimen"
       },{
+        "id": "Patients Regimen Change List",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Patient Regimen Change List",
+        "url": "reportingui/runReport.page?reportDefinition=1381401f-1dd2-11b2-96d6-3d6bf54c9095",
+        "order": 150,
+        "requiredPrivilege": "App: ugandaemrreports.patientRegimenChangeHistory"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
@@ -740,6 +748,13 @@
         "label": "HMIS 009 TB Register",
         "url": "reportingui/runReport.page?reportDefinition=3b9d317f-ac87-4141-b4c2-d93c8419b324",
         "order":25
+      },{
+        "id": "Emergency ART Refill Register",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.registers",
+        "type": "link",
+        "label": "Emergency ART Refill Register",
+        "url": "reportingui/runReport.page?reportDefinition=9f523291-3ddf-4286-aeee-db0f3687150a",
+        "order":30
       },
       {
         "id": "HIVDR Tool Report",

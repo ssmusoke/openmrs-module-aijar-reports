@@ -216,6 +216,16 @@ public class HIVMetadata extends ReportMetadata {
         return l;
     }
 
+    public List<EncounterType> getARTRegimenChangeEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "c11774c1-3b4a-4bdb-a847-6060895e006d"));
+        return l;
+    }
+
+    public EncounterType getRegimenChangeEncounterType() {
+        return getEncounterType("c11774c1-3b4a-4bdb-a847-6060895e006d");
+    }
+
     public Concept getARVDuration() {
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
     }
@@ -223,6 +233,27 @@ public class HIVMetadata extends ReportMetadata {
     public Concept getCurrentRegimen() {
         return getConcept("dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
     }
+
+    public Concept getRegimenChangePriorRegimen() {
+        return getConcept("107bef04-bf05-4f41-9260-b167c1108f7e");
+    }
+
+    public Concept getRegimenChangeType() {
+        return getConcept("ca5a71aa-05f9-42a0-bf0d-65bcfd08036b");
+    }
+
+    public Concept getReasonForRegimenSwitch() {
+        return getConcept("dce0cd97-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getReasonForRegimenSubstitution() {
+        return getConcept("dce0c977-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getRegimenChangeClinicalNotes() {
+        return getConcept("159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+
     public Concept getCurrentViralLoad() {
         return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
     }
@@ -336,6 +367,7 @@ public class HIVMetadata extends ReportMetadata {
     public EncounterType getARTEncounterEncounterType() {
         return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
     }
+
 
     public Concept getTBStatus() {
         return getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115");
