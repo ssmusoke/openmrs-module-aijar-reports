@@ -14,12 +14,10 @@ import org.openmrs.module.ugandaemrreports.common.Observation;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.common.PatientEncounterObs;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EmergencyARTRefillDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.HCTDatasetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
