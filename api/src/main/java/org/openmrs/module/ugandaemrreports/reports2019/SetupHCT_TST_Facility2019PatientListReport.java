@@ -70,7 +70,7 @@ public class SetupHCT_TST_Facility2019PatientListReport extends UgandaEMRDataExp
 	
 	@Override
 	public String getVersion() {
-		return "3.0.0";
+		return "3.0.2";
 	}
 	
 	/**
@@ -177,10 +177,10 @@ public class SetupHCT_TST_Facility2019PatientListReport extends UgandaEMRDataExp
 		dsd.addColumn("HTS Approach", sdd.definition("htsApproach",  getConcept("ff820a28-1adf-4530-bf27-537bfa9ce0b2")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Health Facility Entry Point", sdd.definition("entrypoint",  getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Health Facility Entry Point - Other", sdd.definition("entrypointOther",  getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("ANC Visit Number", sdd.definition("ancVisitNumber",  getConcept("164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("ANC Visit Number", sdd.definition("ancVisitNumber",  getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Community Testing Entry Point", sdd.definition("testingPoints",  getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Community Testing Entry Point - Other", sdd.definition("testingPointsOther",  getConcept("16820069-b4bf-4c47-9efc-408746e1636b")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		dsd.addColumn("Reason For Testing", sdd.definition("reason",  getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("Reason for Testing", sdd.definition("reason",  getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Special Category", sdd.definition("special",  getConcept("927563c5-cb91-4536-b23c-563a72d3f829")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Testing For HIV the First Time",sdd.definition("firstTime",  getConcept("2766c090-c057-44f2-98f0-691b6d0336dc")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("Last HIV Test Date",sdd.definition("lastHIVTestDate",  getConcept("34c917f0-356b-40d0-b3d1-cf609517b5fc")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
