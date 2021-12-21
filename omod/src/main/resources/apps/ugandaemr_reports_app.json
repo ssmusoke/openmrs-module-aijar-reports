@@ -216,7 +216,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "HCT_TST_Facility Report",
-        "url": "reportingui/runReport.page?reportDefinition=5688b030-d2b7-43b5-affd-9e94a07a1a8a",
+        "url": "reportingui/runReport.page?reportDefinition=9d041ea6-2052-4203-8e40-c47fc359b8e1",
         "order": 10,
         "requiredPrivilege": "App: ugandaemrreports.MERHCTTSTFacilityReport"
       },
