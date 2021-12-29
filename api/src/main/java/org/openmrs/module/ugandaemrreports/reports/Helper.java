@@ -771,7 +771,10 @@ public class Helper {
             addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39female");
             addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44female");
             addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49female");
-            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50female");
+            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=between50and54female");
+            addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between55and59female");
+            addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between60and64female");
+            addIndicator(dsd, "16" + key, label, cohortDefinition, "age=above65female");
         } else if (key == "b") {
             addIndicator(dsd, "2" + key, label, cohortDefinition, "age=below1male");
             addIndicator(dsd, "3" + key, label, cohortDefinition, "age=between1and4male");
@@ -784,7 +787,10 @@ public class Helper {
             addIndicator(dsd, "10" + key, label, cohortDefinition, "age=between35and39male");
             addIndicator(dsd, "11" + key, label, cohortDefinition, "age=between40and44male");
             addIndicator(dsd, "12" + key, label, cohortDefinition, "age=between45and49male");
-            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=above50male");
+            addIndicator(dsd, "13" + key, label, cohortDefinition, "age=between50and54male");
+            addIndicator(dsd, "14" + key, label, cohortDefinition, "age=between55and59male");
+            addIndicator(dsd, "15" + key, label, cohortDefinition, "age=between60and64male");
+            addIndicator(dsd, "16" + key, label, cohortDefinition, "age=above65male");
         }
     }
 
