@@ -216,7 +216,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.mer",
         "type": "link",
         "label": "HCT_TST_Facility Report",
-        "url": "reportingui/runReport.page?reportDefinition=5688b030-d2b7-43b5-affd-9e94a07a1a8a",
+        "url": "reportingui/runReport.page?reportDefinition=9d041ea6-2052-4203-8e40-c47fc359b8e1",
         "order": 10,
         "requiredPrivilege": "App: ugandaemrreports.MERHCTTSTFacilityReport"
       },
@@ -363,6 +363,15 @@
         "url": "reportingui/runReport.page?reportDefinition=5803a894-5bb6-4d33-976d-bc074b5f5a26",
         "order": 30,
         "requiredPrivilege": "App: ugandaemrreports.MERTXRTTReport_PatientList"
+      },
+      {
+        "id": "MER_HTS_TST_Facility_Patient_List_Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.mer_patient_lists",
+        "type": "link",
+        "label": "MER HTS_TST_Facility Patient List",
+        "url": "reportingui/runReport.page?reportDefinition=b79baee4-44bf-1da1-ab6d-f1fc2513583a",
+        "order": 30,
+        "requiredPrivilege": "App: ugandaemrreports.MERHTS_TST_FacilityReport_PatientList"
       },
       {
         "id": "Appointments List",
