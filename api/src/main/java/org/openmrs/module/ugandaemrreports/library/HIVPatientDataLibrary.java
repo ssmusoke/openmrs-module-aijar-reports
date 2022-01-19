@@ -679,6 +679,21 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getTPTLastTPTStatus() {
         return df.getObsByEndDate(hivMetadata.getTPTStatus(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
+    public PatientDataDefinition getBTCFollowUpAction() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpAction(), Arrays.asList(hivMetadata.getBTCEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getBTCFollowUpOutCome() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpOutcome(), Arrays.asList(hivMetadata.getBTCEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getBTCFollowUpOutcomebyQuarter() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpOutcomebyQuarter(), Arrays.asList(hivMetadata.getBTCEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getTreatmentSupporter() {
+        return df.getObsByEndDate(hivMetadata.getTreatmentSupporter(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueTextConverter());
+    }
+    public PatientDataDefinition getTreatmentSupporterPhoneNumber() {
+        return df.getObsByEndDate(hivMetadata.getTreatmentSupporterPhoneNumber(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueTextConverter());
+    }
 
     public PatientDataDefinition getLastHepBScreeningDate() {
         return df.getObsByEndDate(hivMetadata.getHepBScreeningDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());

@@ -367,6 +367,9 @@ public class HIVMetadata extends ReportMetadata {
     public EncounterType getARTEncounterEncounterType() {
         return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
     }
+    public EncounterType getBTCEncounterType() {
+        return getEncounterType("791faefd-36b8-482f-ab78-20c297b03851");
+    }
 
 
     public Concept getTBStatus() {
@@ -626,6 +629,21 @@ public class HIVMetadata extends ReportMetadata {
 
     public Concept getTPTStatus() {
         return getConcept("37d4ac43-b3b4-4445-b63b-e3acf47c8910");
+    }
+    public Concept getTreatmentSupporter() {
+        return getConcept("23e28311-3c17-4137-8eee-69860621b80b");
+    }
+    public Concept getTreatmentSupporterPhoneNumber() {
+        return getConcept("dce17480-30ab-102d-86b0-7a5022ba4115");
+    }
+    public Concept getFollowUpAction() {
+        return getConcept("928c4617-436e-44b3-91c3-725cb1c910c0");
+    }
+    public Concept getFollowUpOutcome() {
+        return getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4");
+    }
+    public Concept getFollowUpOutcomebyQuarter() {
+        return getConcept("cd14792c-03e3-47ac-9e08-846ab1d93c87");
     }
 
     public Concept getHepBScreeningDate() {

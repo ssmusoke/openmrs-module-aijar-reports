@@ -30,6 +30,7 @@ import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefin
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
+import org.openmrs.module.ugandaemrreports.reporting.calculation.BackToCareProviderCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.ProviderNameCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.AgeLimitCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.PersonAddressCalculation;
@@ -117,6 +118,12 @@ public class SharedDataDefintion {
     }
     public DataDefinition getNameofProvideratDelivery() {
         CalculationDataDefinition cd = new CalculationDataDefinition("Delivered By", new ProviderNameCalculation());
+        cd.addParameter(new Parameter("onDate", "On Date", Date.class));
+
+        return cd;
+    }
+    public DataDefinition getNameofProvider() {
+        CalculationDataDefinition cd = new CalculationDataDefinition("Provider", new BackToCareProviderCalculation());
         cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 
         return cd;
