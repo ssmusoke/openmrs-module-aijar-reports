@@ -38,6 +38,14 @@ public class ARTClinicCohortDefinitionLibrary extends BaseDefinitionLibrary<Coho
 		return q;
 	}
 
+	public CohortDefinition getPatientsWithRegimenChangesBetweenStartAndEndDate() {
+		EncounterCohortDefinition q = new EncounterCohortDefinition();
+		q.setEncounterTypeList(hivMetadata.getARTRegimenChangeEncounterType());
+		q.addParameter(df.getStartDateParameter());
+		q.addParameter(df.getEndDateParameter());
+		return q;
+	}
+
 	public CohortDefinition getPatientsWithReturnVisitDateOnEndDate() {
 		return df.getPatientsWhoseObsValueDateIsOnSpecifiedDate(hivMetadata.getReturnVisitDate(), hivMetadata.getARTEncounterPageEncounterType());
 	}

@@ -103,6 +103,34 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
 
+    public PatientDataDefinition getRegimenChangeEncounterDate() {
+        return df.getFirstEncounterOfTypeByEndDate(hivMetadata.getRegimenChangeEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeNewRegimen() {
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangePriorRegimen() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangePriorRegimen(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeType() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangeType(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getReasonForRegimenSwitch() {
+        return df.getObsByEndDate(hivMetadata.getReasonForRegimenSwitch(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getReasonForRegimenSubstitution() {
+        return df.getObsByEndDate(hivMetadata.getReasonForRegimenSubstitution(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeClinicalNotes() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangeClinicalNotes(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
     public PatientDataDefinition getPreviousRegimen() {
         return df.getObsBeforeDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
