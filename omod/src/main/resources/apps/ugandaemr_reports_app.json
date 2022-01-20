@@ -793,6 +793,14 @@
         "label": "HIV Exposed Infant Audit Tool",
         "url": "reportingui/runReport.page?reportDefinition=13814069-1dd2-11b2-b6fe-eeb59a9a73fa",
         "order": 10
+      },
+      {
+        "id": "Care Audit CQI Indicators Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+        "type": "link",
+        "label": "Care Audit CQI Indicators Report",
+        "url": "reportingui/runReport.page?reportDefinition=138140e6-1dd2-11b2-8811-ec47ee6bbc58",
+        "order": 15
       }
     ]
   }
