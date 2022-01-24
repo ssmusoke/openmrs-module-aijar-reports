@@ -141,8 +141,8 @@ public class SharedDataDefintion {
         return cd;
     }
 
-    public PersonName getPersonNamesByProviderUUID(String providerUUID) {
-        return Context.getProviderService().getProviderByUuid(providerUUID).getPerson().getPersonName();
+    public DataDefinition getPersonNamesByProviderUUID(String providerUUID) {
+        return (DataDefinition) Context.getProviderService().getProviderByUuid(providerUUID).getPerson().getPersonName();
     }
     public DataDefinition getFolicAcidGiven() {
         CalculationDataDefinition cd = new CalculationDataDefinition("Folic acid given", new FolicAcidCalculation());

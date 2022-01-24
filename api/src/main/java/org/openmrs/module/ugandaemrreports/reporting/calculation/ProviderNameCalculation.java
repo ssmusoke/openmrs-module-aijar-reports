@@ -20,7 +20,7 @@ public class ProviderNameCalculation extends AbstractPatientCalculation  {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
-        Set<Integer> male = Filters.male(cohort, context);
+        Set<Integer> male = Filters.alive(cohort, context);
         EncounterService service = Context.getEncounterService();
         EncounterRole role = service.getEncounterRoleByUuid("a0b03050-c99b-11e0-9572-0800200c9a66");
         CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), cohort, context);

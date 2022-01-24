@@ -138,8 +138,7 @@ public class SetupBackToCareServicesReport extends UgandaEMRDataExportManager {
         addColumn(dsd, "FollowUpAction", hivPatientData.getBTCFollowUpAction());
         addColumn(dsd,"FollowUpOutCome",hivPatientData.getBTCFollowUpOutCome());
         addColumn(dsd,"QuarteryOutcome",hivPatientData.getBTCFollowUpOutcomebyQuarter());
-//        addColumn(dsd,"FollowUpPerson", sdd.getPersonNamesByProviderUUID("240b26f9-dd88-4172-823d-4a8bfeb7841f"));
-
+        dsd.addColumn("FollowUpPerson", sdd.getNameofProvider(), "onDate=${endDate}", new CalculationResultDataConverter());
         rd.addDataSetDefinition("BACKTOCARE", Mapped.mapStraightThrough(dsd));
         rd.setBaseCohortDefinition(Mapped.mapStraightThrough(btccohortDefinition));
 
@@ -149,7 +148,7 @@ public class SetupBackToCareServicesReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.1";
+        return "2.1.2";
     }
 
     @Override
