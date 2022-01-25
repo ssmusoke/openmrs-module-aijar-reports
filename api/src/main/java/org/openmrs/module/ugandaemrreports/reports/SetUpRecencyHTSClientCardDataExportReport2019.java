@@ -10,6 +10,7 @@ import org.openmrs.module.reporting.data.converter.*;
 import org.openmrs.module.reporting.data.encounter.definition.ConvertedEncounterDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
@@ -118,9 +119,6 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		rd.addDataSetDefinition("HTSCARDDATAEXPORT", Mapped.mapStraightThrough(dataSetDefinition()));
-
-		// data set definition for DHIS2 Uuid which is a required column
-		rd.addDataSetDefinition("S", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
 		return rd;
 	}
 	private Concept getConcept(String uuid) {
@@ -180,7 +178,14 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 		dsd.addColumn("referred_to_tb_services", sdd.definition("referedForTBServices",  getConcept("c5da115d-f6a3-4d13-b182-c2e982a3a796")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("referred_to_hiv_care", sdd.definition("refferedTonrollment",  getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		dsd.addColumn("referred_location", sdd.definition("referralPlace",  getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+		dsd.addColumn("dhis2_uuid",getDHIS2UUID(),(String) null);
 //		dsd.addColumn("counselor_name", builtInPatientData.getPreferredFamilyName(), (String) null);//TODO: Get the service provider
 		return dsd;
+	}
+
+	private DataDefinition getDHIS2UUID(){
+		SqlPatientDataDefinition cd = new SqlPatientDataDefinition();
+		cd.setQuery("select person_id,(select property_value from global_property where property='ugandaemr.dhis2.organizationuuid')uuid from person");
+		return  cd;
 	}
 }
