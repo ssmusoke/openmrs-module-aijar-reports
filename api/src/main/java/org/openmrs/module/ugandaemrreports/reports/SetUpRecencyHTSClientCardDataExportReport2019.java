@@ -25,6 +25,7 @@ import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.smc.SMCEncounterDateCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -117,6 +118,9 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 		rd.addDataSetDefinition("HTSCARDDATAEXPORT", Mapped.mapStraightThrough(dataSetDefinition()));
+
+		// data set definition for DHIS2 Uuid which is a required column
+		rd.addDataSetDefinition("S", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
 		return rd;
 	}
 	private Concept getConcept(String uuid) {
