@@ -6,7 +6,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.converter.DateConverter;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
@@ -18,7 +17,9 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.PersonAttributeDataConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.EncounterUUIDFromEncounterIdConverter;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
     @Autowired
     private DataFactory df;
     @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
+    private HIVPatientDataLibrary hivPatientData;
 
     @Override
     public String getDescription() {
@@ -60,7 +61,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
     @Override
     public String getVersion() {
-        return "1.1.0";
+        return "1.1.1";
     }
 
     /**
@@ -108,7 +109,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-        rd.addDataSetDefinition("HTSCARDDATAEXPORT", Mapped.mapStraightThrough(dataSetDefinition()));
+        rd.addDataSetDefinition("HTS", Mapped.mapStraightThrough(dataSetDefinition()));
 
         return rd;
     }
@@ -124,7 +125,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
     private DataSetDefinition dataSetDefinition() {
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        dsd.setName("HTSCARDDATAEXPORT");
+        dsd.setName("HTS");
         dsd.addParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(getPatientWithHCTEncounterDuringPeriod()));
 
@@ -172,6 +173,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
         dsd.addColumn("referred_to_hiv_care", sdd.definition("refferedTonrollment", getConcept("3d620422-0641-412e-ab31-5e45b98bc459")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("referred_location", sdd.definition("referralPlace", getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("dhis2_uuid", sdd.getDHIS2Uuid(), (String) null);
+        dsd.addColumn( "encounter_uuid", df.getHTSEncounterUuid(), (String) null);
         return dsd;
     }
 }
