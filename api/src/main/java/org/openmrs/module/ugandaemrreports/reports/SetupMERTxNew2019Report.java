@@ -23,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.getUgandaEMRVersion;
 
 /**
  *  TX Current Report
@@ -124,7 +126,9 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
 
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("TX_NEW", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
 
         CohortDefinitionDimension ageDimension = commonDimensionLibrary.getNewTxCurrAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
@@ -187,6 +191,6 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.8";
+        return "0.2.0";
     }
 }

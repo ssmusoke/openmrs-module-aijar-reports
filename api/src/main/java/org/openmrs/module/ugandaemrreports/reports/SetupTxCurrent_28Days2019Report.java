@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.getUgandaEMRVersion;
 
 /**
  *  TX Current Report
@@ -114,7 +116,9 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
 
         dsd.setParameters(getParameters());
-        rd.addDataSetDefinition("TX_CURR", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("S",Mapped.mapStraightThrough(settings()));
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
 
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getNewTxCurrAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
@@ -160,6 +164,12 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
         Helper.addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,beenOnArtDuringQuarter),"");
         Helper.addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,beenOnArtDuringQuarter),"");
 
+        Helper.addIndicator(dsd,"14e","<3 months of ARVs dispensed by <15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWithLessThan3MonthsOfARVDrugsDispensed,below15Years),"");
+        Helper.addIndicator(dsd,"15e","<3 months of ARVs dispensed by >15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWithLessThan3MonthsOfARVDrugsDispensed,above15Years),"");
+        Helper.addIndicator(dsd,"16e","3 to 5 months months of ARVs dispensed by <15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWith3To5MonthsOfARVDrugsDispensed,below15Years),"");
+        Helper.addIndicator(dsd,"17e","3 to 5 months months of ARVs dispensed by >15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWith3To5MonthsOfARVDrugsDispensed,above15Years),"");
+        Helper.addIndicator(dsd,"18e","6 or more months of ARVs dispensed to patient by <15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed,below15Years),"");
+        Helper.addIndicator(dsd,"19e","6 or more months of ARVs dispensed to patient by >15yrs",df.getPatientsInAll(beenOnArtDuringQuarter,patientsWithEqualOrGreaterThan6MonthsOfARVDrugsDispensed,above15Years),"");
         Helper.addIndicator(dsd,"14c","<3 mnths ARV dispensing female less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsFemales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
         Helper.addIndicator(dsd,"14d","<3 mnths ARV dispensing male less than 15",df.getPatientsInAll(currentOnARTAndDrugsDispensedToPatientsBelow15YearsMales,patientsWithLessThan3MonthsOfARVDrugsDispensed),"");
 
@@ -185,8 +195,9 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
 
 
 
+
     @Override
     public String getVersion() {
-        return "0.4.2";
+        return "0.4.7";
     }
 }
