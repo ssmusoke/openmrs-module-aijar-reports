@@ -120,7 +120,7 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
         rd.addDataSetDefinition("S",Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
 
-        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getNewTxCurrAgeGenderGroup();
+        CohortDefinitionDimension ageDimension =commonDimensionLibrary.getFinerAgeWith55And65Ranges();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),

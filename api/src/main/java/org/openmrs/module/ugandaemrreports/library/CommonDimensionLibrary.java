@@ -405,7 +405,7 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
 
     }
 
-    public CohortDefinitionDimension getNewTxCurrAgeGenderGroup() {
+    public CohortDefinitionDimension getFinerAgeWith55And65Ranges() {
         CohortDefinitionDimension ageGenderDimension = new CohortDefinitionDimension();
 
         CohortDefinition below1Year = cohortDefinitionLibrary.below1Year();

@@ -130,7 +130,7 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
 
-        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getNewTxCurrAgeGenderGroup();
+        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getFinerAgeWith55And65Ranges();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
         CohortDefinition males = cohortDefinitionLibrary.males();
