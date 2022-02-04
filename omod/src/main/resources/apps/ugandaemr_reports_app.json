@@ -608,10 +608,10 @@
         "requiredPrivilege": "App: ugandaemrreports.patientRegimenChangeHistory"
       },
       {
-        "id": "Back To Care Services",
+        "id": "Back To Care Services Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
         "type": "link",
-        "label": "Back To Care Services",
+        "label": "Back To Care Services Report",
         "url": "reportingui/runReport.page?reportDefinition=6f1f996e-6f2c-4491-b055-2560242b1ab9",
         "order": 150,
         "requiredPrivilege": "App: ugandaemrreports.backToCare"

@@ -367,7 +367,7 @@ public class HIVMetadata extends ReportMetadata {
     public EncounterType getARTEncounterEncounterType() {
         return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
     }
-    public EncounterType getBTCEncounterType() {
+    public EncounterType getBackToCareEncounterType() {
         return getEncounterType("791faefd-36b8-482f-ab78-20c297b03851");
     }
 
