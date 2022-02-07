@@ -70,6 +70,14 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
 
+    public PatientDataDefinition getLastEIDEncounterVisitDate() {
+        return df.getLastEncounterOfTypeByEndDate(hivMetadata.getEIDEncounterPageEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getEIDEnrollmentDate() {
+        return df.getLastEncounterOfTypeByEndDate(hivMetadata.getEIDSummaryPageEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
     public PatientDataDefinition getLastEncounterDateTime() {
         return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
@@ -142,6 +150,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
+    public PatientDataDefinition getExpectedEIDEncounterReturnDate() {
+        return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), hivMetadata.getEIDEncounterPageEncounterType(), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
     public PatientDataDefinition getLatestExpectedReturnDateBeforeStartDate() {
         return df.getObsBeforeDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
@@ -169,6 +181,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getExpectedReturnDateDuringPeriodAtLocation() {
         return df.getExpectedReturnDateAtLocation(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getExpectedEIDReturnDateDuringPeriodAtLocation() {
+        return df.getExpectedReturnDateAtLocation(hivMetadata.getReturnVisitDate(), hivMetadata.getEIDEncounterPageEncounterType(), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getStartRegimen() {

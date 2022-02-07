@@ -452,6 +452,10 @@ public class HIVMetadata extends ReportMetadata {
         return getConceptList("012a1378-b005-4793-8ea0-d01fceea769d,dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,25b0b83c-a7b8-4663-b727-0c03c982bab2,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,6cdbfee8-87bf-406c-8dc3-3a22d95e952c,583a954b-0cd5-4b69-aef6-87c281e03a55,14c56659-3d4e-4b88-b3ff-e2d43dbfb865,a58d12c5-abc2-4575-8fdb-f30960f348fc,6cc36637-596a-4426-92cf-170f76ea437d,a779d984-9ccf-4424-a750-47506bf8212b");
     }
 
+    public List<Concept> getDTGAndLPVRegimens() {
+        return getConceptList("0cb7b5ee-42ba-4667-98ab-d94b3443bbc8,0d843278-8732-48f0-a345-029f2e779a84,14c56659-3d4e-4b88-b3ff-e2d43dbfb865,248d52a8-5caf-4e8b-8a06-1d4ce4964c16,29439504-5f5d-49ac-b8e4-258adc08c67a,29abb0ac-fcda-4dc0-b69b-9a2558e6a122,2ae8fb21-1070-4d54-ab0e-c3afeb570dca,3b5248cc-0527-468e-8eb5-23565a4bad1f,4a608d68-516f-44d2-9e0b-1783dc0d870e,4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6");
+    }
+
     public List<Concept> getFirstLineDrugsAdults() {
         return getConceptList("dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,012a1378-b005-4793-8ea0-d01fceea769d,25b0b83c-a7b8-4663-b727-0c03c982bab2,a58d12c5-abc2-4575-8fdb-f30960f348fc,6cc36637-596a-4426-92cf-170f76ea437d,a779d984-9ccf-4424-a750-47506bf8212b");
     }
