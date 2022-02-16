@@ -26,6 +26,7 @@ import org.openmrs.module.reporting.data.converter.DataConverter;
 import org.openmrs.module.reporting.data.converter.ObjectFormatter;
 import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
+import org.openmrs.module.reporting.data.patient.definition.SqlPatientDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.ObsForPersonDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -159,5 +160,11 @@ public class SharedDataDefintion {
         NameOfHealthUnitDatasetDefinition dsd = new NameOfHealthUnitDatasetDefinition();
         dsd.setFacilityName("ugandaemr.healthCenterName");
         return dsd;
+    }
+
+    public DataDefinition getDHIS2Uuid(){
+        SqlPatientDataDefinition cd = new SqlPatientDataDefinition();
+        cd.setQuery("select person_id,(select property_value from global_property where property='ugandaemr.dhis2.organizationuuid')uuid from person");
+        return  cd;
     }
 }
