@@ -20,7 +20,6 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
@@ -124,7 +123,7 @@ public class SetupMoH105Section5Report extends UgandaEMRDataExportManager  {
 
         dsd.setParameters(getParameters());
         dsd.setName("M");
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.standardAgeGroupsForSmc(), "onDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.SMCAgeGroups(), "onDate=${endDate}"));
         dsd.addDimension("site", ReportUtils.map(dimensionLibrary.siteType(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
         dsd.addDimension("method", ReportUtils.map(dimensionLibrary.procedureMethod(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
 

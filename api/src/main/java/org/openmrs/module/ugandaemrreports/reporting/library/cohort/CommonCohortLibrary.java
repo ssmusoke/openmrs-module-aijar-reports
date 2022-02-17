@@ -262,7 +262,17 @@ public class CommonCohortLibrary {
      *
      * @return the cohort definition
      */
-	public CohortDefinition agedAtLeastMonthsAgedAtMostYears(int minAge, int maxAge) {
+    public CohortDefinition agedAtLeastMonthsAgedAtMostMonths(int minAge, int maxAge) {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("aged between " + minAge + " months and " + maxAge + " years");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(minAge);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        cd.setMaxAge(maxAge);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+    public CohortDefinition agedAtLeastMonthsAgedAtMostYears(int minAge, int maxAge) {
         AgeCohortDefinition cd = new AgeCohortDefinition();
         cd.setName("aged between " + minAge + " months and " + maxAge + " years");
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));

@@ -117,14 +117,14 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
     protected DataSetDefinition antentalDataSetDefinition() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.ANCAgeGroups(), "effectiveDate=${endDate}"));
+        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.SMCAgeGroups(), "effectiveDate=${endDate}"));
         dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
         dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 
-        addRowWithColumns(dsd, "SMC01","Number of females with a first ANC Visit ",indicatorLibrary.ANCFirstContact() );
+        addRowWithColumns(dsd, "SMC01","Number of females with a first ANC Visit ",indicatorLibrary.ANCEighthVisit() );
         addRowWithColumns(dsd, "SMC02","Number of females with a fourth contact  ANC Visit ",indicatorLibrary.ANCFourthVisit());
 
 
@@ -133,12 +133,23 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
 
     public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
 
-        addIndicator(dsd, key + "aF", label + " (Below 15 Years) Female", cohortIndicator, "age=Below15");
-        addIndicator(dsd, key + "bF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "age=Between15And19yrs");
-        addIndicator(dsd, key + "cF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "age=Between20And24yrs");
-        addIndicator(dsd, key + "dF", label + " (Between 25 and 49 Years) Female", cohortIndicator, "age=Between25And49yrs");
-        addIndicator(dsd, key + "eF", label + " (>50) Female", cohortIndicator, "age=GreaterThan50yrs");
-        addIndicator(dsd, key + "fF", label + " (Total) ", cohortIndicator, "");
+        addIndicator(dsd, key + "aM", label + " (Between 0 and 60 days) Male", cohortIndicator, "age=Below2Months");
+        addIndicator(dsd, key + "bM", label + " (Between 2 Months and a Year) Male", cohortIndicator, "age=Between2MonthsAnd1Year");
+        addIndicator(dsd, key + "cM", label + " (Between 1 and 9 Year) Male", cohortIndicator, "age=Between1And9Year");
+        addIndicator(dsd, key + "dM", label + " (Between 10 and 14 Year) Male", cohortIndicator, "age=Between10And14Year");
+        addIndicator(dsd, key + "eM", label + " (Between 15 and 19 Year) Male", cohortIndicator, "age=Between15And19Year");
+        addIndicator(dsd, key + "fM", label + " (Between 20 and 24 Year) Male", cohortIndicator, "age=Between20And24Year");
+        addIndicator(dsd, key + "gM", label + " (Between 25 and 29 Year) Male", cohortIndicator, "age=Between25And29Year");
+        addIndicator(dsd, key + "hM", label + " (Between 30 and 34 Year) Male", cohortIndicator, "age=Between30And34Year");
+        addIndicator(dsd, key + "iM", label + " (Between 35 and 39 Year) Male", cohortIndicator, "age=Between35And39Year");
+        addIndicator(dsd, key + "jM", label + " (Between 40 and 44 Year) Male", cohortIndicator, "age=Between40And44yrs");
+        addIndicator(dsd, key + "kM", label + " (Between 45 and 49 Year) Male", cohortIndicator, "age=Between45And49yrs");
+        addIndicator(dsd, key + "lM", label + " (Greater than 50) Male", cohortIndicator, "age=GreaterThan50yrs");
+        addIndicator(dsd, key + "mM", label + " (Between 45 and 49 Year) Male", cohortIndicator, "age=Between45And49yrs");
+
+
+
+
     }
 
     public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
