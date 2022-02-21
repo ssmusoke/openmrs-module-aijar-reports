@@ -10,6 +10,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.Moh105IndicatorLibrary;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.openmrs.module.ugandaemrreports.reports.UgandaEMRDataExportManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,13 +109,13 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         rd.setParameters(getParameters());
 
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
-        rd.addDataSetDefinition("105", Mapped.mapStraightThrough(antentalDataSetDefinition()));
+        rd.addDataSetDefinition("105", Mapped.mapStraightThrough(smcDataSetDefinition()));
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
         return rd;
 
     }
 
-    protected DataSetDefinition antentalDataSetDefinition() {
+    protected DataSetDefinition smcDataSetDefinition() {
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         dsd.addDimension("age", ReportUtils.map(dimensionLibrary.SMCAgeGroups(), "effectiveDate=${endDate}"));
@@ -124,9 +125,9 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
 
 
-        addRowWithColumns(dsd, "SMC01","Number of females with a first ANC Visit ",indicatorLibrary.ANCEighthVisit() );
-        addRowWithColumns(dsd, "SMC02","Number of females with a fourth contact  ANC Visit ",indicatorLibrary.ANCFourthVisit());
-
+        addRowWithColumns(dsd, "SMC01","SM01. Number of Males Counselled and Tested Postive for HIV at SMC site ",indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc866728-30ab-102d-86b0-7a5022ba4115")) );
+        addRowWithColumns(dsd, "SMC02","SM01. Number of Males Counselled and Tested Negative for HIV at SMC site ",indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")));
+        addRowWithColumns(dsd, "SMC03","SM01. Number of Males Counselled and Tested Incloclusive for HIV at SMC site ",indicatorLibrary.counseledAndTestedWithResuls(Dictionary.getConcept("dc85aa72-30ab-102d-86b0-7a5022ba4115")));
 
         return dsd;
     }
@@ -159,6 +160,6 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.0.3";
+        return "2.1.0.5";
     }
 }

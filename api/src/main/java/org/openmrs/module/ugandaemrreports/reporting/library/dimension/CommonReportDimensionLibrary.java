@@ -189,6 +189,7 @@ public class CommonReportDimensionLibrary {
      */
     public CohortDefinitionDimension SMCAgeGroups() {
         CohortDefinitionDimension dim = new CohortDefinitionDimension();
+        dim.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         dim.setName("age groups (<2, 2<5, 5<15, 15-49, >49)");
         dim.addParameter(new Parameter("onDate", "On Date", Date.class));
         dim.addCohortDefinition("Below2Months", map(commonCohortLibrary.agedAtLeastMonthsAgedAtMostMonths(0,2), "effectiveDate=${onDate}"));

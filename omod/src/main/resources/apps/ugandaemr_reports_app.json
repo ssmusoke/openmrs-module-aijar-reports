@@ -656,7 +656,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",
         "label": "HMIS 105 Section 5.0: SMC",
-        "url": "reportingui/runReport.page?reportDefinition=0b095617-de87-4f7c-a15b-a53b9a2e43b4",
+        "url": "reportingui/runReport.page?reportDefinition=d7c9aca3-1640-4761-ba9c-32dbbf109ecf",
         "order": 5,
         "requiredPrivilege": "App: ugandaemrreports.HMIS105"
       },
