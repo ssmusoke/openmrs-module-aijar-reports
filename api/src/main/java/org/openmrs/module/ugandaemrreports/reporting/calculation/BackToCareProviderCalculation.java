@@ -16,14 +16,14 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public class ProviderNameCalculation extends AbstractPatientCalculation  {
+public class BackToCareProviderCalculation extends AbstractPatientCalculation  {
     @Override
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
-        Set<Integer> male = Filters.alive(cohort, context);
+        Set<Integer> male = Filters.male(cohort, context);
         EncounterService service = Context.getEncounterService();
-        EncounterRole role = service.getEncounterRoleByUuid("a0b03050-c99b-11e0-9572-0800200c9a66");
-        CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), cohort, context);
+        EncounterRole role = service.getEncounterRoleByUuid("240b26f9-dd88-4172-823d-4a8bfeb7841f");
+        CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "791faefd-36b8-482f-ab78-20c297b03851"), cohort, context);
         for(Integer ptId: male){
             String provider = "";
             Encounter enc = EmrCalculationUtils.encounterResultForPatient(encounter, ptId);
@@ -39,4 +39,5 @@ public class ProviderNameCalculation extends AbstractPatientCalculation  {
         }
         return ret;
     }
+
 }
