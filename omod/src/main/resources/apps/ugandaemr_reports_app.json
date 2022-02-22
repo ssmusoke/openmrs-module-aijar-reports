@@ -611,6 +611,15 @@
         "url": "reportingui/runReport.page?reportDefinition=1381401f-1dd2-11b2-96d6-3d6bf54c9095",
         "order": 150,
         "requiredPrivilege": "App: ugandaemrreports.patientRegimenChangeHistory"
+      },
+      {
+        "id": "Back To Care Services Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Back To Care Services Report",
+        "url": "reportingui/runReport.page?reportDefinition=6f1f996e-6f2c-4491-b055-2560242b1ab9",
+        "order": 150,
+        "requiredPrivilege": "App: ugandaemrreports.backToCare"
       },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
