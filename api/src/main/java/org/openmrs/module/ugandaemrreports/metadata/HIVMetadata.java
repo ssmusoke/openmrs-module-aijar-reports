@@ -400,6 +400,10 @@ public class HIVMetadata extends ReportMetadata {
         return getConcept("dce09e2f-30ab-102d-86b0-7a5022ba4115");
     }
 
+    public Concept getWeight() {
+        return getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+
     public Concept getBaselineBodyWeight() {
         return getConcept("900b8fd9-2039-4efc-897b-9b8ce37396f5");
     }

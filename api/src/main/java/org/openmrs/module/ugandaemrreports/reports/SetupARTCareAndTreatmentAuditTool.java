@@ -9,6 +9,9 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
+import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
@@ -127,13 +130,20 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
 		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
 		addColumn(dsd, "Start Regimen", hivPatientData.getStartRegimen());
+		addColumn(dsd, "Weight", hivPatientData.getWeight());
 		addColumn(dsd, "Start Regimen Date", hivPatientData.getStartRegimenDate());
 		addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
 		addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
 		addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
-
+		addColumn(dsd, "Prescription Duration", hivPatientData.getARVDuration());
 		addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
 		addColumn(dsd, "Next Appointment Date", hivPatientData.getExpectedReturnDate());
+		dsd.addColumn("IsActiveCurrentMonth", new ActiveInPeriodDataDefinition(), "startDate=${startDate},endDate=${endDate}", new ObsDataConverter());
+		dsd.addColumn("IsActiveMonth1", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-1m,endDate=${endDate}-1m", new ObsDataConverter());
+		dsd.addColumn("IsActiveMonth2", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-2m,endDate=${endDate}-2m", new ObsDataConverter());
+		dsd.addColumn("IsActiveMonth3", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-3m,endDate=${endDate}-3m", new ObsDataConverter());
+		dsd.addColumn("IsActiveMonth4", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-4m,endDate=${endDate}-4m", new ObsDataConverter());
+		dsd.addColumn("IsActiveMonth5", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-5m,endDate=${endDate}-5m", new ObsDataConverter());
 		return rd;
 	}
 

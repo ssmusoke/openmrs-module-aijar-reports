@@ -191,6 +191,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getArtStartRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
+    public PatientDataDefinition getWeight() {
+        return df.getObsByEndDate(hivMetadata.getWeight(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
+    }
+
     public PatientDataDefinition getStartRegimenDate() {
         return df.getObsByEndDate(hivMetadata.getArtStartDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }

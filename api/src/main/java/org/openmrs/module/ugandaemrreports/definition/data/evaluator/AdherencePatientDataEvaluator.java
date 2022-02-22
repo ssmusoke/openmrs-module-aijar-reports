@@ -8,8 +8,6 @@ import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.data.patient.EvaluatedPatientData;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.evaluator.PatientDataEvaluator;
-import org.openmrs.module.reporting.data.patient.evaluator.SqlPatientDataEvaluator;
-import org.openmrs.module.reporting.data.patient.service.PatientDataService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
@@ -17,12 +15,13 @@ import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Adherence;
 import org.openmrs.module.ugandaemrreports.common.StubDate;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.AdherencePatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.FUStatusPatientDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -30,22 +29,10 @@ import static java.util.stream.Collectors.groupingBy;
  */
 @Handler(supports = AdherencePatientDataDefinition.class, order = 50)
 public class AdherencePatientDataEvaluator implements PatientDataEvaluator {
-    protected static final Log log = LogFactory.getLog(FUStatusPatientDataDefinition.class);
-
-    @Autowired
-    private HIVPatientDataLibrary hivLibrary;
-
-    @Autowired
-    private PatientDataService patientDataService;
+    protected static final Log log = LogFactory.getLog(AdherencePatientDataDefinition.class);
 
     @Autowired
     private EvaluationService evaluationService;
-
-    @Autowired
-    private SqlPatientDataEvaluator sqlPatientDataEvaluator;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
 
     @Override
     public EvaluatedPatientData evaluate(PatientDataDefinition definition, EvaluationContext context) throws EvaluationException {
@@ -59,9 +46,6 @@ public class AdherencePatientDataEvaluator implements PatientDataEvaluator {
 
 
         Map<Integer, Date> m = new HashMap<Integer, Date>();
-
-        LocalDate workingDate = StubDate.dateOf(DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd"));
-
 
         String startDate = DateUtil.formatDate(def.getStartDate(), "yyyy-MM-dd");
         String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
