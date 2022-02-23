@@ -19,8 +19,8 @@ import java.util.List;
 
 /**
  */
-@Handler(supports = ActiveInPeriodDataDefinition.class, order = 50)
-public class        ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
+@Handler(supports = ActiveInPeriodDataDefinition.class, order = 1)
+public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
     protected static final Log log = LogFactory.getLog(ActiveInPeriodDataEvaluator.class);
 
     @Autowired
@@ -33,6 +33,8 @@ public class        ActiveInPeriodDataEvaluator implements PatientDataEvaluator 
         EvaluatedPatientData c = new EvaluatedPatientData(def, context);
 
         if (context.getBaseCohort() != null && context.getBaseCohort().isEmpty()) {
+            log.info("Base Cohort for ActiveInPeriod is null or empty");
+            System.out.println("Base Cohort for ActiveInPeriod is null or empty");
             return c;
         }
 
@@ -58,6 +60,7 @@ public class        ActiveInPeriodDataEvaluator implements PatientDataEvaluator 
                 "GROUP BY o.person_id";
 
         log.info("Running active in care report definition with startDate " + startDate + " and endDate " + endDate + " and SQL query " + query);
+        System.out.println("Running active in care report definition with startDate " + startDate + " and endDate " + endDate + " and SQL query " + query);
 
         SqlQueryBuilder sqlQueryBuilder = new SqlQueryBuilder(query);
 
@@ -67,6 +70,7 @@ public class        ActiveInPeriodDataEvaluator implements PatientDataEvaluator 
             Obs o = new Obs();
             o.setValueBoolean(Boolean.valueOf(String.valueOf(row[2])));
             c.addData(Integer.valueOf(String.valueOf(row[0])), o);
+            log.info("Adding active data for patient with id " + row[0]);
         }
 
         return c;
