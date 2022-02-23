@@ -20,7 +20,7 @@ import java.util.List;
 /**
  */
 @Handler(supports = ActiveInPeriodDataDefinition.class, order = 50)
-public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
+public class        ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
     protected static final Log log = LogFactory.getLog(ActiveInPeriodDataEvaluator.class);
 
     @Autowired
@@ -40,9 +40,9 @@ public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
         String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
         String query = "SELECT o.person_id, e.encounter_type,\n" +
-                "       IF (MAX(last_encounter.last_encounter_date) > MAX(last_visit.return_visit_date), 1, IF(CURRENT_DATE() - MAX(last_encounter.last_encounter_date) < 28, 0, 1)) AS is_active\n" +
+                "       IF (MAX(last_encounter.last_encounter_date) > MAX(last_visit.return_visit_date), 1, IF(CURRENT_DATE() - MAX(last_encounter.last_encounter_date) < 28, 0, 1)) AS is_active,\n" +
                 "       MAX(last_visit.return_visit_date) AS return_visit_date,\n" +
-                "       MAX(last_encounter.last_encounter_date) as last_encounter_date,\n" +
+                "       MAX(last_encounter.last_encounter_date) as last_encounter_date\n" +
                 "    FROM obs o\n" +
                 "    INNER JOIN encounter e on o.encounter_id = e.encounter_id\n" +
                 "    INNER JOIN encounter_type et on e.encounter_type = et.encounter_type_id AND et.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f'\n" +
@@ -65,7 +65,7 @@ public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
 
         for (Object[] row : results) {
             Obs o = new Obs();
-            o.setValueBoolean(Boolean.valueOf(String.valueOf(row[1])));
+            o.setValueBoolean(Boolean.valueOf(String.valueOf(row[2])));
             c.addData(Integer.valueOf(String.valueOf(row[0])), o);
         }
 

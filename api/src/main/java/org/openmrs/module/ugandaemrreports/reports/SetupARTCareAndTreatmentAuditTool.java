@@ -2,6 +2,8 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
+import org.openmrs.module.reporting.data.converter.ObsValueConverter;
+import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -138,17 +141,28 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd, "Prescription Duration", hivPatientData.getARVDuration());
 		addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
 		addColumn(dsd, "Next Appointment Date", hivPatientData.getExpectedReturnDate());
-		dsd.addColumn("IsActiveCurrentMonth", new ActiveInPeriodDataDefinition(), "startDate=${startDate},endDate=${endDate}", new ObsDataConverter());
-		dsd.addColumn("IsActiveMonth1", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-1m,endDate=${endDate}-1m", new ObsDataConverter());
-		dsd.addColumn("IsActiveMonth2", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-2m,endDate=${endDate}-2m", new ObsDataConverter());
-		dsd.addColumn("IsActiveMonth3", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-3m,endDate=${endDate}-3m", new ObsDataConverter());
-		dsd.addColumn("IsActiveMonth4", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-4m,endDate=${endDate}-4m", new ObsDataConverter());
-		dsd.addColumn("IsActiveMonth5", new ActiveInPeriodDataDefinition(), "startDate=${startDate}-5m,endDate=${endDate}-5m", new ObsDataConverter());
+		addColumn(dsd, "IsActiveCurrentMonth",getActiveInPeriodDataDefinition(null));
+		addColumn(dsd,"IsActiveMonth1", getActiveInPeriodDataDefinition("1m"));
+		addColumn(dsd,"IsActiveMonth2", getActiveInPeriodDataDefinition("2m"));
+		addColumn(dsd,"IsActiveMonth3", getActiveInPeriodDataDefinition("3m"));
+		addColumn(dsd,"IsActiveMonth4", getActiveInPeriodDataDefinition("4m"));
+		addColumn(dsd,"IsActiveMonth5", getActiveInPeriodDataDefinition("5m"));
 		return rd;
+	}
+
+	public PatientDataDefinition getActiveInPeriodDataDefinition(String pastPeriod) {
+		ActiveInPeriodDataDefinition def = new ActiveInPeriodDataDefinition();
+		def.addParameter(new Parameter("startDate", "Start Date", Date.class));
+		def.addParameter(new Parameter("endDate", "End Date", Date.class));
+		if(pastPeriod!=null){
+			return df.createPatientDataDefinition(def, new ObsDataConverter(), "startDate=startDate-"+pastPeriod+",endDate=endDate-"+pastPeriod);
+		}else{
+			return df.createPatientDataDefinition(def, new ObsValueConverter(), "startDate=startDate,endDate=endDate");
+		}
 	}
 
 	@Override
 	public String getVersion() {
-		return "1.0.1";
+		return "1.0.2.3";
 	}
 }
