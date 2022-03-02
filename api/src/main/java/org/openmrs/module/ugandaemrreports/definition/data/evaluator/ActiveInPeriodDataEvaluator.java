@@ -68,7 +68,11 @@ public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
 
         for (Object[] row : results) {
             Obs o = new Obs();
-            o.setValueBoolean(Boolean.valueOf(String.valueOf(row[2])));
+            if (String.valueOf(row[2]).equals("1")) {
+                o.setValueText("Y");
+            } else {
+                o.setValueText("N");
+            }
             c.addData(Integer.valueOf(String.valueOf(row[0])), o);
             log.info("Adding active data for patient with id " + row[0]);
         }
