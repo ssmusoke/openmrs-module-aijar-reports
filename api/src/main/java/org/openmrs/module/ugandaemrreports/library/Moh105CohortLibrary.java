@@ -3409,18 +3409,28 @@ public class Moh105CohortLibrary {
         cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("outReach", ReportUtils.map(surgicalMethodsusedAtOutreachsite(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("adverseEvents AND outReach");
         return cd;
     }
-
-    public CohortDefinition clientsWithModerateAdverseEventsUsingSurgicalatFacility(String concept) {
+    public CohortDefinition clientsWithModerateAdverseEventsUsingDeviceatOutreachSite(String concept) {
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("outReach", ReportUtils.map(deviceMethodsusedAtOutreach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("adverseEvents AND outReach");
+        return cd;
+    }
+
+    public CohortDefinition clientsWithAdverseEventsUsingSurgicalatFacility(String concept) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("facilitytype", ReportUtils.map(surgicalMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("adverseEvents AND facilitytype");
         return cd;
@@ -3431,7 +3441,7 @@ public class Moh105CohortLibrary {
         cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
         cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
         cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
-        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.addSearch("devicetype", ReportUtils.map(deviceMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("adverseEvents AND devicetype");
         return cd;

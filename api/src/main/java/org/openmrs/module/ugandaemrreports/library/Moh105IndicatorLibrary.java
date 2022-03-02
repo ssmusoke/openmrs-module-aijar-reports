@@ -21,11 +21,8 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
-import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.UgandaEMRReportUtil.map;
 import static org.openmrs.module.ugandaemrreports.reporting.utils.EmrReportingUtils.cohortIndicator;
@@ -3653,16 +3650,28 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatFacilityafter48HoursUsingSurgicalMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator moderateAdverseEventsAtFacilityUsingSurgical(){
-        return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingSurgicalatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithAdverseEventsUsingSurgicalatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator moderateAdverseEventsAtOutreachsiteUsingSurgical(){
+        return cohortIndicator("Moderate adverse events at the Outreach", map(cohortLibrary.clientsWithModerateAdverseEventsUsingSurgicalatOutreachSite("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator moderateAdverseEventsAtOutreachUsingDevice(){
+        return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatOutreachSite("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator severeAdverseEventsAtFacilityUsingSurgical(){
-        return cohortIndicator("Severe adverse events at the facility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingSurgicalatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+        return cohortIndicator("Severe adverse events at the facility", map(cohortLibrary.clientsWithAdverseEventsUsingSurgicalatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator severeAdverseEventsAtOutreachUsingSurgical(){
+        return cohortIndicator("Severe adverse events at the Outreach", map(cohortLibrary.clientsWithAdverseEventsUsingSurgicalatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator moderateAdverseEventsAtFacilityUsingDevice(){
         return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
     public CohortIndicator severeAdverseEventsAtFacilityUsingDevice(){
         return cohortIndicator("Severe adverse events at the facility using Device ", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator severeAdverseEventsAtOutreachUsingDevice(){
+        return cohortIndicator("Severe adverse events at the facility using Device ", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatOutreachSite("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
 

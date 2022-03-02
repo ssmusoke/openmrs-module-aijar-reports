@@ -140,14 +140,13 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd,"SMC13", "First follow up visit within beyond 14 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(15));
         addRowWithColumns(dsd,"SMC30", "Moderate Adverse Events at Facility using Surgical Means", indicatorLibrary.moderateAdverseEventsAtFacilityUsingSurgical());
         addRowWithColumns(dsd,"SMC31", "Moderate Adverse Events at Facility using device Means", indicatorLibrary.moderateAdverseEventsAtFacilityUsingDevice());
+        addRowWithColumns(dsd,"SMC32", "Moderate Adverse Events at Outreach site  using surgical Means", indicatorLibrary.moderateAdverseEventsAtOutreachsiteUsingSurgical());
+        addRowWithColumns(dsd,"SMC33", "Moderate Adverse Events at Outreach site  using device Means", indicatorLibrary.moderateAdverseEventsAtOutreachUsingDevice());
 
-        addRowWithColumns(dsd,"SMC35", "Moderate Adverse Events at Facility using Surgical Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingSurgical());
-        addRowWithColumns(dsd,"SMC36", "Severe Adverse Events at Facility using Surgical Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingDevice());
-
-
-
-
-
+        addRowWithColumns(dsd,"SMC35", "Severe Adverse Events at Facility using Surgical Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingSurgical());
+        addRowWithColumns(dsd,"SMC36", "Severe Adverse Events at Facility using device Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingDevice());
+        addRowWithColumns(dsd,"SMC37", "Severe Adverse Events at Outreach Site using Surgical Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingSurgical());
+        addRowWithColumns(dsd,"SMC38", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingDevice());
 
         return dsd;
     }
@@ -179,6 +178,6 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.4";
+        return "2.1.5";
     }
 }
