@@ -58,6 +58,9 @@ public class Moh105CohortLibrary {
     private DataFactory df;
     String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
 
+    @Autowired
+    private CommonCohortDefinitionLibrary cclibrary;
+
 
     public CohortDefinition femaleAndHasAncVisit(double lower, double upper){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
@@ -3223,6 +3226,50 @@ public class Moh105CohortLibrary {
 		cd.addParameter(new Parameter("onDate", "On Date", Date.class));
 		return cd;
 	}
+
+    //combining all that constitute to facility site type
+    public CohortDefinition surgicalMethodsusedAtfacility() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Surgical Methods used at Facility Level");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("facilitySite", ReportUtils.map(facilitySiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("surgicalMethods", ReportUtils.map(surgicalProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("facilitySite AND surgicalMethods ");
+        return cd;
+    }
+
+    public CohortDefinition deviceMethodsusedAtfacility() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Surgical Methods used at Facility Level");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("facilitySite", ReportUtils.map(facilitySiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deviceMethods", ReportUtils.map(deviceProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("facilitySite AND deviceMethods ");
+        return cd;
+    }
+    public CohortDefinition deviceMethodsusedAtOutreach() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Surgical Methods used at Facility Level");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("outreachsite", ReportUtils.map(outreachSiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("deviceMethods", ReportUtils.map(deviceProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outreachsite AND deviceMethods ");
+        return cd;
+    }
+    public CohortDefinition surgicalMethodsusedAtOutreachsite() {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Surgical Methods used at Facility Level");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("outReachsite", ReportUtils.map(outreachSiteType(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("surgicalMethods", ReportUtils.map(surgicalProcedureMethod(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("outReachsite AND surgicalMethods ");
+        return cd;
+    }
+
 	
 	//combining all that constitute to facility site type
 	public CohortDefinition facilitySiteType() {
@@ -3262,6 +3309,8 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("(procedureMethod OR emptyProcedureObs) AND smcEncounter");
         return cd;
 	}
+
+
 	
 	//combining all that constitutes the surgical procedure methods
 		public CohortDefinition deviceProcedureMethod() {
@@ -3323,6 +3372,7 @@ public class Moh105CohortLibrary {
     /**
      * 
      */
+
     public CohortDefinition clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(int visit) {
     	CompositionCohortDefinition cd = new CompositionCohortDefinition();
     	cd.setName("Returned for visit and has SMC encounter within period");
@@ -3333,6 +3383,58 @@ public class Moh105CohortLibrary {
         cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
         cd.setCompositionString("visit AND smcEncounter");
     return cd;
+    }
+    public CohortDefinition clientsReturnedatFacilityafter48HoursUsingSurgicalMeans(int visit) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("visit", ReportUtils.map(clientsCircumcisedAndReturnedWithin6Weeks(visit), "onDate=${onOrBefore}"));
+        cd.addSearch("facilitytype", ReportUtils.map(surgicalMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("visit AND facilitytype");
+        return cd;
+    }
+    public CohortDefinition clientsWithAdverseEvents(String concept){
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Clients experiencing Moderate Adverse Events after SMC");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("adverseEvents", ReportUtils.map(definitionLibrary.hasObs(getConcept("e34976b9-1aff-489d-b959-4da1f7272499"), getConcept(concept)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.addSearch("smcEncounter", ReportUtils.map(definitionLibrary.hasEncounter(MetadataUtils.existing(EncounterType.class, Metadata.EncounterType.SMC_ENCOUNTER)), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("adverseEvents AND smcEncounter");
+        return cd;
+    }
+    public CohortDefinition clientsWithModerateAdverseEventsUsingSurgicalatOutreachSite(String concept) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("outReach", ReportUtils.map(surgicalMethodsusedAtOutreachsite(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("adverseEvents AND outReach");
+        return cd;
+    }
+
+    public CohortDefinition clientsWithModerateAdverseEventsUsingSurgicalatFacility(String concept) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("facilitytype", ReportUtils.map(surgicalMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("adverseEvents AND facilitytype");
+        return cd;
+    }
+
+    public CohortDefinition clientsWithModerateAdverseEventsUsingDeviceatFacility(String concept) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("adverseEvents",  ReportUtils.map(clientsWithAdverseEvents(concept), "onDate=${onOrBefore}"));
+        cd.addSearch("devicetype", ReportUtils.map(deviceMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("adverseEvents AND devicetype");
+        return cd;
     }
 
 

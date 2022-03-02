@@ -203,6 +203,7 @@ public class CommonReportDimensionLibrary {
         dim.addCohortDefinition("Between35And39Year", map(commonCohortLibrary.agedAtLeastAgedAtMost(30,34), "effectiveDate=${onDate}"));
         dim.addCohortDefinition("Between40And44yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(40, 44), "effectiveDate=${endDate}"));
         dim.addCohortDefinition("Between45And49yrs", map(commonCohortLibrary.agedAtLeastAgedAtMost(45, 49), "effectiveDate=${endDate}"));
+
         dim.addCohortDefinition("GreaterThan50yrs", map(commonCohortLibrary.agedAtLeast(50), "effectiveDate=${endDate}"));
         return dim;
     }

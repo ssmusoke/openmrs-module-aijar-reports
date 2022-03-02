@@ -21,6 +21,7 @@ import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
+import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,6 +40,8 @@ public class Moh105IndicatorLibrary {
     String PNC_UUID = Metadata.EncounterType.PNC_ENCOUNTER;
     String EID_UUID = Metadata.EncounterType.EID_ENCOUNTER_PAGE;
     String MATERNITY_UUID = Metadata.EncounterType.MATERNITY_ENCOUNTER;
+    String SMC_UUID =Metadata.EncounterType.SMC_ENCOUNTER;
+
     @Autowired
     private Moh105CohortLibrary cohortLibrary;
 
@@ -3574,6 +3577,24 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator counseledAndTestedWithResuls(Concept ans) {
         return cohortIndicator("Counseled and tested with results", map(cohortLibrary.counseledTestedForHivResults(ans), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator individualsNoteTestedForHIV() {
+        return cohortIndicator("Counseled and tested with results", map(cohortLibrary.hasObsAndEncounter(SMC_UUID,Dictionary.getConcept("41dcf21d-7e2f-4867-9ede-ed491aca454a"),Dictionary.getConcept("dcd69c06-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator circumcisedAtFacilityUsingSurgicalMethods() {
+        return cohortIndicator("Males Circumcised at Facility Using Surgical means ", map(cohortLibrary.surgicalMethodsusedAtfacility(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator circumcisedAtFacilityUsingDeviceMethods() {
+        return cohortIndicator("Males Circumcised at Facility Using Device ", map(cohortLibrary.deviceMethodsusedAtfacility(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator circumcisedAtOutreachUsingSurgicaleMethods() {
+        return cohortIndicator("Males Circumcised at Outreach Using Device ", map(cohortLibrary.surgicalMethodsusedAtOutreachsite(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator circumcisedAtOutreachUsingDeviceMethods() {
+        return cohortIndicator("Males Circumcised at Outreach site Using Device ", map(cohortLibrary.deviceMethodsusedAtOutreach(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+
 
     /**
      * counselled and tested for HIV regardless of the results
@@ -3627,6 +3648,22 @@ public class Moh105IndicatorLibrary {
         return cohortIndicator("follow up visits", map(cohortLibrary.clientsCircumcisedAndReturnedWithin6WeeksAndHaveSmcEncounter(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
+
+    public CohortIndicator followupVisitatFacilityUsingSurgical(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatFacilityafter48HoursUsingSurgicalMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator moderateAdverseEventsAtFacilityUsingSurgical(){
+        return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingSurgicalatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator severeAdverseEventsAtFacilityUsingSurgical(){
+        return cohortIndicator("Severe adverse events at the facility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingSurgicalatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator moderateAdverseEventsAtFacilityUsingDevice(){
+        return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator severeAdverseEventsAtFacilityUsingDevice(){
+        return cohortIndicator("Severe adverse events at the facility using Device ", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatFacility("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 }
