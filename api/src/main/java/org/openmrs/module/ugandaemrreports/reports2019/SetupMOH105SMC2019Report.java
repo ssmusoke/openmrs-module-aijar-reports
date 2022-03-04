@@ -146,6 +146,9 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd,"SMC36", "Severe Adverse Events at Facility using device Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingDevice());
         addRowWithColumns(dsd,"SMC37", "Severe Adverse Events at Outreach Site using Surgical Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingSurgical());
         addRowWithColumns(dsd,"SMC38", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingDevice());
+        addRowWithColumns(dsd,"SMC42", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT1Shots());
+        addRowWithColumns(dsd,"SMC43", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT2Shots());
+
 
         return dsd;
     }
@@ -177,6 +180,6 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.5";
+        return "2.1.7";
     }
 }

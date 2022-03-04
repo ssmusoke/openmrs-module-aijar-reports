@@ -59,7 +59,7 @@ public class SmcReturnFollowUpCalculation extends AbstractPatientCalculation {
 
                 Integer numberofDays = DateUtil.getDaysBetween(circumcisedDate.getEncounterDatetime(), followUpDate);
 
-                if (followUpDate != null) {
+                if (followUpDate != null && numberofDays!= null && numberofDays!=0) {
                     if (visit != null && visit <= 2 && numberofDays <= 2) {
                         cameForVisit = true;
                     } else if (visit != null && visit <= 7 && numberofDays <= 7) {

@@ -3673,6 +3673,12 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator severeAdverseEventsAtOutreachUsingDevice(){
         return cohortIndicator("Severe adverse events at the facility using Device ", map(cohortLibrary.clientsWithModerateAdverseEventsUsingDeviceatOutreachSite("44f95fcb-1054-466f-906d-45a41ef07297"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator clientsRecievedTT1Shots() {
+        return cohortIndicator("Clients who recieved TT1 Shots", map(cohortLibrary.hasObsAndEncounter(SMC_UUID, Dictionary.getConcept("ed8eebcb-0d31-4c85-ab37-402ba2b9f78d")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator clientsRecievedTT2Shots() {
+        return cohortIndicator("Clients who recieved TT2 Shots", map(cohortLibrary.hasObsAndEncounter(SMC_UUID, Dictionary.getConcept("c7700c4f-3dc6-4270-ba0d-dd42c0557027"),Dictionary.getConcept("abf95a81-d34a-4b3a-8323-f3edc6da542b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
 
 
 }
