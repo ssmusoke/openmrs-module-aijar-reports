@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.converter.ObsValueConverter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
@@ -19,6 +20,7 @@ import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.Cohorts;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+
+import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
 
 /**
  * Care and Treatment Audit Tool
@@ -47,6 +51,9 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Autowired
 	private BasePatientDataLibrary basePatientData;
+
+	@Autowired
+	private HIVMetadata hivMetadata;
 	
 	/**
 	 * @return the uuid for the report design for exporting to Excel
@@ -147,6 +154,19 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd,"IsActiveMonth3", getActiveInPeriodDataDefinition("3m"));
 		addColumn(dsd,"IsActiveMonth4", getActiveInPeriodDataDefinition("4m"));
 		addColumn(dsd,"IsActiveMonth5", getActiveInPeriodDataDefinition("5m"));
+		addColumn(dsd,"HIVDR_Date",df.getObsByEndDate(getConcept("b913c0d9-f279-4e43-bb8e-3d1a4cf1ad4d"), hivMetadata.getIACEncounters(), TimeQualifier.LAST, new ObsValueConverter()));
+		addColumn(dsd,"CurrentRegimenLine", hivPatientData.getRegimenLine());
+		addColumn(dsd,"CurrentRegimenLineStartDate", hivPatientData.getRegimenLineStartDate());
+		addColumn(dsd,"TPT Start Date",hivPatientData.getTPTInitiationDate());
+		addColumn(dsd,"TPT End Date",hivPatientData.getTPTCompletionDate());
+		addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
+		addColumn(dsd,"TB Status",df.getObsByEndDate(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), TimeQualifier.LAST, new ObsValueConverter()));
+		addColumn(dsd,"1st IAC Date",basePatientData.getIAC(0,"date"));
+		addColumn(dsd,"2nd IAC Date",basePatientData.getIAC(1,"date"));
+		addColumn(dsd,"3rd IAC Date",basePatientData.getIAC(2,"date"));
+		addColumn(dsd,"4th IAC Date",basePatientData.getIAC(3,"date"));
+		addColumn(dsd,"5th IAC Date",basePatientData.getIAC(4,"date"));
+		addColumn(dsd,"6th IAC Date",basePatientData.getIAC(5,"date"));
 		return rd;
 	}
 

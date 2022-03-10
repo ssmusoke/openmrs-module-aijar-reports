@@ -42,7 +42,7 @@ public class ActiveInPeriodDataEvaluator implements PatientDataEvaluator {
         String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
         String query = "SELECT o.person_id, e.encounter_type,\n" +
-                "       IF (MAX(last_encounter.last_encounter_date) > MAX(last_visit.return_visit_date), 1, IF(CURRENT_DATE() - MAX(last_encounter.last_encounter_date) < 28, 0, 1)) AS is_active,\n" +
+                "       IF (MAX(last_encounter.last_encounter_date) > MAX(last_visit.return_visit_date), 1, IF(CURRENT_DATE() - MAX(last_encounter.last_encounter_date) < 28, 1, 0)) AS is_active,\n" +
                 "       MAX(last_visit.return_visit_date) AS return_visit_date,\n" +
                 "       MAX(last_encounter.last_encounter_date) as last_encounter_date\n" +
                 "    FROM obs o\n" +
