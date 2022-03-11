@@ -15,19 +15,13 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
-import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.Cohorts;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
 
@@ -54,6 +48,9 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Autowired
 	private HIVMetadata hivMetadata;
+
+	@Autowired
+	SharedDataDefintion sdd;
 	
 	/**
 	 * @return the uuid for the report design for exporting to Excel
@@ -167,6 +164,7 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd,"4th IAC Date",basePatientData.getIAC(3,"date"));
 		addColumn(dsd,"5th IAC Date",basePatientData.getIAC(4,"date"));
 		addColumn(dsd,"6th IAC Date",basePatientData.getIAC(5,"date"));
+		dsd.addColumn("Pregnant", sdd.definition("pregnant", getConcept("dcda5179-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
 		return rd;
 	}
 
