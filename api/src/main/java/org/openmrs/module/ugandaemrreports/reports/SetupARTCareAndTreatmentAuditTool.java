@@ -165,7 +165,8 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd,"5th IAC Date",basePatientData.getIAC(4,"date"));
 		addColumn(dsd,"6th IAC Date",basePatientData.getIAC(5,"date"));
 		dsd.addColumn("Pregnant", sdd.definition("pregnant", getConcept("dcda5179-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-		return rd;
+        addColumn(dsd,"Client Status",hivPatientData.getClientStatus());
+        return rd;
 	}
 
 	public PatientDataDefinition getActiveInPeriodDataDefinition(String pastPeriod) {
