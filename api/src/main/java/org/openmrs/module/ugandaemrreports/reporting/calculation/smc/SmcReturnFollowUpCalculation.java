@@ -20,15 +20,12 @@ import org.openmrs.calculation.patient.PatientCalculationContext;
 import org.openmrs.calculation.result.CalculationResultMap;
 import org.openmrs.calculation.result.ListResult;
 import org.openmrs.module.metadatadeploy.MetadataUtils;
-import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.AbstractPatientCalculation;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.BooleanResult;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.Calculations;
 import org.openmrs.module.ugandaemrreports.reporting.calculation.EmrCalculationUtils;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CalculationUtils;
 
-import java.time.Duration;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -43,38 +40,39 @@ public class SmcReturnFollowUpCalculation extends AbstractPatientCalculation {
     public CalculationResultMap evaluate(Collection<Integer> cohort, Map<String, Object> map, PatientCalculationContext context) {
         CalculationResultMap ret = new CalculationResultMap();
         Integer visit = (map != null && map.containsKey("visit")) ? (Integer) map.get("visit") : null;
-        EncounterType type = Context.getEncounterService().getEncounterTypeByUuid("244da86d-f80e-48fe-aba9-067f241905ee");
+        EncounterType type = Context.getEncounterService().getEncounterTypeByUuid("d0f9e0b7-f336-43bd-bf50-0a7243857fa6");
         CalculationResultMap followUpEncounters = Calculations.allEncounters(type, cohort, context);
         CalculationResultMap encounter = Calculations.lastEncounter(MetadataUtils.existing(EncounterType.class, "244da86d-f80e-48fe-aba9-067f241905ee"), cohort, context);
-        CalculationResultMap followUpDateObservation = Calculations.lastObs(Dictionary.getConcept("785aceb7-2bd5-4955-ba69-627ca1befa64"), cohort, context);
-        for (Integer ptId : cohort) {
+        for(Integer ptId:cohort){
             boolean cameForVisit = false;
             Encounter circumcisedDate = EmrCalculationUtils.encounterResultForPatient(encounter, ptId);
-            Date followUpDate = EmrCalculationUtils.datetimeObsResultForPatient(followUpDateObservation, ptId);
-
             ListResult encounterList = (ListResult) followUpEncounters.get(ptId);
             List<Encounter> listResult = CalculationUtils.extractResultValues(encounterList);
-
-            for (Encounter encounter1 : listResult) {
-
-                Integer numberofDays = DateUtil.getDaysBetween(circumcisedDate.getEncounterDatetime(), followUpDate);
-
-                if (followUpDate != null && numberofDays!= null && numberofDays!=0) {
-                    if (visit != null && visit <= 2 && numberofDays <= 2) {
-                        cameForVisit = true;
-                    } else if (visit != null && visit <= 7 && numberofDays <= 7) {
-                        cameForVisit = true;
-                    } else if (visit != null && visit <= 14 && numberofDays <= 14) {
-                        cameForVisit = true;
-                    } else {
-                        cameForVisit = true;
-                    }
-                }
-                ret.put(ptId, new BooleanResult(cameForVisit, this));
+            
+          
+            if(circumcisedDate != null && visit != null && listResult.size() > 0) {
+            	for(Encounter enc: listResult) {
+	         
+	                if (visit > 7 && enc.getEncounterDatetime().after(circumcisedDate.getEncounterDatetime()) && enc.getEncounterDatetime().after(getDate(circumcisedDate.getEncounterDatetime(), 7))) {
+	                    cameForVisit = true;
+	                }
+	                else if (visit == 2 && enc.getEncounterDatetime().after(circumcisedDate.getEncounterDatetime()) && enc.getEncounterDatetime().before(getDate(circumcisedDate.getEncounterDatetime(), 3))) {
+	                    cameForVisit = true;
+	                }
+	                else if (visit == 7 && enc.getEncounterDatetime().after(circumcisedDate.getEncounterDatetime()) && enc.getEncounterDatetime().before(getDate(circumcisedDate.getEncounterDatetime(), 8)) && enc.getEncounterDatetime().after(getDate(circumcisedDate.getEncounterDatetime(), 2))) {
+	                    cameForVisit = true;
+	                }
+            	}
             }
-
+            ret.put(ptId, new BooleanResult(cameForVisit, this));
         }
-
         return ret;
+    }
+
+    private Date getDate(Date date, int days){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, days);
+        return calendar.getTime();
     }
 }
