@@ -7,9 +7,14 @@ import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinitio
 import org.openmrs.module.reporting.data.person.definition.PersonAttributeDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredAddressDataDefinition;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
+import org.openmrs.module.ugandaemrreports.definition.data.converter.IACConverter;
+import org.openmrs.module.ugandaemrreports.definition.data.definition.IACPatientDataDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.CommonReportMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 @Component
 public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefinition> {
@@ -58,5 +63,11 @@ public class BasePatientDataLibrary extends BaseDefinitionLibrary<PatientDataDef
     public PatientDataDefinition getTelephone() {
         PersonAttributeDataDefinition personAttributeDataDefinition = PatientColumns.createAttributeForPersonData("telephone", commonReportMetadata.getTelephone());
         return df.convert(personAttributeDataDefinition, new PropertyConverter(PersonAttribute.class, "value"));
+    }
+
+    public PatientDataDefinition getIAC(Integer number,String parameter) {
+        IACPatientDataDefinition def = new IACPatientDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        return df.convert(def, new IACConverter(number,parameter));
     }
 }
