@@ -222,6 +222,9 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsHavingRegimenDuringPeriod() {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
+    public CohortDefinition getPatientsWithBackToCareEncounter() {
+        return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getFollowUpAction(), hivMetadata.getMissedAppointmentEncounterType(), BaseObsCohortDefinition.TimeModifier.ANY);
+    }
 
     public CohortDefinition getPatientsHavingRegimenDuringPeriod(String olderThan) {
         return df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), olderThan, BaseObsCohortDefinition.TimeModifier.ANY);
@@ -405,6 +408,7 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getPatientsWithCodedObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdult(), BaseObsCohortDefinition.TimeModifier.LAST);
     }
 
+
     public CohortDefinition getAdultsOnFirstLineRegimen() {
         return df.getPatientsWithCodedObs(hivMetadata.getCurrentRegimen(), hivMetadata.getARTEncounterPageEncounterType(), hivMetadata.getFirstLineDrugsAdults(), BaseObsCohortDefinition.TimeModifier.ANY);
     }
@@ -587,6 +591,8 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
     public CohortDefinition getPatientsThatReceivedDrugsForNoOfDaysByEndOfPeriod(Double value1, RangeComparator rangeComparator1, Double value2, RangeComparator rangeComparator2){
         return df.getPatientsWithNumericObsByEndOfPeriod(hivMetadata.getNumberOfDaysDispensed(), hivMetadata.getARTEncounterPageEncounterType(), rangeComparator1,value1,rangeComparator2,value2, BaseObsCohortDefinition.TimeModifier.LAST);
     }
+
+
 
     public CohortDefinition getPatientsWithNoClinicalContactsByEndDateForDays(Integer days) {
         String query = String.format("select person_id from (select o.person_id,last_enc_date,max(o.value_datetime)next_visit from obs o inner join\n" +

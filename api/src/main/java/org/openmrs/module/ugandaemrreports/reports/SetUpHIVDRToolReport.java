@@ -172,18 +172,18 @@ public class SetUpHIVDRToolReport extends UgandaEMRDataExportManager {
         dsd.addColumn("pss3",sdd.definition("pss3",hivMetadata.getConcept("1760ea50-8f05-4675-aedd-d55f99541aa8")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("pss10",sdd.definition("pss10",hivMetadata.getConcept("eb7c1c34-59e5-46d5-beba-626694badd54")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         addColumn(dsd,"IAC_Done",df.getObsByEndDate(hivMetadata.getConcept("164988AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), null, TimeQualifier.LAST, new YesConverter()));
-        addColumn(dsd,"1st_IAC_Completion",getIAC(0,"date"));
-        addColumn(dsd,"1st_IAC_Outcome",getIAC(0,"outcome"));
-        addColumn(dsd,"2nd_IAC_Completion",getIAC(1,"date"));
-        addColumn(dsd,"2nd_IAC_Outcome",getIAC(1,"outcome"));
-        addColumn(dsd,"3rd_IAC_Completion",getIAC(2,"date"));
-        addColumn(dsd,"3rd_IAC_Outcome",getIAC(2,"outcome"));
-        addColumn(dsd,"4th_IAC_Completion",getIAC(3,"date"));
-        addColumn(dsd,"4th_IAC_Outcome",getIAC(3,"outcome"));
-        addColumn(dsd,"5th_IAC_Completion",getIAC(4,"date"));
-        addColumn(dsd,"5th_IAC_Outcome",getIAC(4,"outcome"));
-        addColumn(dsd,"6th_IAC_Completion",getIAC(5,"date"));
-        addColumn(dsd,"6th_IAC_Outcome",getIAC(5,"outcome"));
+        addColumn(dsd,"1st_IAC_Completion",basePatientData.getIAC(0,"date"));
+        addColumn(dsd,"1st_IAC_Outcome",basePatientData.getIAC(0,"outcome"));
+        addColumn(dsd,"2nd_IAC_Completion",basePatientData.getIAC(1,"date"));
+        addColumn(dsd,"2nd_IAC_Outcome",basePatientData.getIAC(1,"outcome"));
+        addColumn(dsd,"3rd_IAC_Completion",basePatientData.getIAC(2,"date"));
+        addColumn(dsd,"3rd_IAC_Outcome",basePatientData.getIAC(2,"outcome"));
+        addColumn(dsd,"4th_IAC_Completion",basePatientData.getIAC(3,"date"));
+        addColumn(dsd,"4th_IAC_Outcome",basePatientData.getIAC(3,"outcome"));
+        addColumn(dsd,"5th_IAC_Completion",basePatientData.getIAC(4,"date"));
+        addColumn(dsd,"5th_IAC_Outcome",basePatientData.getIAC(4,"outcome"));
+        addColumn(dsd,"6th_IAC_Completion",basePatientData.getIAC(5,"date"));
+        addColumn(dsd,"6th_IAC_Outcome",basePatientData.getIAC(5,"outcome"));
         addColumn(dsd,"vl_results_after_IAC",df.getObsByEndDate(getConcept("dca12261-30ab-102d-86b0-7a5022ba4115"), hivMetadata.getIACEncounters(), TimeQualifier.LAST, new ObsValueConverter()));
         addColumn(dsd,"vl_date_after_IAC",df.getObsByEndDate(getConcept("163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), hivMetadata.getIACEncounters(), TimeQualifier.LAST, new ObsValueConverter()));
         addColumn(dsd,"repeat_vl",df.getObsByEndDate(getConcept("0b434cfa-b11c-4d14-aaa2-9aed6ca2da88"), hivMetadata.getIACEncounters(), TimeQualifier.LAST, new ObsValueConverter()));
@@ -211,12 +211,6 @@ public class SetUpHIVDRToolReport extends UgandaEMRDataExportManager {
         return hivMetadata.getConceptList("14c56659-3d4e-4b88-b3ff-e2d43dbfb865,25186d70-ed8f-486c-83e5-fc31cbe95630,fe78521e-eb7a-440f-912d-0eb9bf2d4b2c,942e427c-7a3b-49b6-97f3-5cdbfeb8d0e3,29439504-5f5d-49ac-b8e4-258adc08c67a," +
                 "d4393bd0-3a9e-4716-8968-1057c58c32bc,faf13d3c-7ca8-4995-ab29-749f3960b83d,f00e5ff7-73bb-4385-8ee1-ea7aa772ec3e,4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6,d239c3d5-d296-4458-b49d-8501258886e5,b06bdb63-dd08-4b80-af5a-d17f6b3062a5,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c," +
                 "4a608d68-516f-44d2-9e0b-1783dc0d870e,dd2b9181-30ab-102d-86b0-7a5022ba4115");
-    }
-
-    public PatientDataDefinition getIAC(Integer number,String parameter) {
-        IACPatientDataDefinition def = new IACPatientDataDefinition();
-        def.addParameter(new Parameter("startDate", "startDate", Date.class));
-        return df.convert(def, new IACConverter(number,parameter));
     }
 
     public PatientDataDefinition getClientStatus(){
