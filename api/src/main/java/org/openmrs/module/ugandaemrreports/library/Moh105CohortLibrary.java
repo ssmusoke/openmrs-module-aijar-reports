@@ -3394,6 +3394,37 @@ public class Moh105CohortLibrary {
         cd.setCompositionString("visit AND facilitytype");
         return cd;
     }
+    public CohortDefinition clientsReturnedatOutreachafter48HoursUsingSurgicalMeans(int visit) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("visit", ReportUtils.map(clientsCircumcisedAndReturnedWithin6Weeks(visit), "onDate=${onOrBefore}"));
+        cd.addSearch("facilitytype", ReportUtils.map(surgicalMethodsusedAtOutreachsite(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("visit AND facilitytype");
+        return cd;
+    }
+    public CohortDefinition clientsReturnedatOutreachafter48HoursUsingDeviceMeans(int visit) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("visit", ReportUtils.map(clientsCircumcisedAndReturnedWithin6Weeks(visit), "onDate=${onOrBefore}"));
+        cd.addSearch("facilitytype", ReportUtils.map(deviceMethodsusedAtOutreach(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("visit AND facilitytype");
+        return cd;
+    }
+    public CohortDefinition clientsReturnedatFacilityafter48HoursDeviceMeans(int visit) {
+        CompositionCohortDefinition cd = new CompositionCohortDefinition();
+        cd.setName("Circumcised at the facility using surgical and returned after 48 hours");
+        cd.addParameter(new Parameter("onOrAfter", "Start Date", Date.class));
+        cd.addParameter(new Parameter("onOrBefore", "End Date", Date.class));
+        cd.addSearch("visit", ReportUtils.map(clientsCircumcisedAndReturnedWithin6Weeks(visit), "onDate=${onOrBefore}"));
+        cd.addSearch("facilitytype", ReportUtils.map(deviceMethodsusedAtfacility(), "onOrAfter=${onOrAfter},onOrBefore=${onOrBefore}"));
+        cd.setCompositionString("visit AND facilitytype");
+        return cd;
+    }
+
     public CohortDefinition clientsWithAdverseEvents(String concept){
         CompositionCohortDefinition cd = new CompositionCohortDefinition();
         cd.setName("Clients experiencing Moderate Adverse Events after SMC");

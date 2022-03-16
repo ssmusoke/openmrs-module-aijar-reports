@@ -135,9 +135,24 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd, "SMC08","SM01. Circumcised at Outreach using surgical means",indicatorLibrary.circumcisedAtOutreachUsingSurgicaleMethods());
         addRowWithColumns(dsd, "SMC09","SM01. Circumcised at Facility using device means",indicatorLibrary.circumcisedAtOutreachUsingDeviceMethods());
         addRowWithColumns(dsd,"SMC10", "First follow up visit within 2 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(2));
-        addRowWithColumns(dsd,"SMC11", "First follow up visit within 7 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(7));
-        addRowWithColumns(dsd,"SMC12", "First follow up visit within 14 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(14));
-        addRowWithColumns(dsd,"SMC13", "First follow up visit within beyond 14 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(15));
+        addRowWithColumns(dsd,"SMC11", "First follow up visit within 2 days", indicatorLibrary.followupVisitatFacilityUsingDevice(2));
+        addRowWithColumns(dsd,"SMC12", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingSurgical(2));
+        addRowWithColumns(dsd,"SMC13", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingDevice(2));
+        addRowWithColumns(dsd,"SMC15", "First follow up visit within 7 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(7));
+        addRowWithColumns(dsd,"SMC16", "First follow up visit within 2 days", indicatorLibrary.followupVisitatFacilityUsingDevice(7));
+        addRowWithColumns(dsd,"SMC17", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingSurgical(7));
+        addRowWithColumns(dsd,"SMC18", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingDevice(7));
+
+        addRowWithColumns(dsd,"SMC20", "First follow up visit within 14 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(14));
+        addRowWithColumns(dsd,"SMC21", "First follow up visit within 14 days", indicatorLibrary.followupVisitatFacilityUsingDevice(14));
+        addRowWithColumns(dsd,"SMC22", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingSurgical(14));
+        addRowWithColumns(dsd,"SMC23", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingDevice(14));
+
+        addRowWithColumns(dsd,"SMC25", "First follow up visit within beyond 14 days", indicatorLibrary.followupVisitatFacilityUsingSurgical(15));
+        addRowWithColumns(dsd,"SMC26", "First follow up visit within beyond 14 days", indicatorLibrary.followupVisitatFacilityUsingDevice(15));
+        addRowWithColumns(dsd,"SMC27", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingSurgical(15));
+        addRowWithColumns(dsd,"SMC28", "First follow up visit within 2 days at an Outreach using a surgical", indicatorLibrary.followupVisitatOutreachUsingDevice(15));
+
         addRowWithColumns(dsd,"SMC30", "Moderate Adverse Events at Facility using Surgical Means", indicatorLibrary.moderateAdverseEventsAtFacilityUsingSurgical());
         addRowWithColumns(dsd,"SMC31", "Moderate Adverse Events at Facility using device Means", indicatorLibrary.moderateAdverseEventsAtFacilityUsingDevice());
         addRowWithColumns(dsd,"SMC32", "Moderate Adverse Events at Outreach site  using surgical Means", indicatorLibrary.moderateAdverseEventsAtOutreachsiteUsingSurgical());
@@ -146,8 +161,10 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
         addRowWithColumns(dsd,"SMC36", "Severe Adverse Events at Facility using device Means", indicatorLibrary.severeAdverseEventsAtFacilityUsingDevice());
         addRowWithColumns(dsd,"SMC37", "Severe Adverse Events at Outreach Site using Surgical Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingSurgical());
         addRowWithColumns(dsd,"SMC38", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.severeAdverseEventsAtOutreachUsingDevice());
-        addRowWithColumns(dsd,"SMC42", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT1Shots());
-        addRowWithColumns(dsd,"SMC43", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT2Shots());
+        addRowWithColumns(dsd,"SMC39", "Managed by the Facility", indicatorLibrary.individualsManagedAtFacility());
+        addRowWithColumns(dsd,"SMC39", "Managed by the Facility", indicatorLibrary.individualsRefferedOutOfthefacility());
+        addRowWithColumns(dsd,"SMC41", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT1Shots());
+        addRowWithColumns(dsd,"SMC42", "Severe Adverse Events at Outreach Site  using Device Means", indicatorLibrary.clientsRecievedTT2Shots());
 
 
         return dsd;
@@ -180,6 +197,6 @@ public class SetupMOH105SMC2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.1.7";
+        return "2.2.0";
     }
 }

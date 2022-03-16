@@ -38,6 +38,8 @@ public class Moh105IndicatorLibrary {
     String EID_UUID = Metadata.EncounterType.EID_ENCOUNTER_PAGE;
     String MATERNITY_UUID = Metadata.EncounterType.MATERNITY_ENCOUNTER;
     String SMC_UUID =Metadata.EncounterType.SMC_ENCOUNTER;
+    String SMC_FOLLOW_UP_UUID =Metadata.EncounterType.SMC_FOLLOWUP_ENCOUNTER;
+
 
     @Autowired
     private Moh105CohortLibrary cohortLibrary;
@@ -1473,6 +1475,10 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandLinkedtoCare() {
         return cohortIndicator("Individuals With Other Facility Based Points as Entry Point ", map(cohortLibrary.individualsWithOtherFacilityPointEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator clientsManagedAtFacilityLevel() {
+        return cohortIndicator("Clients Managed at Facility", map(cohortLibrary.individualsWithOtherFacilityPointEntryandLinkedtoCare(), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
     /**
@@ -3649,6 +3655,15 @@ public class Moh105IndicatorLibrary {
     public CohortIndicator followupVisitatFacilityUsingSurgical(int visit){
         return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatFacilityafter48HoursUsingSurgicalMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
+    public CohortIndicator followupVisitatFacilityUsingDevice(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatFacilityafter48HoursDeviceMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator followupVisitatOutreachUsingSurgical(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatOutreachafter48HoursUsingSurgicalMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator followupVisitatOutreachUsingDevice(int visit){
+        return cohortIndicator("follow up visits", map(cohortLibrary.clientsReturnedatOutreachafter48HoursUsingDeviceMeans(visit), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
     public CohortIndicator moderateAdverseEventsAtFacilityUsingSurgical(){
         return cohortIndicator("Moderate adverse events at the faciility", map(cohortLibrary.clientsWithAdverseEventsUsingSurgicalatFacility("ba7ae66b-8108-45b6-a34d-e842cf31c623"), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
@@ -3678,6 +3693,13 @@ public class Moh105IndicatorLibrary {
     }
     public CohortIndicator clientsRecievedTT2Shots() {
         return cohortIndicator("Clients who recieved TT2 Shots", map(cohortLibrary.hasObsAndEncounter(SMC_UUID, Dictionary.getConcept("c7700c4f-3dc6-4270-ba0d-dd42c0557027"),Dictionary.getConcept("abf95a81-d34a-4b3a-8323-f3edc6da542b")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+    public CohortIndicator individualsManagedAtFacility() {
+        return cohortIndicator("Managed by the Facilty", map(cohortLibrary.hasObsAndEncounter(SMC_UUID, Dictionary.getConcept("c4dbec6b-8024-40b2-a84c-e5210efb3de7")), "onOrAfter=${startDate},onOrBefore=${endDate}"));
+    }
+
+    public CohortIndicator individualsRefferedOutOfthefacility() {
+        return cohortIndicator("Individuals Transfered out", map(cohortLibrary.hasObsAndEncounter(SMC_FOLLOW_UP_UUID, Dictionary.getConcept("dd27a783-30ab-102d-86b0-7a5022ba4115"), Dictionary.getConcept(Metadata.Concept.EMTCT_CODE_T)), "onOrAfter=${startDate},onOrBefore=${endDate}"));
     }
 
 

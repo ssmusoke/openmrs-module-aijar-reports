@@ -341,7 +341,9 @@ public class Metadata {
         public static final String MATERNITY_ENCOUNTER = "a9f11592-22e7-45fc-904d-dfe24cb1fc67";
         public static final String OPD_ENCOUNTER = "ee4780f5-b5eb-423b-932f-00b5879df5ab";
         public final static String SMC_ENCOUNTER = "244da86d-f80e-48fe-aba9-067f241905ee";
-        public final static String APPOINTMENT_FOLLOWUP_ENCOUNTER = "dc551efc-024d-4c40-aeb8-2147c4033778";
+            public final static String SMC_FOLLOWUP_ENCOUNTER = "d0f9e0b7-f336-43bd-bf50-0a7243857fa6";
+
+            public final static String APPOINTMENT_FOLLOWUP_ENCOUNTER = "dc551efc-024d-4c40-aeb8-2147c4033778";
 
     }
 
