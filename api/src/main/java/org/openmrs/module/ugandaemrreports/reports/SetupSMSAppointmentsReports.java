@@ -1,8 +1,8 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.Program;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.InProgramCohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
@@ -11,11 +11,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.CurrentlyInProgramCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.UgandaEMRMobileDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -49,7 +48,13 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
     private HIVMetadata hivMetadata;
 
     @Autowired
+    private CommonCohortLibrary commonCohortLibrary;
+
+    @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+    @Autowired
+    private CommonDimensionLibrary commonDimensionLibrary;
 
 
     @Override
@@ -81,7 +86,6 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
         List<Parameter> l = new ArrayList<Parameter>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
-        l.add(new Parameter("programs", "programs", Program.class, List.class, null,null,false));
         return l;
     }
 
@@ -116,14 +120,12 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
         CohortDefinition cohortstoExclude =df.getPatientsInAny(hadEncounterInPeriod,patientsDeadAndTransferredOut);
         CohortDefinition patientsWithAppointments=df.getPatientsNotIn(appointmentList,cohortstoExclude);
 
-        CurrentlyInProgramCohortDefinition cd = new CurrentlyInProgramCohortDefinition();
-        cd.setName("in program during period");
-        cd.addParameter(new Parameter("onOrBefore", "Before Date", Date.class));
-        cd.addParameter(new Parameter("onOrAfter", "After Date", Date.class));
-        cd.addParameter(new Parameter("programs", "programs", Program.class));
-        CohortDefinition inSMSProgram = df.convert(cd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate,programs=programs"));
+        InProgramCohortDefinition inSMSProgram = new InProgramCohortDefinition();
+        inSMSProgram.setName("in program ");
+        inSMSProgram.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("aba5124b-8123-427d-b1e6-c0552e593361")));
 
-        CohortDefinition all = df.getPatientsInAll(inSMSProgram,patientsWithAppointments);
+
+        CohortDefinition all = inSMSProgram;
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -153,6 +155,6 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.0";
+        return "1.0.1";
     }
 }
