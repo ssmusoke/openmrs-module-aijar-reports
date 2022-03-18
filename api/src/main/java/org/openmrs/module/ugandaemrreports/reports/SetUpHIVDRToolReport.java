@@ -225,7 +225,7 @@ public class SetUpHIVDRToolReport extends UgandaEMRDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "0.3.9";
+        return "0.4";
     }
 }
 
