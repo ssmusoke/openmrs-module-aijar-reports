@@ -712,4 +712,12 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObs(hivMetadata.getHepBResults(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
 
+    public PatientDataDefinition getPatientSMSTemplateMessage() {
+        SMSTemplatePatientDataDefinition def = new SMSTemplatePatientDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return def;
+    }
+
 }

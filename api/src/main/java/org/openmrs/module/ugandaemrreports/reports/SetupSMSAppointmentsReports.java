@@ -1,8 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Cohort;
+import org.openmrs.api.CohortService;
+import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.InProgramCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
@@ -14,6 +18,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -36,7 +41,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
     ARTClinicCohortDefinitionLibrary hivCohorts;
 
     @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
+    private SharedDataDefintion sdd;
 
     @Autowired
     private HIVPatientDataLibrary hivPatientData;
@@ -120,34 +125,15 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
         CohortDefinition cohortstoExclude =df.getPatientsInAny(hadEncounterInPeriod,patientsDeadAndTransferredOut);
         CohortDefinition patientsWithAppointments=df.getPatientsNotIn(appointmentList,cohortstoExclude);
 
-        InProgramCohortDefinition inSMSProgram = new InProgramCohortDefinition();
-        inSMSProgram.setName("in program ");
-        inSMSProgram.setPrograms(Arrays.asList(commonDimensionLibrary.getProgramByUuid("aba5124b-8123-427d-b1e6-c0552e593361")));
 
-
-        CohortDefinition all = inSMSProgram;
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(all));
-        addColumn(dsd,"Person UUID",hivPatientData.getPatientUUID());
-        addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
-        addColumn(dsd, "Sex", builtInPatientData.getGender());
-        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
-        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
-        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
-        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "Current Regimen UUID", hivPatientData.getCurrentRegimenUuid() );
-        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
-        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
-        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
-        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
+        dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithAppointments));
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Message", hivPatientData.getPatientSMSTemplateMessage());
+
 
         rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
         return rd;
@@ -155,6 +141,8 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.3.8";
     }
+
+
 }
