@@ -144,7 +144,6 @@ public class SetupTxCurrent_28Days2019ReportPatientListReport extends UgandaEMRD
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
         addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());

@@ -11,6 +11,7 @@
     def mer = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.mer")
     def mer_patient_lists = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.mer_patient_lists")
     def ewi = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.ewi")
+    def cqi = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.cqi")
     def contextModel = [:]
 %>
 
@@ -89,6 +90,21 @@
             <div class="info-section">
                 <ul>
                     <% quarterly.each { %>
+                    <li>
+                        ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+        <% if (cqi) { %>
+        <div class="info-section">
+            <div class="info-header"><h3>CQI Reports</h3></div>
+
+            <div class="info-section">
+                <ul>
+                    <% cqi.each { %>
                     <li>
                         ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
                     </li>
