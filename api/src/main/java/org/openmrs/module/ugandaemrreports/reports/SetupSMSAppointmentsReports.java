@@ -1,31 +1,19 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.Cohort;
-import org.openmrs.api.CohortService;
-import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.InProgramCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
-import org.openmrs.module.reporting.common.ObjectUtil;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,9 +29,6 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
     ARTClinicCohortDefinitionLibrary hivCohorts;
 
     @Autowired
-    private SharedDataDefintion sdd;
-
-    @Autowired
     private HIVPatientDataLibrary hivPatientData;
 
     @Autowired
@@ -53,13 +38,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
     private HIVMetadata hivMetadata;
 
     @Autowired
-    private CommonCohortLibrary commonCohortLibrary;
-
-    @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private CommonDimensionLibrary commonDimensionLibrary;
 
 
     @Override
@@ -141,7 +120,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.3.8";
+        return "1.0.4";
     }
 
 
