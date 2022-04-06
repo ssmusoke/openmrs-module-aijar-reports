@@ -54,7 +54,6 @@ public class SMSTemplatePatientDataEvaluator implements PatientDataEvaluator {
         List<String> queryResult = this.evaluationService.evaluateToList(q1,String.class, context);
 
         String template = queryResult.get(0);
-        System.out.println(template+"template here");
 
 
 
