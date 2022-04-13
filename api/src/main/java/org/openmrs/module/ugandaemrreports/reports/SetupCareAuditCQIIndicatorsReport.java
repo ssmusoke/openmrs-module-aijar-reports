@@ -185,7 +185,7 @@ public class SetupCareAuditCQIIndicatorsReport extends UgandaEMRDataExportManage
         addIndicator(dsd, "b12", "Returned to care in month", returnedToCareInMonth);
 
         addIndicator(dsd, "c1", "Got first DNA PCR in review month", eidPatientsWhoGotFirstDNAPCR);
-        addIndicator(dsd, "c2", "HEI who got 1st DNA PCR at 0-2 months", eidPatientsWhoGotFirstDNAPCR);
+        addIndicator(dsd, "c2", "HEI who got 1st DNA PCR at 0-2 months", eidPatientsAged0to2MonthsAtFirstDNAPCR);
         addIndicator(dsd, "c3", "First DNA PCR results given to care giver in review month", firstDNAPCRWhoseResultsGivenToCareGiver);
         addIndicator(dsd, "c4", "Received NVP at birth", givenNVPAtBirth);
         addIndicator(dsd, "c5", "Received CPT by 2 months", initiatedOnCPT);
