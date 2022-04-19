@@ -1,6 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.EncounterType;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
@@ -135,7 +134,6 @@ public class SetupCareAuditCQIIndicatorsReport extends UgandaEMRDataExportManage
                 hivCohortDefinitionLibrary.getPatientsWhoseLastViralLoadWasMonthsAgoFromEndDate("7m"));
         CohortDefinition startedARTMoreThna6MonthsAgoWithActiveViralLoad = df.getPatientsNotIn(startedARTMoreThan6MonthsAgo, df.getPatientsInAny(adolscentsDueForViralLoad, childDueForViralLoad));
 
-
         CohortDefinition onFirstLineRegimen = df.getPatientsInAll(activeChildrenAndAdolescents, df.getWorkFlowStateCohortDefinition(hivMetadata.getFirstLineRegimenState()));
         CohortDefinition onSecondLineRegimen = df.getPatientsInAll(activeChildrenAndAdolescents, df.getWorkFlowStateCohortDefinition(hivMetadata.getSecondLineRegimenState()));
 
@@ -156,7 +154,8 @@ public class SetupCareAuditCQIIndicatorsReport extends UgandaEMRDataExportManage
                 hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("30"),
                 hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsForAbove28DaysByBeginningOfPeriod());
 
-        CohortDefinition testedUsingFirstDNAPCR = eidCohortDefinitionLibrary.getEIDPatientsTestedUsingFirstDNAPCR();
+        CohortDefinition eidPatientsWhoGotFirstDNAPCR = eidCohortDefinitionLibrary.getEIDPatientsWhoTestedFirstDNAPCRInReviewMonth();
+        CohortDefinition eidPatientsAged0to2MonthsAtFirstDNAPCR = df.getPatientsInAll(eidCohortDefinitionLibrary.getEIDPatientsWhoTestedFirstDNAPCRInReviewMonth(),cohortDefinitionLibrary.below2Months());
         CohortDefinition firstDNAPCRWhoseResultsGivenToCareGiver = eidCohortDefinitionLibrary
                 .getEIDPatientsTestedUsingFirstDNAPCRWhoseResultsGivenToCareGiver();
         CohortDefinition givenNVPAtBirth = eidCohortDefinitionLibrary.getEIDPatientsGivenNVP();
@@ -185,7 +184,8 @@ public class SetupCareAuditCQIIndicatorsReport extends UgandaEMRDataExportManage
         addIndicator(dsd, "b11", "No clinical contact or drug pickup in previous month", noClinicalEncounterInPreviousMonth);
         addIndicator(dsd, "b12", "Returned to care in month", returnedToCareInMonth);
 
-        addIndicator(dsd, "c1", "Got first DNA PCR in review month", testedUsingFirstDNAPCR);
+        addIndicator(dsd, "c1", "Got first DNA PCR in review month", eidPatientsWhoGotFirstDNAPCR);
+        addIndicator(dsd, "c2", "HEI who got 1st DNA PCR at 0-2 months", eidPatientsAged0to2MonthsAtFirstDNAPCR);
         addIndicator(dsd, "c3", "First DNA PCR results given to care giver in review month", firstDNAPCRWhoseResultsGivenToCareGiver);
         addIndicator(dsd, "c4", "Received NVP at birth", givenNVPAtBirth);
         addIndicator(dsd, "c5", "Received CPT by 2 months", initiatedOnCPT);
