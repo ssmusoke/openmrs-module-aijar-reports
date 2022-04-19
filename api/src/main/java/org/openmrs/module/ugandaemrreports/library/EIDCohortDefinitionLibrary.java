@@ -261,6 +261,35 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         cd.setMinAgeUnit(DurationUnit.MONTHS);
         return cd;
     }
+
+    /**
+     * Infants who are 13 months and above
+     * @return
+     */
+    public CohortDefinition getInfantsAged9Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants aged 9 months");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(9);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        cd.setMaxAge(10);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+    /**
+     * Infants who are 13 months and above
+     * @return
+     */
+    public CohortDefinition getInfantsAged18Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants aged 18 months");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(18);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        cd.setMaxAge(19);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
     
     /**
      * Infants who are 18 months and above
@@ -272,6 +301,14 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
         cd.setMinAge(18);
         cd.setMinAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+    public CohortDefinition getInfants2YearsAndOlder() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 2 years old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(2);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
         return cd;
     }
     public CohortDefinition getEIDPatientsGivenNVP() {
@@ -320,6 +357,10 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getEIDPatientsTestedPositiveUsingABTest() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
+    }
+
+    public CohortDefinition getEIDPatientsWithFinalOutcome() {
+        return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
     public CohortDefinition getEIDPatientsWhoDied() {
