@@ -1,15 +1,17 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.GenderDataDefinition;
 import org.openmrs.module.reporting.data.person.definition.PreferredNameDataDefinition;
+import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ARTAccessCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ARTAccessCheckListDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
@@ -112,13 +114,14 @@ public class SetupARTAccessIntegrationDataCheckList extends UgandaEMRDataExportM
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-
-		ARTAccessCheckListDataSetDefinition dsd = new ARTAccessCheckListDataSetDefinition();
+		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
 
 		dsd.setName(getName());
 		dsd.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dsd));
 
+		CohortDefinition cd = new ARTAccessCohortDefinition();
+		dsd.addRowFilter(Mapped.mapStraightThrough(cd));
 
 		addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
 		addColumn(dsd,"Person UUID",hivPatientData.getPatientUUID());
@@ -129,17 +132,17 @@ public class SetupARTAccessIntegrationDataCheckList extends UgandaEMRDataExportM
 		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
 		addColumn(dsd, "returnVisitDate", hivPatientData.getLastReturnDateByEndDate());
 		addColumn(dsd, "Telephone", basePatientData.getTelephone());
-		addColumn(dsd,"Refill Point Code",df.getObsByEndDate(Dictionary.getConcept("7a22cfcb-a272-4eff-968c-5e9467125a7b"), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),TimeQualifier.LAST,df.getObsValueTextConverter()));
+		addColumn(dsd,"refillPointCode",df.getObsByEndDate(Dictionary.getConcept("7a22cfcb-a272-4eff-968c-5e9467125a7b"), Arrays.asList(hivMetadata.getARTEncounterEncounterType()),TimeQualifier.LAST,df.getObsValueTextConverter()));
 
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dsd));
 		rd.addDataSetDefinition("S",Mapped.mapStraightThrough(settings()));
-
+		rd.setBaseCohortDefinition(Mapped.mapStraightThrough(cd));
 		return rd;
 	}
 
 	@Override
 	public String getVersion() {
-		return "0.1";
+		return "0.1.3";
 	}
 
 }
