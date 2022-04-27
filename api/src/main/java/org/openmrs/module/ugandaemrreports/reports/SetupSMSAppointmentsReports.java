@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -110,7 +111,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithAppointments));
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
-        addColumn(dsd, "Telephone", basePatientData.getTelephone());
+        addColumn(dsd, "Telephone", df.getObsByEndDate(hivMetadata.getConcept("0593abe7-6658-43c3-ab53-a714a761de55"),null, TimeQualifier.LAST,df.getObsValueTextConverter()));
         addColumn(dsd, "Message", hivPatientData.getPatientSMSTemplateMessage());
 
 
@@ -120,7 +121,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.4";
+        return "1.0.5";
     }
 
 
