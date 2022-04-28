@@ -73,7 +73,7 @@ public class SMSTemplatePatientDataEvaluator implements PatientDataEvaluator {
             Date date = (Date)row[2];
 
             String person_template =template.replace("<name>",name);
-            person_template =person_template.replace("<date>",date.toString());
+            person_template =person_template.replace("<date>",DateUtil.formatDate(date, "yyyy-MM-dd"));
 //            String person_template = String.format(template, name,date);
             finalMap.put((Integer) row[0],person_template);
 
