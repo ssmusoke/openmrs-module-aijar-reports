@@ -4,6 +4,7 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.DHIS2PeriodDatasetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.GlobalPropertyParametersDatasetDefinition;
 
 import java.util.Date;
@@ -26,5 +27,10 @@ public class CommonDatasetLibrary {
         cst.setName("S");
         cst.setGp("ugandaemr.dhis2.organizationuuid");
         return cst;
+    }
+
+    public static DataSetDefinition getUgandaEMRVersion(){
+        EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
+        return dsd;
     }
 }

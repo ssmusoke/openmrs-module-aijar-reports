@@ -156,6 +156,17 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
+    public CohortDefinition below2Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("2 months and below");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(2);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
+    }
+
     public CohortDefinition below2Years() {
         return agedAtMost(1);
     }
@@ -251,6 +262,9 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
     }
     public CohortDefinition between40And44years() { return agedBetween(40,44); }
     public CohortDefinition between45And49years() { return agedBetween(45,49); }
+    public CohortDefinition between50And54years() { return agedBetween(50,54); }
+    public CohortDefinition between55And59years() { return agedBetween(55,59); }
+    public CohortDefinition between60And64years() { return agedBetween(60,64); }
     public CohortDefinition between40And49years() { return agedBetween(40,49); }
     public CohortDefinition between25And49years() {
         return agedBetween(25,49);

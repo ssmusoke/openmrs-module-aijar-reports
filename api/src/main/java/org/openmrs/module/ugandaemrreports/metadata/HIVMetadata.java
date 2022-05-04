@@ -216,6 +216,16 @@ public class HIVMetadata extends ReportMetadata {
         return l;
     }
 
+    public List<EncounterType> getARTRegimenChangeEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "c11774c1-3b4a-4bdb-a847-6060895e006d"));
+        return l;
+    }
+
+    public EncounterType getRegimenChangeEncounterType() {
+        return getEncounterType("c11774c1-3b4a-4bdb-a847-6060895e006d");
+    }
+
     public Concept getARVDuration() {
         return getConcept("7593ede6-6574-4326-a8a6-3d742e843659");
     }
@@ -223,6 +233,27 @@ public class HIVMetadata extends ReportMetadata {
     public Concept getCurrentRegimen() {
         return getConcept("dd2b0b4d-30ab-102d-86b0-7a5022ba4115");
     }
+
+    public Concept getRegimenChangePriorRegimen() {
+        return getConcept("107bef04-bf05-4f41-9260-b167c1108f7e");
+    }
+
+    public Concept getRegimenChangeType() {
+        return getConcept("ca5a71aa-05f9-42a0-bf0d-65bcfd08036b");
+    }
+
+    public Concept getReasonForRegimenSwitch() {
+        return getConcept("dce0cd97-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getReasonForRegimenSubstitution() {
+        return getConcept("dce0c977-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getRegimenChangeClinicalNotes() {
+        return getConcept("159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+
     public Concept getCurrentViralLoad() {
         return getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115");
     }
@@ -336,6 +367,10 @@ public class HIVMetadata extends ReportMetadata {
     public EncounterType getARTEncounterEncounterType() {
         return getEncounterType("8d5b2be0-c2cc-11de-8d13-0010c6dffd0f");
     }
+    public EncounterType getBackToCareEncounterType() {
+        return getEncounterType("791faefd-36b8-482f-ab78-20c297b03851");
+    }
+
 
     public Concept getTBStatus() {
         return getConcept("dce02aa1-30ab-102d-86b0-7a5022ba4115");
@@ -366,6 +401,10 @@ public class HIVMetadata extends ReportMetadata {
 
     public Concept getBodyWeight() {
         return getConcept("dce09e2f-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getWeight() {
+        return getConcept("5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     public Concept getBaselineBodyWeight() {
@@ -418,6 +457,10 @@ public class HIVMetadata extends ReportMetadata {
 
     public List<Concept> getFirstLineDrugsChildren() {
         return getConceptList("012a1378-b005-4793-8ea0-d01fceea769d,dd2b361c-30ab-102d-86b0-7a5022ba4115,dd2b3eee-30ab-102d-86b0-7a5022ba4115,25b0b83c-a7b8-4663-b727-0c03c982bab2,f30e9dae-cc6a-4669-98d5-ad25b8a3ce9c,6cdbfee8-87bf-406c-8dc3-3a22d95e952c,583a954b-0cd5-4b69-aef6-87c281e03a55,14c56659-3d4e-4b88-b3ff-e2d43dbfb865,a58d12c5-abc2-4575-8fdb-f30960f348fc,6cc36637-596a-4426-92cf-170f76ea437d,a779d984-9ccf-4424-a750-47506bf8212b");
+    }
+
+    public List<Concept> getDTGAndLPVRegimens() {
+        return getConceptList("0cb7b5ee-42ba-4667-98ab-d94b3443bbc8,0d843278-8732-48f0-a345-029f2e779a84,14c56659-3d4e-4b88-b3ff-e2d43dbfb865,248d52a8-5caf-4e8b-8a06-1d4ce4964c16,29439504-5f5d-49ac-b8e4-258adc08c67a,29abb0ac-fcda-4dc0-b69b-9a2558e6a122,2ae8fb21-1070-4d54-ab0e-c3afeb570dca,3b5248cc-0527-468e-8eb5-23565a4bad1f,4a608d68-516f-44d2-9e0b-1783dc0d870e,4b9c639e-3d06-4f2a-9c34-dd07e44f4fa6");
     }
 
     public List<Concept> getFirstLineDrugsAdults() {
@@ -594,6 +637,21 @@ public class HIVMetadata extends ReportMetadata {
 
     public Concept getTPTStatus() {
         return getConcept("37d4ac43-b3b4-4445-b63b-e3acf47c8910");
+    }
+    public Concept getTreatmentSupporter() {
+        return getConcept("23e28311-3c17-4137-8eee-69860621b80b");
+    }
+    public Concept getTreatmentSupporterPhoneNumber() {
+        return getConcept("dce17480-30ab-102d-86b0-7a5022ba4115");
+    }
+    public Concept getFollowUpAction() {
+        return getConcept("928c4617-436e-44b3-91c3-725cb1c910c0");
+    }
+    public Concept getFollowUpOutcome() {
+        return getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4");
+    }
+    public Concept getFollowUpOutcomebyQuarter() {
+        return getConcept("cd14792c-03e3-47ac-9e08-846ab1d93c87");
     }
 
     public Concept getHepBScreeningDate() {

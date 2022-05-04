@@ -4,12 +4,8 @@ import org.openmrs.Concept;
 import org.openmrs.module.reporting.cohort.definition.AgeCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CompositionCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.DateObsCohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.ObsInEncounterCohortDefinition;
-import org.openmrs.module.reporting.common.BooleanOperator;
 import org.openmrs.module.reporting.common.DurationUnit;
-import org.openmrs.module.reporting.common.TimeQualifier;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.Parameterizable;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CodedObsCohortDefinition;
@@ -18,7 +14,6 @@ import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.common.Age;
 import org.openmrs.module.reporting.common.SetComparator;
 import org.openmrs.module.reporting.definition.library.BaseDefinitionLibrary;
-import org.openmrs.module.reporting.definition.library.DocumentedDefinition;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.module.ugandaemrreports.reporting.utils.CoreUtils;
 import org.openmrs.module.ugandaemrreports.reporting.utils.ReportUtils;
@@ -261,6 +256,35 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         cd.setMinAgeUnit(DurationUnit.MONTHS);
         return cd;
     }
+
+    /**
+     * Infants who are 13 months and above
+     * @return
+     */
+    public CohortDefinition getInfantsAged9Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants aged 9 months");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(9);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        cd.setMaxAge(10);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
+    /**
+     * Infants who are 13 months and above
+     * @return
+     */
+    public CohortDefinition getInfantsAged18Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants aged 18 months");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(18);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        cd.setMaxAge(19);
+        cd.setMaxAgeUnit(DurationUnit.MONTHS);
+        return cd;
+    }
     
     /**
      * Infants who are 18 months and above
@@ -274,6 +298,14 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         cd.setMinAgeUnit(DurationUnit.MONTHS);
         return cd;
     }
+    public CohortDefinition getInfants2YearsAndOlder() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("Infants at least 2 years old");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMinAge(2);
+        cd.setMinAgeUnit(DurationUnit.YEARS);
+        return cd;
+    }
     public CohortDefinition getEIDPatientsGivenNVP() {
         return df.getObsWithEncounters(hivMetadata.getDateOfNVP(), hivMetadata.getEIDSummaryPageEncounterType());
     }
@@ -282,7 +314,7 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return df.getObsWithEncounters(hivMetadata.getDateOfCPT(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
-    public CohortDefinition getEIDPatientsTestedUsingFirstDNAPCR() {
+    public CohortDefinition getEIDPatientsWhoTestedFirstDNAPCRInReviewMonth() {
         return df.getObsWithEncounters(hivMetadata.getFirstPCRTestDate(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
@@ -320,6 +352,10 @@ public class EIDCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getEIDPatientsTestedPositiveUsingABTest() {
         return df.getObsWithEncounters(hivMetadata.get18MonthsRapidPCRTestResults(), hivMetadata.getEIDSummaryPageEncounterType(), Arrays.asList(hivMetadata.getPositiveResult()));
+    }
+
+    public CohortDefinition getEIDPatientsWithFinalOutcome() {
+        return df.getObsWithEncounters(hivMetadata.getFinalOutcome(), hivMetadata.getEIDSummaryPageEncounterType());
     }
 
     public CohortDefinition getEIDPatientsWhoDied() {

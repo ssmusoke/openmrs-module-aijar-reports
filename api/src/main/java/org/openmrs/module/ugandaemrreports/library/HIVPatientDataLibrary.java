@@ -70,6 +70,14 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
 
+    public PatientDataDefinition getLastEIDEncounterVisitDate() {
+        return df.getLastEncounterOfTypeByEndDate(hivMetadata.getEIDEncounterPageEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getEIDEnrollmentDate() {
+        return df.getLastEncounterOfTypeByEndDate(hivMetadata.getEIDSummaryPageEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
     public PatientDataDefinition getLastEncounterDateTime() {
         return getLastARTVisitEncounterByEndDate(df.getEncounterDatetimeConverter());
     }
@@ -95,6 +103,34 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
 
+    public PatientDataDefinition getRegimenChangeEncounterDate() {
+        return df.getFirstEncounterOfTypeByEndDate(hivMetadata.getRegimenChangeEncounterType(), df.getEncounterDatetimeConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeNewRegimen() {
+        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangePriorRegimen() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangePriorRegimen(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeType() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangeType(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getReasonForRegimenSwitch() {
+        return df.getObsByEndDate(hivMetadata.getReasonForRegimenSwitch(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getReasonForRegimenSubstitution() {
+        return df.getObsByEndDate(hivMetadata.getReasonForRegimenSubstitution(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
+    public PatientDataDefinition getRegimenChangeClinicalNotes() {
+        return df.getObsByEndDate(hivMetadata.getRegimenChangeClinicalNotes(), hivMetadata.getARTRegimenChangeEncounterType(), TimeQualifier.LAST, new ObsValueConverter());
+    }
+
     public PatientDataDefinition getPreviousRegimen() {
         return df.getObsBeforeDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new ObsValueConverter());
     }
@@ -112,6 +148,10 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getExpectedReturnDate() {
         return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), null, TimeQualifier.LAST, df.getObsValueDatetimeConverter());
+    }
+
+    public PatientDataDefinition getExpectedEIDEncounterReturnDate() {
+        return df.getObsByEndDate(hivMetadata.getReturnVisitDate(), hivMetadata.getEIDEncounterPageEncounterType(), TimeQualifier.LAST, df.getObsValueDatetimeConverter());
     }
 
     public PatientDataDefinition getLatestExpectedReturnDateBeforeStartDate() {
@@ -143,8 +183,16 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getExpectedReturnDateAtLocation(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, new ObsValueDatetimeConverter());
     }
 
+    public PatientDataDefinition getExpectedEIDReturnDateDuringPeriodAtLocation() {
+        return df.getExpectedReturnDateAtLocation(hivMetadata.getReturnVisitDate(), hivMetadata.getEIDEncounterPageEncounterType(), TimeQualifier.LAST, new ObsValueDatetimeConverter());
+    }
+
     public PatientDataDefinition getStartRegimen() {
         return df.getObsByEndDate(hivMetadata.getArtStartRegimen(), null, TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+
+    public PatientDataDefinition getWeight() {
+        return df.getObsByEndDate(hivMetadata.getWeight(), null, TimeQualifier.LAST, df.getObsValueNumericConverter());
     }
 
     public PatientDataDefinition getStartRegimenDate() {
@@ -651,6 +699,21 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
     public PatientDataDefinition getTPTLastTPTStatus() {
         return df.getObsByEndDate(hivMetadata.getTPTStatus(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
     }
+    public PatientDataDefinition getBackToCareFollowUpAction() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpAction(), Arrays.asList(hivMetadata.getBackToCareEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getBackToCareFollowUpOutCome() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpOutcome(), Arrays.asList(hivMetadata.getBackToCareEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getBackToCareFollowUpOutcomebyQuarter() {
+        return df.getObsByEndDate(hivMetadata.getFollowUpOutcomebyQuarter(), Arrays.asList(hivMetadata.getBackToCareEncounterType()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+    public PatientDataDefinition getTreatmentSupporter() {
+        return df.getObsByEndDate(hivMetadata.getTreatmentSupporter(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueTextConverter());
+    }
+    public PatientDataDefinition getTreatmentSupporterPhoneNumber() {
+        return df.getObsByEndDate(hivMetadata.getTreatmentSupporterPhoneNumber(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueTextConverter());
+    }
 
     public PatientDataDefinition getLastHepBScreeningDate() {
         return df.getObsByEndDate(hivMetadata.getHepBScreeningDate(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.FIRST, df.getObsValueDatetimeConverter());
@@ -667,6 +730,11 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
 
     public PatientDataDefinition getLastHepBScreeningResult() {
         return df.getObs(hivMetadata.getHepBResults(), Arrays.asList(hivMetadata.getARTSummaryEncounter()), TimeQualifier.LAST, df.getObsValueCodedConverter());
+    }
+
+    public PatientDataDefinition getClientStatus(){
+        ClientCareStatusDataDefinition def = new ClientCareStatusDataDefinition();
+        return df.convert(def,ObjectUtil.toMap("startDate=startDate,endDate=endDate"),new ClientCareStatusConverter());
     }
 
 }

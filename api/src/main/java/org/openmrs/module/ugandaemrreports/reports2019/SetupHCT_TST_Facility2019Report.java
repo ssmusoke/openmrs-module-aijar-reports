@@ -1,13 +1,12 @@
 package org.openmrs.module.ugandaemrreports.reports2019;
 
 import org.openmrs.Concept;
-import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
@@ -120,24 +119,25 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         CohortDefinition testedPositiveDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition testedNegativeDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
 
+        CohortDefinition APNReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("f06ce85a-69a3-4415-8cc3-e2b51a4ae6a1")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition IndexClientTestingReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("0e19ee29-a7bf-4580-9313-7853cdc412c1")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition SNSReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("43eae374-df77-464c-ad3c-3deb5bfe2447")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
-
-        CohortDefinition patientsTestedThroughHealthFacility =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("ecb88326-0a3f-44a5-9bbf-df4bfc3239e1")), BaseObsCohortDefinition.TimeModifier.LAST);
-        CohortDefinition patientsTestedThroughCommunity =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369")), BaseObsCohortDefinition.TimeModifier.LAST);
 
         CohortDefinition patientThroughSTIClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("dcd98f72-30ab-102d-86b0-7a5022ba4115"));
         CohortDefinition patientThroughTBClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
         CohortDefinition patientThroughIPDClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("c09c3d3d-d07d-4d34-84f0-89ea4fd5d6d5"));
-        CohortDefinition patientThroughNutrionalEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("11c12455-2f54-4bb5-b051-0ecfd4a5fe96"));
+        CohortDefinition patientThroughNutritionEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("11c12455-2f54-4bb5-b051-0ecfd4a5fe96"));
+        CohortDefinition nutritionAbove5Years = df.getPatientsInAll(patientThroughNutritionEntryPoint,cohortDefinitionLibrary.agedAtLeast(6));
+        CohortDefinition patientThroughOPDEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition patientThroughFamilyPlanningEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("164984AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
         CohortDefinition patientThroughYCCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("e9469d61-b0c3-4785-81c6-057c7bc099fc"));
-        CohortDefinition patientThroughANCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("164983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition YCCAbove5Years = df.getPatientsInAll(patientThroughYCCEntryPoint,cohortDefinitionLibrary.agedAtLeast(6));
+        CohortDefinition OPDORFamilyPlaningOrYCCorNutrition = df.getPatientsInAny(YCCAbove5Years,nutritionAbove5Years,patientThroughOPDEntryPoint,patientThroughFamilyPlanningEntryPoint);
         CohortDefinition patientThroughMaternityEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("160456AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
         CohortDefinition patientThroughPNCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
         CohortDefinition patientThroughSMCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("409eae6b-9457-4896-b5fa-2667ad5ceffc"));
-        CohortDefinition patientThroughOtherEntryPoints = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("165047AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("164984AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-                ,Dictionary.getConcept("160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
 
         CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getHCTEncounterType(),
                 Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -145,21 +145,12 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         CohortDefinition PIPS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getHCTEncounterType(),
                 Arrays.asList(Dictionary.getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition patientsTestedThroughVCTApproach = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("ff820a28-1adf-4530-bf27-537bfa9ce0b2"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("a0857c20-9dc3-410f-9fda-d8fde202b727")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientsTestedOnFirstANC = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.LESS_EQUAL, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientsTestedOnOtherANCs = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.GREATER_THAN, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
 
-        CohortDefinition patientsTestedThroughPITCApproach = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("ff820a28-1adf-4530-bf27-537bfa9ce0b2"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("74120d00-5483-4148-acc3-00647dc13add")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition PMTCT = df.getPatientsInAny(patientsTestedOnOtherANCs,patientThroughMaternityEntryPoint,patientThroughPNCEntryPoint);
 
-        CohortDefinition patientThroughMobilePoints = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("e8dd38d8-28a2-4c09-8cb4-f93f112279ea"),Dictionary.getConcept("29d1a223-4ce4-43df-96fc-6d53c0e022b1")
-                        ,Dictionary.getConcept("6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e"),Dictionary.getConcept("b928b2e7-3ab4-4924-b730-5a13d8305408")), BaseObsCohortDefinition.TimeModifier.LAST);
-
-        CohortDefinition patientThroughOtherCommunityTestingPoints = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369"),hivMetadata.getHCTEncounterType(),
-                Arrays.asList(Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
-
-
-        CohortDefinition PMTCTEntrants = df.getPatientsInAny(patientThroughMaternityEntryPoint,patientThroughPNCEntryPoint);
+        CohortDefinition patientThroughOtherSpecifyEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("dcd68a88-30ab-102d-86b0-7a5022ba4115"));
 
         /** facility level mapping **/
         addAgeAndGender(dsd,"e","tested positive through the STI Clinic",df.getPatientsInAll(patientThroughSTIClinicEntryPoint,testedPositiveDuringPeriod));
@@ -168,11 +159,14 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         addAgeAndGender(dsd,"g","tested positive through the IPD Clinic",df.getPatientsInAll(patientThroughIPDClinicEntryPoint,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"h","tested negative through the IPD Clinic",df.getPatientsInAll(patientThroughIPDClinicEntryPoint,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"i","tested positive through the PMTCT Clinic",df.getPatientsInAll(PMTCTEntrants,testedPositiveDuringPeriod));
-        addAgeAndGender(dsd,"j","tested negative through the PMTCT Clinic",df.getPatientsInAll(PMTCTEntrants,testedNegativeDuringPeriod));
+        addAgeAndGender(dsd,"i","tested positive through the SMC Clinic",df.getPatientsInAll(patientThroughSMCEntryPoint,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"j","tested negative through the SMC Clinic",df.getPatientsInAll(patientThroughSMCEntryPoint,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"k","tested positive through the VCT Approach",df.getPatientsInAll(patientsTestedThroughVCTApproach,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility));
-        addAgeAndGender(dsd,"l","tested negative through the VCT Approach",df.getPatientsInAll(patientsTestedThroughVCTApproach,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility));
+        addAgeAndGender(dsd,"k","tested positive with APN reason for testing",df.getPatientsInAll(df.getPatientsInAny(APNReasonForTesting,IndexClientTestingReasonForTesting),testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"l","tested negative with APN reason for testing",df.getPatientsInAll(df.getPatientsInAny(APNReasonForTesting,IndexClientTestingReasonForTesting),testedNegativeDuringPeriod));
+
+        addAgeAndGender(dsd,"y","tested positive with SNS reason for testing",df.getPatientsInAll(SNSReasonForTesting,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"z","tested negative with SNS reason for testing",df.getPatientsInAll(SNSReasonForTesting,testedNegativeDuringPeriod));
 
         addAgeAndGender(dsd,"m","tested positive through the TB Clinic",df.getPatientsInAll(patientThroughTBClinicEntryPoint,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"n","tested negative through the TB Clinic",df.getPatientsInAll(patientThroughTBClinicEntryPoint,testedNegativeDuringPeriod));
@@ -180,41 +174,37 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         addAgeAndGender(dsd,"o","tested positive through the YCC Clinic",df.getPatientsInAll(patientThroughYCCEntryPoint,testedPositiveDuringPeriod));
         addAgeAndGender(dsd,"p","tested negative through the YCC Clinic",df.getPatientsInAll(patientThroughYCCEntryPoint,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"q","tested positive through the Malnutrition Clinic",df.getPatientsInAll(patientThroughNutrionalEntryPoint,testedPositiveDuringPeriod));
-        addAgeAndGender(dsd,"r","tested negative through the Malnutrition Clinic",df.getPatientsInAll(patientThroughNutrionalEntryPoint,testedNegativeDuringPeriod));
+        addAgeAndGender(dsd,"q","tested positive through the Malnutrition Clinic",df.getPatientsInAll(patientThroughNutritionEntryPoint,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"r","tested negative through the Malnutrition Clinic",df.getPatientsInAll(patientThroughNutritionEntryPoint,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"s","tested positive through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedPositiveDuringPeriod));
-        addAgeAndGender(dsd,"t","tested negative through the Other PITC Clinic",df.getPatientsInAll(patientThroughOtherEntryPoints,patientsTestedThroughVCTApproach,testedNegativeDuringPeriod));
+        addAgeAndGender(dsd,"s","tested positive through the OPDORFamilyPlaningOrYCCorNutrition",df.getPatientsInAll(OPDORFamilyPlaningOrYCCorNutrition,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"t","tested negative through the OPDORFamilyPlaningOrYCCorNutrition",df.getPatientsInAll(OPDORFamilyPlaningOrYCCorNutrition,testedNegativeDuringPeriod));
 
-        Helper.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PIPb","PIPb positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PIPc","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PIPd","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PIPa","PIPa positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod),"");
+        Helper.addIndicator(dsd,"PIPb","PIPb positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod),"");
+        Helper.addIndicator(dsd,"PIPc","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod),"");
+        Helper.addIndicator(dsd,"PIPd","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod),"");
 
-        Helper.addIndicator(dsd,"PWIDSa","PWIDSa positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PWIDSb","PWIDSb positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PWIDSc","PWIDSc negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
-        Helper.addIndicator(dsd,"PWIDSd","PWIDSd negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughHealthFacility),"");
+        Helper.addIndicator(dsd,"PWIDSa","PWIDSa positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod),"");
+        Helper.addIndicator(dsd,"PWIDSb","PWIDSb positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod),"");
+        Helper.addIndicator(dsd,"PWIDSc","PWIDSc negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod),"");
+        Helper.addIndicator(dsd,"PWIDSd","PWIDSd negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod),"");
 
         /** community level mappings**/
-        addAgeAndGender(dsd,"a","tested positive through the Mobile point",df.getPatientsInAll(patientThroughMobilePoints,testedPositiveDuringPeriod));
-        addAgeAndGender(dsd,"b","tested negative through the Mobile point",df.getPatientsInAll(patientThroughMobilePoints,testedNegativeDuringPeriod));
+        addAgeAndGender(dsd,"a","tested positive through other specify entry point",df.getPatientsInAll(patientThroughOtherSpecifyEntryPoint,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"b","tested negative through other specify entry point",df.getPatientsInAll(patientThroughOtherSpecifyEntryPoint,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"c","tested positive through the VCT Approach",df.getPatientsInAll(patientsTestedThroughVCTApproach,testedPositiveDuringPeriod,patientsTestedThroughCommunity));
-        addAgeAndGender(dsd,"d","tested negative through the VCT Approach",df.getPatientsInAll(patientsTestedThroughVCTApproach,testedNegativeDuringPeriod,patientsTestedThroughCommunity));
+        addAgeAndGender(dsd,"c","tested positive through the VCT Approach",df.getPatientsInAll(patientsTestedOnFirstANC,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"d","tested negative through the VCT Approach",df.getPatientsInAll(patientsTestedOnFirstANC,testedNegativeDuringPeriod));
 
-        addAgeAndGender(dsd,"u","tested positive through the Other points",df.getPatientsInAll(patientThroughOtherCommunityTestingPoints,testedPositiveDuringPeriod));
-        addAgeAndGender(dsd,"v","tested negative through the Other point",df.getPatientsInAll(patientThroughOtherCommunityTestingPoints,testedNegativeDuringPeriod));
+        addAgeAndGender(dsd,"u","tested positive through the Other points",df.getPatientsInAll(PMTCT,testedPositiveDuringPeriod));
+        addAgeAndGender(dsd,"v","tested negative through the Other point",df.getPatientsInAll(PMTCT,testedNegativeDuringPeriod));
 
-        Helper.addIndicator(dsd,"PIPe","PIPe positive females",df.getPatientsInAll(females,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PIPf","PIPf positive males",df.getPatientsInAll(males,PIPS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PIPg","PIPc negative females",df.getPatientsInAll(females,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PIPh","PIPd negative males",df.getPatientsInAll(males,PIPS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"3c","ANC female below 10 years positive",df.getPatientsInAll(patientsTestedOnFirstANC,testedPositiveDuringPeriod,cohortDefinitionLibrary.agedAtMost(9)),"");
+        Helper.addIndicator(dsd,"3d","ANC female below 10 years negative",df.getPatientsInAll(patientsTestedOnFirstANC,testedNegativeDuringPeriod,cohortDefinitionLibrary.agedAtMost(9)),"");
 
-        Helper.addIndicator(dsd,"PWIDSe","PWIDSe positive females",df.getPatientsInAll(females,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PWIDSf","PWIDSf positive males",df.getPatientsInAll(males,PWIDS,testedPositiveDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PWIDSg","PWIDSg negative females",df.getPatientsInAll(females,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
-        Helper.addIndicator(dsd,"PWIDSh","PWIDSh negative males",df.getPatientsInAll(males,PWIDS,testedNegativeDuringPeriod,patientsTestedThroughCommunity),"");
+        Helper.addIndicator(dsd,"3u","other points PMTCT female below 10 years positive",df.getPatientsInAll(PMTCT,testedPositiveDuringPeriod,cohortDefinitionLibrary.agedAtMost(9)),"");
+        Helper.addIndicator(dsd,"3v","other points PMTCT female below 10 years negative",df.getPatientsInAll(PMTCT,testedNegativeDuringPeriod,cohortDefinitionLibrary.agedAtMost(9)),"");
 
 
         return rd;
@@ -258,6 +248,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.3.0";
+        return "0.3.1";
     }
 }
