@@ -133,7 +133,7 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
 		addColumn(dsd,"Village",df.getPreferredAddress("address5"));
 		addColumn(dsd, "Telephone", basePatientData.getTelephone());
-		addColumn(dsd, "ART Start Date", hivPatientData.getARTStartDate());
+		addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
 		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
 		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
 		addColumn(dsd, "Start Regimen", hivPatientData.getStartRegimen());

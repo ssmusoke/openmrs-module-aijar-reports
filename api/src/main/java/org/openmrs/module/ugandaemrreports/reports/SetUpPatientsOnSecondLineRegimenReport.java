@@ -9,14 +9,11 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.library.cohort.CommonCohortLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -141,7 +138,7 @@ public class SetUpPatientsOnSecondLineRegimenReport extends UgandaEMRDataExportM
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
-        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
@@ -158,6 +155,6 @@ public class SetUpPatientsOnSecondLineRegimenReport extends UgandaEMRDataExportM
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.2";
     }
 }
