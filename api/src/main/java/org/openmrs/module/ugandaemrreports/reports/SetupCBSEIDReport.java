@@ -96,7 +96,7 @@ public class SetupCBSEIDReport extends UgandaEMRDataExportManager {
 		CohortDefinition givenNVPAtBirth = eidCohorts.getEIDPatientsGivenNVP();
 		CohortDefinition initiatedOnCPT = eidCohorts.getEIDPatientsInitiatedOnCPT();
 
-		CohortDefinition testedUsingFirstDNAPCR = eidCohorts.getEIDPatientsTestedUsingFirstDNAPCR();
+		CohortDefinition testedUsingFirstDNAPCR = eidCohorts.getEIDPatientsWhoTestedFirstDNAPCRInReviewMonth();
 		CohortDefinition testedUsingSecondDNAPCR = eidCohorts.getEIDPatientsTestedUsingSecondDNAPCR();
 		CohortDefinition testedUsingABTest = eidCohorts.getEIDPatientsTestedUsingABTest();
 

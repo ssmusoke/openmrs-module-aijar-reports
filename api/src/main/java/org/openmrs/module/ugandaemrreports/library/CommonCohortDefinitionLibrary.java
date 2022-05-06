@@ -156,6 +156,17 @@ public class CommonCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortD
         return cd;
     }
 
+    public CohortDefinition below2Months() {
+        AgeCohortDefinition cd = new AgeCohortDefinition();
+        cd.setName("2 months and below");
+        cd.addParameter(new Parameter("effectiveDate", "Effective Date", Date.class));
+        cd.setMaxAge(2);
+        cd.setMinAgeUnit(DurationUnit.MONTHS);
+        UUID uuid = UUID.randomUUID();
+        cd.setUuid(String.valueOf(uuid));
+        return df.convert(cd, ObjectUtil.toMap("effectiveDate=endDate"));
+    }
+
     public CohortDefinition below2Years() {
         return agedAtMost(1);
     }
