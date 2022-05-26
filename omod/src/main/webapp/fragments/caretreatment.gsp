@@ -51,56 +51,10 @@
 	@media only screan and (max-width:550px){
 
 	}
-/* ********************** */
-body {font-family: Arial;}
 
-/* Style the tab */
-.tab {
-  overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-}
-
-/* Style the buttons inside the tab */
-.tab button {
-  background-color: inherit;
-  float: left;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-  font-size: 17px;
-}
-
-/* Change background color of buttons on hover */
-.tab button:hover {
-  background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-.tab button.active {
-  background-color: #ccc;
-}
-
-/* Style the tab content */
-.tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid #ccc;
-  border-top: none;
-}
 </style>
 
-<div class="tab">
-  <button class="tablinks" onclick="openDashboardCareandTreatment(event, 'careandtreatment')">Care and Treatment</button>
-  <button class="tablinks" onclick="openDashboardHTS(event, 'hts')">HTS</button>
-  <button class="tablinks" onclick="openDashboardApointments(event, 'apointments')">Appointments</button>
-</div>
-
-
 <!--Section for Care and Treatment dashboard-->
-<div id="careandtreatment" class="tabcontent" style="display:block">
 <div class="container-dashboard">
 
 <div id=filter><b>Reporting Period:${ui.format(quarter)}</b></div>
@@ -165,81 +119,7 @@ body {font-family: Arial;}
 <div id=graph2><canvas id="ViralLoadBar" style="width:100%;height:100%"></canvas></div>
 
 </div>
-</div>
 
-<!--Section HTS dashboard-->
-<div id="hts" class="tabcontent">
-<div class="container-dashboard">
-        <div id=filter><b>Reporting Period:${ui.format(quarter)}</b></div>
-		<div id=content0>HTS one</div>
-		<div id=content1>HTS two</div>
-		<div id=content2>HTS Three</div>
-		<div id=graph1 >HTS Four</div>
-		<div id=graph2>HTS Five</div>
-</div>
-</div>
-
-<!--Section Appointments dashboard-->
-<div id="apointments" class="tabcontent">
-<div class="container-dashboard">
-        <div id=filter><b>Reporting Period:${ui.format(quarter)}</b></div>
-		<div id=content0>HTS one</div>
-		<div id=content1>HTS two</div>
-		<div id=content2>HTS Three</div>
-		<div id=graph1 >HTS Four</div>
-		<div id=graph2>HTS Five</div>
-</div>
-</div>
-
-
-<!--Scripts Section-->
-<script>
-function openDashboardCareandTreatment(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-</script>
-
-<script>
-function openDashboardHTS(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-</script>
-
-<script>
-function openDashboardApointments(evt, tabName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(tabName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
-</script>
 
 <!--scripts dashboards for Care and Treatment -->
 <script>
@@ -429,59 +309,3 @@ function openDashboardApointments(evt, tabName) {
            }
       });
 </script>
-
-<!--
-<script>
-     var xValues = [];
-     var yValues = [];
-     var barColors = ["red", "green","blue","orange","brown"];
-
-      <% if (monthly_enrollments_in_period) { %>
-            <% monthly_enrollments_in_period.each { %>
-                xValues.push("${ ui.format(it.get(0))}");
-                yValues.push(${ ui.format(it.get(1))});
-        <% } %>
-        <% }%>
-
-          new Chart("ViralLoadBar", {
-            type: "bar",
-            data: {
-              labels: xValues,
-              datasets: [{
-                fill: false,
-                lineTension: 0,
-                backgroundColor: barColors,
-                borderColor: "rgba(0,0,255,0.1)",
-                data: yValues
-              }]
-            },
-             options: {
-               legend: {display: false,position:"bottom",},
-               title: {
-                        display: true,
-                        text: "# Enrolled in a Given Period"
-                  },
-
-               scales: {
-
-                 //x axis tittle label
-                 xAxes: [{
-                 scaleLabel: {
-                   display: true,
-                   labelString: 'Month'
-                 }
-               }],
-
-               //y axis tittle label
-                 yAxes: [{
-                 scaleLabel: {
-                   display: true,
-                   labelString: '# Enrolled'
-               }
-             }],
-
-             },
-           }
-      });
-</script>
--->

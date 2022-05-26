@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.fragment.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
@@ -43,20 +44,112 @@ public class HtsFragmentController {
 
         AdministrationService administrationService = Context.getAdministrationService();
 
-        //HTS
+        //Total enrolled in Care in a specified period
+        //select count(*) from encounter e where e.encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and e.encounter_datetime between '2022-04-01' and '2022-07-31';
         q = new HqlQueryBuilder();
-        q.select("");
+        q.select("count(*) as 'Total_Enrolled_In_A_Period'");
         q.from(Encounter.class);
-        q.where(String.format("", startDate, endDate));
-        q.groupBy("");
+        q.where(String.format("encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime between '%s' and '%s'", startDate, endDate));
 
-        log.error(q.toString() + " Hts");
+        List<List<Object>> t_enrolled = administrationService.executeSQL(q.toString(), true);
+        model.addAttribute("hts_total_enrolled_in_a_period", t_enrolled.get(0).get(0));
 
-        List<List<Object>> hts = administrationService.executeSQL(q.toString(), true);
-        log.info(hts.size() + ":Hts Records Returned");
+        //HTS - Delivery model
+        //select distinct(person_id), value_coded, max(obs_datetime) from obs where concept_id=165171 group by person_id and obs_datetime between '%s' and '%s'
+        q = new HqlQueryBuilder();
+        q.select("distinct(person_id), value_coded, max(obs_datetime)");
+        q.from(Obs.class);
+        q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",165171, startDate, endDate));
+        q.groupBy("person_id");
+
+        log.error(q.toString() + " query delivery model");
+
+        List<List<Object>> hts_dm = administrationService.executeSQL(q.toString(), true);
+        log.info(hts_dm.size() + ":Hts Records Returned");
+        int ctp = 0, hct = 0,others=0;
+        if (hts_dm.size() != 0) {
+            for (List<Object> item : hts_dm) {
+                int dm = (int) Double.parseDouble(item.get(1).toString());
+                if (dm == 165171)
+                    ctp += 1;
+                else if(dm == 99416)
+                    hct += 1;
+                else
+                    others += 1;
+            }
+        }
 
         //add returned record to a model attribute for further processing on the UI
-        model.addAttribute("hts", hts);
+        model.addAttribute("hts_ctp", ctp);
+        model.addAttribute("hts_hct", hct);
+        model.addAttribute("hts_others", others);
+
+
+        //HTS - Delivery model
+        //select distinct(person_id), value_coded, max(obs_datetime) from obs where concept_id=99493 group by person_id and obs_datetime between '%s' and '%s'
+        q = new HqlQueryBuilder();
+        q.select("distinct(person_id), value_coded, max(obs_datetime)");
+        q.from(Obs.class);
+        q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",99493, startDate, endDate));
+        q.groupBy("person_id");
+
+        log.error(q.toString() + " query hts-test results");
+
+        List<List<Object>> hts_ts = administrationService.executeSQL(q.toString(), true);
+        log.info(hts_ts.size() + ":Hts test results Returned");
+        int hts_p = 0, hts_n = 0,hts_inc=0,hts_nt=0;
+        if (hts_ts.size() != 0) {
+            for (List<Object> item : hts_ts) {
+                int hts_result = (int) Double.parseDouble(item.get(1).toString());
+                switch(hts_result) {
+                    case 162927:
+                        hts_nt += 1;
+                        break;
+                    case 90166:
+                        hts_p += 1;
+                        break;
+                    case 90167:
+                        hts_n += 1;
+                        break;
+                    case 162926:
+                        hts_inc += 1;
+                        break;
+                }
+            }
+        }
+
+        //add returned record to a model attribute for further processing on the UI
+        model.addAttribute("hts_p", hts_p);
+        model.addAttribute("hts_n", hts_n);
+        model.addAttribute("hts_inc", hts_inc);
+        model.addAttribute("hts_nt", hts_nt);
+
+        //HTS - Counselling or not Counselling
+        //select distinct(person_id), value_coded, max(obs_datetime) from obs where concept_id=162918 group by person_id and obs_datetime between '%s' and '%s'
+        q = new HqlQueryBuilder();
+        q.select("distinct(person_id), value_coded, max(obs_datetime)");
+        q.from(Obs.class);
+        q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",162918, startDate, endDate));
+        q.groupBy("person_id");
+
+        log.error(q.toString() + " query Counselling");
+
+        List<List<Object>> hts_counselling = administrationService.executeSQL(q.toString(), true);
+        log.info(hts_counselling.size() + ":Hts Records Returned");
+        int htc_co = 0, hts_not_co = 0;
+        if (hts_counselling.size() != 0) {
+            for (List<Object> item : hts_counselling) {
+                int dm = (int) Double.parseDouble(item.get(1).toString());
+                if (dm == 90004)
+                    htc_co += 1;
+                else if(dm == 90003)
+                    hts_not_co += 1;
+            }
+        }
+
+        //add returned record to a model attribute for further processing on the UI
+        model.addAttribute("htc_co", htc_co);
+        model.addAttribute("hts_not_co", hts_not_co);
 
     }
 
@@ -91,14 +184,5 @@ public class HtsFragmentController {
         }
 
         return String.format("%s" + dateSpliter + "%s" + dateSpliter + "%s", quarter, startDate, endDate);
-    }
-
-    private String getVlReportingPeriod(AdministrationService administrationService) {
-
-        int monthsToSubtract = Integer.parseInt(administrationService.getGlobalProperty("ugandaemr.dsdm.validPeriodInMothsForViralLoad"));
-        LocalDateTime updatedTime = LocalDateTime.now().minusMonths(monthsToSubtract);
-
-        return String.format("%s-%s-%s", updatedTime.getYear(), updatedTime.getMonthValue(), updatedTime.getDayOfMonth());
-
     }
 }
