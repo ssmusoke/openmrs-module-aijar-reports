@@ -11,13 +11,13 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.cqi",
-        "description": "CQI Reports",
+        "id": "org.openmrs.module.ugandaemr.reports.quarterly",
+        "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
-        "id": "org.openmrs.module.ugandaemr.reports.quarterly",
-        "description": "Links to available Quarterly Reports",
+        "id": "org.openmrs.module.ugandaemr.reports.weekly",
+        "description": "Weekly Reports",
         "supportedExtensionTypes": [ "link" ]
       },
       {
@@ -810,6 +810,14 @@
         "label": "Care Audit CQI Indicators Report",
         "url": "reportingui/runReport.page?reportDefinition=138140e6-1dd2-11b2-8811-ec47ee6bbc58",
         "order": 15
+      },
+      {
+        "id": "Weekly Surge Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.weekly",
+        "type": "link",
+        "label": "Weekly Surge Report",
+        "url": "reportingui/runReport.page?reportDefinition=e7102e5c-b90d-4a4a-b763-20518eadbae5",
+        "order": 5
       }
     ]
   }
