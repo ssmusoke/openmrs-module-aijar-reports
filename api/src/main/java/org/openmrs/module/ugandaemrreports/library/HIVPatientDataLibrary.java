@@ -135,7 +135,13 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, new CodedConceptUUIDValueConverter());
     }
     public PatientDataDefinition getCurrentRegimenDate() {
-        return df.getObsByEndDate(hivMetadata.getCurrentRegimen(), null, TimeQualifier.LAST, df.getObsDatetimeConverter());
+        SqlPatientDataDefinition definition = new SqlPatientDataDefinition();
+        definition.setSql("SELECT B.person_id, min(DATE(B.obs_datetime)) as obsDatetime from obs B inner join\n" +
+                "(SELECT o.person_id,o.value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315\n" +
+                "   and voided=0 group by person_id)A on o.person_id = A.person_id where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=:endDate)C on B.person_id=C.person_id where B.value_coded=C.value_coded and obs_datetime<=:endDate and voided=0 group by B.person_id");
+        definition.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return df.createPatientDataDefinition(definition, null);
     }
 
     public PatientDataDefinition getARVDuration() {
