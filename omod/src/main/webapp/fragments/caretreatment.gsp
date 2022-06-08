@@ -5,16 +5,17 @@
 	display:grid;
 	height:100vh;
 
-	grid-template-columns:1.2fr 0.3fr 0.3fr 1.2fr;
 
-	grid-template-rows:0.4fr 3.4fr 5.2fr;
+	grid-template-columns:repeat(4,1.4fr);
+	grid-template-rows:0.4fr 3fr 5fr;
+
 
 	grid-template-areas:
 	"filter filter filter filter"
 	"content0 content1 content1 content2"
 	"graph1 graph1 graph2 graph2";
 
-	grid-gap:4px;
+	grid-gap:2px;
 	background:#F1F1F1;
 	}
 
@@ -63,7 +64,7 @@
 
 <div id=content1>
 
-    <table border="1" summary="Facility Summary">
+    <table border="1" summary="Facility Summary" style="width:100%;height:100%">
         <tr>
             <th>Indicator</th>
             <th>Value</th>
@@ -95,17 +96,17 @@
          </tr>
 
          <tr>
-         <td>Total Clients with VL(Today)</td>
+         <td>Clients with updated VL (Today)</td>
          <td>${ ui.format(tt_clients_with_vl_in_period)}</td>
          </tr>
 
          <tr>
-         <td>Suppressed(Today)</td>
+         <td>Clients with Suppressed VL (Today)</td>
          <td>${ ui.format(tt_suppressed_in_period)}</td>
          </tr>
 
          <tr>
-         <td>Non suppressed(Today)</td>
+         <td>Clients with Non Suppressed VL (Today)</td>
          <td>${ ui.format(tt_non_suppressed_in_period)}</td>
          </tr>
 </table>

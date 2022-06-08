@@ -7,11 +7,12 @@
 	height:100vh;
 
 	grid-template-columns:repeat(3,1.4fr);
-	grid-template-rows:0.2fr 6fr;
+	grid-template-rows:0.2fr 2.5fr 3fr;
 
 	grid-template-areas:
 	"f f f"
-	"g1 g2 g3";
+	"g1 g2 g3"
+	"g4 g4 g4";
 
 	grid-gap:2px;
 	background:#F1F1F1;
@@ -36,17 +37,65 @@
     	background:#FFFFFF;
     	grid-area:g3;
     }
+    #g4{
+        background:#FFFFFF;
+        grid-area:g4;
+    }
 </style>
 
 <div class="container-dashboard-hts">
 
 <div id=f><b>Reporting Period:${ui.format(quarter)}</b></div>
+
 <div id=g1><canvas id="deliverymodelmodalities" style="width:100%;height:100%"></canvas></div>
-<div id=g2><canvas id="HTS_HIV_STATUS_And_Counseling" style="width:100%;height:100%"></canvas></div>
+
+<div id=g2>
+<table border="1" summary="Summary Table">
+        <tr>
+            <th>Indicator</th>
+            <th>Value</th>
+        </tr>
+
+         <tr>
+         <td>Total Enrolled</td>
+         <td>${ ui.format(hts_total_enrolled_in_a_period)}</td>
+         </tr>
+
+        <tr>
+        <td>HIV +</td>
+        <td>${ ui.format(hts_p)}</td>
+        </tr>
+
+         <tr>
+         <td>HIV -</td>
+         <td>${ ui.format(hts_n)}</td>
+         </tr>
+
+         <tr>
+         <td>INC (HTC)</td>
+         <td>${ ui.format(hts_inc)}</td>
+         </tr>
+
+         <tr>
+         <td>NT (HTC)</td>
+         <td>${ ui.format(hts_nt)}</td>
+         </tr>
+
+         <tr>
+         <td>Counselled</td>
+         <td>${ ui.format(htc_co)}</td>
+         </tr>
+
+         <tr>
+         <td>Not Counselled</td>
+         <td>${ ui.format(hts_not_co)}</td>
+         </tr>
+</table>
+</div>
 
 <div id=g3><canvas id="g3_2" style="width:100%;height:100%"></canvas></div>
 
-<!-- <div id=g3 style="width:100%; max-width:600px; height:500px;"></div> -->
+<div id=g4><canvas id="HTS_HIV_STATUS_And_Counseling" style="width:600px;height:100%"></canvas></div>
 
 </div>
 

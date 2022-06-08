@@ -52,8 +52,8 @@ public class CareTreatmentFragmentController {
         model.addAttribute("edate", getReportingPeriod().split(dateSpliter)[2]);
 
         //Automatically generated basing on the server/pc date.
-        String startDate = getReportingPeriod().split(dateSpliter)[1];
-        String endDate = getReportingPeriod().split(dateSpliter)[2];
+        String startDate = (getReportingPeriod().split(dateSpliter)[1]).trim();
+        String endDate = (getReportingPeriod().split(dateSpliter)[2]).trim();
 
         AdministrationService administrationService = Context.getAdministrationService();
 
@@ -198,23 +198,23 @@ public class CareTreatmentFragmentController {
             //Q1
             startDate = String.format("%s-%s-%s", now.getYear(), 01, 01);
             endDate = String.format("%s-%s-%s", now.getYear(), 3, 31);
-            quarter = String.format("Q1 %s", now.getYear());
+            quarter = String.format("Q1 %s (Jan-Mar)", now.getYear());
 
         } else if (m.getValue() == 4 || m.getValue() == 5 || m.getValue() == 6) {
             //Q2
             startDate = String.format("%s-%s-%s", now.getYear(), 04, 01);
             endDate = String.format("%s-%s-%s", now.getYear(), 6, 30);
-            quarter = String.format("Q2 %s", now.getYear());
+            quarter = String.format("Q2 %s (Apr-Jun)", now.getYear());
 
         } else if (m.getValue() == 7 || m.getValue() == 8 || m.getValue() == 9) {
             startDate = String.format("%s-%s-%s", now.getYear(), 07, 01);
             endDate = String.format("%s-%s-%s", now.getYear(), 9, 30);
-            quarter = String.format("Q3 %s", now.getYear());
+            quarter = String.format("Q3 %s (Jul-Sept)", now.getYear());
 
         } else {
             startDate = String.format("%s-%s-%s", now.getYear(), 10, 01);
             endDate = String.format("%s-%s-%s", now.getYear(), 12, 31);
-            quarter = String.format("Q4 %s", now.getYear());
+            quarter = String.format("Q4 %s (Oct-Dec)", now.getYear());
         }
 
         return String.format("%s" + dateSpliter + "%s" + dateSpliter + "%s", quarter, startDate, endDate);

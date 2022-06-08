@@ -64,9 +64,10 @@ body {font-family: Arial;}
 
 <!--Section Appointments dashboard-->
 <div id="apointments" class="tabcontent">
-<p>Sample content for apointments dashboard</p>
-</div>
 
+    ${ ui.includeFragment("ugandaemrreports", "appointments") }
+
+</div>
 
 <!--Scripts Section-->
 <script>
@@ -116,9 +117,6 @@ function openDashboardApointments(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 </script>
-
-
-
 
 
 <% } else { %>
