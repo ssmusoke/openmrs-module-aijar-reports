@@ -200,7 +200,6 @@ public class AppointmentsFragmentController {
 
         LocalDateTime now = LocalDateTime.now();
 
-
         Month m = now.getMonth();
         String quarter = "",startDate="";
         startDate = String.format("%s-%s-%s", now.getYear(), now.getMonthValue(), now.getDayOfMonth());
