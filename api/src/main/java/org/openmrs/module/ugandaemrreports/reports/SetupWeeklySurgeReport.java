@@ -89,7 +89,7 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<>();
         l.add(buildReportDesign(reportDefinition));
-//        l.add(buildJSONReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
         return l;
     }
 
@@ -105,9 +105,9 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "SURGE.xls");
     }
 
-//    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
-//        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_TX_NEW_2019.json");
-//    }
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "SURGE.json");
+    }
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -170,10 +170,10 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"2b","TX_NEW 15+ above15male", TX_New,"age=above15male");
 
         addIndicator(dsd,"3b","VMMC_CIRC <15", SMC,"age=less15male");
-        addIndicator(dsd,"4b","VMMC_CIRC 15-19", SMC,"age=between15And19male");
+        addIndicator(dsd,"4b","VMMC_CIRC 15-29", SMC,"age=between15And29male");
         addIndicator(dsd,"5b","VMMC_CIRC 30", SMC,"age=above30male");
 
-        addIndicator(dsd,"6a","TB_IPT <15", initiatedOnIPT,"age=less15Years");
+        addIndicator(dsd,"6a","TB_IPT <5", initiatedOnIPT,"age=less5Years");
         addIndicator(dsd,"7a","TB_IPT 5-14", initiatedOnIPT,"age=between5And14Years");
         addIndicator(dsd,"8a","TB_IPT 15+ females", initiatedOnIPT,"age=above15female");
         addIndicator(dsd,"8b","TB_IPT 15+ males", initiatedOnIPT,"age=above15male");
@@ -206,13 +206,15 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"20a","TLD Transitioned MBCP 15+ females", transitionedToTLDThroughEMTCT,"age=above15female");
         addIndicator(dsd,"20b","TLD Transitioned MBCP 15+ males", transitionedToTLDThroughEMTCT,"age=above15male");
 
-        addIndicator(dsd,"21a","TX_SV(D) <15", dueForSecondVisitInReportingPeriod,"age=less15Years");
+        addIndicator(dsd,"21a","TX_SV(D) <15", dueForSecondVisitInReportingPeriod,"age=less15female");
+        addIndicator(dsd,"21b","TX_SV(D) <15", dueForSecondVisitInReportingPeriod,"age=less15male");
         addIndicator(dsd,"22a","TX_SV(D) 15+ females", dueForSecondVisitInReportingPeriod,"age=above15female");
         addIndicator(dsd,"22b","TX_SV(D) 15+ males", dueForSecondVisitInReportingPeriod,"age=above15male");
 
-//        addIndicator(dsd,"21a","TX_SV() <15", dueForSecondVisitInReportingPeriod,"age=less15Years");
-//        addIndicator(dsd,"22a","TX_SV(D) 15+ females", dueForSecondVisitInReportingPeriod,"age=above15female");
-//        addIndicator(dsd,"22b","TX_SV(D) 15+ males", dueForSecondVisitInReportingPeriod,"age=above15male");
+        addIndicator(dsd,"21c","TX_SV(N) <15", dueForSecondVisitInReportingPeriod,"age=less15female");
+        addIndicator(dsd,"21d","TX_SV(N) <15", dueForSecondVisitInReportingPeriod,"age=less15male");
+        addIndicator(dsd,"22c","TX_SV(N) 15+ females", dueForSecondVisitInReportingPeriod,"age=above15female");
+        addIndicator(dsd,"22d","TX_SV(N) 15+ males", dueForSecondVisitInReportingPeriod,"age=above15male");
 
         addIndicator(dsd,"23a","TX_ PRO ABC/3TC/DTG <3", transitionToABC3TCDTG,"age=less3Years");
         addIndicator(dsd,"23b","TX_ PRO ABC/3TC/DTG 3-9", transitionToABC3TCDTG,"age=between3And9Years");
@@ -257,6 +259,6 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.0.4";
+        return "0.0.7";
     }
 }
