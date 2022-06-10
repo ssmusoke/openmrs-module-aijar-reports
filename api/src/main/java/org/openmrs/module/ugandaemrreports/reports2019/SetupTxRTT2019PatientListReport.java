@@ -145,7 +145,7 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "Enrollment Date", hivPatientData.getSummaryPageDate());
-        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
@@ -167,6 +167,6 @@ public class SetupTxRTT2019PatientListReport extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.0.5";
+        return "0.0.6";
     }
 }

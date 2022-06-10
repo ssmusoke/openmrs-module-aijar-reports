@@ -1,23 +1,9 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.joda.time.LocalDate;
-import org.openmrs.Concept;
-import org.openmrs.PatientIdentifierType;
-import org.openmrs.PersonAttributeType;
-import org.openmrs.api.context.Context;
-import org.openmrs.module.metadatadeploy.MetadataUtils;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.data.DataDefinition;
 import org.openmrs.module.reporting.data.converter.AgeConverter;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
-import org.openmrs.module.reporting.data.converter.DataConverter;
-import org.openmrs.module.reporting.data.converter.ObjectFormatter;
-import org.openmrs.module.reporting.data.patient.definition.ConvertedPatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.definition.PatientIdentifierDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.*;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
@@ -28,17 +14,10 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.common.StubDate;
-import org.openmrs.module.ugandaemrreports.data.converter.*;
-import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.CalculationDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.DeathDateDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.calculation.anc.*;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -177,7 +156,7 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
         addColumn( dsd,"Sex", builtInPatientData.getGender());
         dsd.addColumn("DOB", new BirthdateDataDefinition(), "", new BirthdateConverter("dd/MM/yyyy"));
         dsd.addColumn("Age", new AgeDataDefinition(), "", new AgeConverter("{y}"));
-        addColumn(dsd,"intiationDate",hivPatientData.getARTStartDate());
+        addColumn(dsd,"intiationDate",hivPatientData.getArtStartDate());
         addColumn(dsd, "viralLoadDate", hivPatientData.getLastViralLoadDateByEndDatePlusMonths("3m"));
         addColumn(dsd, "viralLoad", hivPatientData.getViralLoadByEndDatePlusMonths("3m"));
         if(hivPatientData.getTODateDuringPeriod() !=null) {
@@ -209,6 +188,6 @@ public class SetupEWIViralLoadSupressionReport extends UgandaEMRDataExportManage
 
     @Override
     public String getVersion() {
-        return "1.7.0";
+        return "1.7.1";
     }
 }

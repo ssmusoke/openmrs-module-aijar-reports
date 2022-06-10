@@ -8,6 +8,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.library.dimension.CommonReportDimensionLibrary;
@@ -143,6 +144,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("105", Mapped.mapStraightThrough(eid()));
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
         return rd;
 
     }
@@ -380,8 +382,12 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     }
 
+    public static DataSetDefinition getUgandaEMRVersion(){
+        EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
+        return dsd;
+    }
     @Override
     public String getVersion() {
-        return "6.0.4";
+        return "6.0.5";
     }
 }
