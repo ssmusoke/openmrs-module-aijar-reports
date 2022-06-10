@@ -15,6 +15,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
 import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -114,40 +115,11 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-		dsd.setName(getName());
-		dsd.setParameters(getParameters());
-		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dsd));
-		
-		CohortDefinition patientsInCare = df.getAnyEncounterOfTypesFromPastEndPeriodToEndDate(hivMetadata.getArtEncounterTypes(),"2y");
-		dsd.addRowFilter(Mapped.mapStraightThrough(patientsInCare));
-
-		// columns to include
-		addColumn(dsd, "ID", hivPatientData.getClinicNumber());
-		addColumn(dsd, "Gender", builtInPatientData.getGender());
-		dsd.addColumn("Date of Birth", new BirthdateDataDefinition(), "", new BirthdateConverter("MMM dd,yyyy"));
-		addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
-		addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-		addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-		addColumn(dsd, "Current Regimen Date", hivPatientData.getCurrentRegimenDate());
-		addColumn(dsd, "Start Regimen", hivPatientData.getStartRegimen());
-		addColumn(dsd,"Adherence",hivPatientData.getAdherence());
-		addColumn(dsd, "Weight", hivPatientData.getWeight());
-		addColumn(dsd, "Start Regimen Date", hivPatientData.getStartRegimenDate());
-		addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-		addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
-//		addColumn(dsd,"DSDM", hivPatientData.getDSDMModel());
-//		addColumn(dsd, "Prescription Duration", hivPatientData.getARVDuration());
-//		//addColumn(dsd, "Last Visit Date", hivPatientData.getLastVisitDate());
-		addColumn(dsd, "Next Appointment Date", hivPatientData.getExpectedReturnDate());
-////		addColumn(dsd,"HIVDR_Date",df.getObsByEndDate(getConcept("b913c0d9-f279-4e43-bb8e-3d1a4cf1ad4d"), hivMetadata.getIACEncounters(), TimeQualifier.LAST, new ObsValueConverter()));
-		addColumn(dsd,"CurrentRegimenLine", hivPatientData.getRegimenLine());
-//		addColumn(dsd,"CurrentRegimenLineStartDate", hivPatientData.getRegimenLineStartDate());
-		addColumn(dsd,"Last TPT Status",hivPatientData.getTPTLastTPTStatus());
-		addColumn(dsd,"TB Status",df.getObsByEndDate(hivMetadata.getTBStatus(), hivMetadata.getARTEncounterPageEncounterType(), TimeQualifier.LAST, new ObsValueConverter()));
-//////		dsd.addColumn("Pregnant", sdd.definition("pregnant", getConcept("dcda5179-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        addColumn(dsd,"Client Status",hivPatientData.getClientStatus());
-        return rd;
+		CQIHIVAdultToolDataSetDefinition dataSetDefinition = new CQIHIVAdultToolDataSetDefinition();
+		dataSetDefinition.setName(getName());
+		dataSetDefinition.setParameters(getParameters());
+		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
+		return rd;
 	}
 
 	public PatientDataDefinition getActiveInPeriodDataDefinition(String pastPeriod) {
@@ -163,6 +135,6 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Override
 	public String getVersion() {
-		return "1.1.5.5";
+		return "1.1.6.7";
 	}
 }
