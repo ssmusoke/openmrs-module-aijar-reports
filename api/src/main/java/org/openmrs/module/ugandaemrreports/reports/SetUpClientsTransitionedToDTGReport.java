@@ -2,7 +2,6 @@ package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -160,7 +159,7 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd,"Enrollment Date",hivPatientData.getEnrollmentDate());
-        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "VL Date", hivPatientData.getLastViralLoadDateByEndDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
@@ -179,7 +178,7 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
 
     @Override
     public String getVersion() {
-        return "3.0.1";
+        return "3.0.2";
     }
 }
 

@@ -1,7 +1,6 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
@@ -12,14 +11,12 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWhoDidntTurnupForScheduledAppointmentCohortDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -142,7 +139,7 @@ public class SetupDailyMissedAppointmentList extends UgandaEMRDataExportManager 
         addColumn(dsd, "Telephone", basePatientData.getTelephone());
         addColumn(dsd, "Age", builtInPatientData.getAgeAtStart());
         addColumn(dsd, "Enrollment Date", hivPatientData.getSummaryPageDate());
-        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
         addColumn(dsd,"Village",df.getPreferredAddress("address5"));
         addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
@@ -165,6 +162,6 @@ public class SetupDailyMissedAppointmentList extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "1.1.7";
+        return "1.1.8";
     }
 }

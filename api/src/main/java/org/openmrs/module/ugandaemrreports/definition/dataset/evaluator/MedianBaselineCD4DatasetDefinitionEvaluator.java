@@ -51,7 +51,7 @@ public class MedianBaselineCD4DatasetDefinitionEvaluator implements DataSetEvalu
         if(results.size()>0 && !results.isEmpty() && results.get(0)[0] != null){
             pdh.addCol(row, "14y",String.valueOf(results.get(0)[0]));
         }else{
-            pdh.addCol(row, "14y","");
+            pdh.addCol(row, "14y",0);
         }
 
         dataSet.addRow(row);
