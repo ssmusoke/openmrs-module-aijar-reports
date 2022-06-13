@@ -10,6 +10,7 @@ import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -111,7 +112,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
         dsd.setParameters(getParameters());
         dsd.addRowFilter(Mapped.mapStraightThrough(patientsWithAppointments));
         addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateBetween());
-        addColumn(dsd, "Telephone", df.getObsByEndDate(hivMetadata.getConcept("0593abe7-6658-43c3-ab53-a714a761de55"),null, TimeQualifier.LAST,df.getObsValueTextConverter()));
+        addColumn(dsd, "Telephone", df.getSMSTelephoneNumber());
         addColumn(dsd, "Message", hivPatientData.getPatientSMSTemplateMessage());
 
 
@@ -121,7 +122,7 @@ public class SetupSMSAppointmentsReports extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0.5";
+        return "1.0.6";
     }
 
 
