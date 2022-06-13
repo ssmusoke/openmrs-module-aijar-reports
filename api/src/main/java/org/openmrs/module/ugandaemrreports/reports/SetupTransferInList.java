@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+
 
 /**
  */
@@ -153,7 +153,7 @@ public class SetupTransferInList extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.1.3";
+        return "1.1.4";
     }
 
     @Override

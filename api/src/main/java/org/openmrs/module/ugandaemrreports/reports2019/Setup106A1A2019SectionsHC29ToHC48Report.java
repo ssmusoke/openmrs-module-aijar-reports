@@ -13,6 +13,7 @@ import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.MedianBaselineCD4DatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
 /**
  */
@@ -52,6 +55,11 @@ public class Setup106A1A2019SectionsHC29ToHC48Report extends UgandaEMRDataExport
     public String getExcelDesignUuid() {
         return "9ac8b336-292a-4714-90e1-584f4074ea1e";
     }
+
+    public String getJSONDesignUuid() {
+        return "d39f79b7-b44b-4ac7-bf0f-798ef500e8c9";
+    }
+
 
     @Override
     public String getUuid() {
@@ -78,12 +86,21 @@ public class Setup106A1A2019SectionsHC29ToHC48Report extends UgandaEMRDataExport
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+
+        return l;
     }
 
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1A2019HC29ToHC48Report.xls");
+    }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        ReportDesign rd = createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "106A1A2019HC29ToHC48Report.json");
+        return rd;
     }
 
     @Override
@@ -98,6 +115,9 @@ public class Setup106A1A2019SectionsHC29ToHC48Report extends UgandaEMRDataExport
         CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("x", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("aijar",Mapped.mapStraightThrough(getUgandaEMRVersion()));
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
+
 
         CohortDefinitionDimension finerAgeDisaggregations = commonDimensionLibrary.getFinerAgeDisaggregations();
         dsd.addDimension("age", Mapped.mapStraightThrough(finerAgeDisaggregations));
@@ -285,8 +305,13 @@ public class Setup106A1A2019SectionsHC29ToHC48Report extends UgandaEMRDataExport
         return dsd;
     }
 
+    public static DataSetDefinition getUgandaEMRVersion(){
+        EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
+        return dsd;
+    }
+
     @Override
     public String getVersion() {
-        return "1.0.2";
+        return "1.0.3";
     }
 }

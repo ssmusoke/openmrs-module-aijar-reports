@@ -139,7 +139,7 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
         dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
         addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
         addColumn(dsd, "HIV Enrolled Date", hivPatientData.getSummaryPageDate());
-        addColumn(dsd, "Art Start Date", hivPatientData.getARTStartDate());
+        addColumn(dsd, "Art Start Date", hivPatientData.getArtStartDate());
         addColumn(dsd,  "Regimen Start Date", hivPatientData.getFirstRegimenPickupDate());
         addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
         addColumn(dsd, "Clinic Stage", hivPatientData.getWHOClinicStage());
@@ -156,6 +156,6 @@ public class SetUpDSDMModelEnrollmentReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "2.0.18";
+        return "2.0.2";
     }
 }

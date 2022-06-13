@@ -1,0 +1,2161 @@
+{
+    "resourceType": "MeasureReport",
+    "id": "weeklySurgeIndicators",
+    "status": "complete",
+    "type": "summary",
+    "measure": "https://ugisl.mets.or.ug/pirs/surge-indicators",
+    "meta": {
+        "source": "UgandaEMR",
+        "versionId": "#aijar.version#"
+    },
+    "identifier": [
+        {
+            "id": "UID",
+            "value": "#S.dhis_uuid#"
+        }
+    ],
+    "period": {
+        "start": "#parameter.startDate|YYYY-MM-dd#",
+        "end": "#parameter.endDate|YYYY-MM-dd#"
+    },
+    "group": [
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_NEW",
+                        "display": "TX_NEW (Weekly, Coarse Age/Sex) : Number of adults and children newly enrolled"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0M--12M",
+                                                "display": "No of individuals <11 Months"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "T",
+                                                "display": "Total"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.BABIES#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P1Y--15Y",
+                                                "display": "No of individuals 1 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.1a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P1Y--14Y",
+                                                "display": "No of individuals 1 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.1b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.2a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.2b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "VMMC_CIRC",
+                        "display": "VMMC_CIRC (Weekly, Coarse Age) : Number of Males Circumcised"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--P15Y",
+                                                "display": "No of individuals < 15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.3b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--P30Y",
+                                                "display": "No of individuals 15 - 29 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.4b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P30Y--P9999Y",
+                                                "display": "No of individuals 30+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.5b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TB_IPT",
+                        "display": "TB (Weekly, TB IPT, Coarse Age/Sex) : Number of ART patients initiated on IPT"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P1Y--5Y",
+                                                "display": "No of individuals <5 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "T",
+                                                "display": "Total"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.6a#
+
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P5Y--15Y",
+                                                "display": "No of individuals 5 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "T",
+                                                "display": "Total"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.7a#
+
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.8a#
+
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.8b#
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_STARTED_COARSE",
+                        "display": "TLD (N, Started on TLD, Coarse Age/Sex) : Number of newly initiated clients started on TLD"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "T",
+                                                "display": "Total"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.9a# 
+                             }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.10b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_STARTED_ART",
+                        "display": "TLD (N, Started on TLD at ART clinic, Coarse Age/Sex) : Number of newly initiated clients started on TLD at ART clinic"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.12a#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_STARTED_MOTHER",
+                        "display": "TLD (N, Started on TLD at Mother - Baby Care point, Coarse Age/Sex) : Number of newly initiated clients started on TLD at MCH point"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.14a#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_TRANS_COARSE",
+                        "display": "TLD (N, Transitioned to TLD, Coarse Age/Sex) : Number of active ART clients"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "T",
+                                                "display": "Total"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.15a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.16b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_TRANS_ART",
+                        "display": "TLD (N, Transitioned to TLD at ART clinic, Coarse Age/Sex) : Number of active ART clients"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.18a#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TLD_TRANS_MOTHER",
+                        "display": "TLD (N, Transitioned to TLD at Mother - Baby Care point, Coarse Age/Sex) : Number of active ART clients"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.20a#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_SV_DENOM",
+                        "display": "TX_SV (D, Initiated due for second visit in the reporting period, Coarse Age/Sex) : Number of clients newly initiated on ART"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.21a#
+
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.21b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.22a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.22b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_SV_NUM",
+                        "display": "TX_SV (N, Initiated due for second visit in the reporting period returning for appointment, Coarse Age/Sex) : Number of clients newly initiated on ART"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.21c#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.21d#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.22c#
+
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.22d#
+
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_PRO_DTG",
+                        "display": "TX_PRO_DTG (Weekly, Transitioned to ABC/3TC/DTG, Age ) : Number of Active ART clients transitioned  ABC/3TC/DTG"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--3Y",
+                                                "display": "No of individuals <3 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.23a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P3Y--10Y",
+                                                "display": "No of individuals 3 - 9 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.23b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P10Y--15Y",
+                                                "display": "No of individuals 10 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.23c#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--19Y",
+                                                "display": "No of individuals 15 - 20 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.23d#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_PRO_LPV",
+                        "display": "TX_PRO_LPV (Weekly, Transitioned to ABC/3TC/LPV/r, Age ) : Number of Active ART clients transitioned transitioned to ABC/3TC/LPV/r"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--3Y",
+                                                "display": "No of individuals <3 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.24a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P3Y--10Y",
+                                                "display": "No of individuals 3 - 9 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.24b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P10Y--15Y",
+                                                "display": "No of individuals 10 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.24c#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--19Y",
+                                                "display": "No of individuals 15 - 20 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.24d#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "TX_PRO_TLD",
+                        "display": "TX_PRO_TLD (Weekly, Transitioned to TLD, Age ) : Number of Active ART Clients transitioned to TLD"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--3Y",
+                                                "display": "No of individuals <3 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.25a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P3Y--10Y",
+                                                "display": "No of individuals 3 - 9 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.25b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P10Y--15Y",
+                                                "display": "No of individuals 10 - 14 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.25c#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--19Y",
+                                                "display": "No of individuals 15 - 20 years"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.25d#
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "code": {
+                "coding": [
+                    {
+                        "code": "HTS_RECENT",
+                        "display": "HTS_RECENT (Weekly, Coarse Age/Sex ) : Number of Newly Diagnosed that received recent infection testing"
+                    }
+                ]
+            },
+            "measureScore": {
+                "value": 0
+            },
+            "stratifier": [
+                {
+                    "code": [
+                        {
+                            "coding": [
+                                {
+                                    "code": "AGE_GROUP",
+                                    "display": "Age group dissaggregation"
+                                }
+                            ]
+                        },
+                        {
+                            "coding": [
+                                {
+                                    "code": "SEX",
+                                    "display": "Sex dissaggregation"
+                                }
+                            ]
+                        }
+                    ],
+                    "stratum": [
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.26a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P0Y--15Y",
+                                                "display": "No of individuals <15 years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.26b#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "F",
+                                                "display": "Female"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.27a#
+                            }
+                        },
+                        {
+                            "component": [
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "AGE_GROUP"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "P15Y--9999Y",
+                                                "display": "No of individuals 15+ years"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code": {
+                                        "coding": [
+                                            {
+                                                "code": "SEX"
+                                            }
+                                        ]
+                                    },
+                                    "value": {
+                                        "coding": [
+                                            {
+                                                "code": "M",
+                                                "display": "Male"
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "measureScore": {
+                                "value": #TX.27b#
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
