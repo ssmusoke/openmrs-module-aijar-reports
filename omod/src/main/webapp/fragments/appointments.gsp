@@ -170,7 +170,7 @@
                  yAxes: [{
                  scaleLabel: {
                    display: true,
-                   labelString: '# Number of Clients'
+                   labelString: '# of Clients'
                }
              }],
 
@@ -247,7 +247,7 @@
                  yAxes: [{
                  scaleLabel: {
                    display: true,
-                   labelString: '# Number of Clients'
+                   labelString: '# of Clients'
                }
              }],
 

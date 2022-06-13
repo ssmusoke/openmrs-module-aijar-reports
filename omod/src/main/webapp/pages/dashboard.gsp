@@ -46,6 +46,9 @@ body {font-family: Arial;}
   <button class="tablinks" onclick="openDashboardCareandTreatment(event, 'careandtreatment')">Care and Treatment</button>
   <button class="tablinks" onclick="openDashboardHTS(event, 'hts')">HTS</button>
   <button class="tablinks" onclick="openDashboardApointments(event, 'apointments')">Appointments</button>
+  <button class="tablinks" onclick="openDashboardWeeklysurge(event, 'weeklysurge')">Weekly Surge</button>
+
+
 </div>
 
 <!--Section for Care and Treatment dashboard-->
@@ -66,6 +69,13 @@ body {font-family: Arial;}
 <div id="apointments" class="tabcontent">
 
     ${ ui.includeFragment("ugandaemrreports", "appointments") }
+
+</div>
+
+<!--Weekly Surge dashboard-->
+<div id="weeklysurge" class="tabcontent">
+
+    ${ ui.includeFragment("ugandaemrreports", "weeklySurge") }
 
 </div>
 
@@ -117,6 +127,23 @@ function openDashboardApointments(evt, tabName) {
   evt.currentTarget.className += " active";
 }
 </script>
+
+<script>
+function openDashboardWeeklysurge(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+</script>
+
 
 
 <% } else { %>
