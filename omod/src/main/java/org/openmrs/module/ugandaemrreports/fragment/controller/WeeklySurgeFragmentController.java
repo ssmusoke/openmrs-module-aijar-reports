@@ -26,7 +26,6 @@ public class WeeklySurgeFragmentController {
 
     public void controller(FragmentModel model) {
 
-
         try {
             ReportDefinitionService reportDefinitionService= Context.getService(ReportDefinitionService.class);
             ReportDefinition rd = reportDefinitionService.getDefinitionByUuid("e7102e5c-b90d-4a4a-b763-20518eadbae5");
@@ -34,19 +33,23 @@ public class WeeklySurgeFragmentController {
                 throw new IllegalArgumentException("unable to find Analytics Data Export report with uuid "
                         + "ANALYTICS_DATA_EXPORT_REPORT_DEFINITION_UUID");
             }
+
             String reportRendergingMode = "org.openmrs.module.reporting.report.renderer.TextTemplateRenderer" + "!" + "98b4d8d6-17da-45f2-a825-87a8f6522e13";
             RenderingMode renderingMode = new RenderingMode(reportRendergingMode);
+
             if (!renderingMode.getRenderer().canRender(rd)) {
                 throw new IllegalArgumentException("Unable to render Analytics Data Export with " + reportRendergingMode);
             }
+
             Map<String, Object> parameterValues = new HashMap<String, Object>();
 
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime endd = LocalDateTime.now().minusDays(7);
+            LocalDateTime enddate = LocalDateTime.now().minusDays(7);
 
             parameterValues.put("startDate", String.format("%s-%s-%s", now.getYear(), now.getMonthValue(), now.getDayOfMonth()));
-            parameterValues.put("endDate", String.format("%s-%s-%s", endd.getYear(), endd.getMonthValue(), endd.getDayOfMonth()));
+            parameterValues.put("endDate", String.format("%s-%s-%s", enddate.getYear(), enddate.getMonthValue(), enddate.getDayOfMonth()));
+            parameterValues.put("effectiveDate", String.format("%s-%s-%s", enddate.getYear(), enddate.getMonthValue(), enddate.getDayOfMonth()));
 
             EvaluationContext context = new EvaluationContext();
 
@@ -70,6 +73,7 @@ public class WeeklySurgeFragmentController {
             log.info("Error rendering the contents of the Analytics data export report to"
                     + OpenmrsUtil.getApplicationDataDirectory() + "surge_report" + e.toString());
             e.printStackTrace();
+            model.addAttribute("nodata", "No data");
         }
 
     }

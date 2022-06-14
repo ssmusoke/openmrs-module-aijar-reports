@@ -182,7 +182,7 @@
 <script>
      var xValues_na = [];
      var yValues_na = [];
-     var barColors_na = ["red","blue","orange","brown","yellow","green","black"];
+     var barColors_na = ["green","green","green","green","green","green","green"];
 
 
          var myDay0 = "${ui.format(Day0)}".split("=:");

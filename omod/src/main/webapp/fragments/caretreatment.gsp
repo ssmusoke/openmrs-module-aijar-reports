@@ -71,12 +71,7 @@
         </tr>
 
         <tr>
-        <td>Total Patients</td>
-        <td>${ ui.format(total_patients_system)}</td>
-        </tr>
-
-        <tr>
-        <td>Total Enrolled</td>
+        <td>Cumulative Enrollments</td>
         <td>${ ui.format(total_enrolled_in_a_care)}</td>
         </tr>
 
@@ -86,7 +81,7 @@
          </tr>
 
          <tr>
-         <td>Current In Care (Period)</td>
+         <td>Active In Care (Period)</td>
          <td>${ ui.format(total_enrolled_in_a_period)}</td>
          </tr>
 
@@ -96,17 +91,17 @@
          </tr>
 
          <tr>
-         <td>Clients with updated VL (Today)</td>
+         <td>Clients with updated VL (Within 12 months)</td>
          <td>${ ui.format(tt_clients_with_vl_in_period)}</td>
          </tr>
 
          <tr>
-         <td>Clients with Suppressed VL (Today)</td>
+         <td>Clients with Suppressed VL (Within 12 months)</td>
          <td>${ ui.format(tt_suppressed_in_period)}</td>
          </tr>
 
          <tr>
-         <td>Clients with Non Suppressed VL (Today)</td>
+         <td>Clients with Non Suppressed VL (Within 12 months)</td>
          <td>${ ui.format(tt_non_suppressed_in_period)}</td>
          </tr>
 </table>
@@ -285,7 +280,7 @@
                legend: {display: false,position:"bottom",},
                title: {
                         display: true,
-                        text: "Viral Load Tracker (As of Today)"
+                        text: "Viral Load Tracker (Within 12 months)"
                   },
 
                scales: {

@@ -47,7 +47,7 @@
 
 <div id=f><b>Reporting Period:${ui.format(quarter)}</b></div>
 
-<div id=g1><canvas id="deliverymodelmodalities" style="width:100%;height:100%"></canvas></div>
+<div id=g1><canvas id="htsentrypoint" style="width:100%;height:100%"></canvas></div>
 
 <div id=g2>
 <table border="1" summary="Summary Table">
@@ -57,8 +57,8 @@
         </tr>
 
          <tr>
-         <td>Total Enrolled</td>
-         <td>${ ui.format(hts_total_enrolled_in_a_period)}</td>
+         <td>Counselled</td>
+         <td>${ ui.format(htc_co)}</td>
          </tr>
 
         <tr>
@@ -72,6 +72,11 @@
          </tr>
 
          <tr>
+         <td>New on ART</td>
+         <td>${ ui.format(hts_total_enrolled_in_a_period)}</td>
+         </tr>
+
+         <tr>
          <td>INC (HTC)</td>
          <td>${ ui.format(hts_inc)}</td>
          </tr>
@@ -79,11 +84,6 @@
          <tr>
          <td>NT (HTC)</td>
          <td>${ ui.format(hts_nt)}</td>
-         </tr>
-
-         <tr>
-         <td>Counselled</td>
-         <td>${ ui.format(htc_co)}</td>
          </tr>
 
          <tr>
@@ -103,18 +103,45 @@
 <script>
      var xValues2 = [];
      var yValues2 = [];
-     var barColors = ["yellow","green","brown"];
+     var barColors = ["yellow","green","brown","red","pink","blue","orange","grey","gold","indigo","cyan","silver"];
 
-         xValues2.push("${ ui.format("Community Testing Point")}");
-         yValues2.push(${ ui.format(hts_ctp)});
+         xValues2.push("${ ui.format("OPD")}");
+         yValues2.push(${ ui.format(htc_e_opd)});
 
-         xValues2.push("${ ui.format("Facility Based(HCT)")}");
-         yValues2.push(${ ui.format(hts_hct)});
+         xValues2.push("${ ui.format("Ward")}");
+         yValues2.push(${ ui.format(htc_e_ward)});
+
+         xValues2.push("${ ui.format("ART Clinic")}");
+         yValues2.push(${ ui.format(htc_e_artc)});
+
+         xValues2.push("${ ui.format("TB Clinic")}");
+         yValues2.push(${ ui.format(htc_e_tbc)});
+
+         xValues2.push("${ ui.format("Nutrition unit")}");
+         yValues2.push(${ ui.format(htc_e_nu)});
+
+         xValues2.push("${ ui.format("YCC")}");
+         yValues2.push(${ ui.format(htc_e_ycc)});
+
+         xValues2.push("${ ui.format("ANC")}");
+         yValues2.push(${ ui.format(htc_e_anc)});
+
+         xValues2.push("${ ui.format("Maternity")}");
+         yValues2.push(${ ui.format(htc_e_m)});
+
+         xValues2.push("${ ui.format("PNC")}");
+         yValues2.push(${ ui.format(htc_e_pnc)});
+
+         xValues2.push("${ ui.format("Family Planning")}");
+         yValues2.push(${ ui.format(htc_e_fp)});
+
+         xValues2.push("${ ui.format("STI Clinic")}");
+         yValues2.push(${ ui.format(htc_e_stic)});
 
          xValues2.push("${ ui.format("Others")}");
-         yValues2.push(${ ui.format(hts_others)});
+         yValues2.push(${ ui.format(htc_e_o)});
 
-          new Chart("deliverymodelmodalities", {
+          new Chart("htsentrypoint", {
             type: "doughnut",
             data: {
               labels: xValues2,
@@ -130,7 +157,7 @@
                legend: {display: true,position:"bottom",},
                title: {
                         display: true,
-                        text: "HTS Delivery Model Modalities"
+                        text: "HTS % Contribution For Entry Point"
                   },
            }
       });
@@ -139,10 +166,10 @@
 <script>
      var xValues1 = [];
      var yValues1 = [];
-     var barColors = ["red","blue","orange","brown","yellow","green","black"];
+     var barColors = ["green","red","yellow","brown","blue","green"];
 
-         xValues1.push("${ ui.format("Total Enrolled")}");
-         yValues1.push(${ ui.format(hts_total_enrolled_in_a_period)});
+         xValues1.push("${ ui.format("Counselled")}");
+         yValues1.push(${ ui.format(htc_co)});
 
          xValues1.push("${ ui.format("HIV +")}");
          yValues1.push(${ ui.format(hts_p)});
@@ -150,17 +177,14 @@
          xValues1.push("${ ui.format("HIV -")}");
          yValues1.push(${ ui.format(hts_n)});
 
+         xValues1.push("${ ui.format("New on ART")}");
+         yValues1.push(${ ui.format(hts_total_enrolled_in_a_period)});
+
          xValues1.push("${ ui.format("INC (HTC)")}");
          yValues1.push(${ ui.format(hts_inc)});
 
          xValues1.push("${ ui.format("NT (HTC)")}");
          yValues1.push(${ ui.format(hts_nt)});
-
-         xValues1.push("${ ui.format("Counselled")}");
-         yValues1.push(${ ui.format(htc_co)});
-
-         xValues1.push("${ ui.format("Not Counselled")}");
-         yValues1.push(${ ui.format(hts_not_co)});
 
           new Chart("HTS_HIV_STATUS_And_Counseling", {
             type: "bar",
@@ -211,24 +235,31 @@
 
 
        xValues.push("${ ui.format("Community Testing Point")}");
-             yValues.push(${ ui.format(hts_ctp)});
+       yValues.push(${ ui.format(hts_ctp)});
 
-             xValues.push("${ ui.format("Facility Based(HCT)")}");
-             yValues.push(${ ui.format(hts_hct)});
+       xValues.push("${ ui.format("Facility Based(HCT)")}");
+       yValues.push(${ ui.format(hts_hct)});
 
-             xValues.push("${ ui.format("Others")}");
-             yValues.push(${ ui.format(hts_others)});
+       xValues.push("${ ui.format("Others")}");
+       yValues.push(${ ui.format(hts_others)});
 
     function drawChart() {
         var data = google.visualization.arrayToDataTable([
         ['Indicator', 'Score'],
-        ['Facility Based(HCT)',${ ui.format(hts_hct)}],
-         ['Community Testing Point',${ ui.format(hts_ctp)}],
-        ['Others',${ ui.format(hts_others)}]
+        ['APN',${ ui.format(hts_apn)}],
+        ['ICT Other Than APN',${ ui.format(hts_iapn)}],
+        ['PrEP',${ ui.format(hts_prep)}],
+        ['PEP',${ ui.format(hts_pep)}],
+        ['HIV Self -Test Positive',${ ui.format(hts_hitp)}],
+        ['Inconclusive HIV result',${ ui.format(hts_ihr)}],
+        ['Self-initiative',${ ui.format(hts_si)}],
+        ['PMTCT',${ ui.format(hts_pmtct)}],
+        ['Others',${ ui.format(hts_o)}],
+        ['SNS',${ ui.format(hts_sns)}]
 ]);
 
 var options = {
-  title:'HTS Delivery Model Modalities',
+  title:'HTS % Reason for Testing',
   is3D:true
 };
 

@@ -1,5 +1,5 @@
 <table>
-  <% if (weeklysurgedata) { %>
+  <% if (nodata) { %>
       <td class="w3-right-align Good 0_2_4_none_red_green_yellow none_0_light-green"></td>
 
       <style>
