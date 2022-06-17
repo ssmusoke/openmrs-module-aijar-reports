@@ -60,7 +60,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       family.name as Family_Planning,\n" +
                 "       ADV_DZZ.name as Advanced_Disease\n" +
                 "\n" +
-                "FROM  (select e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 2 YEAR) group by patient)cohort join\n" +
+                "FROM  (select e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR) group by patient)cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
                 "    (SELECT pi.patient_id as patientid,identifier FROM patient_identifier pi INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='e1731641-30ab-102d-86b0-7a5022ba4115'  WHERE  pi.voided=0 group by pi.patient_id)ids on patient=patientid\n" +
                 "    LEFT JOIN(SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90041 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
@@ -127,13 +127,15 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "Current Regimen Date",  o[15]);
                 pdh.addCol(row, "Adherence", o[13]);
                 pdh.addCol(row, "VL Quantitative", o[16]);
-                pdh.addCol(row, "VL Date", o[17]);
+                pdh.addCol(row, "VL QTY", o[17]);
+//                pdh.addCol(row, "VL Date", o[17]);
                 pdh.addCol(row, "Last TPT Status", o[18]);
                 pdh.addCol(row, "TB Status", o[19]);
                 pdh.addCol(row, "HEPB", o[20]);
                 pdh.addCol(row, "SYPHILLIS", o[21]);
                 pdh.addCol(row, "FAMILY", o[22]);
                 pdh.addCol(row, "ADV", o[23]);
+                pdh.addCol(row, "VL Date", o[24]);
 //                pdh.addCol(row, "", (String)o[]);
                 dataSet.addRow(row);
             }
