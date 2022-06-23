@@ -1,5 +1,4 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 <style>
 .container-dashboard-hts{
@@ -47,10 +46,10 @@
 
 <div id=f><b>Reporting Period:${ui.format(quarter)}</b></div>
 
-<div id=g1><canvas id="htsentrypoint" style="width:100%;height:100%"></canvas></div>
+<div id=g1><canvas id="htsentrypoint" style="width:600px;height:100%"></canvas></div>
 
 <div id=g2>
-<table border="1" summary="Summary Table">
+<table border="1" summary="Summary Table" style="width:100%;height:100%">
         <tr>
             <th>Indicator</th>
             <th>Value</th>
@@ -93,7 +92,7 @@
 </table>
 </div>
 
-<div id=g3><canvas id="g3_2" style="width:100%;height:100%"></canvas></div>
+<div id=g3><canvas id="HTS_Reason_for_testing" style="width:600px;height:100%"></canvas></div>
 
 <div id=g4><canvas id="HTS_HIV_STATUS_And_Counseling" style="width:600px;height:100%"></canvas></div>
 
@@ -228,44 +227,61 @@
       });
 </script>
 
-<!-- sampling 3D graph -->
 <script>
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
+     var xValues3 = [];
+     var yValues3 = [];
+      var barColors3 = ["yellow","green","brown","red","pink","blue","orange","grey","gold","indigo","cyan","silver"];
 
+           xValues3.push("${ ui.format("APN")}");
+           yValues3.push(${ ui.format(hts_apn)});
 
-       xValues.push("${ ui.format("Community Testing Point")}");
-       yValues.push(${ ui.format(hts_ctp)});
+           xValues3.push("${ ui.format("ICT Other Than APN")}");
+           yValues3.push(${ ui.format(hts_iapn)});
 
-       xValues.push("${ ui.format("Facility Based(HCT)")}");
-       yValues.push(${ ui.format(hts_hct)});
+           xValues3.push("${ ui.format("PrEP")}");
+           yValues3.push(${ ui.format(hts_prep)});
 
-       xValues.push("${ ui.format("Others")}");
-       yValues.push(${ ui.format(hts_others)});
+           xValues3.push("${ ui.format("PEP")}");
+           yValues3.push(${ ui.format(hts_pep)});
 
-    function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-        ['Indicator', 'Score'],
-        ['APN',${ ui.format(hts_apn)}],
-        ['ICT Other Than APN',${ ui.format(hts_iapn)}],
-        ['PrEP',${ ui.format(hts_prep)}],
-        ['PEP',${ ui.format(hts_pep)}],
-        ['HIV Self -Test Positive',${ ui.format(hts_hitp)}],
-        ['Inconclusive HIV result',${ ui.format(hts_ihr)}],
-        ['Self-initiative',${ ui.format(hts_si)}],
-        ['PMTCT',${ ui.format(hts_pmtct)}],
-        ['Others',${ ui.format(hts_o)}],
-        ['SNS',${ ui.format(hts_sns)}]
-]);
+           xValues3.push("${ ui.format("HIV Self -Test Positive")}");
+           yValues3.push(${ ui.format(hts_hitp)});
 
-var options = {
-  title:'HTS % Reason for Testing',
-  is3D:true
-};
+           xValues3.push("${ ui.format("Inconclusive HIV result")}");
+           yValues3.push(${ ui.format(hts_ihr)});
 
-var chart = new google.visualization.PieChart(document.getElementById('g3'));
-  chart.draw(data, options);
-}
+           xValues3.push("${ ui.format("Self-initiative")}");
+           yValues3.push(${ ui.format(hts_si)});
+
+           xValues3.push("${ ui.format("PMTCT")}");
+           yValues3.push(${ ui.format(hts_pmtct)});
+
+           xValues3.push("${ ui.format("Others")}");
+           yValues3.push(${ ui.format(hts_o)});
+
+           xValues3.push("${ ui.format("SNS")}");
+           yValues3.push(${ ui.format(hts_sns)});
+
+          new Chart("HTS_Reason_for_testing", {
+            type: "pie",
+            data: {
+              labels: xValues3,
+              datasets: [{
+                fill: false,
+                lineTension: 0,
+                backgroundColor: barColors3,
+                borderColor: "rgba(0,0,255,0.1)",
+                data: yValues3
+              }]
+            },
+             options: {
+               legend: {display: true,position:"bottom",},
+               title: {
+                        display: true,
+                        text: "HTS % Reason for Testing"
+                  },
+           }
+      });
 </script>
 
 

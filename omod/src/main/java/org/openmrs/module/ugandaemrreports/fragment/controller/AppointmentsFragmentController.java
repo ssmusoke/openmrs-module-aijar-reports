@@ -60,6 +60,8 @@ public class AppointmentsFragmentController {
         List<List<Object>> v_onattended = administrationService.executeSQL(q.toString(), true);
 
         log.info(v_onattended.size() + ":onattended");
+        //put logic to to check if return value is null
+
         int attended_ontime = 0, non_attended_ontime = 0;
         if (v_onattended.size() != 0) {
             for (List<Object> item : v_onattended) {

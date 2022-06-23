@@ -80,6 +80,7 @@ public class HtsFragmentController {
         }
 
         //add returned record to a model attribute for further processing on the UI
+        //NOT NEEDED ANY MORE DELETE AFTER TESTING
         model.addAttribute("hts_ctp", ctp);
         model.addAttribute("hts_hct", hct);
         model.addAttribute("hts_others", others);
