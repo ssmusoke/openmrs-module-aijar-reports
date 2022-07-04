@@ -1,5 +1,5 @@
 <table>
-    <% if (nodata) { %>
+
         <td class="w3-right-align Good 0_2_4_none_red_green_yellow none_0_light-green"></td>
 
         <style>
@@ -365,25 +365,4 @@
 
             </table>
         </body>
-        <% } else { %>
-            <tr>
-                <td colspan="2">${ ui.message("general.none") }</td>
-            </tr>
-            <% } %>
 </table>
-
-<script>
-
-    var json = JSON.parse(weeklysurgedata);
-
-    alert(json["name"]); //jwasswa
-    alert(json.name); //jwasw
-
-    alert(json.address.streetAddress); //88 8nd Street
-    alert(json["address"].city); //New York
-
-    alert(json.phoneNumber[0].number); //111 111-1111
-    alert(json.phoneNumber[1].type); //fax
-
-    alert(json.phoneNumber.number); //undefined
-</script>
