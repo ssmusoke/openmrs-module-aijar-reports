@@ -56,6 +56,8 @@ public class WeeklySurgeFragmentController {
             parameterValues.put("effectiveDate",String.format("%s-%s-%s", enddate.getYear(), enddate.getMonthValue(),
                     enddate.getDayOfMonth()));
 
+            //This code still returns some error on dates entered
+            /*
             EvaluationContext context = new EvaluationContext();
 
             context.setParameterValues(parameterValues);
@@ -71,7 +73,9 @@ public class WeeklySurgeFragmentController {
            String strOutput ="";// this.readOutputFile(strOutput);
 
             log.error(strOutput);
-            model.addAttribute("weeklysurgedata", strOutput);
+
+             */
+            model.addAttribute("weeklysurgedata", "");
 
 
         } catch (Exception e) {
