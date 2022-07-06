@@ -1,54 +1,41 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.common.TimeQualifier;
-import org.openmrs.module.reporting.data.converter.BirthdateConverter;
 import org.openmrs.module.reporting.data.converter.ObsValueConverter;
 import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
 import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
-import org.openmrs.module.reporting.data.person.definition.BirthdateDataDefinition;
-import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.data.converter.RegimenLineConverter;
 import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.library.*;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
+import org.openmrs.module.ugandaemrreports.library.DataFactory;
+import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-
-import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Care and Treatment Audit Tool
  */
 @Component
-public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManager {
+public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExportManager {
 
 	@Autowired
 	ARTClinicCohortDefinitionLibrary hivCohorts;
 
 	@Autowired
 	private DataFactory df;
-
-	@Autowired
-	private BuiltInPatientDataLibrary builtInPatientData;
-
-	@Autowired
-	private HIVPatientDataLibrary hivPatientData;
-
-	@Autowired
-	private BasePatientDataLibrary basePatientData;
-
-	@Autowired
-	private HIVMetadata hivMetadata;
 
 	@Autowired
 	SharedDataDefintion sdd;
@@ -58,17 +45,17 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "b483c304-793d-11c0-a478-f0e40e519e5b";
+		return "2ae5a9ef-7e11-41e0-947f-2aa9581c6722";
 	}
 
 	@Override
 	public String getUuid() {
-		return "138140ef-1dd2-11b2-96d8-6cab73c93472";
+		return "bc18e380-039e-482a-96c0-1555f3fdb773";
 	}
 
 	@Override
 	public String getName() {
-		return "HIV Care and Treatment Service Quality Assessment Tool";
+		return "HIV Care and Treatment Service Quality Assessment Tool -PMTCT";
 	}
 
 	@Override
@@ -99,7 +86,7 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HIVAdultTool.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CQIAudiTool-PMTCT.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -115,26 +102,16 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		CQIHIVAdultToolDataSetDefinition dataSetDefinition = new CQIHIVAdultToolDataSetDefinition();
+		CQIHIVPMTCTToolDataSetDefinition dataSetDefinition = new CQIHIVPMTCTToolDataSetDefinition();
 		dataSetDefinition.setName(getName());
 		dataSetDefinition.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
 		return rd;
 	}
 
-	public PatientDataDefinition getActiveInPeriodDataDefinition(String pastPeriod) {
-		ActiveInPeriodDataDefinition def = new ActiveInPeriodDataDefinition();
-		def.addParameter(new Parameter("startDate", "Start Date", Date.class));
-		def.addParameter(new Parameter("endDate", "End Date", Date.class));
-		if(pastPeriod!=null){
-			return df.createPatientDataDefinition(def, new ObsDataConverter(), "startDate=startDate-"+pastPeriod+",endDate=endDate-"+pastPeriod);
-		}else{
-			return df.createPatientDataDefinition(def, new ObsValueConverter(), "startDate=startDate,endDate=endDate");
-		}
-	}
 
 	@Override
 	public String getVersion() {
-		return "1.1.8.4";
+		return "0.2.4.3";
 	}
 }

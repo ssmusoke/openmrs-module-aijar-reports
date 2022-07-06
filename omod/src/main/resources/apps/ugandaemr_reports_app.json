@@ -796,6 +796,14 @@
         "order": 5
       },
       {
+      "id": "Care and Treatment Audit Tool-PMTCT",
+      "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+      "type": "link",
+      "label": "HIV Care and Treatment Audit Tool-PMTCT",
+      "url": "reportingui/runReport.page?reportDefinition=bc18e380-039e-482a-96c0-1555f3fdb773",
+      "order": 6
+      },
+      {
         "id": "HIV Exposed Infant Audit Tool",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
