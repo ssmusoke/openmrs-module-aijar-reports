@@ -739,4 +739,12 @@ public class HIVPatientDataLibrary extends BaseDefinitionLibrary<PatientDataDefi
         return df.convert(def,ObjectUtil.toMap("startDate=startDate,endDate=endDate"),new ClientCareStatusConverter());
     }
 
+    public PatientDataDefinition getPatientSMSTemplateMessage() {
+        SMSTemplatePatientDataDefinition def = new SMSTemplatePatientDataDefinition();
+        def.addParameter(new Parameter("startDate", "startDate", Date.class));
+        def.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return def;
+    }
+
 }
