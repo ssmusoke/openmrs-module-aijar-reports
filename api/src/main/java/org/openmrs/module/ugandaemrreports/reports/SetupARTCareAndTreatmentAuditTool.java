@@ -39,18 +39,6 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 	private DataFactory df;
 
 	@Autowired
-	private BuiltInPatientDataLibrary builtInPatientData;
-
-	@Autowired
-	private HIVPatientDataLibrary hivPatientData;
-
-	@Autowired
-	private BasePatientDataLibrary basePatientData;
-
-	@Autowired
-	private HIVMetadata hivMetadata;
-
-	@Autowired
 	SharedDataDefintion sdd;
 	
 	/**
@@ -135,6 +123,6 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Override
 	public String getVersion() {
-		return "1.1.8.4";
+		return "1.2.6";
 	}
 }

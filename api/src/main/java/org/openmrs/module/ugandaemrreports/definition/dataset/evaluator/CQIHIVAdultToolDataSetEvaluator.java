@@ -47,7 +47,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       IFNULL(last_enc.visit_date,'') as Last_visit_date,\n" +
                 "       IFNULL(returndate,'') AS Next_Appointment_Date,\n" +
                 "       MMD.value_numeric as NO_of_Days,\n" +
-                "       IFNULL(ARTStartDate,''),\n" +
+                "       ARTStartDate,\n" +
                 "       adherence.name as Adherence,\n" +
                 "       current_regimen.name as Current_Regimen,\n" +
                 "       VL.value_numeric as VL_copies,\n" +
@@ -58,7 +58,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       SYPHILLIS.name as Sphillis_Status,\n" +
                 "       family.name as Family_Planning,\n" +
                 "       ADV_DZZ.name as Advanced_Disease,\n" +
-                "       IFNULL(vl_bled.vl_date,''),\n" +
+                "       vl_bled.vl_date,\n" +
                 "       INDEX_TESTING_CHILD_AGE.no,\n" +
                 "       RELATIONSHIP_CHILD_STATUS.no,\n" +
                 "       RELATIONSHIP_CHILD_POSITIVE.no,\n" +
@@ -66,7 +66,19 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       INDEX_TESTING_PARTNER.no,\n" +
                 "       RELATIONSHIP_PARTNER_STATUS.no,\n" +
                 "       RELATIONSHIP_PARTNER_POSITIVE.no,\n" +
-                "       RELATIONSHIP_PARTNER_ONART.no\n" +
+                "       RELATIONSHIP_PARTNER_ONART.no,\n" +
+                "       psy_codes.name as CODES,\n" +
+                "       DEPRESSION.name as depression,\n" +
+                "       GBV.name,\n" +
+                "       LINKAGE.name,\n" +
+                "       OVC_SCREENING.name,\n" +
+                "       OVC_ENROL.name,\n" +
+                "       NUTRITION_STATUS.name,\n" +
+                "       NUTRITION_SUPPORT.name,\n" +
+                "       CACX_STATUS.name,\n" +
+                "       IFNULL(STABLE.name,'') AS stable,\n" +
+                "       REGIMEN_LINES.concept_id,\n" +
+                "       IFNULL(PP.name,'') as PP " +
                 "\n" +
                 "FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
@@ -148,8 +160,32 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "where concept_id=99075 AND obs_datetime =A.latest_date and o.voided=0)B on family.obs_group_id = B.obs_id  where concept_id=164352 and value_coded=90280\n" +
                 ")RELATIONSHIP INNER JOIN (SELECT family.person_id,obs_group_id from obs family inner join  (SELECT o.person_id,obs_id from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99075 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 "where concept_id=99075 AND obs_datetime =A.latest_date and o.voided=0)B on family.obs_group_id = B.obs_id  where concept_id=90270 AND value_coded=90003)C on C.obs_group_id= RELATIONSHIP.obs_group_id group by RELATIONSHIP.person_id\n" +
-                ")RELATIONSHIP_PARTNER_ONART on RELATIONSHIP_PARTNER_ONART.person_id = patient";
-
+                ")RELATIONSHIP_PARTNER_ONART on RELATIONSHIP_PARTNER_ONART.person_id = patient\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165185 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165185 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)psy_codes on patient= psy_codes.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165194 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165194 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)DEPRESSION on patient= DEPRESSION.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165302 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165302 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)GBV on patient= GBV.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165193 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165193 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)LINKAGE on patient= LINKAGE.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165200 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165200 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)OVC_SCREENING on patient= OVC_SCREENING.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165212 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165212 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)OVC_ENROL on patient= OVC_ENROL.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165050 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165050 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)NUTRITION_STATUS on patient= NUTRITION_STATUS.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99054 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=99054 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)NUTRITION_SUPPORT on patient= NUTRITION_SUPPORT.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165315 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)CACX_STATUS on patient= CACX_STATUS.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165144 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165144 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)STABLE on patient =STABLE.person_id\n" +
+                "    LEFT JOIN (SELECT pp.patient_id, program_workflow_state.concept_id from patient_state inner join program_workflow_state on patient_state.state = program_workflow_state.program_workflow_state_id\n" +
+                "        inner join program_workflow on program_workflow_state.program_workflow_id = program_workflow.program_workflow_id inner join program on program_workflow.program_id = program.program_id inner join patient_program pp\n" +
+                "            on patient_state.patient_program_id = pp.patient_program_id and program_workflow.concept_id=166214 and patient_state.end_date is null)REGIMEN_LINES ON patient = REGIMEN_LINES.patient_id " +
+                " LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id= 165169 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165169 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)PP on patient =PP.person_id";
         dataQuery =dataQuery.replaceAll("%s",endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();
@@ -195,7 +231,40 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "PARTNER_KNOWN", o[29]);
                 pdh.addCol(row, "PARTNER_HIV", o[30]);
                 pdh.addCol(row, "PARTNER_ART", o[31]);
-//                pdh.addCol(row, "", (String)o[]);
+                pdh.addCol(row, "PSY_CODES", o[32]);
+                pdh.addCol(row, "DEPRESSION", o[33]);
+                pdh.addCol(row, "GBV", o[34]);
+                pdh.addCol(row, "LINKAGE", o[35]);
+                pdh.addCol(row, "OVC1", o[36]);
+                pdh.addCol(row, "OVC2", o[37]);
+                pdh.addCol(row, "NUTRITION_STATUS", o[38]);
+                pdh.addCol(row, "NUTRITION_SUPPORT", o[39]);
+                pdh.addCol(row, "CACX_STATUS", o[40]);
+
+                String stable =(String)o[41];
+                if(stable.toLowerCase().equals("yes")){
+                    pdh.addCol(row, "STABLE", "STABLE");
+                }else if(stable.toLowerCase().equals("no")){
+                    pdh.addCol(row, "STABLE", "UNSTABLE");
+                }else{
+                    pdh.addCol(row, "STABLE", "");
+                }
+
+                //regimen lines
+                int lines_concept =(int)o[42];
+                if(lines_concept==90271){
+                    pdh.addCol(row, "REGIMEN_LINE", 1);
+                }else if(lines_concept==90305){
+                    pdh.addCol(row, "REGIMEN_LINE", 2);
+                }else if(lines_concept==162987){
+                    pdh.addCol(row, "REGIMEN_LINE", 3);
+                }
+                String ff = (String)o[43];
+                if(!ff.equals("")){
+                    pdh.addCol(row, "PP", "Priority population(PP)");
+                }else{
+                    pdh.addCol(row, "PP", "");
+                }
                 dataSet.addRow(row);
             }
 
