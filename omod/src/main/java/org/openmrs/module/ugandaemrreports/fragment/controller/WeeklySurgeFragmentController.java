@@ -13,16 +13,20 @@ import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class WeeklySurgeFragmentController {
 
     protected final Log log = LogFactory.getLog(getClass());
+    private final String outPutPath =OpenmrsUtil.getApplicationDataDirectory() +"surge_report_dashboard";
 
     public void controller(FragmentModel model) {
 
@@ -46,33 +50,39 @@ public class WeeklySurgeFragmentController {
 
             Map<String, Object> parameterValues = new HashMap<String, Object>();
 
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime enddate = LocalDateTime.now().minusDays(7);
+            LocalDateTime eDate = getEndDate();
+            LocalDateTime sDate = getStartDate(eDate);
 
-            parameterValues.put("startDate",String.format("%s-%s-%s", now.getYear(), now.getMonthValue(),
-                    now.getDayOfMonth()));
-            parameterValues.put("endDate",String.format("%s-%s-%s", enddate.getYear(), enddate.getMonthValue(),
-                    enddate.getDayOfMonth()));
-            parameterValues.put("effectiveDate",String.format("%s-%s-%s", enddate.getYear(), enddate.getMonthValue(),
-                    enddate.getDayOfMonth()));
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            Date startDate = dateFormat.parse(String.format("%s-%s-%s", sDate.getYear(), sDate.getMonthValue(),
+                    sDate.getDayOfMonth()));
+
+            Date endDate = dateFormat.parse(String.format("%s-%s-%s", eDate.getYear(), eDate.getMonthValue(),
+                    eDate.getDayOfMonth()));
+
+            parameterValues.put("startDate",startDate);
+            parameterValues.put("endDate",endDate);
 
             EvaluationContext context = new EvaluationContext();
-
             context.setParameterValues(parameterValues);
             ReportData reportData = reportDefinitionService.evaluate(rd, context);
+
             ReportRequest reportRequest = new ReportRequest();
             reportRequest.setReportDefinition(new Mapped<ReportDefinition>(rd, context.getParameterValues()));
             reportRequest.setRenderingMode(renderingMode);
 
-            File file = new File(OpenmrsUtil.getApplicationDataDirectory() +"surge_report");
+            File file = new File(outPutPath);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             renderingMode.getRenderer().render(reportData, renderingMode.getArgument(), fileOutputStream);
 
-           String strOutput ="";// this.readOutputFile(strOutput);
+            String strOutput ="";
+            strOutput= this.readOutputFile(strOutput);
 
-            log.error(strOutput);
+            log.error("From WeeklySurgeFragment::" + strOutput.length());
             model.addAttribute("weeklysurgedata", strOutput);
-
+            model.addAttribute("startdate", startDate);
+            model.addAttribute("enddate", endDate);
 
         } catch (Exception e) {
             log.info("Error rendering the contents of the Analytics data export report to"
@@ -83,6 +93,45 @@ public class WeeklySurgeFragmentController {
 
     }
 
+    private String readOutputFile(String strOutput) throws Exception {
+        FileInputStream fstreamItem = new FileInputStream(outPutPath);
+        DataInputStream inItem = new DataInputStream(fstreamItem);
+        BufferedReader brItem = new BufferedReader(new InputStreamReader(inItem));
+        String phraseItem;
 
+        if (!(phraseItem = brItem.readLine()).isEmpty()) {
+            strOutput = strOutput + phraseItem + System.lineSeparator();
+            while ((phraseItem = brItem.readLine()) != null) {
+                strOutput = strOutput + phraseItem + System.lineSeparator();
+            }
+        }
+
+        fstreamItem.close();
+
+        return strOutput;
+    }
+    private  LocalDateTime getEndDate(){
+
+        LocalDateTime dt=LocalDateTime.now();
+
+        if(dt.getDayOfWeek()== DayOfWeek.MONDAY)
+            return dt.minusDays(1);
+        else if(dt.getDayOfWeek()== DayOfWeek.TUESDAY)
+            return dt.minusDays(2);
+        else if(dt.getDayOfWeek()== DayOfWeek.WEDNESDAY)
+            return dt.minusDays(3);
+        else if(dt.getDayOfWeek()== DayOfWeek.THURSDAY)
+            return dt.minusDays(4);
+        else if(dt.getDayOfWeek()== DayOfWeek.FRIDAY)
+            return dt.minusDays(5);
+        else if(dt.getDayOfWeek()== DayOfWeek.SATURDAY)
+            return dt.minusDays(6);
+        else
+            return dt; //for Sunday no need to adjust the date
+
+    }
+    private  LocalDateTime getStartDate(LocalDateTime endDate){
+            return endDate.minusDays(6);
+    }
 
 }
