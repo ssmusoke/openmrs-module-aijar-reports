@@ -1,9 +1,11 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
+import org.openmrs.Concept;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
+import org.openmrs.module.reporting.common.RangeComparator;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -15,6 +17,7 @@ import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.metadata.SMCMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
+import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +27,7 @@ import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.getUgandaEMRVersion;
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+import static org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary.getConcept;
 
 /**
  *  TX Current Report
@@ -236,8 +240,84 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"27a","HTS RECENT 15+ females", recentHIVInfectionDuringPeriod,"age=above15female");
         addIndicator(dsd,"27b","HTS RECENT 15+ males", recentHIVInfectionDuringPeriod,"age=above15male");
 
+        CohortDefinition patientsTestedThroughHealthFacility =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("ecb88326-0a3f-44a5-9bbf-df4bfc3239e1")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientsTestedThroughCommunity =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition testedPositiveDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition testedPositiveBefore = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.PREVIOUS_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_POSITIVE)), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition testedNegativeDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept(Metadata.Concept.CURRENT_HIV_TEST_RESULTS),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept(Metadata.Concept.HIV_NEGATIVE)),BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition testingForFirstTime = df.getPatientsWithCodedObsDuringPeriod(getConcept(Metadata.Concept.FIRST_HIV_TEST),hivMetadata.getHCTEncounterType(),Arrays.asList(getConcept(Metadata.Concept.YES_WHO)), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition IndexClientTestingReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("0e19ee29-a7bf-4580-9313-7853cdc412c1")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition SNSReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("b1f34616-de68-4b90-9bc4-f0397692befa")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition VCT = df.getPatientsWithCodedObsDuringPeriod(getConcept(Metadata.Concept.COUNSELLING_APPROACH),hivMetadata.getHCTEncounterType(),Arrays.asList(getConcept(Metadata.Concept.CICT)), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientThroughMaternityEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("160456AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition patientThroughPNCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("165046AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
 
+        CohortDefinition indexFacilityClientTesting = df.getPatientsInAll(IndexClientTestingReasonForTesting,patientsTestedThroughHealthFacility);
+        CohortDefinition indexCommunityClientTesting = df.getPatientsInAll(IndexClientTestingReasonForTesting,patientsTestedThroughCommunity);
+        CohortDefinition FirstPositiveTest =df.getPatientsInAll(testedPositiveDuringPeriod,testingForFirstTime);
+        CohortDefinition repeatPositive = df.getPatientsInAll(testedPositiveBefore,testedPositiveDuringPeriod);
 
+        CohortDefinition patientsTestedOnFirstANC = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.LESS_EQUAL, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientsTestedOnOtherANCs = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.GREATER_THAN, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
+
+        CohortDefinition PMTCT = df.getPatientsInAny(patientsTestedOnOtherANCs,patientThroughMaternityEntryPoint,patientThroughPNCEntryPoint);
+        CohortDefinition VCTCommunity = df.getPatientsInAll(VCT,patientsTestedThroughCommunity);
+
+        CohortDefinition mobile = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369"),hivMetadata.getHCTEncounterType(),hivMetadata.getConceptList("29d1a223-4ce4-43df-96fc-6d53c0e022b1,6080ad91-fc24-49dd-aa5d-3ce7c1b4ce2e,03596df2-09bc-4d1f-94fd-484411ac9012"), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition patientThroughSTIClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("dcd98f72-30ab-102d-86b0-7a5022ba4115"));
+        CohortDefinition patientThroughTBClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("165048AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition patientThroughIPDClinicEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("c09c3d3d-d07d-4d34-84f0-89ea4fd5d6d5"));
+        CohortDefinition patientThroughNutritionEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("11c12455-2f54-4bb5-b051-0ecfd4a5fe96"));
+
+        CohortDefinition patientThroughOPDEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("160542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition patientThroughFamilyPlanningEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("164984AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"));
+        CohortDefinition patientThroughYCCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("e9469d61-b0c3-4785-81c6-057c7bc099fc"));
+
+        CohortDefinition patientThroughSMCEntryPoint = getpatientTestedThroughFacilityEntryPoint(Dictionary.getConcept("409eae6b-9457-4896-b5fa-2667ad5ceffc"));
+
+        fillPerIndicator(dsd,"28","29","SNS positive ist positive test",df.getPatientsInAll(SNSReasonForTesting,FirstPositiveTest));
+        fillPerIndicator(dsd,"30","31","SNS positive repeat positive test",df.getPatientsInAll(SNSReasonForTesting,repeatPositive));
+        fillPerIndicator(dsd,"32","33","SNS negative",df.getPatientsInAll(SNSReasonForTesting,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"34","35","Index Facility client testing positive ist positive test",df.getPatientsInAll(indexFacilityClientTesting,FirstPositiveTest));
+        fillPerIndicator(dsd,"36","37","Index Facility client testing positive repeat positive test",df.getPatientsInAll(indexFacilityClientTesting,repeatPositive));
+        fillPerIndicator(dsd,"38","39","Index Facility client testing negative",df.getPatientsInAll(indexFacilityClientTesting,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"40","41","PMTCT ANC 1 postive ist positive test",df.getPatientsInAll(patientsTestedOnFirstANC,FirstPositiveTest));
+        fillPerIndicator(dsd,"42","43","PMTCT ANC 1 postive repeat positive test",df.getPatientsInAll(patientsTestedOnFirstANC,repeatPositive));
+        fillPerIndicator(dsd,"44","45","PMTCT ANC 1 negative",df.getPatientsInAll(patientsTestedOnFirstANC,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"46","47","PMTCT post ANC postive ist positive test",df.getPatientsInAll(PMTCT,FirstPositiveTest));
+        fillPerIndicator(dsd,"48","50","PMTCT post ANC postive repeat positive test",df.getPatientsInAll(PMTCT,repeatPositive));
+        fillPerIndicator(dsd,"51","52","PMTCT post ANC negative",df.getPatientsInAll(PMTCT,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"53","54","Malnutrition positive ist positive test",df.getPatientsInAll(patientThroughNutritionEntryPoint,FirstPositiveTest));
+        fillPerIndicator(dsd,"55","56","Malnutrition positive repeat positive test",df.getPatientsInAll(patientThroughNutritionEntryPoint,repeatPositive));
+        fillPerIndicator(dsd,"57","58","Malnutrition negative",df.getPatientsInAll(patientThroughNutritionEntryPoint,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"59","60","Pediatric positive ist positive test",df.getPatientsInAll(patientThroughYCCEntryPoint,FirstPositiveTest));
+        fillPerIndicator(dsd,"61","62","Pediatric positive repeat positive test",df.getPatientsInAll(patientThroughYCCEntryPoint,repeatPositive));
+        fillPerIndicator(dsd,"63","64","Pediatric negative",df.getPatientsInAll(patientThroughYCCEntryPoint,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"65","66","TB Clinic positive ist positive test",df.getPatientsInAll(patientThroughTBClinicEntryPoint,FirstPositiveTest));
+        fillPerIndicator(dsd,"67","68","TB Clinic positive repeat positive test",df.getPatientsInAll(patientThroughTBClinicEntryPoint,repeatPositive));
+        fillPerIndicator(dsd,"69","70","TB Clinic negative",df.getPatientsInAll(patientsTestedOnFirstANC,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"71","72","Other PITC positive ist positive test",df.getPatientsInAll(patientThroughOPDEntryPoint,FirstPositiveTest));
+        fillPerIndicator(dsd,"73","74","Other PITC positive repeat positive test",df.getPatientsInAll(patientThroughOPDEntryPoint,repeatPositive));
+        fillPerIndicator(dsd,"75","76","Other PITC negative",df.getPatientsInAll(patientThroughOPDEntryPoint,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"77","78","Index Community testing positive ist positive test",df.getPatientsInAll(indexCommunityClientTesting,FirstPositiveTest));
+        fillPerIndicator(dsd,"79","80","Index Community testing positive repeat positive test",df.getPatientsInAll(indexCommunityClientTesting,repeatPositive));
+        fillPerIndicator(dsd,"81","82","Index Community testing negative",df.getPatientsInAll(indexCommunityClientTesting,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"83","84","VCT Community positive ist positive test",df.getPatientsInAll(VCTCommunity,FirstPositiveTest));
+        fillPerIndicator(dsd,"85","86","VCT Community positive repeat positive test",df.getPatientsInAll(VCTCommunity,repeatPositive));
+        fillPerIndicator(dsd,"87","88","VCT Community negative",df.getPatientsInAll(VCTCommunity,testedNegativeDuringPeriod));
+
+        fillPerIndicator(dsd,"89","90","Mobile Community positive ist positive test",df.getPatientsInAll(mobile,FirstPositiveTest));
+        fillPerIndicator(dsd,"91","92","Mobile Community positive repeat positive test",df.getPatientsInAll(mobile,repeatPositive));
+        fillPerIndicator(dsd,"93","94","Mobile Community negative",df.getPatientsInAll(mobile,testedNegativeDuringPeriod));
         return rd;
     }
 
@@ -252,13 +332,25 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
     }
 
+    private void fillPerIndicator(CohortIndicatorDataSetDefinition dsd,String rowIndicator1,String rowIndicator2,String label,CohortDefinition cohortDefinition){
+        addIndicator(dsd,rowIndicator1+"a",label+"less15female", cohortDefinition,"age=less15female");
+        addIndicator(dsd,rowIndicator1+"b",label+"less15male", cohortDefinition,"age=less15male");
+        addIndicator(dsd,rowIndicator2+"a",label+"above15female", cohortDefinition,"age=above15female");
+        addIndicator(dsd,rowIndicator2+"b",label+"above15male", cohortDefinition,"age=above15male");
+    }
 
     public CohortDefinition addParameters(CohortDefinition cohortDefinition) {
         return df.convert(cohortDefinition, ObjectUtil.toMap("onOrAfter=startDate,onOrBefore=endDate"));
     }
 
+    public CohortDefinition getpatientTestedThroughFacilityEntryPoint(Concept entryPointConcept){
+        CohortDefinition entryPoint = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("720a1e85-ea1c-4f7b-a31e-cb896978df79"),hivMetadata.getHCTEncounterType(),
+                Arrays.asList(entryPointConcept), BaseObsCohortDefinition.TimeModifier.LAST);
+        return entryPoint;
+    }
+
     @Override
     public String getVersion() {
-        return "0.0.9";
+        return "0.1.7.1";
     }
 }
