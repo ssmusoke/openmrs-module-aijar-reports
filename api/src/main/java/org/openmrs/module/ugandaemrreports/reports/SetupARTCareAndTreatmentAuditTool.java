@@ -123,6 +123,6 @@ public class SetupARTCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Override
 	public String getVersion() {
-		return "1.2.9.4.5";
+		return "1.2.9.5.7";
 	}
 }

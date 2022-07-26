@@ -1,13 +1,8 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.search.query.fieldcache.impl.FieldCacheLoadingType;
 import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.Cohorts;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ObjectUtil;
@@ -18,18 +13,13 @@ import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDate;
 import java.util.*;
 
 @Handler(supports = {CQIHIVAdultToolDataSetDefinition.class})
@@ -40,11 +30,6 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
 
     @Autowired
     private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private DataFactory df;
-
-    Map<Integer,String> drugNames = new HashMap<>();
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 
@@ -64,7 +49,6 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         newDate.add(Calendar.DATE, 1);
 
         Date startDate = newDate.getTime();
-        System.out.println(startDate.toString()+" StartDate to "+myendDate.toString());
 
         parameterValues.put("startDate",startDate);
         parameterValues.put("endDate", myendDate);
@@ -105,15 +89,21 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContextPreviousPeriod);
         Cohort activeInOtherPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContextOtherPreviousPeriod);
 
+        String arvStartDateQuery = "SELECT B.person_id, min(B.obs_datetime) as start_date from obs B inner join (SELECT o.person_id,o.value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315 \n" +
+                "           and voided=0 group by person_id)A on o.person_id = A.person_id where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s')C on B.person_id=C.person_id where B.value_coded=C.value_coded and obs_datetime<='%s' and voided=0 group by B.person_id";
 
+        arvStartDateQuery =arvStartDateQuery.replaceAll("%s",endDate);
+        SqlQueryBuilder q1 = new SqlQueryBuilder();
+        q1.append(arvStartDateQuery);
+        Map<Integer,Object> arvStartDateMap = evaluationService.evaluateToMap(q1,Integer.class,Object.class, context);
 
         String dataQuery = "SELECT patient,gender,identifier,p.birthdate,TIMESTAMPDIFF(YEAR, p.birthdate, '%s') as age,\n" +
                 "       Preg.name as pregnant_status,\n" +
                 "       Wgt.value_numeric as Weight,\n" +
                 "       DSD.name as DSDM,\n" +
                 "       vst_type.name as Visit_Type,\n" +
-                "       IFNULL(last_enc.visit_date,'') as Last_visit_date,\n" +
-                "       IFNULL(returndate,'') AS Next_Appointment_Date,\n" +
+                "       last_enc.visit_date as Last_visit_date,\n" +
+                "       returndate AS Next_Appointment_Date,\n" +
                 "       MMD.value_numeric as NO_of_Days,\n" +
                 "       ARTStartDate,\n" +
                 "       adherence.name as Adherence,\n" +
@@ -188,7 +178,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=90238 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)family on patient= family.person_id\n" +
                 "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165272 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=165272 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)ADV_DZZ on patient= ADV_DZZ.person_id\n" +
-                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as vl_date FROM obs WHERE concept_id=1305 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)vl_bled on patient=vl_bled.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as vl_date FROM obs WHERE concept_id=163023 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)vl_bled on patient=vl_bled.person_id\n" +
                 "    LEFT JOIN (SELECT AGE.person_id,count(*) as no from (SELECT family.person_id,obs_group_id from obs family inner join  (SELECT o.person_id,obs_id from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99075 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 "where concept_id=99075 AND obs_datetime =A.latest_date and o.voided=0)B on family.obs_group_id = B.obs_id  where concept_id=164352 and value_coded=90280\n" +
                 ")RELATIONSHIP INNER JOIN (SELECT family.person_id,obs_group_id from obs family inner join  (SELECT o.person_id,obs_id from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99075 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
@@ -264,7 +254,6 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         SqlQueryBuilder q = new SqlQueryBuilder();
         q.append(dataQuery);
         List<Object[]> results = evaluationService.evaluateToList(q, context);
-        int startingrowindex = 2;
         PatientDataHelper pdh = new PatientDataHelper();
         if(results.size()>0 && !results.isEmpty()) {
             for (Object[] o : results) {
@@ -272,23 +261,23 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 DataSetRow row = new DataSetRow();
                 pdh.addCol(row, "ID", (String)o[2]);
                 pdh.addCol(row, "Gender", (String)o[1]);
-                pdh.addCol(row, "Date of Birth",  formatDate(o[3]));
+                pdh.addCol(row, "Date of Birth",  o[3]);
                 pdh.addCol(row, "Age", o[4]);
+                pdh.addCol(row, "Preg", o[5]);
                 pdh.addCol(row, "Weight", o[6]);
                 pdh.addCol(row, "DSDM", (String)o[7]);
                 pdh.addCol(row, "VisitType", (String)o[8]);
-                pdh.addCol(row, "Last Visit Date",  formatDate(o[9]));
-                pdh.addCol(row, "Next Appointment Date",  formatDate(o[10]));
+                pdh.addCol(row, "Last Visit Date",  o[9]);
+                pdh.addCol(row, "Next Appointment Date",  o[10]);
                 pdh.addCol(row, "Prescription Duration", o[11]);
-//                pdh.addCol(row, "Client Status", (String)o[]);
-                pdh.addCol(row, "ART Start Date", String.valueOf(o[12]));
+                pdh.addCol(row, "ART Start Date", o[12]);
 //                pdh.addCol(row, "CurrentRegimenLine", (String)o[]);
                 pdh.addCol(row, "Current Regimen", (String)o[14]);
 //                pdh.addCol(row, "Current Regimen Date",  o[15]);
                 pdh.addCol(row, "Adherence", o[13]);
                 pdh.addCol(row, "VL Quantitative", o[15]);
                 pdh.addCol(row, "VL QTY", o[16]);
-//                pdh.addCol(row, "VL Date", o[17]);
+
                 pdh.addCol(row, "Last TPT Status", o[17]);
                 pdh.addCol(row, "TB Status", o[18]);
                 pdh.addCol(row, "HEPB", o[19]);
@@ -316,7 +305,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "CACX_STATUS", o[40]);
 
                 String stable =(String)o[41];
-                if(stable.toLowerCase().equals("yes")){
+                if(stable.equals("yes")){
                     pdh.addCol(row, "STABLE", "STABLE");
                 }else if(stable.toLowerCase().equals("no")){
                     pdh.addCol(row, "STABLE", "UNSTABLE");
@@ -387,6 +376,8 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                            }
                 }
 
+                fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
+
 
                 if(activeInPreviousPeriod.contains(patientno)){
                     pdh.addCol(row, "previousStatus", "TX_CURR(Active)");
@@ -404,19 +395,22 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         return dataSet;
     }
 
-
-    private String formatDate(Object rowField){
-       String date="";
-       if(!String.valueOf(rowField).equals("")){
-          date = DateUtil.formatDate(DateUtil.parseYmd(String.valueOf(rowField)), "yyyy-MM-dd");
-       }
-       return date;
-
-    }
-
     public static Calendar toCalendar(Date date){
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
+    }
+
+    private void fillInCurrentARVStartDate(int patientno,Map<Integer,Object>map,PatientDataHelper pdh,DataSetRow row){
+        if(!map.isEmpty()){
+            if(map.containsKey(patientno)){
+                pdh.addCol(row, "Current Regimen Date",  map.get(patientno));
+            }else{
+                pdh.addCol(row, "Current Regimen Date",  "");
+            }
+
+        }else{
+            pdh.addCol(row, "Current Regimen Date",  "");
+        }
     }
 }
