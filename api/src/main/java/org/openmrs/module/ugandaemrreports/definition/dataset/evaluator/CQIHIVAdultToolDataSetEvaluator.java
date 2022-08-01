@@ -140,7 +140,11 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       p.dead," +
                 "       IFNULL(TOD.TOdate,'')," +
                 "       IFNULL(TIMESTAMPDIFF(DAY,DATE(returndate),DATE('%s')),''), " +
-                "       IFNULL(TIMESTAMPDIFF(MONTH ,DATE(ARTStartDate),DATE(last_enc.visit_date)),'') " +
+                "       IFNULL(TIMESTAMPDIFF(MONTH ,DATE(ARTStartDate),DATE(last_enc.visit_date)),''),  " +
+                "       IF(VL.value_numeric>=1000,IFNULL(IAC.SESSIONS,0),NULL), " +
+                "       IF(VL.value_numeric>=1000,IFNULL(HIVDRTEST.HIVDR_date,''),''), " +
+                "       HIVDR_TEST_COLECTED.name as SAMPLE_COLLECTED, " +
+                "       IF(VL.value_numeric>=1000,IF(SWITCHED.value_coded in (163162,163164),'Y','N'),'') " +
                 "\n" +
                 "FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
@@ -248,7 +252,14 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "            on patient_state.patient_program_id = pp.patient_program_id and program_workflow.concept_id=166214 and patient_state.end_date is null)REGIMEN_LINES ON patient = REGIMEN_LINES.patient_id " +
                 " LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id= 165169 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=165169 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)PP on patient =PP.person_id " +
-                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as TOdate FROM obs WHERE concept_id=99165 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)TOD on patient=TOD.person_id limit 3000\n";
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as TOdate FROM obs WHERE concept_id=99165 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)TOD on patient=TOD.person_id" +
+                "    LEFT JOIN (select obs.person_id,count(value_datetime) SESSIONS from obs inner join (SELECT person_id, max(DATE (value_datetime))as vldate FROM obs WHERE concept_id=163023 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id\n" +
+                ")vl_date on vl_date.person_id= obs.person_id where concept_id=163154 and value_datetime>=vldate and obs_datetime between DATE_SUB('%s', INTERVAL 1 YEAR) and '%s' GROUP BY obs.person_id)IAC on patient =IAC.person_id " +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as HIVDR_date FROM obs WHERE concept_id=164989 and voided=0 AND obs_datetime <='%s' group by person_id) HIVDRTEST on patient = HIVDRTEST.person_id" +
+                "     LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=164989 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='SHORT' and cn.locale='en'\n" +
+                "where o.concept_id=164989 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)HIVDR_TEST_COLECTED ON patient=HIVDR_TEST_COLECTED.person_id " +
+                "    LEFT JOIN (SELECT o.person_id, value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=163166 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                " where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SWITCHED on patient = SWITCHED.person_id limit 3000\n";
         dataQuery =dataQuery.replaceAll("%s",endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();
@@ -376,6 +387,13 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                            }
                 }
 
+                pdh.addCol(row, "IAC", o[48]);
+                if((String)o[50]=="yes") {
+                    pdh.addCol(row, "HIVDRT", o[49]);
+                }else{
+                    pdh.addCol(row, "HIVDRT", "");
+                }
+                pdh.addCol(row, "SWITCHED", o[51]);
                 fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
 
 
