@@ -81,9 +81,6 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         parameterValuesForPreviousPeriod.put("endDate",otherPreviousEndDate);
         myContextOtherPreviousPeriod.setParameterValues(parameterValuesForPreviousPeriod);
 
-        System.out.println(startDateForPreviousPeriod.toString()+" StartDate to "+endDateForPreviousPeriod.toString());
-        Cohort cohort = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("28"),myContext);
-        Cohort actives = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContext);
 
         Cohort lostInPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("28"),myContextPreviousPeriod);
         Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContextPreviousPeriod);

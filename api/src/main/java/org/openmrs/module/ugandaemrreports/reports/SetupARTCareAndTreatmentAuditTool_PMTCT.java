@@ -112,6 +112,6 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 
 	@Override
 	public String getVersion() {
-		return "0.2.4.3";
+		return "0.2.4.9";
 	}
 }
