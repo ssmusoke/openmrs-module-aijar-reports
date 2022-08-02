@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.TXMLCohortDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.CommonDimensionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -111,7 +113,9 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxNewAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
+
         CohortDefinition TX_ML = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
+
         CohortDefinition silentlyTransferred=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("f57b1500-7ff2-46b4-b183-fed5bce479a9")), BaseObsCohortDefinition.TimeModifier.LAST);
 
@@ -130,6 +134,8 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         CohortDefinition ClientsStoppedonART =df.getPatientsInAny(stoppedARVOnARTCard,stoppedARVTaking);
 
         CohortDefinition diedTraceOutcome=df.getDeadPatientsDuringPeriod();
+
+
 
         CohortDefinition diedOfTB =df.getPatientsWithCodedObsDuringPeriod(getCauseOfDeathConcept(),null, Arrays.asList(hivMetadata.getConcept("dc6527eb-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition diedOfCancer = df.getPatientsWithCodedObsDuringPeriod(getCauseOfDeathConcept(),null, Arrays.asList(hivMetadata.getConcept("116030AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -185,6 +191,12 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
     }
 
 
+    private CohortDefinition getPreviousTXCURR(){
+        TXMLCohortDefinition cohortDefinition = new TXMLCohortDefinition();
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cohortDefinition;
+    }
     private Concept getCauseOfDeathConcept(){
         return hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115");
     }
@@ -192,6 +204,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2.0";
+        return "3.2.1";
     }
 }
