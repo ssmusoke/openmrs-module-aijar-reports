@@ -439,31 +439,31 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                     }
                     if (monthsString != "" || !monthsString.equals("")) {
                         monthsonART = Integer.parseInt(monthsString);
+                    }else{
+                        pdh.addCol(row, "FOLLOWUP", "");
                     }
 
-                } catch (NumberFormatException e) {
-                    daysActive = 999;
+                }catch (NumberFormatException e){
+                    daysActive=999;
+                    pdh.addCol(row, "FOLLOWUP", "");
                     e.printStackTrace();
                 }
-                if (daysActive <= 0) {
+                if(daysActive <=0){
                     pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Active)");
                     pdh.addCol(row, "FOLLOWUP", "");
-                } else if (daysActive >= 1 && daysActive <= 7) {
+                }else if(daysActive >=1 && daysActive<=7){
                     pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Missed Appointment)");
                     pdh.addCol(row, "FOLLOWUP", "");
-                } else if (daysActive >= 8 && daysActive < 28) {
+                }else if(daysActive >=8 && daysActive < 28){
                     pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Pre_IIT)");
                     pdh.addCol(row, "FOLLOWUP", "");
-                } else if (daysActive >= 28 && daysActive <= 999) {
+                }else if(daysActive>=28 && daysActive<=999) {
                     pdh.addCol(row, "CLIENT_STATUS", "TX_ML");
-                } else {
-                    pdh.addCol(row, "CLIENT_STATUS", "Lost to Followup");
-
                     if (dead) {
                         pdh.addCol(row, "FOLLOWUP", "Dead");
                     } else if (!TO.equals("")) {
                         pdh.addCol(row, "FOLLOWUP", "Transferred Out");
-                    } else if (monthsonART < 3 && monthsonART > 0) {
+                    } else if (monthsonART < 3 && monthsonART >= 0) {
                         pdh.addCol(row, "FOLLOWUP", "IIT (On RX < 3 months");
                     } else if (monthsonART >= 3 && monthsonART <= 5) {
                         pdh.addCol(row, "FOLLOWUP", "IIT (On RX 3-5 months)");
@@ -471,6 +471,9 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                     } else if (monthsonART >= 6) {
                         pdh.addCol(row, "FOLLOWUP", "IIT (On RX 6+months)");
                     }
+                }else{
+                    pdh.addCol(row, "CLIENT_STATUS", "Lost to Followup");
+                    pdh.addCol(row, "FOLLOWUP", "");
                 }
 
                 pdh.addCol(row, "IAC", o[48]);
