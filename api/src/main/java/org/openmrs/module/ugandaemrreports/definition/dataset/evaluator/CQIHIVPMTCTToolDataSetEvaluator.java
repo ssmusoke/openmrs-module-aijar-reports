@@ -186,7 +186,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         String dataQuery = "SELECT patient,gender,identifier,p.birthdate,TIMESTAMPDIFF(YEAR, p.birthdate, '%s') as age,\n" +
                 "       Preg.name as pregnant_status,\n" +
                 "       Wgt.value_numeric as Weight,\n" +
-                "       DSD.name as DSDM,\n" +
+                "       IF(DSD.name='FTR','FTDR',DSD.name) as DSDM,\n" +
                 "       vst_type.name as Visit_Type,\n" +
                 "       last_enc.visit_date as Last_visit_date,\n" +
                 "       returndate AS Next_Appointment_Date,\n" +
