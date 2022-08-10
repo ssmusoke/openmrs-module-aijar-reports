@@ -770,4 +770,10 @@ public class HIVMetadata extends ReportMetadata {
         l.add(MetadataUtils.existing(EncounterType.class, "38cb2232-30fc-4b1f-8df1-47c795771ee9"));
         return l;
     }
+
+    public List<EncounterType> getCovidVaccinationEncounterType() {
+        List<EncounterType> l = new ArrayList<EncounterType>();
+        l.add(MetadataUtils.existing(EncounterType.class, "c392cf0e-5024-4f47-9ed9-e10e307e942f"));
+        return l;
+    }
 }
