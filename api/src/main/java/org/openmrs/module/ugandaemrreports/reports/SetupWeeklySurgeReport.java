@@ -148,6 +148,9 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         CohortDefinition dueForSecondVisitInReportingPeriod = df.getCohortDefinitionBySql("SELECT obs.person_id FROM obs INNER JOIN (SELECT person_id,value_datetime AS artStartDate FROM obs WHERE concept_id=99165 AND  voided=0)A\n" +
                 "    ON A.person_id=obs.person_id WHERE concept_id=5096 AND voided=0 AND value_datetime >=:startDate AND value_datetime<=:endDate AND DATE(artStartDate)=DATE(obs.obs_datetime)");
 
+        CohortDefinition hadEncounterInPeriod = hivCohortDefinitionLibrary.getArtPatientsWithEncounterOrSummaryPagesBetweenDates();
+
+        CohortDefinition TX_SV_N = df.getPatientsInAll(hadEncounterInPeriod,dueForSecondVisitInReportingPeriod);
         CohortDefinition onTLDBeforePeriod = df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getCurrentRegimen(), null, Arrays.asList(Dictionary.getConcept("a58d12c5-abc2-4575-8fdb-f30960f348fc")),"1d", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition onTLDDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), null, Arrays.asList(Dictionary.getConcept("a58d12c5-abc2-4575-8fdb-f30960f348fc")), BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition transitionToTLD = df.getPatientsNotIn(onTLDDuringPeriod,onTLDBeforePeriod);
@@ -215,10 +218,10 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"22a","TX_SV(D) 15+ females", dueForSecondVisitInReportingPeriod,"age=above15female");
         addIndicator(dsd,"22b","TX_SV(D) 15+ males", dueForSecondVisitInReportingPeriod,"age=above15male");
 
-        addIndicator(dsd,"21c","TX_SV(N) <15", dueForSecondVisitInReportingPeriod,"age=less15female");
-        addIndicator(dsd,"21d","TX_SV(N) <15", dueForSecondVisitInReportingPeriod,"age=less15male");
-        addIndicator(dsd,"22c","TX_SV(N) 15+ females", dueForSecondVisitInReportingPeriod,"age=above15female");
-        addIndicator(dsd,"22d","TX_SV(N) 15+ males", dueForSecondVisitInReportingPeriod,"age=above15male");
+        addIndicator(dsd,"21c","TX_SV(N) <15", TX_SV_N,"age=less15female");
+        addIndicator(dsd,"21d","TX_SV(N) <15", TX_SV_N,"age=less15male");
+        addIndicator(dsd,"22c","TX_SV(N) 15+ females", TX_SV_N,"age=above15female");
+        addIndicator(dsd,"22d","TX_SV(N) 15+ males", TX_SV_N,"age=above15male");
 
         addIndicator(dsd,"23a","TX_ PRO ABC/3TC/DTG <3", transitionToABC3TCDTG,"age=less3Years");
         addIndicator(dsd,"23b","TX_ PRO ABC/3TC/DTG 3-9", transitionToABC3TCDTG,"age=between3And9Years");
@@ -351,6 +354,6 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.7.1";
+        return "1.0";
     }
 }
