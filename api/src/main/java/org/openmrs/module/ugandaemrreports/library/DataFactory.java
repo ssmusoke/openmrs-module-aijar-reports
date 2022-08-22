@@ -277,6 +277,13 @@ public class DataFactory {
         return createPatientDataDefinition(def, converter, Parameters.ON_OR_BEFORE_END_DATE);
     }
 
+    public PatientDataDefinition getSMSTelephoneNumber(){
+        SqlPatientDataDefinition def = new SqlPatientDataDefinition();
+        def.setQuery("SELECT o.person_id,o.value_text from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=166561 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=166561 and obs_datetime =A.latest_date and o.voided=0");
+        return def;
+    }
+
     public PatientDataDefinition getObsByEndDate(Concept question, List<EncounterType> encounterTypes, TimeQualifier timeQualifier, String olderThan, DataConverter converter) {
         ObsForPersonDataDefinition def = PatientColumns.createObsForPersonData(question, encounterTypes, "onOrBefore", timeQualifier);
         return createPatientDataDefinition(def, converter, Parameters.createParameterBeforeDuration("onOrBefore", "endDate", olderThan));
