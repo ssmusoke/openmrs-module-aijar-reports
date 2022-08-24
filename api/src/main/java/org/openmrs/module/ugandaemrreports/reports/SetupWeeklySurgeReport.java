@@ -159,7 +159,7 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         CohortDefinition transitionedToTLDThroughEMTCT = df.getPatientsInAll(transitionToTLD,pregnantOrBFeeding);
         CohortDefinition transitionedToTLDThroughARTClinic = df.getPatientsNotIn(transitionToTLD,transitionedToTLDThroughEMTCT);
 
-        CohortDefinition recentHIVInfectionDuringPeriod = hivCohortDefinitionLibrary.getPatientWithRecentHIVInfectionDuringPeriod();
+        CohortDefinition testedForRecentInfection = hivCohortDefinitionLibrary.getPatientWhoTestedForRecencyHIVInfectionDuringPeriod();
 
         CohortDefinition onABC3TCDTGBeforePeriod = df.getPatientsWithCodedObsByEndOfPreviousDate(hivMetadata.getCurrentRegimen(), null, Arrays.asList(Dictionary.getConcept("6cc36637-596a-4426-92cf-170f76ea437d")),"1d", BaseObsCohortDefinition.TimeModifier.ANY);
         CohortDefinition onABC3TCDTGDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getCurrentRegimen(), null, Arrays.asList(Dictionary.getConcept("6cc36637-596a-4426-92cf-170f76ea437d")), BaseObsCohortDefinition.TimeModifier.ANY);
@@ -238,10 +238,10 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         addIndicator(dsd,"25c","TX_ PRO TLD 10-14", transitionToTLD,"age=between10And14years");
         addIndicator(dsd,"25d","TX_ PRO TLD 15-19", transitionToTLD,"age=between15And19Years");
 
-        addIndicator(dsd,"26a","HTS RECENT <15 FEMALE", recentHIVInfectionDuringPeriod,"age=less15female");
-        addIndicator(dsd,"26b","HTS RECENT <15 MALE", recentHIVInfectionDuringPeriod,"age=less15male");
-        addIndicator(dsd,"27a","HTS RECENT 15+ females", recentHIVInfectionDuringPeriod,"age=above15female");
-        addIndicator(dsd,"27b","HTS RECENT 15+ males", recentHIVInfectionDuringPeriod,"age=above15male");
+        addIndicator(dsd,"26a","HTS RECENT <15 FEMALE", testedForRecentInfection,"age=less15female");
+        addIndicator(dsd,"26b","HTS RECENT <15 MALE", testedForRecentInfection,"age=less15male");
+        addIndicator(dsd,"27a","HTS RECENT 15+ females", testedForRecentInfection,"age=above15female");
+        addIndicator(dsd,"27b","HTS RECENT 15+ males", testedForRecentInfection,"age=above15male");
 
         CohortDefinition patientsTestedThroughHealthFacility =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("ecb88326-0a3f-44a5-9bbf-df4bfc3239e1")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition patientsTestedThroughCommunity =  df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("46648b1d-b099-433b-8f9c-3815ff1e0a0f"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("4f4e6d1d-4343-42cc-ba47-2319b8a84369")), BaseObsCohortDefinition.TimeModifier.LAST);
