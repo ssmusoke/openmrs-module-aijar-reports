@@ -354,8 +354,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         PatientDataHelper pdh = new PatientDataHelper();
         if(results.size()>0 && !results.isEmpty()) {
             for (Object[] o : results) {
-                int patientno = (int) o[0];
-                DataSetRow row = new DataSetRow();
+                int patientno = (int) o[0];                DataSetRow row = new DataSetRow();
                 pdh.addCol(row, "ID", (String) o[2]);
                 pdh.addCol(row, "Gender", (String) o[1]);
                 pdh.addCol(row, "Date of Birth", o[3]);

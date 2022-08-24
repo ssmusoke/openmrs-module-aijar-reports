@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
@@ -22,6 +23,7 @@ import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 @Handler(supports = {CQIHIVAdultToolDataSetDefinition.class})
 public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
@@ -99,6 +101,58 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         activesInCareCohortDefinitionInOtherPreviousPeriod.setStartDate(otherPreviousStartDate);
         activesInCareCohortDefinitionInOtherPreviousPeriod.setLostToFollowupDays("28");
         Cohort activeInOtherPreviousPeriod = cohortDefinitionService.evaluate(activesInCareCohortDefinitionInOtherPreviousPeriod,context);
+
+        String AHDQuery = "select patient,CD4.value_numeric ,CD4Baseline.value_numeric,TB_LAM.name,CRAG.name,WHO_STAGE.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
+                "    (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=5497 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=5497 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)CD4 on patient=CD4.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99071 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=99071 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)CD4Baseline on patient=CD4Baseline.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165291 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165291 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TB_LAM on patient= TB_LAM.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165290 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165290 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)CRAG on patient= CRAG.person_id " +
+                "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90203 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=90203 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)WHO_STAGE on patient= WHO_STAGE.person_id\n";
+
+        AHDQuery =AHDQuery.replaceAll("%s",endDate);
+        SqlQueryBuilder AHD = new SqlQueryBuilder();
+        AHD.append(AHDQuery);
+        List<Object[]> AHDDataMap = evaluationService.evaluateToList(AHD, context);
+
+        String NSRegister = "select patient,dates.session_dates,scores.session_score,adherence.score,hivdr,hivdr_sample_collected.name,vl_after_iac.name,vl_copies.value_numeric,\n" +
+                "       vlreceived.dates,hivdr_results.name,hivdr_result_date.dates,decision_date.dates,decision_outcome.name,new_regimen.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "    person p on p.person_id = cohort.patient INNER JOIN\n" +
+                "    (SELECT o.person_id from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=856 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=856 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' and value_numeric>1000 group by o.person_id)VL on patient=VL.person_id\n" +
+                "    LEFT JOIN (select grouped.person_id, group_concat(v.value_datetime,'')as session_dates from obs grouped inner join obs v on grouped.obs_id=v.obs_group_id\n" +
+                "        inner  join encounter e on v.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' where grouped.concept_id=163153 and grouped.voided=0 and v.concept_id=163154 and v.obs_datetime <='%s' and v.obs_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR) group by v.person_id)dates on patient = dates.person_id\n" +
+                "    LEFT JOIN (select grouped.person_id, group_concat(v.value_numeric,'')as session_score from obs grouped inner join obs v on grouped.obs_id=v.obs_group_id\n" +
+                "    inner  join encounter e on v.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9'\n" +
+                "    where grouped.concept_id=163153 and grouped.voided=0 and v.concept_id=163155 and v.obs_datetime <='%s' and v.obs_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR) group by v.person_id)scores on patient = scores.person_id\n" +
+                "    LEFT JOIN (select grouped.person_id, group_concat(v.value_coded,'')as score from obs grouped inner join obs v on grouped.obs_id=v.obs_group_id inner  join encounter e on v.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9'\n" +
+                "      where grouped.concept_id=163153 and grouped.voided=0 and v.concept_id=90221 and v.obs_datetime <='%s' and v.obs_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR) group by v.person_id)adherence on patient = adherence.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as hivdr FROM obs inner  join encounter e on obs.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9'  WHERE concept_id=163023 and obs.voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)vlrepeat on patient=vlrepeat.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9'  inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=164989 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=164989 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)hivdr_sample_collected on patient= hivdr_sample_collected.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=1305 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=1305 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)vl_after_iac on patient= vl_after_iac.person_id\n" +
+                "    LEFT JOIN(SELECT o.person_id,value_numeric from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=856 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=856 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)vl_copies on patient=vl_copies.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as dates FROM obs inner  join encounter e on obs.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' WHERE concept_id=163150 and obs.voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)vlreceived on patient=vlreceived.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165824 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165824 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)hivdr_results on patient= hivdr_results.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as dates FROM obs inner  join encounter e on obs.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' WHERE concept_id=165823 and obs.voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)hivdr_result_date on patient=hivdr_result_date.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as dates FROM obs inner  join encounter e on obs.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' WHERE concept_id=163167 and obs.voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)decision_date on patient=decision_date.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=163166 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)decision_outcome on patient= decision_outcome.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner  join encounter e on o.encounter_id=e.encounter_id INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id and et.uuid ='38cb2232-30fc-4b1f-8df1-47c795771ee9' inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)new_regimen on patient= new_regimen.person_id ";
+
+        NSRegister =NSRegister.replaceAll("%s",endDate);
+        SqlQueryBuilder NS = new SqlQueryBuilder();
+        NS.append(NSRegister);
+        List<Object[]> NSDataMap = evaluationService.evaluateToList(NS, context);
 
         String arvStartDateQuery = "SELECT B.person_id, min(B.obs_datetime) as start_date from obs B inner join (SELECT o.person_id,o.value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315 \n" +
                 "           and voided=0 group by person_id)A on o.person_id = A.person_id where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s')C on B.person_id=C.person_id where B.value_coded=C.value_coded and obs_datetime<='%s' and voided=0 group by B.person_id";
@@ -393,6 +447,9 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "SWITCHED", o[51]);
                 pdh.addCol(row, "NEW_BLED_DATE", o[52]);
                 fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
+                fillAdvancedDiseaseStatusData(patientno,AHDDataMap,pdh,row);
+                fillNonSuppressedData(patientno,NSDataMap,pdh,row);
+
 
 
                 if(activeInPreviousPeriod.contains(patientno)){
@@ -429,6 +486,96 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
 
         }else{
             pdh.addCol(row, "Current Regimen Date",  "");
+        }
+    }
+
+    private void fillAdvancedDiseaseStatusData(int patientno, List<Object[]> list,PatientDataHelper pdh,DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    pdh.addCol(row, "cd4", o[1]);
+                    pdh.addCol(row, "baseline_cd4", o[2]);
+                    pdh.addCol(row, "TB_LAM", o[3]);
+                    pdh.addCol(row, "TB_CRAG", o[4]);
+                    pdh.addCol(row, "WHO", o[5]);
+                }
+            }
+        }
+    }
+
+    private void fillNonSuppressedData(int patientno, List<Object[]> list,PatientDataHelper pdh,DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    String sessiondates = (String)o[1];
+                    String sessionscore = (String)o[2];
+                    String adherences = (String)o[3];
+
+                    if (StringUtils.isNotBlank(sessiondates)) {
+                        String[] results = sessiondates.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+                                String dates;
+                                if(x<6){
+                                    pdh.addCol(row, "session_date"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_date"+x, " ");
+                                }
+                            }
+                        }
+                    }
+
+                    if (StringUtils.isNotBlank(sessionscore)) {
+                        String[] results = sessionscore.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+
+                                if(x<6){
+                                    pdh.addCol(row, "session_score"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_score"+x, " ");
+                                }
+                            }
+                        }
+                    }
+
+                    if (StringUtils.isNotBlank(adherences)) {
+                        String[] results = adherences.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+                                if(x<6){
+                                    pdh.addCol(row, "session_adherence"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_adherence"+x, " ");
+                                }
+                            }
+                        }
+                    }
+                    pdh.addCol(row, "VLREPEAT", o[4]);
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", o[5]);
+                    pdh.addCol(row, "VL_AFTER_IAC", o[6]);
+                    pdh.addCol(row, "VL_COPIES", o[7]);
+                    pdh.addCol(row, "RESULTS_RECEIVED", o[8]);
+                    pdh.addCol(row, "HIVDR_RESULTS", o[9]);
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", o[10]);
+                    pdh.addCol(row, "DECISION_DATE", o[11]);
+                    pdh.addCol(row, "DECISION_OUTCOME", o[12]);
+                    pdh.addCol(row, "NEW REGIMEN", o[13]);
+                }else{
+                    pdh.addCol(row, "VLREPEAT", "");
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", "");
+                    pdh.addCol(row, "VL_AFTER_IAC", "");
+                    pdh.addCol(row, "VL_COPIES", "");
+                    pdh.addCol(row, "RESULTS_RECEIVED", "");
+                    pdh.addCol(row, "HIVDR_RESULTS", "");
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", "");
+                    pdh.addCol(row, "DECISION_DATE", "");
+                    pdh.addCol(row, "DECISION_OUTCOME", "");
+                    pdh.addCol(row, "NEW REGIMEN", "");
+                }
+            }
         }
     }
 }
