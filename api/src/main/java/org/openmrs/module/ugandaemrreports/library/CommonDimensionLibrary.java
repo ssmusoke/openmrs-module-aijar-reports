@@ -885,6 +885,8 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         CohortDefinition less3Years = cohortDefinitionLibrary.agedAtMost(2);
         CohortDefinition less5Years = cohortDefinitionLibrary.agedAtMost(4);
         CohortDefinition between15And29Years = cohortDefinitionLibrary.agedBetween(15,29);
+        CohortDefinition between20And24Years = cohortDefinitionLibrary.agedBetween(20,24);
+        CohortDefinition between25And29Years = cohortDefinitionLibrary.agedBetween(25,29);
 
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
@@ -917,6 +919,10 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         CohortDefinition bj = df.getPatientsInAll(less5Years, females);
         CohortDefinition bk = df.getPatientsInAll(between15And29Years, males);
         CohortDefinition bl = df.getPatientsInAll(between15And29Years, females);
+        CohortDefinition bm = df.getPatientsInAll(between20And24Years, males);
+        CohortDefinition bn = df.getPatientsInAll(between20And24Years, females);
+        CohortDefinition bo = df.getPatientsInAll(between25And29Years, males);
+        CohortDefinition bp = df.getPatientsInAll(between25And29Years, females);
 
 
         ageGenderDimension.addParameter(ReportingConstants.END_DATE_PARAMETER);
@@ -959,6 +965,10 @@ public class CommonDimensionLibrary extends BaseDefinitionLibrary<CohortDefiniti
         ageGenderDimension.addCohortDefinition("between15And29Years",Mapped.mapStraightThrough(between15And29Years));
         ageGenderDimension.addCohortDefinition("between15And29male",Mapped.mapStraightThrough(bk));
         ageGenderDimension.addCohortDefinition("between15And29female",Mapped.mapStraightThrough(bl));
+        ageGenderDimension.addCohortDefinition("between20And24male",Mapped.mapStraightThrough(bm));
+        ageGenderDimension.addCohortDefinition("between20And24female",Mapped.mapStraightThrough(bn));
+        ageGenderDimension.addCohortDefinition("between25And29male",Mapped.mapStraightThrough(bo));
+        ageGenderDimension.addCohortDefinition("between25And29female",Mapped.mapStraightThrough(bp));
         return ageGenderDimension;
 
     }

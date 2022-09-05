@@ -259,6 +259,7 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         CohortDefinition indexCommunityClientTesting = df.getPatientsInAll(IndexClientTestingReasonForTesting,patientsTestedThroughCommunity);
         CohortDefinition FirstPositiveTest =df.getPatientsInAll(testedPositiveDuringPeriod,testingForFirstTime);
         CohortDefinition repeatPositive = df.getPatientsInAll(testedPositiveBefore,testedPositiveDuringPeriod);
+        CohortDefinition cervcialCancerScreening =df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("5029d903-51ba-4c44-8745-e97f320739b6"),hivMetadata.getArtEncounterTypes(), BaseObsCohortDefinition.TimeModifier.LAST);
 
         CohortDefinition patientsTestedOnFirstANC = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.LESS_EQUAL, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition patientsTestedOnOtherANCs = df.getPatientsWithNumericObsDuringPeriod(Dictionary.getConcept("c7231d96-34d8-4bf7-a509-c810f75e3329"),hivMetadata.getHCTEncounterType(), RangeComparator.GREATER_THAN, 1.0, BaseObsCohortDefinition.TimeModifier.LAST);
@@ -321,6 +322,11 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
         fillPerIndicator(dsd,"89","90","Mobile Community positive ist positive test",df.getPatientsInAll(mobile,FirstPositiveTest));
         fillPerIndicator(dsd,"91","92","Mobile Community positive repeat positive test",df.getPatientsInAll(mobile,repeatPositive));
         fillPerIndicator(dsd,"93","94","Mobile Community negative",df.getPatientsInAll(mobile,testedNegativeDuringPeriod));
+
+//        addIndicator(dsd,"95a","cacx scrn 15 to 19 ", cervcialCancerScreening,"age=between15And19female");
+//        addIndicator(dsd,"96a","cacx scrn 20 to 24", cervcialCancerScreening,"age=between20And24female");
+//        addIndicator(dsd,"97a","cacx scrn 25 to 29", cervcialCancerScreening,"age=between25And29female");
+//        addIndicator(dsd,"98a","cacx 30+", cervcialCancerScreening,"age=above30female");
         return rd;
     }
 
@@ -354,6 +360,6 @@ public class SetupWeeklySurgeReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.0.2";
     }
 }
