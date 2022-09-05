@@ -1587,4 +1587,11 @@ public class DataFactory {
         icsd.addParameter(new Parameter("onOrBefore", "On or Before", Date.class));
         return convert(icsd, ObjectUtil.toMap("onOrAfter=endDate,onOrBefore=endDate"));
     }
+
+    public CohortDefinition getCohortDefinitionBySql(String sql) {
+        SqlCohortDefinition cd = new SqlCohortDefinition(sql);
+        cd.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cd.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cd;
+    }
 }

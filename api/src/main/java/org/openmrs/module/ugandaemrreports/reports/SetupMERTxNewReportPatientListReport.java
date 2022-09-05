@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+
 
 /**
  *  TX New Patient Listing Report
@@ -127,7 +127,7 @@ public class SetupMERTxNewReportPatientListReport extends UgandaEMRDataExportMan
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_NEW_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition havingArtStartDateDuringQuarter = df.getPatientsNotIn(hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(),transferIn());
+        CohortDefinition havingArtStartDateDuringQuarter = df.getPatientsNotIn(hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(),hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod());
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -162,6 +162,6 @@ public class SetupMERTxNewReportPatientListReport extends UgandaEMRDataExportMan
 
     @Override
     public String getVersion() {
-        return "0.1.1";
+        return "0.1.2";
     }
 }

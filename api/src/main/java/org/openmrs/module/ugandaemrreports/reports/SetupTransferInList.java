@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.openmrs.module.ugandaemrreports.library.Cohorts.transferIn;
+
 
 /**
  */
