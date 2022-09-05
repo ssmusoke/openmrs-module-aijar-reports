@@ -86,7 +86,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<Parameter> getParameters() {
-        List<Parameter> l = new ArrayList<Parameter>();
+        List<Parameter> l = new ArrayList<>();
         l.add(df.getStartDateParameter());
         l.add(df.getEndDateParameter());
         return l;
@@ -368,7 +368,7 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         addIndicator(dsd, key + "fF", label + " (Between 30 and 34 Years) Female", cohortIndicator, "gender=F|age=Between30And34yrs");
         addIndicator(dsd, key + "gM", label + " (Between 35 and 39 Years) Male", cohortIndicator, "gender=M|age=Between35And39yrs");
         addIndicator(dsd, key + "gF", label + " (Between 35 and 39 Years) Female", cohortIndicator, "gender=F|age=Between35And39yrs");
-        addIndicator(dsd, key + "hM", label + " (Between 40 and 44 Years) Male", cohortIndicator, "gender=F|age=Between40And44yrs");
+        addIndicator(dsd, key + "hM", label + " (Between 40 and 44 Years) Male", cohortIndicator, "gender=M|age=Between40And44yrs");
         addIndicator(dsd, key + "hF", label + " (Between 40 and 44 Years) Female", cohortIndicator, "gender=F|age=Between40And44yrs");
         addIndicator(dsd, key + "jM", label + " (Between 45 and 49 Years) Male", cohortIndicator, "gender=M|age=Between45And49yrs");
         addIndicator(dsd, key + "jF", label + " (Between 45 and 49 Years) Female", cohortIndicator, "gender=F|age=Between45And49yrs");
@@ -388,6 +388,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "6.0.5";
+        return "6.0.6";
     }
 }
