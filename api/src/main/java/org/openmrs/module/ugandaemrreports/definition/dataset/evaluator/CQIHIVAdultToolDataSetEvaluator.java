@@ -179,7 +179,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       VL_Q.name,\n" +
                 "       TPT.name as TPT_Status,\n" +
                 "       TB.name as TB_Status,\n" +
-                "       HEPB.name as HEP_B_Status,\n" +
+                "       IF(HEPB.value_coded=90001,'Not Tested',IF(HEPB.value_coded=159971,'Tested','')) as HEP_B_Status,\n" +
                 "       SYPHILLIS.name as Sphillis_Status,\n" +
                 "       family.name as Family_Planning,\n" +
                 "       ADV_DZZ.name as Advanced_Disease,\n" +
@@ -242,7 +242,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=165288 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TPT on patient= TPT.person_id\n" +
                 "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90216 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=90216 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TB on patient= TB.person_id\n" +
-                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime )latest_date from obs where concept_id=1322 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_coded from obs o inner join (SELECT person_id,max(obs_datetime )latest_date from obs where concept_id=1322 and voided=0 group by person_id)A on o.person_id = A.person_id \n" +
                 "where o.concept_id=1322 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)HEPB on patient= HEPB.person_id\n" +
                 "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99753 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=99753 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SYPHILLIS on patient= SYPHILLIS.person_id\n" +
@@ -525,6 +525,13 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                                 }
                             }
                         }
+                    }else{
+                        pdh.addCol(row, "session_date"+0, " ");
+                        pdh.addCol(row, "session_date"+1, " ");
+                        pdh.addCol(row, "session_date"+2, " ");
+                        pdh.addCol(row, "session_date"+3, " ");
+                        pdh.addCol(row, "session_date"+4, " ");
+                        pdh.addCol(row, "session_date"+5, " ");
                     }
 
                     if (StringUtils.isNotBlank(sessionscore)) {
@@ -539,6 +546,13 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                                 }
                             }
                         }
+                    }else{
+                        pdh.addCol(row, "session_score"+0, " ");
+                        pdh.addCol(row, "session_score"+1, " ");
+                        pdh.addCol(row, "session_score"+2, " ");
+                        pdh.addCol(row, "session_score"+3, " ");
+                        pdh.addCol(row, "session_score"+4, " ");
+                        pdh.addCol(row, "session_score"+5, " ");
                     }
 
                     if (StringUtils.isNotBlank(adherences)) {
@@ -552,6 +566,13 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                                 }
                             }
                         }
+                    }else{
+                        pdh.addCol(row, "session_adherence"+0, " ");
+                        pdh.addCol(row, "session_adherence"+1, " ");
+                        pdh.addCol(row, "session_adherence"+2, " ");
+                        pdh.addCol(row, "session_adherence"+3, " ");
+                        pdh.addCol(row, "session_adherence"+4, " ");
+                        pdh.addCol(row, "session_adherence"+5, " ");
                     }
                     pdh.addCol(row, "VLREPEAT", o[4]);
                     pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", o[5]);
@@ -574,6 +595,29 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "DECISION_DATE", "");
                     pdh.addCol(row, "DECISION_OUTCOME", "");
                     pdh.addCol(row, "NEW REGIMEN", "");
+
+                    pdh.addCol(row, "session_score"+0, " ");
+                    pdh.addCol(row, "session_score"+1, " ");
+                    pdh.addCol(row, "session_score"+2, " ");
+                    pdh.addCol(row, "session_score"+3, " ");
+                    pdh.addCol(row, "session_score"+4, " ");
+                    pdh.addCol(row, "session_score"+5, " ");
+
+                    pdh.addCol(row, "session_date"+0, " ");
+                    pdh.addCol(row, "session_date"+1, " ");
+                    pdh.addCol(row, "session_date"+2, " ");
+                    pdh.addCol(row, "session_date"+3, " ");
+                    pdh.addCol(row, "session_date"+4, " ");
+                    pdh.addCol(row, "session_date"+5, " ");
+
+                    pdh.addCol(row, "session_adherence"+0, " ");
+                    pdh.addCol(row, "session_adherence"+1, " ");
+                    pdh.addCol(row, "session_adherence"+2, " ");
+                    pdh.addCol(row, "session_adherence"+3, " ");
+                    pdh.addCol(row, "session_adherence"+4, " ");
+                    pdh.addCol(row, "session_adherence"+5, " ");
+
+
                 }
             }
         }

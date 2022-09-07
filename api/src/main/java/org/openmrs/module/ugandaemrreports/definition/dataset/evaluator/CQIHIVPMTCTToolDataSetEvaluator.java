@@ -16,6 +16,7 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ActivesInCareCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         newDate.add(Calendar.DATE, 1);
 
         Date startDate = newDate.getTime();
+        String startDateString = DateUtil.formatDate(startDate, "yyyy-MM-dd");
 
         parameterValues.put("startDate",startDate);
         parameterValues.put("endDate", myendDate);
@@ -65,11 +67,6 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         newDate1.set(Calendar.DATE, 1);
         Date startDateForPreviousPeriod =newDate1.getTime();
 
-        EvaluationContext myContextPreviousPeriod = new EvaluationContext();
-        parameterValuesForPreviousPeriod.put("startDate",startDateForPreviousPeriod);
-        parameterValuesForPreviousPeriod.put("endDate",endDateForPreviousPeriod);
-        myContextPreviousPeriod.setParameterValues(parameterValuesForPreviousPeriod);
-
         Calendar newDate2 = toCalendar(startDateForPreviousPeriod);
         newDate2.add(Calendar.MONTH, -3);
         Date otherPreviousStartDate =newDate2.getTime();
@@ -78,10 +75,6 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         newDate2.add(Calendar.MONTH, -3);
         Date otherPreviousEndDate =newDate2.getTime();
 
-        EvaluationContext myContextOtherPreviousPeriod = new EvaluationContext();
-        parameterValuesForPreviousPeriod.put("startDate",otherPreviousStartDate);
-        parameterValuesForPreviousPeriod.put("endDate",otherPreviousEndDate);
-        myContextOtherPreviousPeriod.setParameterValues(parameterValuesForPreviousPeriod);
 
         String eidQuery ="SELECT patient,\n" +
                 "                IFNULL(EDD.edd_date,''),\n" +
@@ -171,9 +164,32 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         eid.append(eidQuery);
         List<Object[]> eidResults = evaluationService.evaluateToList(eid, context);
 
-        Cohort lostInPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("28"),myContextPreviousPeriod);
-        Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContextPreviousPeriod);
-        Cohort activeInOtherPreviousPeriod = cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myContextOtherPreviousPeriod);
+        String lostInPreviousPeriodString = "select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff('"+DateUtil.formatDate(endDateForPreviousPeriod, "yyyy-MM-dd")+"',max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <='" + DateUtil.formatDate(endDateForPreviousPeriod, "yyyy-MM-dd")+"'"+
+                "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= '"+DateUtil.formatDate(startDateForPreviousPeriod, "yyyy-MM-dd")+"'  and e.voided=0 and o.voided=0 group by patient_id) as t  where ltfp_days >=28";
+
+        SqlQueryBuilder lostinpreviousperiod = new SqlQueryBuilder();
+        lostinpreviousperiod.append(lostInPreviousPeriodString);
+        List<Integer> lostInPreviousPeriod =  evaluationService.evaluateToList(lostinpreviousperiod,Integer.class, context);
+
+
+        String startARTInCurrentPeriodString = "SELECT person_id FROM obs  WHERE concept_id=99161 and voided=0 and value_datetime between '"+startDateString+"' AND '"+endDate+"' ";
+
+        SqlQueryBuilder startART = new SqlQueryBuilder();
+        startART.append(startARTInCurrentPeriodString);
+        List<Integer> startARTInReportingPeriod =  evaluationService.evaluateToList(startART,Integer.class, context);
+
+        ActivesInCareCohortDefinition activesInCareCohortDefinitionPreviousPeriod = new ActivesInCareCohortDefinition();
+        activesInCareCohortDefinitionPreviousPeriod.setEndDate(endDateForPreviousPeriod);
+        activesInCareCohortDefinitionPreviousPeriod.setStartDate(startDateForPreviousPeriod);
+        activesInCareCohortDefinitionPreviousPeriod.setLostToFollowupDays("28");
+        Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(activesInCareCohortDefinitionPreviousPeriod,context);
+
+        ActivesInCareCohortDefinition activesInCareCohortDefinitionInOtherPreviousPeriod = new ActivesInCareCohortDefinition();
+        activesInCareCohortDefinitionInOtherPreviousPeriod.setEndDate(otherPreviousEndDate);
+        activesInCareCohortDefinitionInOtherPreviousPeriod.setStartDate(otherPreviousStartDate);
+        activesInCareCohortDefinitionInOtherPreviousPeriod.setLostToFollowupDays("28");
+        Cohort activeInOtherPreviousPeriod = cohortDefinitionService.evaluate(activesInCareCohortDefinitionInOtherPreviousPeriod,context);
+
 
         String arvStartDateQuery = "SELECT B.person_id, min(B.obs_datetime) as start_date from obs B inner join (SELECT o.person_id,o.value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315 \n" +
                 "           and voided=0 group by person_id)A on o.person_id = A.person_id where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s')C on B.person_id=C.person_id where B.value_coded=C.value_coded and obs_datetime<='%s' and voided=0 group by B.person_id";
@@ -192,13 +208,15 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "       returndate AS Next_Appointment_Date,\n" +
                 "       MMD.value_numeric as NO_of_Days,\n" +
                 "       ARTStartDate,\n" +
-                "       adherence.name as Adherence,\n" +
+                "       IF(adherence.value_coded=90156,'Good (95%)'," +
+                "       IF(adherence.value_coded=90157,'Fair (85-94%)'," +
+                "       IF(adherence.value_coded=90158,'Poor (<85%)',adherence.value_coded))) as Adherence,\n" +
                 "       current_regimen.name as Current_Regimen,\n" +
                 "       VL.value_numeric as VL_copies,\n" +
                 "       VL_Q.name,\n" +
                 "       TPT.name as TPT_Status,\n" +
                 "       TB.name as TB_Status,\n" +
-                "       HEPB.name as HEP_B_Status,\n" +
+                "       IF(HEPB.value_coded=90001,'Not Tested',IF(HEPB.value_coded=159971,'Tested','')) as HEP_B_Status,\n" +
                 "       SYPHILLIS.name as Sphillis_Status,\n" +
                 "       family.name as Family_Planning,\n" +
                 "       ADV_DZZ.name as Advanced_Disease,\n" +
@@ -230,8 +248,9 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "       IF(VL.value_numeric>=1000,IFNULL(IAC.SESSIONS,0),NULL), " +
                 "       IF(VL.value_numeric>=1000,IFNULL(HIVDRTEST.HIVDR_date,''),''), " +
                 "       HIVDR_TEST_COLECTED.name as SAMPLE_COLLECTED, " +
-                "       IF(VL.value_numeric>=1000,IF(SWITCHED.value_coded in (163162,163164),'Y','N'),'')  " +
-                "" +
+                "       IF(VL.value_numeric>=1000,IF(SWITCHED.value_coded in (163162,163164),'Y','N'),''), " +
+                "       IF(bled_for_vl.bled_date > vl_bled.vl_date, bled_for_vl.bled_date,'') as new_bled_date" +
+                "\n" +
                 "FROM  (select DISTINCT o.person_id as patient from obs o  WHERE o.voided = 0 and concept_id=90041 and obs_datetime<= '%s' and obs_datetime= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "      person p on p.person_id = cohort.patient LEFT JOIN\n" +
                 "    (SELECT pi.patient_id as patientid,identifier FROM patient_identifier pi INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='e1731641-30ab-102d-86b0-7a5022ba4115'  WHERE  pi.voided=0 group by pi.patient_id)ids on patient=patientid\n" +
@@ -241,8 +260,8 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=5089 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)Wgt on patient=Wgt.person_id\n" +
                 "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165143 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='SHORT' and cn.locale='en'\n" +
                 "where o.concept_id=165143 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)DSD on patient =DSD.person_id\n" +
-                "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=160288 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
-                "where o.concept_id=160288 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id) vst_type on patient= vst_type.person_id\n" +
+                "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=160288 and voided=0 and value_coded in (164969,165284) group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=160288 and value_coded in (164969,165284) and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id) vst_type on patient= vst_type.person_id\n" +
                 "   LEFT JOIN (select e.patient_id,max(DATE(encounter_datetime))visit_date from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in ('8d5b2be0-c2cc-11de-8d13-0010c6dffd0f','8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' group by patient_id)as last_enc on patient=last_enc.patient_id\n" +
                 "   LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as returndate FROM obs WHERE concept_id=5096 and voided=0 AND obs_datetime <='%s' group by person_id)return_date on patient=return_date.person_id\n" +
                 "   LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99036 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
@@ -250,7 +269,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "   LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as ARTStartDate FROM obs WHERE concept_id=99161 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)ARTStart on patient=ARTStart.person_id\n" +
                 "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90315 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=90315 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id) current_regimen on patient= current_regimen.person_id\n" +
-                "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90221 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "   LEFT JOIN (SELECT o.person_id,value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90221 and voided=0 group by person_id)A on o.person_id = A.person_id \n" +
                 "where o.concept_id=90221 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id) adherence on patient= adherence.person_id\n" +
                 "   LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=856 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 "where o.concept_id=856 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)VL on patient=VL.person_id\n" +
@@ -260,7 +279,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=165288 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TPT on patient= TPT.person_id\n" +
                 "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90216 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=90216 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TB on patient= TB.person_id\n" +
-                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime )latest_date from obs where concept_id=1322 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_coded from obs o inner join (SELECT person_id,max(obs_datetime )latest_date from obs where concept_id=1322 and voided=0 group by person_id)A on o.person_id = A.person_id \n" +
                 "where o.concept_id=1322 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)HEPB on patient= HEPB.person_id\n" +
                 "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99753 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
                 "where o.concept_id=99753 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SYPHILLIS on patient= SYPHILLIS.person_id\n" +
@@ -345,7 +364,8 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "     LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=164989 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='SHORT' and cn.locale='en'\n" +
                 "where o.concept_id=164989 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)HIVDR_TEST_COLECTED ON patient=HIVDR_TEST_COLECTED.person_id " +
                 "    LEFT JOIN (SELECT o.person_id, value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=163166 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
-                " where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SWITCHED on patient = SWITCHED.person_id ";
+                " where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SWITCHED on patient = SWITCHED.person_id " +
+                "    LEFT JOIN (SELECT person_id,max(obs_datetime)bled_date from obs where concept_id=165845 and voided=0 group by person_id)bled_for_vl on patient=bled_for_vl.person_id";
         dataQuery =dataQuery.replaceAll("%s",endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();
@@ -354,21 +374,22 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         PatientDataHelper pdh = new PatientDataHelper();
         if(results.size()>0 && !results.isEmpty()) {
             for (Object[] o : results) {
-                int patientno = (int) o[0];                DataSetRow row = new DataSetRow();
-                pdh.addCol(row, "ID", (String) o[2]);
-                pdh.addCol(row, "Gender", (String) o[1]);
-                pdh.addCol(row, "Date of Birth", o[3]);
+                int patientno = (int)o[0];
+                DataSetRow row = new DataSetRow();
+                pdh.addCol(row, "ID", o[2]);
+                pdh.addCol(row, "Gender", o[1]);
+                pdh.addCol(row, "Date of Birth",  o[3]);
                 pdh.addCol(row, "Age", o[4]);
                 pdh.addCol(row, "Preg", o[5]);
                 pdh.addCol(row, "Weight", o[6]);
-                pdh.addCol(row, "DSDM", (String) o[7]);
-                pdh.addCol(row, "VisitType", (String) o[8]);
-                pdh.addCol(row, "Last Visit Date", o[9]);
-                pdh.addCol(row, "Next Appointment Date", o[10]);
+                pdh.addCol(row, "DSDM", o[7]);
+                pdh.addCol(row, "VisitType", o[8]);
+                pdh.addCol(row, "Last Visit Date",  o[9]);
+                pdh.addCol(row, "Next Appointment Date",  o[10]);
                 pdh.addCol(row, "Prescription Duration", o[11]);
                 pdh.addCol(row, "ART Start Date", o[12]);
 //                pdh.addCol(row, "CurrentRegimenLine", (String)o[]);
-                pdh.addCol(row, "Current Regimen", (String) o[14]);
+                pdh.addCol(row, "Current Regimen", (String)o[14]);
 //                pdh.addCol(row, "Current Regimen Date",  o[15]);
                 pdh.addCol(row, "Adherence", o[13]);
                 pdh.addCol(row, "VL Quantitative", o[15]);
@@ -400,46 +421,41 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "NUTRITION_SUPPORT", o[39]);
                 pdh.addCol(row, "CACX_STATUS", o[40]);
 
-                String stable = (String) o[41];
-                if (stable.equals("yes")) {
+                String stable =(String)o[41];
+                if(stable.equals("yes")){
                     pdh.addCol(row, "STABLE", "STABLE");
-                } else if (stable.toLowerCase().equals("no")) {
+                }else if(stable.toLowerCase().equals("no")){
                     pdh.addCol(row, "STABLE", "UNSTABLE");
-                } else {
+                }else{
                     pdh.addCol(row, "STABLE", "");
                 }
 
                 //regimen lines
-                int lines_concept = (int) o[42];
-                if (lines_concept == 90271) {
+                int lines_concept =(int)o[42];
+                if(lines_concept==90271){
                     pdh.addCol(row, "REGIMEN_LINE", 1);
-                } else if (lines_concept == 90305) {
+                }else if(lines_concept==90305){
                     pdh.addCol(row, "REGIMEN_LINE", 2);
-                } else if (lines_concept == 162987) {
+                }else if(lines_concept==162987){
                     pdh.addCol(row, "REGIMEN_LINE", 3);
                 }
-                String ff = (String) o[43];
-                if (!ff.equals("")) {
+                String ff = (String)o[43];
+                if(!ff.equals("")){
                     pdh.addCol(row, "PP", "Priority population(PP)");
-                } else {
+                }else{
                     pdh.addCol(row, "PP", "");
                 }
-                boolean dead = false;
-                dead = (boolean) o[44];
+                boolean dead =false;
+                dead= (boolean)o[44];
                 String TO = (String) o[45];
-                String daysString = (String) o[46];
-                String monthsString = (String) o[47];
-                int daysActive = -1;
-                int monthsonART = -1;
+                String daysString = (String)o[46];
+                String monthsString = (String)o[47];
+                pdh.addCol(row, "DurationOnART", monthsString);
+                int daysActive=-1;
 
                 try {
                     if (daysString != "" || !daysString.equals("")) {
                         daysActive = Integer.parseInt(daysString);
-                    }
-                    if (monthsString != "" || !monthsString.equals("")) {
-                        monthsonART = Integer.parseInt(monthsString);
-                    }else{
-                        pdh.addCol(row, "FOLLOWUP", "");
                     }
 
                 }catch (NumberFormatException e){
@@ -448,49 +464,38 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                     e.printStackTrace();
                 }
                 if(daysActive <=0){
-                    pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Active)");
-                    pdh.addCol(row, "FOLLOWUP", "");
+                    pdh.addCol(row, "CLIENT_STATUS", "Active(TX_CURR)");
                 }else if(daysActive >=1 && daysActive<=7){
-                    pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Missed Appointment)");
-                    pdh.addCol(row, "FOLLOWUP", "");
-                }else if(daysActive >=8 && daysActive < 28){
-                    pdh.addCol(row, "CLIENT_STATUS", "TX_CURR(Pre_IIT)");
-                    pdh.addCol(row, "FOLLOWUP", "");
-                }else if(daysActive>=28 && daysActive<=999) {
-                    pdh.addCol(row, "CLIENT_STATUS", "TX_ML");
-                    if (dead) {
-                        pdh.addCol(row, "FOLLOWUP", "Dead");
-                    } else if (!TO.equals("")) {
-                        pdh.addCol(row, "FOLLOWUP", "Transferred Out");
-                    } else if (monthsonART < 3 && monthsonART >= 0) {
-                        pdh.addCol(row, "FOLLOWUP", "IIT (On RX < 3 months");
-                    } else if (monthsonART >= 3 && monthsonART <= 5) {
-                        pdh.addCol(row, "FOLLOWUP", "IIT (On RX 3-5 months)");
-
-                    } else if (monthsonART >= 6) {
-                        pdh.addCol(row, "FOLLOWUP", "IIT (On RX 6+months)");
-                    }
+                    pdh.addCol(row, "CLIENT_STATUS", "Missed Appointment(TX_CURR)");
+                }else if(daysActive >=8 && daysActive <= 28){
+                    pdh.addCol(row, "CLIENT_STATUS", "Lost (Pre-IIT)");
+                }else if(daysActive>28 && daysActive<=999) {
+                    pdh.addCol(row, "CLIENT_STATUS", "LTFU(TX-ML)");
                 }else{
                     pdh.addCol(row, "CLIENT_STATUS", "Lost to Followup");
-                    pdh.addCol(row, "FOLLOWUP", "");
                 }
 
                 pdh.addCol(row, "IAC", o[48]);
-                if ((String) o[50] == "yes") {
+                if((String)o[50]=="yes") {
                     pdh.addCol(row, "HIVDRT", o[49]);
-                } else {
+                }else{
                     pdh.addCol(row, "HIVDRT", "");
                 }
                 pdh.addCol(row, "SWITCHED", o[51]);
-                fillInCurrentARVStartDate(patientno, arvStartDateMap, pdh, row);
+                pdh.addCol(row, "NEW_BLED_DATE", o[52]);
+                fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
 
 
-                if (activeInPreviousPeriod.contains(patientno)) {
-                    pdh.addCol(row, "previousStatus", "TX_CURR(Active)");
-                } else if (lostInPreviousPeriod.contains(patientno) && activeInOtherPreviousPeriod.contains(patientno)) {
-                    pdh.addCol(row, "previousStatus", "TX_ML(Lost)");
-                } else {
-                    pdh.addCol(row, "previousStatus", "Lost to Followup");
+
+
+                if(activeInPreviousPeriod.contains(patientno)){
+                    pdh.addCol(row, "previousStatus", "Active(TX_CURR)");
+                }else if(lostInPreviousPeriod.contains(patientno)&& activeInOtherPreviousPeriod.contains(patientno)) {
+                    pdh.addCol(row, "previousStatus", "Lost(TX-ML)");
+                }else if ( startARTInReportingPeriod.contains(patientno)){
+                    pdh.addCol(row, "previousStatus", " ");
+                } else{
+                    pdh.addCol(row, "previousStatus", "LTFU");
                 }
 
                 if (eidResults.size() > 0 && !eidResults.isEmpty()) {
