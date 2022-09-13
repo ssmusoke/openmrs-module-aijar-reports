@@ -163,7 +163,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         Map<Integer,Object> arvStartDateMap = evaluationService.evaluateToMap(q1,Integer.class,Object.class, context);
 
         String dataQuery = "SELECT patient,gender,identifier,p.birthdate,TIMESTAMPDIFF(YEAR, p.birthdate, '%s') as age,\n" +
-                "       Preg.name as pregnant_status,\n" +
+                "       IF(Preg.name='Yes','Pregnant',IF(Preg.name='NO','Not Pregnant',Preg.name)) as pregnant_status,\n" +
                 "       Wgt.value_numeric as Weight,\n" +
                 "       IF(DSD.name='FTR','FTDR',DSD.name) as DSDM,\n" +
                 "       vst_type.name as Visit_Type,\n" +
@@ -328,7 +328,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=164989 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)HIVDR_TEST_COLECTED ON patient=HIVDR_TEST_COLECTED.person_id " +
                 "    LEFT JOIN (SELECT o.person_id, value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=163166 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 " where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SWITCHED on patient = SWITCHED.person_id " +
-                "    LEFT JOIN (SELECT person_id,max(obs_datetime)bled_date from obs where concept_id=165845 and voided=0 group by person_id)bled_for_vl on patient=bled_for_vl.person_id limit 3000\n";
+                "    LEFT JOIN (SELECT person_id,max(obs_datetime)bled_date from obs where concept_id=165845 and voided=0 group by person_id)bled_for_vl on patient=bled_for_vl.person_id ";
         dataQuery =dataQuery.replaceAll("%s",endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();

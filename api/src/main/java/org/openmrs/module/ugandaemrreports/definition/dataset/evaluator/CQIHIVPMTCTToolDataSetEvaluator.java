@@ -104,7 +104,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "                finalOutcome.name,\n" +
                 "                linkageNo.value_text,\n" +
                 "                IFNULL(NVP.mydate,'') AS NVP_START_DATE,\n" +
-                "                IF(TIMESTAMPDIFF(DAY , NVP.mydate, '%s')<=2,'Y','N') as NVP\n" +
+                "                IF(NVP.mydate IS NULL,'', IF(TIMESTAMPDIFF(DAY , NVP.mydate, '%s')<=2,'Y','N')) as NVP\n" +
                 "\n" +
                 "                FROM  (select DISTINCT o.person_id as patient from obs o  WHERE o.voided = 0 and concept_id=90041 and obs_datetime<= '%s' and obs_datetime= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "                    person p on p.person_id = cohort.patient\n" +
@@ -200,7 +200,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
         Map<Integer,Object> arvStartDateMap = evaluationService.evaluateToMap(q1,Integer.class,Object.class, context);
 
         String dataQuery = "SELECT patient,gender,identifier,p.birthdate,TIMESTAMPDIFF(YEAR, p.birthdate, '%s') as age,\n" +
-                "       Preg.name as pregnant_status,\n" +
+                "       IF(Preg.name='Yes','Pregnant',IF(Preg.name='NO','Not Pregnant',Preg.name)) as pregnant_status,\n" +
                 "       Wgt.value_numeric as Weight,\n" +
                 "       IF(DSD.name='FTR','FTDR',DSD.name) as DSDM,\n" +
                 "       vst_type.name as Visit_Type,\n" +
@@ -529,6 +529,8 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                             pdh.addCol(row, "RAPID_RESULT", e[24]);
                             pdh.addCol(row, "OUTCOME", e[25]);
                             pdh.addCol(row, "LINKAGE_NO", e[26]);
+//                            pdh.addCol(row, "LINKAGE_NO", e[27]);
+                            pdh.addCol(row, "NVP", e[28]);
                         }
 
                     }
