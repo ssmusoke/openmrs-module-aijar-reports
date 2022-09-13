@@ -13,6 +13,7 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ActivesInCareCohortDefinition;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.TXMLCohortDefinition;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -38,13 +39,26 @@ public class TXMLCohortEvaluator implements CohortDefinitionEvaluator {
         Map<String, Object> parameterValues = new HashMap<String, Object>();
 
 
-        Calendar newEndDate = toCalendar(cd .getEndDate());
+        Calendar newEndDate = toCalendar(cd.getEndDate());
+        Calendar newStartDate = toCalendar(cd.getStartDate());
+
         newEndDate.add(Calendar.MONTH, -3);
         Date previousPeriodEndDate = newEndDate.getTime();
 
-        Calendar newStartDate = toCalendar(cd .getStartDate());
         newStartDate.add(Calendar.MONTH, -3);
         Date previousPeriodStartDate = newStartDate.getTime();
+
+        ActivesInCareCohortDefinition thisActivePeriod = new ActivesInCareCohortDefinition();
+        thisActivePeriod.setLostToFollowupDays("28");
+        thisActivePeriod.setStartDate(cd.getStartDate());
+        thisActivePeriod.setEndDate(cd.getEndDate());
+
+        ActivesInCareCohortDefinition previousPeriod = new ActivesInCareCohortDefinition();
+        previousPeriod.setEndDate(previousPeriodEndDate);
+        previousPeriod.setStartDate(previousPeriodStartDate);
+        previousPeriod.setLostToFollowupDays("28");
+
+
         EvaluationContext myPreviouscontext =new EvaluationContext();
         parameterValues.put("startDate",previousPeriodStartDate);
         parameterValues.put("endDate", previousPeriodEndDate);
