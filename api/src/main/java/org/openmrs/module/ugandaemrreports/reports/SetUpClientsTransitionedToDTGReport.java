@@ -140,7 +140,7 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
         rd.setParameters(getParameters());
 
         PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-        CohortDefinition patientsOnDTGInPeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenInPeriod(), df.getDeadPatientsDuringPeriod(), hivCohortDefinitionLibrary.getTransferredOut());
+        CohortDefinition patientsOnDTGInPeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenInPeriod(), df.getDeadPatientsDuringPeriod(), hivCohortDefinitionLibrary.getPatientsTransferredOutDuringPeriod());
         CohortDefinition patientsOnDTGBeforePeriod = df.getPatientsNotIn(hivCohortDefinitionLibrary.getPatientsOnDTGRegimenBeforePeriod(), df.getDeadPatientsByEndOfPreviousDate("1d"));
         CohortDefinition patientsStartedOnDTGDuringPeriod = df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getArtStartRegimen(),hivMetadata.getARTSummaryPageEncounterType(),Dictionary.getConceptList(Metadata.Concept.DTG_TLD_REGIMEN_LIST), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition transitionedToDTGCohort =  df.getPatientsNotIn(patientsOnDTGInPeriod, patientsOnDTGBeforePeriod,patientsStartedOnDTGDuringPeriod);
@@ -178,7 +178,7 @@ public class SetUpClientsTransitionedToDTGReport extends UgandaEMRDataExportMana
 
     @Override
     public String getVersion() {
-        return "3.0.2";
+        return "3.0.1";
     }
 }
 

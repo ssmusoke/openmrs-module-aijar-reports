@@ -4,6 +4,7 @@
 
     def appFrameworkService = context.getService(context.loadClass("org.openmrs.module.appframework.service.AppFrameworkService"))
     def overview = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.overview")
+    def weekly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.weekly")
     def monthly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.monthly")
     def registers = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.registers")
     def quarterly = appFrameworkService.getExtensionsForCurrentUser("org.openmrs.module.ugandaemr.reports.quarterly")
@@ -67,6 +68,22 @@
     </div>
 
     <div class="info-container column">
+        <% if (weekly) { %>
+        <div class="info-section">
+            <div class="info-header"><h3>Weekly Reports</h3></div>
+
+            <div class="info-body">
+                <ul>
+                    <% weekly.each { %>
+                    <li>
+                        ${ui.includeFragment("uicommons", "extension", [extension: it, contextModel: contextModel])}
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+        <% } %>
+
         <% if (monthly) { %>
         <div class="info-section">
             <div class="info-header"><h3>Monthly Reports</h3></div>
