@@ -114,7 +114,7 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
 
-        CohortDefinition TX_ML = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
+        CohortDefinition TX_ML = hivCohortDefinitionLibrary.getTX_ML();
 
         CohortDefinition silentlyTransferred=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("f57b1500-7ff2-46b4-b183-fed5bce479a9")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -190,13 +190,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         Helper.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
     }
 
-
-    private CohortDefinition getPreviousTXCURR(){
-        TXMLCohortDefinition cohortDefinition = new TXMLCohortDefinition();
-        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
-        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
-        return cohortDefinition;
-    }
     private Concept getCauseOfDeathConcept(){
         return hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115");
     }
@@ -204,6 +197,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2.1";
+        return "3.2.2";
     }
 }

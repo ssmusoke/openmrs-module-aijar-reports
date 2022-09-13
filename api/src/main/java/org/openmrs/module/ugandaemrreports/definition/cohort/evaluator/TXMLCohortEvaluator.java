@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.definition.cohort.evaluator;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.CohortService;
@@ -52,20 +53,18 @@ public class TXMLCohortEvaluator implements CohortDefinitionEvaluator {
         thisActivePeriod.setLostToFollowupDays("28");
         thisActivePeriod.setStartDate(cd.getStartDate());
         thisActivePeriod.setEndDate(cd.getEndDate());
+        Cohort activeInPeriod = cohortDefinitionService.evaluate(thisActivePeriod,context);
 
         ActivesInCareCohortDefinition previousPeriod = new ActivesInCareCohortDefinition();
         previousPeriod.setEndDate(previousPeriodEndDate);
         previousPeriod.setStartDate(previousPeriodStartDate);
         previousPeriod.setLostToFollowupDays("28");
+        Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(previousPeriod,context);
 
+        Set<Integer> tx_ml_set = new HashSet(CollectionUtils.subtract(activeInPreviousPeriod.getMemberIds(), activeInPeriod.getMemberIds()));
 
-        EvaluationContext myPreviouscontext =new EvaluationContext();
-        parameterValues.put("startDate",previousPeriodStartDate);
-        parameterValues.put("endDate", previousPeriodEndDate);
-        myPreviouscontext.setParameterValues(parameterValues);
-
-        Cohort activeInPreviousPeriod= cohortDefinitionService.evaluate(hivCohortDefinitionLibrary.getActivePatientsWithLostToFollowUpAsByDays("28"),myPreviouscontext);
-        ret.setMemberIds(activeInPreviousPeriod.getMemberIds());
+        System.out.println("tx_ml _size "+ tx_ml_set.size());
+        ret.setMemberIds(tx_ml_set);
         return ret;
 
 

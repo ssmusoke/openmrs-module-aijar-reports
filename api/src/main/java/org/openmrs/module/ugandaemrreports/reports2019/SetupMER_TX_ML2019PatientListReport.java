@@ -126,7 +126,7 @@ public class SetupMER_TX_ML2019PatientListReport extends UgandaEMRDataExportMana
         dsd.setParameters(getParameters());
         rd.addDataSetDefinition("TX_ML_PatientList", Mapped.mapStraightThrough(dsd));
 
-        CohortDefinition patientWithNoClinicalContact = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
+        CohortDefinition patientWithNoClinicalContact = hivCohortDefinitionLibrary.getTX_ML();
 
         dsd.setName(getName());
         dsd.setParameters(getParameters());
@@ -161,6 +161,6 @@ public class SetupMER_TX_ML2019PatientListReport extends UgandaEMRDataExportMana
 
     @Override
     public String getVersion() {
-        return "0.0.3";
+        return "0.0.4";
     }
 }
