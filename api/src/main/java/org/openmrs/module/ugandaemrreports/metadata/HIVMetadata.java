@@ -770,4 +770,13 @@ public class HIVMetadata extends ReportMetadata {
         l.add(MetadataUtils.existing(EncounterType.class, "38cb2232-30fc-4b1f-8df1-47c795771ee9"));
         return l;
     }
+
+    public Concept getCareEntryPoint() {
+        return getConcept("dcdfe3ce-30ab-102d-86b0-7a5022ba4115");
+    }
+
+    public Concept getEMTCTCareEntryPoint() {
+        return getConcept("dcd7e8e5-30ab-102d-86b0-7a5022ba4115");
+    }
+
 }
