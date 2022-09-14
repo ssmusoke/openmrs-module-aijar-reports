@@ -63,7 +63,7 @@ public class TXMLCohortEvaluator implements CohortDefinitionEvaluator {
 
         Set<Integer> tx_ml_set = new HashSet(CollectionUtils.subtract(activeInPreviousPeriod.getMemberIds(), activeInPeriod.getMemberIds()));
 
-        System.out.println("tx_ml _size "+ tx_ml_set.size());
+
         ret.setMemberIds(tx_ml_set);
         return ret;
 

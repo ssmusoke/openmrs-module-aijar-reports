@@ -195,6 +195,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2.2";
+        return "3.2.3";
     }
 }
