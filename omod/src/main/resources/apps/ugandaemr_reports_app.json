@@ -11,6 +11,11 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
+        "id": "org.openmrs.module.ugandaemr.reports.cqi",
+        "description": "CQI Reports",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
@@ -621,6 +626,14 @@
         "order": 150,
         "requiredPrivilege": "App: ugandaemrreports.backToCare"
       },{
+        "id": "Covid-19 Vaccination Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.overview",
+        "type": "link",
+        "label": "Covid-19 Vaccination Report",
+        "url": "reportingui/runReport.page?reportDefinition=ca24a543-c0dc-45c2-baf7-a73e31060bb3",
+        "order": 155,
+        "requiredPrivilege": "App: ugandaemrreports.Covidvaccination"
+      },{
         "id": "Family Connect EMTCT Module Data Export",
         "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
         "type": "link",
@@ -794,6 +807,14 @@
         "label": "HIV Care and Treatment Audit Tool",
         "url": "reportingui/runReport.page?reportDefinition=138140ef-1dd2-11b2-96d8-6cab73c93472",
         "order": 5
+      },
+      {
+      "id": "Care and Treatment Audit Tool-PMTCT",
+      "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+      "type": "link",
+      "label": "HIV Care and Treatment Audit Tool-PMTCT",
+      "url": "reportingui/runReport.page?reportDefinition=bc18e380-039e-482a-96c0-1555f3fdb773",
+      "order": 6
       },
       {
         "id": "HIV Exposed Infant Audit Tool",

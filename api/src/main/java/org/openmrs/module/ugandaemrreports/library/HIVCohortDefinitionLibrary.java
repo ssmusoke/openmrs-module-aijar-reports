@@ -9,6 +9,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reportingcompatibility.service.ReportService.TimeModifier;
 import org.openmrs.module.ugandaemrreports.common.Enums;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.PatientsWithNoClinicalContactDefinition;
+import org.openmrs.module.ugandaemrreports.definition.cohort.definition.TXMLCohortDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
@@ -762,6 +763,13 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
 
     public CohortDefinition getTPTStopDateBetweenPeriod() {
         return df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDate(hivMetadata.getTPTCompletionDate(), null, BaseObsCohortDefinition.TimeModifier.ANY);
+    }
+
+    public CohortDefinition getTX_ML(){
+        TXMLCohortDefinition cohortDefinition = new TXMLCohortDefinition();
+        cohortDefinition.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohortDefinition.addParameter(new Parameter("endDate", "endDate", Date.class));
+        return cohortDefinition;
     }
 
 }
