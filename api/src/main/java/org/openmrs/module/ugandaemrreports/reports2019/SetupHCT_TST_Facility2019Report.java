@@ -121,7 +121,7 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
         CohortDefinition APNReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("f06ce85a-69a3-4415-8cc3-e2b51a4ae6a1")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition IndexClientTestingReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("0e19ee29-a7bf-4580-9313-7853cdc412c1")), BaseObsCohortDefinition.TimeModifier.LAST);
-        CohortDefinition SNSReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("43eae374-df77-464c-ad3c-3deb5bfe2447")), BaseObsCohortDefinition.TimeModifier.LAST);
+        CohortDefinition SNSReasonForTesting = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("2afe1128-c3f6-4b35-b119-d17b9b9958ed"),hivMetadata.getHCTEncounterType(),Arrays.asList(Dictionary.getConcept("b1f34616-de68-4b90-9bc4-f0397692befa")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition males = cohortDefinitionLibrary.males();
         CohortDefinition females = cohortDefinitionLibrary.females();
 
@@ -248,6 +248,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.3.1";
+        return "0.3.2";
     }
 }
