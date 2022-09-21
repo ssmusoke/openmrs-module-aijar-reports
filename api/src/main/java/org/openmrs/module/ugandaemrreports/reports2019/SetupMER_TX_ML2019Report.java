@@ -111,7 +111,9 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getTxNewAgeGenderGroup();
         dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
 
-        CohortDefinition TX_ML = hivCohortDefinitionLibrary.getPatientsWithNoClinicalContactsByEndDateForDays(28);
+
+        CohortDefinition TX_ML = hivCohortDefinitionLibrary.getTX_ML();
+
         CohortDefinition silentlyTransferred=df.getPatientsWithCodedObsDuringPeriod(hivMetadata.getConcept("8f889d84-8e5c-4a66-970d-458d6d01e8a4"),hivMetadata.getMissedAppointmentEncounterType(),
                 Arrays.asList(hivMetadata.getConcept("f57b1500-7ff2-46b4-b183-fed5bce479a9")), BaseObsCohortDefinition.TimeModifier.LAST);
 
@@ -130,6 +132,8 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         CohortDefinition ClientsStoppedonART =df.getPatientsInAny(stoppedARVOnARTCard,stoppedARVTaking);
 
         CohortDefinition diedTraceOutcome=df.getDeadPatientsDuringPeriod();
+
+
 
         CohortDefinition diedOfTB =df.getPatientsWithCodedObsDuringPeriod(getCauseOfDeathConcept(),null, Arrays.asList(hivMetadata.getConcept("dc6527eb-30ab-102d-86b0-7a5022ba4115")), BaseObsCohortDefinition.TimeModifier.LAST);
         CohortDefinition diedOfCancer = df.getPatientsWithCodedObsDuringPeriod(getCauseOfDeathConcept(),null, Arrays.asList(hivMetadata.getConcept("116030AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
@@ -184,7 +188,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         Helper.addIndicator(dsd, "24" + key, label, cohortDefinition, "age=above50male");
     }
 
-
     private Concept getCauseOfDeathConcept(){
         return hivMetadata.getConcept("dca2c3f2-30ab-102d-86b0-7a5022ba4115");
     }
@@ -192,6 +195,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2.0";
+        return "3.2.3";
     }
 }
