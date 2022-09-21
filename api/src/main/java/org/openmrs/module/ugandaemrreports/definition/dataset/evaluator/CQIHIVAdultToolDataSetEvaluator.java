@@ -202,7 +202,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       NUTRITION_SUPPORT.name,\n" +
                 "       CACX_STATUS.name,\n" +
                 "       IFNULL(STABLE.name,'') AS stable,\n" +
-                "       REGIMEN_LINES.concept_id,\n" +
+                "       IFNULL(REGIMEN_LINES.concept_id,1),\n" +
                 "       IFNULL(PP.name,'') as PP," +
                 "       p.dead," +
                 "       IFNULL(TOD.TOdate,'')," +
@@ -394,13 +394,15 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 }
 
                 //regimen lines
-                int lines_concept =(int)o[42];
+                long lines_concept =(long)o[42];
                 if(lines_concept==90271){
                     pdh.addCol(row, "REGIMEN_LINE", 1);
                 }else if(lines_concept==90305){
                     pdh.addCol(row, "REGIMEN_LINE", 2);
                 }else if(lines_concept==162987){
                     pdh.addCol(row, "REGIMEN_LINE", 3);
+                }else{
+                    pdh.addCol(row, "REGIMEN_LINE", "");
                 }
                 String ff = (String)o[43];
                 if(!ff.equals("")){

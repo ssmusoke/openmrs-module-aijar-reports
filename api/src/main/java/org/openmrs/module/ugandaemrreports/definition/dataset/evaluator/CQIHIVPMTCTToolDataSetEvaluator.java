@@ -106,7 +106,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "                IFNULL(NVP.mydate,'') AS NVP_START_DATE,\n" +
                 "                IF(NVP.mydate IS NULL,'', IF(TIMESTAMPDIFF(DAY , NVP.mydate, '%s')<=2,'Y','N')) as NVP\n" +
                 "\n" +
-                "                FROM  (select DISTINCT o.person_id as patient from obs o  WHERE o.voided = 0 and concept_id=90041 and obs_datetime<= '%s' and obs_datetime= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "                FROM  (SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 2 YEAR)))cohort join\n" +
                 "                    person p on p.person_id = cohort.patient\n" +
                 "                    LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as edd_date FROM obs WHERE concept_id=5596 and voided=0 and  obs_datetime<='%s' AND obs_datetime >=DATE_SUB('%s', INTERVAL 1 YEAR) group by person_id)EDD on patient=EDD.person_id\n" +
                 "                    LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')and concept_id=99771 and obs.voided=0 and obs_datetime<='%s' AND obs_datetime >=DATE_SUB('%s', INTERVAL 1 YEAR) group by person_b)A\n" +
@@ -239,7 +239,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "       NUTRITION_SUPPORT.name,\n" +
                 "       CACX_STATUS.name,\n" +
                 "       IFNULL(STABLE.name,'') AS stable,\n" +
-                "       REGIMEN_LINES.concept_id,\n" +
+                "       IFNULL(REGIMEN_LINES.concept_id,1),\n" +
                 "       IFNULL(PP.name,'') as PP," +
                 "       p.dead," +
                 "       IFNULL(TOD.TOdate,'')," +
@@ -251,7 +251,7 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 "       IF(VL.value_numeric>=1000,IF(SWITCHED.value_coded in (163162,163164),'Y','N'),''), " +
                 "       IF(bled_for_vl.bled_date > vl_bled.vl_date, bled_for_vl.bled_date,'') as new_bled_date" +
                 "\n" +
-                "FROM  (select DISTINCT o.person_id as patient from obs o  WHERE o.voided = 0 and concept_id=90041 and obs_datetime<= '%s' and obs_datetime= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "FROM  (SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 2 YEAR)))cohort join\n" +
                 "      person p on p.person_id = cohort.patient LEFT JOIN\n" +
                 "    (SELECT pi.patient_id as patientid,identifier FROM patient_identifier pi INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='e1731641-30ab-102d-86b0-7a5022ba4115'  WHERE  pi.voided=0 group by pi.patient_id)ids on patient=patientid\n" +
                 "    LEFT JOIN(SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90041 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
@@ -431,13 +431,15 @@ public class CQIHIVPMTCTToolDataSetEvaluator implements DataSetEvaluator {
                 }
 
                 //regimen lines
-                int lines_concept =(int)o[42];
+                long lines_concept =(long)o[42];
                 if(lines_concept==90271){
                     pdh.addCol(row, "REGIMEN_LINE", 1);
                 }else if(lines_concept==90305){
                     pdh.addCol(row, "REGIMEN_LINE", 2);
                 }else if(lines_concept==162987){
                     pdh.addCol(row, "REGIMEN_LINE", 3);
+                }else{
+                    pdh.addCol(row, "REGIMEN_LINE", "");
                 }
                 String ff = (String)o[43];
                 if(!ff.equals("")){
