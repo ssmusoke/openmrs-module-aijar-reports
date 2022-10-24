@@ -212,7 +212,10 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       IF(VL.value_numeric>=1000,IFNULL(HIVDRTEST.HIVDR_date,''),''), " +
                 "       HIVDR_TEST_COLECTED.name as SAMPLE_COLLECTED, " +
                 "       IF(VL.value_numeric>=1000,IF(SWITCHED.value_coded in (163162,163164),'Y','N'),''), " +
-                "       IF(bled_for_vl.bled_date > vl_bled.vl_date, bled_for_vl.bled_date,'') as new_bled_date" +
+                "       IF(bled_for_vl.bled_date > vl_bled.vl_date, bled_for_vl.bled_date,'') as new_bled_date, " +
+                "       HD_enc.visit_date," +
+                "       psy_issues.name,\n" +
+                "       psy_intervention.name" +
                 "\n" +
                 "FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
@@ -328,7 +331,12 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "where o.concept_id=164989 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)HIVDR_TEST_COLECTED ON patient=HIVDR_TEST_COLECTED.person_id " +
                 "    LEFT JOIN (SELECT o.person_id, value_coded from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=163166 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 " where o.concept_id=163166 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)SWITCHED on patient = SWITCHED.person_id " +
-                "    LEFT JOIN (SELECT person_id,max(obs_datetime)bled_date from obs where concept_id=165845 and voided=0 group by person_id)bled_for_vl on patient=bled_for_vl.person_id ";
+                "    LEFT JOIN (SELECT person_id,max(obs_datetime)bled_date from obs where concept_id=165845 and voided=0 group by person_id)bled_for_vl on patient=bled_for_vl.person_id " +
+                "    LEFT JOIN (select e.patient_id,max(DATE(encounter_datetime))visit_date from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in ('6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e') and encounter_datetime<= '%s' group by patient_id)as HD_enc on patient=HD_enc.patient_id " +
+                "LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165244 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                " where o.concept_id=165244 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)psy_issues on patient= psy_issues.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165190 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165190 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)psy_intervention on patient= psy_intervention.person_id\n";
         dataQuery =dataQuery.replaceAll("%s",endDate);
 
         SqlQueryBuilder q = new SqlQueryBuilder();
@@ -448,6 +456,9 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 }
                 pdh.addCol(row, "SWITCHED", o[51]);
                 pdh.addCol(row, "NEW_BLED_DATE", o[52]);
+                pdh.addCol(row, "HEALTH_EDUC_DATE", o[53]);
+                pdh.addCol(row, "ISSUES", o[54]);
+                pdh.addCol(row, "APPROACHES", o[55]);
                 fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
                 fillAdvancedDiseaseStatusData(patientno,AHDDataMap,pdh,row);
                 fillNonSuppressedData(patientno,NSDataMap,pdh,row);
