@@ -120,6 +120,40 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         AHD.append(AHDQuery);
         List<Object[]> AHDDataMap = evaluationService.evaluateToList(AHD, context);
 
+        String OtherIndicators = "select patient,en_date,test_type.name,care_entry.name,TEMP.value_numeric,RR.value_numeric,HR.value_numeric,\n" +
+                "       client_category.name,marital.name,art_summary_enc.visit_date,signs.name,side_effects.name,PPS4.name,\n" +
+                "       PSS7.name,PSS9.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
+                "  (SELECT person_id, max(DATE (value_datetime))as en_date FROM obs WHERE concept_id=165312 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)enroll_date on patient=enroll_date.person_id\n" +
+                "  LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99080 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=99080 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)test_type on patient= test_type.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99116 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=99116 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)care_entry on patient= care_entry.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=5088 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=5088 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TEMP on patient=TEMP.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=5242 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=5242 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)RR on patient=RR.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=5087 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
+                "where o.concept_id=5087 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)HR on patient=HR.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, cn.name from person_attribute pa inner join person_attribute_type pat on pa.person_attribute_type_id = pat.person_attribute_type_id and  pat.uuid='dec484be-1c43-416a-9ad0-18bd9ef28929' LEFT JOIN concept_name cn ON value = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where pa.voided=0)client_category on patient =client_category.person_id\n" +
+                "    LEFT JOIN (SELECT person_id, cn.name from person_attribute pa inner join person_attribute_type pat on pa.person_attribute_type_id = pat.person_attribute_type_id and  pat.uuid='8d871f2a-c2cc-11de-8d13-0010c6dffd0f' LEFT JOIN concept_name cn ON value = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where pa.voided=0)marital on patient =marital.person_id\n" +
+                "    LEFT JOIN (select e.patient_id,max(DATE(encounter_datetime))visit_date from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in ('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' group by patient_id)as art_summary_enc on patient=art_summary_enc.patient_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90251 and voided=0 and value_coded not in (90002) group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=90251 and value_coded not in (90002) and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)signs on patient= signs.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90227 and voided=0 and value_coded not in (90002) group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=90227 and value_coded not in (90002) and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)side_effects on patient= side_effects.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165207 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165207 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)PPS4 on patient= PPS4.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99175 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=99175 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)PSS7 on patient= PSS7.person_id\n" +
+                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165218 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
+                "where o.concept_id=165218 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)PSS9 on patient= PSS9.person_id";
+
+        OtherIndicators =OtherIndicators.replaceAll("%s",endDate);
+        SqlQueryBuilder OtherPSSIndicators = new SqlQueryBuilder();
+        OtherPSSIndicators.append(OtherIndicators);
+        List<Object[]> PSSDataMap = evaluationService.evaluateToList(OtherPSSIndicators, context);
+
         String NSRegister = "select patient,dates.session_dates,scores.session_score,adherence.score,hivdr,hivdr_sample_collected.name,vl_after_iac.name,vl_copies.value_numeric,\n" +
                 "       vlreceived.dates,hivdr_results.name,hivdr_result_date.dates,decision_date.dates,decision_outcome.name,new_regimen.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
                 "    person p on p.person_id = cohort.patient INNER JOIN\n" +
@@ -395,7 +429,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 String stable =(String)o[41];
                 if(stable.equals("yes")){
                     pdh.addCol(row, "STABLE", "STABLE");
-                }else if(stable.toLowerCase().equals("no")){
+                }else if(stable.equals("no")){
                     pdh.addCol(row, "STABLE", "UNSTABLE");
                 }else{
                     pdh.addCol(row, "STABLE", "");
@@ -462,6 +496,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
                 fillAdvancedDiseaseStatusData(patientno,AHDDataMap,pdh,row);
                 fillNonSuppressedData(patientno,NSDataMap,pdh,row);
+                fillOtherMissingIndicators(patientno,PSSDataMap,pdh,row);
 
 
 
@@ -512,6 +547,30 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                     pdh.addCol(row, "TB_LAM", o[3]);
                     pdh.addCol(row, "TB_CRAG", o[4]);
                     pdh.addCol(row, "WHO", o[5]);
+                }
+            }
+        }
+    }
+
+    private void fillOtherMissingIndicators(int patientno, List<Object[]> list,PatientDataHelper pdh,DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    pdh.addCol(row, "ENROLLMENT_DATE", o[1]);
+                    pdh.addCol(row, "TEST_TYPE", o[2]);
+                    pdh.addCol(row, "CARE_ENTRY", o[3]);
+                    pdh.addCol(row, "TEMP", o[4]);
+                    pdh.addCol(row, "RR", o[5]);
+                    pdh.addCol(row, "HR", o[6]);
+                    pdh.addCol(row, "CLIENT_CATEGORY", o[7]);
+                    pdh.addCol(row, "MARITAL", o[8]);
+                    pdh.addCol(row, "REGISTRATION_DATE", o[9]);
+                    pdh.addCol(row, "SIGNS", o[10]);
+                    pdh.addCol(row, "SIDE_EFFECTS", o[11]);
+                    pdh.addCol(row, "PSS4", o[12]);
+                    pdh.addCol(row, "PSS7", o[13]);
+                    pdh.addCol(row, "PSS9", o[14]);
                 }
             }
         }
