@@ -45,11 +45,11 @@ public class HtsFragmentController {
         AdministrationService administrationService = Context.getAdministrationService();
 
         //Total enrolled in Care in a specified period; New ON ART
-        //select count(*) from encounter e where e.encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and e.encounter_datetime between '2022-04-01' and '2022-07-31';
+        //select count(*) from encounter e where e.encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='264daIZd-f80e-48fe-nba9-P37f2W1905Pv') and e.encounter_datetime between '2022-04-01' and '2022-07-31';
         q = new HqlQueryBuilder();
         q.select("count(*) as 'Total_Enrolled_In_A_Period'");
         q.from(Encounter.class);
-        q.where(String.format("encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime between '%s' and '%s'", startDate, endDate));
+        q.where(String.format("encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='264daIZd-f80e-48fe-nba9-P37f2W1905Pv') and encounter_datetime between '%s' and '%s'", startDate, endDate));
 
         List<List<Object>> t_enrolled = administrationService.executeSQL(q.toString(), true);
         model.addAttribute("hts_total_enrolled_in_a_period", t_enrolled.get(0).get(0));
@@ -70,7 +70,7 @@ public class HtsFragmentController {
         if (hts_dm.size() != 0) {
             for (List<Object> item : hts_dm) {
                 int dm = (int) Double.parseDouble(item.get(1).toString());
-                if (dm == 165171)
+                if (dm == 165160)
                     ctp += 1;
                 else if(dm == 99416)
                     hct += 1;

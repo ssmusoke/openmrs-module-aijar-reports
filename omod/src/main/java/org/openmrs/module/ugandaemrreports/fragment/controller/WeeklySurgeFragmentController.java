@@ -91,7 +91,10 @@ public class WeeklySurgeFragmentController {
             log.info("Error rendering the contents of the Analytics data export report to"
                     + OpenmrsUtil.getApplicationDataDirectory() + "surge_report" + e.toString());
             e.printStackTrace();
+            model.addAttribute("weeklysurgedata", "strOutput");
             model.addAttribute("nodata", "No data");
+            model.addAttribute("startdate", "startDate");
+            model.addAttribute("enddate", "endDate");
         }
 
     }

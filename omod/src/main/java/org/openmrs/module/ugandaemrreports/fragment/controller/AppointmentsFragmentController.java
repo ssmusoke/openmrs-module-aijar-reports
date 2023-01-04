@@ -2,10 +2,12 @@ package org.openmrs.module.ugandaemrreports.fragment.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.EncounterCohortDefinition;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AppointmentsFragmentController {
@@ -53,18 +56,29 @@ public class AppointmentsFragmentController {
         //visit attended on scheduled
         //select value_numeric from obs where concept_id=90069 and date(obs_datetime)='2022-06-06'
         q = new HqlQueryBuilder();
-        q.select("value_numeric");
+        q.select("count(*) as 'p_enrolled_in_a_period'");
         q.from(Obs.class);
         q.where(String.format("concept_id=%s and date(obs_datetime) ='%s'",90069, startDate));
 
-        List<List<Object>> v_onattended = administrationService.executeSQL(q.toString(), true);
+        List<List<Object>> visit_on_schedule = administrationService.executeSQL(q.toString(), true);
+        log.info(visit_on_schedule.size() + ":visit_on_schedule");
 
-        log.info(v_onattended.size() + ":onattended");
-        //put logic to to check if return value is null
+        q = new HqlQueryBuilder();
+        q.select("count(*) as 'Total_Enrolled_In_A_Period'");
+        q.from(Encounter.class);
+        q.where(String.format("encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime ='%s'", startDate));
+
+        List<List<Object>> p_enrolled_in_a_period = administrationService.executeSQL(q.toString(), true);
+        log.info(p_enrolled_in_a_period.size() + ":total clients");
+
 
         int attended_ontime = 0, non_attended_ontime = 0;
-        if (v_onattended.size() != 0) {
-            for (List<Object> item : v_onattended) {
+
+        attended_ontime=visit_on_schedule.size();
+        non_attended_ontime=(p_enrolled_in_a_period.size()-attended_ontime);
+        /*
+        if (visit_on_schedule.size() != 0) {
+            for (List<Object> item : visit_on_schedule) {
                 int v = (int) Double.parseDouble(item.get(1).toString());
                 if (v == 1)
                     attended_ontime += 1;
@@ -72,6 +86,8 @@ public class AppointmentsFragmentController {
                     non_attended_ontime += 1;
             }
         }
+         */
+
 
         //add returned record to a model attribute for further processing on the UI
         model.addAttribute("attended_ontime", attended_ontime);

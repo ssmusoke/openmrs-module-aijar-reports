@@ -10,7 +10,12 @@ import org.openmrs.api.EncounterService;
 import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
+import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.ui.framework.page.PageModel;
@@ -25,6 +30,7 @@ import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import org.openmrs.Cohort;
 
 public class CareTreatmentFragmentController {
 
@@ -33,6 +39,12 @@ public class CareTreatmentFragmentController {
 
     @Autowired
     EncounterService encounterService;
+
+    @Autowired
+    HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
+
+    @Autowired
+    EvaluationContext evaluationContext;
 
     HqlQueryBuilder q = null;
     String dateSpliter = "=:";
@@ -46,6 +58,8 @@ public class CareTreatmentFragmentController {
             });
         }
 
+        evaluationContext=new EvaluationContext();
+
         //Computing Reporting period basing on the Current Date on the Server/Pc.
         model.addAttribute("quarter", getReportingPeriod().split(dateSpliter)[0]);
         model.addAttribute("sdate", getReportingPeriod().split(dateSpliter)[1]);
@@ -57,7 +71,7 @@ public class CareTreatmentFragmentController {
 
         AdministrationService administrationService = Context.getAdministrationService();
 
-        //Monthly enrollements
+        //Monthly enrollments
         //Query returning the number of client whose enrollment date fall within the same month => Month:Number Enrolled
         q = new HqlQueryBuilder();
         q.select("monthname(encounter_datetime) as 'Month',count(month(encounter_datetime)) as 'Number_Enrolled_In_A_Month'");
@@ -98,10 +112,16 @@ public class CareTreatmentFragmentController {
             log.error("===========:" + total_patients_system + ":total_patients_system==============");
 
         } else {
-            log.info("===========:getting records from database total_patients_system==============");
+            log.info("===========:getting records from database total_patients_system_database==============");
             q = new HqlQueryBuilder();
             q.select("count(*) as 'total_patients_system'");
-            q.from(Patient.class);
+            q.from(Encounter.class);
+            q.where(String.format("encounter_type =(select et.encounter_type_id from encounter_type et where et.uuid='8d5b27bc-c2cc-11de-8d13-0010c6dffd0f')"));
+
+            /*before
+                q.select("count(*) as 'total_patients_system'");
+                q.from(Patient.class);
+            */
             //q.where(String.format("add where close to eliminate deceased and lost to follow up"));
 
             log.error(q.toString() + " getting records from database total_patients_system");
@@ -185,6 +205,18 @@ public class CareTreatmentFragmentController {
         model.addAttribute("tt_suppressed_in_period", suppressed);
         model.addAttribute("tt_non_suppressed_in_period", non_suppressed);
 
+        //To be tried out in the next release
+        /*
+            CohortDefinition cohortDefinition = hivCohortDefinitionLibrary.getPatientsTxLostToFollowupByDays("28");
+
+            try {
+                Cohort cohort =Context.getService(CohortDefinitionService.class).evaluate(cohortDefinition, evaluationContext);
+                log.error(cohort.size() + " Testing_Cohort definitions===========================");
+
+            } catch (EvaluationException e) {
+                throw new RuntimeException(e);
+            }
+        */
     }
 
     private String getReportingPeriod() {
