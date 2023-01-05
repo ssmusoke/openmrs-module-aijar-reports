@@ -25,7 +25,7 @@
         <developerConnection>scm:git:git@github.com:METS-Programme/openmrs-module-ugandaemr-reports.git
         </developerConnection>
         <url>scm:git:https://github.com/METS-Programme/openmrs-module-ugandaemr-reports</url>
-        <tag> 2.0.36_Alpha</tag>
+        <tag>2.0.36-SNAPSHOT</tag>
     </scm>
 
     <modules>
