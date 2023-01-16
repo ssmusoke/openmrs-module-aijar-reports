@@ -1,7 +1,5 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-import org.apache.commons.lang.StringUtils;
-import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
@@ -19,25 +17,21 @@ import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.Helper;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.definition.cohort.definition.ActivesInCareCohortDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolLiteDataSetDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
-import java.util.regex.Pattern;
 
-@Handler(supports = {CQIHIVAdultToolDataSetDefinition.class})
-public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
+@Handler(supports = {CQIHIVAdultToolLiteDataSetDefinition.class})
+public class CQIHIVAdultToolLiteDataSetEvaluator implements DataSetEvaluator {
 
     @Autowired
     EvaluationService evaluationService;
 
-    @Autowired
-    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 
-        CQIHIVAdultToolDataSetDefinition definition = (CQIHIVAdultToolDataSetDefinition) dataSetDefinition;
+        CQIHIVAdultToolLiteDataSetDefinition definition = (CQIHIVAdultToolLiteDataSetDefinition) dataSetDefinition;
 
         CohortDefinitionService cohortDefinitionService =Context.getService(CohortDefinitionService.class);
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
@@ -77,53 +71,11 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         Date otherPreviousEndDate =newDate2.getTime();
 
 
-        String lostInPreviousPeriodString = "select t.patient_id from (select patient_id, max(value_datetime) return_visit_date,datediff('"+DateUtil.formatDate(endDateForPreviousPeriod, "yyyy-MM-dd")+"',max(value_datetime)) ltfp_days from encounter e inner  join obs o on e.encounter_id = o.encounter_id inner join encounter_type t on  t.encounter_type_id =e.encounter_type where encounter_datetime <='" + DateUtil.formatDate(endDateForPreviousPeriod, "yyyy-MM-dd")+"'"+
-        "and t.uuid = '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f' and  o.concept_id=5096 and o.value_datetime >= '"+DateUtil.formatDate(startDateForPreviousPeriod, "yyyy-MM-dd")+"'  and e.voided=0 and o.voided=0 group by patient_id) as t  where ltfp_days >=28";
-
-        SqlQueryBuilder lostinpreviousperiod = new SqlQueryBuilder();
-        lostinpreviousperiod.append(lostInPreviousPeriodString);
-        List<Integer> lostInPreviousPeriod =  evaluationService.evaluateToList(lostinpreviousperiod,Integer.class, context);
-
-
-        String startARTInCurrentPeriodString = "SELECT person_id FROM obs  WHERE concept_id=99161 and voided=0 and value_datetime between '"+startDateString+"' AND '"+endDate+"' ";
-
-        SqlQueryBuilder startART = new SqlQueryBuilder();
-        startART.append(startARTInCurrentPeriodString);
-        List<Integer> startARTInReportingPeriod =  evaluationService.evaluateToList(startART,Integer.class, context);
-
-        ActivesInCareCohortDefinition activesInCareCohortDefinitionPreviousPeriod = new ActivesInCareCohortDefinition();
-        activesInCareCohortDefinitionPreviousPeriod.setEndDate(endDateForPreviousPeriod);
-        activesInCareCohortDefinitionPreviousPeriod.setStartDate(startDateForPreviousPeriod);
-        activesInCareCohortDefinitionPreviousPeriod.setLostToFollowupDays("28");
-        Cohort activeInPreviousPeriod = cohortDefinitionService.evaluate(activesInCareCohortDefinitionPreviousPeriod,context);
-
-        ActivesInCareCohortDefinition activesInCareCohortDefinitionInOtherPreviousPeriod = new ActivesInCareCohortDefinition();
-        activesInCareCohortDefinitionInOtherPreviousPeriod.setEndDate(otherPreviousEndDate);
-        activesInCareCohortDefinitionInOtherPreviousPeriod.setStartDate(otherPreviousStartDate);
-        activesInCareCohortDefinitionInOtherPreviousPeriod.setLostToFollowupDays("28");
-        Cohort activeInOtherPreviousPeriod = cohortDefinitionService.evaluate(activesInCareCohortDefinitionInOtherPreviousPeriod,context);
-
-        String AHDQuery = "select patient,CD4.value_numeric ,CD4Baseline.value_numeric,TB_LAM.name,CRAG.name,WHO_STAGE.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 6 MONTH))cohort join\n" +
-                "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
-                "    (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=5497 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
-                "where o.concept_id=5497 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)CD4 on patient=CD4.person_id\n" +
-                "    LEFT JOIN (SELECT o.person_id,value_numeric from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99071 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
-                "where o.concept_id=99071 and obs_datetime =A.latest_date and o.voided=0  and obs_datetime <='%s' group by o.person_id)CD4Baseline on patient=CD4Baseline.person_id\n" +
-                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165291 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
-                "where o.concept_id=165291 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)TB_LAM on patient= TB_LAM.person_id\n" +
-                "    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165290 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
-                "where o.concept_id=165290 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)CRAG on patient= CRAG.person_id " +
-                "   LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90203 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
-                "where o.concept_id=90203 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' group by o.person_id)WHO_STAGE on patient= WHO_STAGE.person_id\n";
-
-        AHDQuery =AHDQuery.replaceAll("%s",endDate);
-        SqlQueryBuilder AHD = new SqlQueryBuilder();
-        AHD.append(AHDQuery);
-        List<Object[]> AHDDataMap = evaluationService.evaluateToList(AHD, context);
+        String CohortQuery = "select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 6 MONTH)";
 
         String OtherIndicators = "select patient,en_date,test_type.name,care_entry.name,TEMP.value_numeric,RR.value_numeric,HR.value_numeric,\n" +
                 "       client_category.name,marital.name,art_summary_enc.visit_date,signs.name,side_effects.name,PPS4.name,\n" +
-                "       PSS7.name,PSS9.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 1 YEAR))cohort join\n" +
+                "       PSS7.name,PSS9.name FROM  ("+CohortQuery+")cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
                 "  (SELECT person_id, max(DATE (value_datetime))as en_date FROM obs WHERE concept_id=165312 and voided=0 and  value_datetime<='%s' AND obs_datetime <='%s' group by person_id)enroll_date on patient=enroll_date.person_id\n" +
                 "  LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99080 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
@@ -155,8 +107,9 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         OtherPSSIndicators.append(OtherIndicators);
         List<Object[]> PSSDataMap = evaluationService.evaluateToList(OtherPSSIndicators, context);
 
+
         String NSRegister = "select patient,dates.session_dates,scores.session_score,adherence.score,hivdr,hivdr_sample_collected.name,vl_after_iac.name,vl_copies.value_numeric,\n" +
-                "       vlreceived.dates,hivdr_results.name,hivdr_result_date.dates,decision_date.dates,decision_outcome.name,new_regimen.name FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 6 MONTH))cohort join\n" +
+                "       vlreceived.dates,hivdr_results.name,hivdr_result_date.dates,decision_date.dates,decision_outcome.name,new_regimen.name FROM  ("+CohortQuery+")cohort join\n" +
                 "    person p on p.person_id = cohort.patient INNER JOIN\n" +
                 "    (SELECT o.person_id from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=856 and voided=0 group by person_id)A on o.person_id = A.person_id\n" +
                 "where o.concept_id=856 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <='%s' and value_numeric>1000 group by o.person_id)VL on patient=VL.person_id\n" +
@@ -252,7 +205,7 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 "       psy_issues.name,\n" +
                 "       psy_intervention.name" +
                 "\n" +
-                "FROM  (select DISTINCT e.patient_id as patient from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= '%s' and encounter_datetime>= DATE_SUB('%s', INTERVAL 6 MONTH))cohort join\n" +
+                "FROM  ("+CohortQuery+")cohort join\n" +
                 "    person p on p.person_id = cohort.patient LEFT JOIN\n" +
                 "    (SELECT pi.patient_id as patientid,identifier FROM patient_identifier pi INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='e1731641-30ab-102d-86b0-7a5022ba4115'  WHERE  pi.voided=0 group by pi.patient_id)ids on patient=patientid\n" +
                 "    LEFT JOIN(SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=90041 and voided=0 group by person_id)A on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en'\n" +
@@ -386,55 +339,30 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "Gender", o[1]);
                 pdh.addCol(row, "Date of Birth",  o[3]);
                 pdh.addCol(row, "Age", o[4]);
-                pdh.addCol(row, "Preg", o[5]);
-                pdh.addCol(row, "Weight", o[6]);
                 pdh.addCol(row, "DSDM", o[7]);
-                pdh.addCol(row, "VisitType", o[8]);
                 pdh.addCol(row, "Last Visit Date",  o[9]);
                 pdh.addCol(row, "Next Appointment Date",  o[10]);
                 pdh.addCol(row, "Prescription Duration", o[11]);
                 pdh.addCol(row, "ART Start Date", o[12]);
-//                pdh.addCol(row, "CurrentRegimenLine", (String)o[]);
                 pdh.addCol(row, "Current Regimen", (String)o[14]);
-//                pdh.addCol(row, "Current Regimen Date",  o[15]);
                 pdh.addCol(row, "Adherence", o[13]);
                 pdh.addCol(row, "VL Quantitative", o[15]);
-                pdh.addCol(row, "VL QTY", o[16]);
 
                 pdh.addCol(row, "Last TPT Status", o[17]);
                 pdh.addCol(row, "TB Status", o[18]);
-                pdh.addCol(row, "HEPB", o[19]);
-                pdh.addCol(row, "SYPHILLIS", o[20]);
-                pdh.addCol(row, "FAMILY", o[21]);
-                pdh.addCol(row, "ADV", o[22]);
                 pdh.addCol(row, "VL Date", o[23]);
                 pdh.addCol(row, "CHILD_AGE", o[24]);
                 pdh.addCol(row, "CHILD_KNOWN", o[25]);
-                pdh.addCol(row, "CHILD_HIV", o[26]);
-                pdh.addCol(row, "CHILD_ART", o[27]);
 
                 pdh.addCol(row, "PARTNER_AGE", o[28]);
                 pdh.addCol(row, "PARTNER_KNOWN", o[29]);
-                pdh.addCol(row, "PARTNER_HIV", o[30]);
-                pdh.addCol(row, "PARTNER_ART", o[31]);
                 pdh.addCol(row, "PSY_CODES", o[32]);
-                pdh.addCol(row, "DEPRESSION", o[33]);
-                pdh.addCol(row, "GBV", o[34]);
-                pdh.addCol(row, "LINKAGE", o[35]);
+
                 pdh.addCol(row, "OVC1", o[36]);
                 pdh.addCol(row, "OVC2", o[37]);
-                pdh.addCol(row, "NUTRITION_STATUS", o[38]);
-                pdh.addCol(row, "NUTRITION_SUPPORT", o[39]);
                 pdh.addCol(row, "CACX_STATUS", o[40]);
 
-                String stable =(String)o[41];
-                if(stable.equals("yes")){
-                    pdh.addCol(row, "STABLE", "STABLE");
-                }else if(stable.equals("no")){
-                    pdh.addCol(row, "STABLE", "UNSTABLE");
-                }else{
-                    pdh.addCol(row, "STABLE", "");
-                }
+
 
                 //regimen lines
                 long lines_concept =(long)o[42];
@@ -484,32 +412,14 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
                 }
 
                 pdh.addCol(row, "IAC", o[48]);
-                if((String)o[50]=="yes") {
-                    pdh.addCol(row, "HIVDRT", o[49]);
-                }else{
-                    pdh.addCol(row, "HIVDRT", "");
-                }
-                pdh.addCol(row, "SWITCHED", o[51]);
+
                 pdh.addCol(row, "NEW_BLED_DATE", o[52]);
-                pdh.addCol(row, "HEALTH_EDUC_DATE", o[53]);
                 pdh.addCol(row, "ISSUES", o[54]);
                 pdh.addCol(row, "APPROACHES", o[55]);
                 Helper.fillInCurrentARVStartDate(patientno,arvStartDateMap,pdh,row);
-                Helper.fillAdvancedDiseaseStatusData(patientno,AHDDataMap,pdh,row);
-                Helper.fillNonSuppressedData(patientno,NSDataMap,pdh,row);
-                Helper.fillOtherMissingIndicators(patientno,PSSDataMap,pdh,row);
+                fillOtherMissingIndicators(patientno,PSSDataMap,pdh,row);
+                fillNonSuppressedData(patientno,NSDataMap,pdh,row);
 
-
-
-                if(activeInPreviousPeriod.contains(patientno)){
-                    pdh.addCol(row, "previousStatus", "Active(TX_CURR)");
-                }else if(lostInPreviousPeriod.contains(patientno)&& activeInOtherPreviousPeriod.contains(patientno)) {
-                    pdh.addCol(row, "previousStatus", "Lost(TX-ML)");
-                }else if ( startARTInReportingPeriod.contains(patientno)){
-                    pdh.addCol(row, "previousStatus", " ");
-                } else{
-                    pdh.addCol(row, "previousStatus", "LTFU");
-                }
 
                 dataSet.addRow(row);
             }
@@ -525,4 +435,40 @@ public class CQIHIVAdultToolDataSetEvaluator implements DataSetEvaluator {
         return cal;
     }
 
+    public static void fillNonSuppressedData(int patientno, List<Object[]> list, PatientDataHelper pdh, DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", o[5]);
+                    pdh.addCol(row, "RESULTS_RECEIVED", o[8]);
+                    pdh.addCol(row, "HIVDR_RESULTS", o[9]);
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", o[10]);
+                    pdh.addCol(row, "DECISION_OUTCOME", o[12]);
+                    pdh.addCol(row, "NEW REGIMEN", o[13]);
+                }else{
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", "");
+                    pdh.addCol(row, "RESULTS_RECEIVED", "");
+                    pdh.addCol(row, "HIVDR_RESULTS", "");
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", "");
+                    pdh.addCol(row, "DECISION_OUTCOME", "");
+                    pdh.addCol(row, "NEW REGIMEN", "");
+
+                }
+            }
+        }
+    }
+
+    public static void fillOtherMissingIndicators(int patientno, List<Object[]> list, PatientDataHelper pdh, DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    pdh.addCol(row, "ENROLLMENT_DATE", o[1]);
+                    pdh.addCol(row, "PSS4", o[12]);
+                }
+            }
+        }
+    }
 }

@@ -812,6 +812,22 @@
       "order": 6
       },
       {
+        "id": "HIV Care and Treatment Audit Tool-Resized",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+        "type": "link",
+        "label": "HIV Care and Treatment Audit Tool-Resized",
+        "url": "reportingui/runReport.page?reportDefinition=7519b171-bfe1-47fe-8a2f-2a9bff6d694f",
+        "order": 4
+      },
+      {
+        "id": "PMTCT Audit Tool-Resized",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+        "type": "link",
+        "label": "PMTCT Audit tool-Resized",
+        "url": "reportingui/runReport.page?reportDefinition=9f629343-0b9b-4717-a824-2ba02f853a96",
+        "order": 7
+      },
+      {
         "id": "Weekly Surge Report",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.weekly",
         "type": "link",

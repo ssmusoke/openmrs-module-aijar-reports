@@ -1,27 +1,18 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.data.converter.ObsValueConverter;
-import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
+
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolLiteDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,7 +20,7 @@ import java.util.Properties;
  * Care and Treatment Audit Tool
  */
 @Component
-public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExportManager {
+public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Autowired
 	ARTClinicCohortDefinitionLibrary hivCohorts;
@@ -45,17 +36,17 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "2ae5a9ef-7e11-41e0-947f-2aa9581c6722";
+		return "0d5e7f9e-0679-412f-9cc7-068d7ed07b05";
 	}
 
 	@Override
 	public String getUuid() {
-		return "bc18e380-039e-482a-96c0-1555f3fdb773";
+		return "7519b171-bfe1-47fe-8a2f-2a9bff6d694f";
 	}
 
 	@Override
 	public String getName() {
-		return "HIV Care and Treatment Service Quality Assessment Tool -PMTCT";
+		return "HIV Care and Treatment Service Quality Assessment Tool Lite Version";
 	}
 
 	@Override
@@ -86,7 +77,7 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CQIAudiTool-PMTCT.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HIV_AUDIT_TOOL_Lite.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -102,16 +93,15 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		CQIHIVPMTCTToolDataSetDefinition dataSetDefinition = new CQIHIVPMTCTToolDataSetDefinition();
+		CQIHIVAdultToolLiteDataSetDefinition dataSetDefinition = new CQIHIVAdultToolLiteDataSetDefinition();
 		dataSetDefinition.setName(getName());
 		dataSetDefinition.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
 		return rd;
 	}
 
-
 	@Override
 	public String getVersion() {
-		return "0.3.6.1";
+		return "0.2.4";
 	}
 }
