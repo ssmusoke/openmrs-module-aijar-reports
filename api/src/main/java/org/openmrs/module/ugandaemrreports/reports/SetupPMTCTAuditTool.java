@@ -76,7 +76,7 @@ public class SetupPMTCTAuditTool extends UgandaEMRDataExportManager {
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CQIAUDIT_TOOL_PMTCT.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PMTCT_AUDIT_TOOL.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -102,6 +102,6 @@ public class SetupPMTCTAuditTool extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.3.8";
+		return "0.4.1";
 	}
 }

@@ -4,9 +4,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolLiteDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.evaluator.CQIHIVPMTCTToolLiteDataSetEvaluator;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingPMTCTDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -58,7 +56,6 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
-		l.add(df.getEndDateParameter());
 		return l;
 	}
 
@@ -94,7 +91,7 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		CQIHIVPMTCTToolLiteDataSetDefinition dataSetDefinition = new CQIHIVPMTCTToolLiteDataSetDefinition();
+		ReportingPMTCTDataSetDefinition dataSetDefinition = new ReportingPMTCTDataSetDefinition();
 		dataSetDefinition.setName(getName());
 		dataSetDefinition.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
@@ -104,6 +101,6 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1.4";
+		return "0.1.9";
 	}
 }

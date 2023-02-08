@@ -5,7 +5,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolLiteDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingAuditToolDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingComprehensiveAuditToolDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
@@ -20,7 +21,7 @@ import java.util.Properties;
  * Care and Treatment Audit Tool
  */
 @Component
-public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportManager {
+public class SetupHIVCareAndTreatmentAuditTool extends UgandaEMRDataExportManager {
 
 	@Autowired
 	ARTClinicCohortDefinitionLibrary hivCohorts;
@@ -36,17 +37,17 @@ public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "0d5e7f9e-0679-412f-9cc7-068d7ed07b05";
+		return "a899c5a7-17d4-4c47-a431-89d8d44f5768";
 	}
 
 	@Override
 	public String getUuid() {
-		return "7519b171-bfe1-47fe-8a2f-2a9bff6d694f";
+		return "b5cbec70-3dcf-4b4b-99f9-45e0f0a9a23b";
 	}
 
 	@Override
 	public String getName() {
-		return "HIV Care and Treatment Service Quality Assessment Tool Lite Version";
+		return "HIV Care and Treatment Service Quality Assessment Tool ";
 	}
 
 	@Override
@@ -57,7 +58,6 @@ public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
-		l.add(df.getEndDateParameter());
 		return l;
 	}
 
@@ -77,7 +77,7 @@ public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HIV_AUDIT_TOOL_Lite.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HIV_AUDIT_TOOL.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -93,7 +93,7 @@ public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		CQIHIVAdultToolLiteDataSetDefinition dataSetDefinition = new CQIHIVAdultToolLiteDataSetDefinition();
+		ReportingComprehensiveAuditToolDataSetDefinition dataSetDefinition = new ReportingComprehensiveAuditToolDataSetDefinition();
 		dataSetDefinition.setName(getName());
 		dataSetDefinition.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
@@ -102,6 +102,6 @@ public class SetupARTCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 
 	@Override
 	public String getVersion() {
-		return "0.2.4";
+		return "0.1.3";
 	}
 }
