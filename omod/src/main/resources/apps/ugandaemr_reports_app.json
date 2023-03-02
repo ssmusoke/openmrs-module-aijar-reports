@@ -11,6 +11,11 @@
         "supportedExtensionTypes": [ "link" ]
       },
       {
+        "id": "org.openmrs.module.ugandaemr.reports.cqi",
+        "description": "CQI Reports",
+        "supportedExtensionTypes": [ "link" ]
+      },
+      {
         "id": "org.openmrs.module.ugandaemr.reports.quarterly",
         "description": "Links to available Quarterly Reports",
         "supportedExtensionTypes": [ "link" ]
@@ -834,6 +839,15 @@
         "label": "Weekly Surge Report",
         "url": "reportingui/runReport.page?reportDefinition=e7102e5c-b90d-4a4a-b763-20518eadbae5",
         "order": 5
+      },
+      {
+        "id": "ugandaemr.facility.emrdashboard.homepageLink",
+        "extensionPointId": "org.openmrs.referenceapplication.homepageLink",
+        "type": "link",
+        "label": "Facility Dashboard",
+        "url": "ugandaemrreports/dashboard.page",
+        "icon": "icon-bar-chart",
+        "requiredPrivilege": ""
       }
     ]
   }
