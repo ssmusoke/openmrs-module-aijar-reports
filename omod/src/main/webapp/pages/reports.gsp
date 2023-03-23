@@ -16,6 +16,7 @@
     def contextModel = [:]
 %>
 
+
 <script type="text/javascript">
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},

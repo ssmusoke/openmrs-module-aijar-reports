@@ -34,6 +34,7 @@
 		grid-area:content1;
 	}
 
+
 	#content2{
 		background:#FFFFFF;
 		grid-area:content2;
