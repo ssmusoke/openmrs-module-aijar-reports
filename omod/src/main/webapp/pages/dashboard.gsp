@@ -54,7 +54,7 @@ body {font-family: Arial;}
 <!--Section for Care and Treatment dashboard-->
 <div id="careandtreatment" class="tabcontent" style="display:block">
 
-    ${ ui.includeFragment("ugandaemrreports", "careTreatment") }
+    ${ ui.includeFragment("ugandaemrreports", "care") }
 
 </div>
 
