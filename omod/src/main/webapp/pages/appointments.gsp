@@ -4,6 +4,7 @@
 
 ${ ui.includeFragment("ugandaemrreports", "appointments") }
 
+
 <% } else { %>
 
 <% } %>

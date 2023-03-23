@@ -8,4 +8,5 @@
 
 <% } %>
 
+
 ${ ui.includeFragment("ugandaemrreports", "patients") }

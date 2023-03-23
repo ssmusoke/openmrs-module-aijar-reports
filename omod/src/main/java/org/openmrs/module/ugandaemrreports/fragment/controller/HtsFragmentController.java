@@ -62,7 +62,7 @@ public class HtsFragmentController {
         q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",165171, startDate, endDate));
         q.groupBy("person_id");
 
-        log.error(q.toString() + " query delivery model");
+        log.info(q.toString() + " query delivery model");
 
         List<List<Object>> hts_dm = administrationService.executeSQL(q.toString(), true);
         log.info(hts_dm.size() + ":Hts Records Returned");
@@ -94,7 +94,7 @@ public class HtsFragmentController {
         q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",99493, startDate, endDate));
         q.groupBy("person_id");
 
-        log.error(q.toString() + " query hts-test results");
+        log.info(q.toString() + " query hts-test results");
 
         List<List<Object>> hts_ts = administrationService.executeSQL(q.toString(), true);
         log.info(hts_ts.size() + ":Hts test results Returned");
@@ -133,7 +133,7 @@ public class HtsFragmentController {
         q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",162918, startDate, endDate));
         q.groupBy("person_id");
 
-        log.error(q.toString() + " query Counselling");
+        log.info(q.toString() + " query Counselling");
 
         List<List<Object>> hts_counselling = administrationService.executeSQL(q.toString(), true);
         log.info(hts_counselling.size() + ":Hts Records Returned");
@@ -160,7 +160,7 @@ public class HtsFragmentController {
         q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",165168, startDate, endDate));
         q.groupBy("person_id");
 
-        log.error(q.toString() + " query reason for testing");
+        log.info(q.toString() + " query reason for testing");
 
         List<List<Object>> hts_reason_4_testing = administrationService.executeSQL(q.toString(), true);
         int total_reason_4_testing= hts_reason_4_testing.size();

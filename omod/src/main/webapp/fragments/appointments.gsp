@@ -42,6 +42,7 @@
 
 <div class="container-dashboard-appointments">
 
+
 <div id=fa><b>Reporting Period:${ui.format(quarter)}</b></div>
 
 <div id=ga1><canvas id="appointment_status" style="width:100%;height:100%"></canvas></div>
