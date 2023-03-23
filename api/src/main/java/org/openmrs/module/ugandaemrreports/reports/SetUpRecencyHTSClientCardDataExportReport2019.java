@@ -61,7 +61,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
     @Override
     public String getVersion() {
-        return "1.1.1";
+        return "1.1.2";
     }
 
     /**
@@ -174,6 +174,8 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
         dsd.addColumn("referred_location", sdd.definition("referralPlace", getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("dhis2_uuid", sdd.getDHIS2Uuid(), (String) null);
         dsd.addColumn( "encounter_uuid", df.getHTSEncounterUuid(), (String) null);
+        dsd.addColumn("recency viral load result", sdd.definition("recencyVLresult", getConcept("dc8d83e3-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("recency viral load undetectable", sdd.definition("recencyVLundetectable", getConcept("dca1269d-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         return dsd;
     }
 }
