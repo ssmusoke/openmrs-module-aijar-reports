@@ -2,8 +2,6 @@ package org.openmrs.module.ugandaemrreports.fragment.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.Concept;
-import org.openmrs.ConceptName;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -12,7 +10,6 @@ import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Metadata;
 import org.openmrs.ui.framework.fragment.FragmentModel;
 import org.openmrs.util.OpenmrsUtil;
 
@@ -21,12 +18,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class WeeklySurgeFragmentController {
+public class SurgeFragmentController {
 
     protected final Log log = LogFactory.getLog(getClass());
     private final String outPutPath =OpenmrsUtil.getApplicationDataDirectory() +"surge_report_dashboard";

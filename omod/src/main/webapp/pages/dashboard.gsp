@@ -75,7 +75,7 @@ body {font-family: Arial;}
 <!--Weekly Surge dashboard-->
 <div id="weeklysurge" class="tabcontent">
 
-    ${ ui.includeFragment("ugandaemrreports", "weeklySurge") }
+    ${ ui.includeFragment("ugandaemrreports", "surge") }
 
 </div>
 
