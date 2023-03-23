@@ -101,7 +101,7 @@ public class AppointmentsFragmentController {
         q.where(String.format("concept_id=%s",160288));
         q.groupBy("value_coded");
 
-        log.error(q.toString() + " reasons for the next appointment");
+        log.info(q.toString() + " reasons for the next appointment");
 
         List<List<Object>> rn_appointments = administrationService.executeSQL(q.toString(), true);
         log.info(rn_appointments.size() + ":rn_appointments");

@@ -82,7 +82,7 @@ public class WeeklySurgeFragmentController {
             String strOutput ="";
             strOutput= this.readOutputFile(strOutput);
 
-            log.error("From WeeklySurgeFragment::" + strOutput.length());
+            log.info("From WeeklySurgeFragment::" + strOutput.length());
             model.addAttribute("weeklysurgedata", strOutput);
             model.addAttribute("startdate", startDate);
             model.addAttribute("enddate", endDate);
