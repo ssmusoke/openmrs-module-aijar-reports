@@ -3,36 +3,24 @@ package org.openmrs.module.ugandaemrreports.fragment.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.Patient;
 import org.openmrs.api.AdministrationService;
 import org.openmrs.api.EncounterService;
-import org.openmrs.api.ObsService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
-import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.querybuilder.HqlQueryBuilder;
 import org.openmrs.module.ugandaemrreports.library.HIVCohortDefinitionLibrary;
 import org.openmrs.ui.framework.annotation.SpringBean;
 import org.openmrs.ui.framework.fragment.FragmentModel;
-import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
-import org.openmrs.Cohort;
 
-public class CareTreatmentFragmentController {
+public class CareFragmentController {
 
 
     protected final Log log = LogFactory.getLog(getClass());

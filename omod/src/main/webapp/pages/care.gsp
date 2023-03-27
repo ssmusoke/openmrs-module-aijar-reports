@@ -2,7 +2,8 @@
 
 <% if (context.authenticated) { %>
 
-${ ui.includeFragment("ugandaemrreports", "careTreatment") }
+${ ui.includeFragment("ugandaemrreports", "care") }
+
 
 
 <% } else { %>
