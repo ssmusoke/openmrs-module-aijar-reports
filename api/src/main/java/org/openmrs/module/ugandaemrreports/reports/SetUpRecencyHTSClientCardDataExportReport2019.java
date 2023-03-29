@@ -174,8 +174,8 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
         dsd.addColumn("referred_location", sdd.definition("referralPlace", getConcept("dce015bb-30ab-102d-86b0-7a5022ba4115")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("dhis2_uuid", sdd.getDHIS2Uuid(), (String) null);
         dsd.addColumn( "encounter_uuid", df.getHTSEncounterUuid(), (String) null);
-        dsd.addColumn("recency viral load result", sdd.definition("recencyVLresult", getConcept("5fd38584-21a7-4145-be4b-c126c5fb3d73")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
-        dsd.addColumn("recency viral load undetectable", sdd.definition("recencyVLundetectable", getConcept("5684822b-c2ea-4e03-8293-415e2370f763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("recency_vl_result", sdd.definition("recencyVLresult", getConcept("5fd38584-21a7-4145-be4b-c126c5fb3d73")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
+        dsd.addColumn("is_recency_vl_undetectable", sdd.definition("recencyVLundetectable", getConcept("5684822b-c2ea-4e03-8293-415e2370f763")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         return dsd;
     }
 }
