@@ -162,7 +162,7 @@ public class CareFragmentController {
         //to obtain all those with 12months
         //select count(*) from (select distinct(person_id),max(value_datetime) from obs where concept_id=163023 and value_datetime >='%s'  group by person_id) bt
         q = new HqlQueryBuilder();
-        q.select(String.format("count(*) from (select distinct(person_id),max(value_datetime) as 'date_bread' from %s where concept_id=%s and value_datetime >='%s'  group by person_id) bt", "obs", 163023, getVlReportingPeriod(administrationService)));
+        q.select(String.format("count(*) from (select distinct(person_id),max(obs_datetime) as 'date_bread' from %s where concept_id=%s and obs_datetime >='%s'  group by person_id) bt", "obs", 163023, getVlReportingPeriod(administrationService)));
 
         log.info(q.toString() + " Clients with Vl");
 
