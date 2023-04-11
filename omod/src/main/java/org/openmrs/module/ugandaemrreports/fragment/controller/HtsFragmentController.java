@@ -241,7 +241,7 @@ public class HtsFragmentController {
         q.where(String.format("concept_id=%s and obs_datetime between '%s' and '%s'",162925, startDate, endDate));
         q.groupBy("person_id");
 
-        log.error(q.toString() + " query entry point");
+        log.info(q.toString() + " query entry point");
 
         List<List<Object>> hts_entry_point = administrationService.executeSQL(q.toString(), true);
         int hts_entry_point_size= hts_entry_point.size();
