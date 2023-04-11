@@ -169,6 +169,7 @@ public class CareFragmentController {
         List<List<Object>> tt_clients_with_vl = administrationService.executeSQL(q.toString(), true);
         model.addAttribute("tt_clients_with_vl_in_period", tt_clients_with_vl.get(0).get(0));
 
+
         //suppressed and non suppressed
         //select distinct(person_id),value_numeric,max(obs_datetime) from obs where concept_id=856 and obs_datetime >='2021-10-01' group by person_id
         q = new HqlQueryBuilder();
