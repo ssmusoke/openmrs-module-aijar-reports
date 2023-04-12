@@ -102,6 +102,6 @@ public class SetupHIVCareAndTreatmentAuditTool extends UgandaEMRDataExportManage
 
 	@Override
 	public String getVersion() {
-		return "0.1.3";
+		return "0.1.4";
 	}
 }
