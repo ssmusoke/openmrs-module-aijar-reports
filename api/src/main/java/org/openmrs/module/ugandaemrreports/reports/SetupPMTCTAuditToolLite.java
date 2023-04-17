@@ -1,27 +1,17 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import org.openmrs.module.reporting.data.converter.ObsValueConverter;
-import org.openmrs.module.reporting.data.patient.definition.PatientDataDefinition;
-import org.openmrs.module.reporting.data.patient.library.BuiltInPatientDataLibrary;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
-import org.openmrs.module.ugandaemrreports.data.converter.ObsDataConverter;
-import org.openmrs.module.ugandaemrreports.definition.data.definition.ActiveInPeriodDataDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVAdultToolDataSetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingPMTCTDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
-import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
-import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.module.ugandaemrreports.reporting.dataset.definition.SharedDataDefintion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,7 +19,7 @@ import java.util.Properties;
  * Care and Treatment Audit Tool
  */
 @Component
-public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExportManager {
+public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Autowired
 	ARTClinicCohortDefinitionLibrary hivCohorts;
@@ -45,17 +35,17 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 	 */
 	@Override
 	public String getExcelDesignUuid() {
-		return "2ae5a9ef-7e11-41e0-947f-2aa9581c6722";
+		return "3958ede7-efb6-4230-b33c-459456519439";
 	}
 
 	@Override
 	public String getUuid() {
-		return "bc18e380-039e-482a-96c0-1555f3fdb773";
+		return "9f629343-0b9b-4717-a824-2ba02f853a96";
 	}
 
 	@Override
 	public String getName() {
-		return "HIV Care and Treatment Service Quality Assessment Tool -PMTCT";
+		return "PMTCT Audit Tool Lite";
 	}
 
 	@Override
@@ -66,7 +56,6 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
-		l.add(df.getEndDateParameter());
 		return l;
 	}
 
@@ -86,7 +75,7 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "CQIAudiTool-PMTCT.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PMTCT_AUDIT_TOOLLite.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -102,7 +91,7 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 		rd.setDescription(getDescription());
 		rd.setParameters(getParameters());
 
-		CQIHIVPMTCTToolDataSetDefinition dataSetDefinition = new CQIHIVPMTCTToolDataSetDefinition();
+		ReportingPMTCTDataSetDefinition dataSetDefinition = new ReportingPMTCTDataSetDefinition();
 		dataSetDefinition.setName(getName());
 		dataSetDefinition.setParameters(getParameters());
 		rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
@@ -112,6 +101,6 @@ public class SetupARTCareAndTreatmentAuditTool_PMTCT extends UgandaEMRDataExport
 
 	@Override
 	public String getVersion() {
-		return "0.2.5.8";
+		return "0.1.9";
 	}
 }

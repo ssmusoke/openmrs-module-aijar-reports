@@ -6,6 +6,7 @@ import org.joda.time.LocalDate;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.ReportingConstants;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.definition.service.SerializedDefinitionService;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -299,6 +300,180 @@ public class Helper {
         ci.setType(CohortIndicator.IndicatorType.COUNT);
         ci.setCohortDefinition(Mapped.mapStraightThrough(cohortDefinition));
         dsd.addColumn(key, label, Mapped.mapStraightThrough(ci), dimensionOptions);
+    }
+
+    /**    Audit tool helper methods **/
+
+    public static void fillOtherMissingIndicators(int patientno, List<Object[]> list, PatientDataHelper pdh, DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    pdh.addCol(row, "ENROLLMENT_DATE", o[1]);
+                    pdh.addCol(row, "TEST_TYPE", o[2]);
+                    pdh.addCol(row, "CARE_ENTRY", o[3]);
+                    pdh.addCol(row, "TEMP", o[4]);
+                    pdh.addCol(row, "RR", o[5]);
+                    pdh.addCol(row, "HR", o[6]);
+                    pdh.addCol(row, "CLIENT_CATEGORY", o[7]);
+                    pdh.addCol(row, "MARITAL", o[8]);
+                    pdh.addCol(row, "REGISTRATION_DATE", o[9]);
+                    pdh.addCol(row, "SIGNS", o[10]);
+                    pdh.addCol(row, "SIDE_EFFECTS", o[11]);
+                    pdh.addCol(row, "PSS4", o[12]);
+                    pdh.addCol(row, "PSS7", o[13]);
+                    pdh.addCol(row, "PSS9", o[14]);
+                }
+            }
+        }
+    }
+
+    public static void fillNonSuppressedData(int patientno, List<Object[]> list, PatientDataHelper pdh, DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    String sessiondates = (String)o[1];
+                    String sessionscore = (String)o[2];
+                    String adherences = (String)o[3];
+
+                    if (StringUtils.isNotBlank(sessiondates)) {
+                        String[] results = sessiondates.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+                                String dates;
+                                if(x<6){
+                                    pdh.addCol(row, "session_date"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_date"+x, " ");
+                                }
+                            }
+                        }
+                    }else{
+                        pdh.addCol(row, "session_date"+0, " ");
+                        pdh.addCol(row, "session_date"+1, " ");
+                        pdh.addCol(row, "session_date"+2, " ");
+                        pdh.addCol(row, "session_date"+3, " ");
+                        pdh.addCol(row, "session_date"+4, " ");
+                        pdh.addCol(row, "session_date"+5, " ");
+                    }
+
+                    if (StringUtils.isNotBlank(sessionscore)) {
+                        String[] results = sessionscore.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+
+                                if(x<6){
+                                    pdh.addCol(row, "session_score"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_score"+x, " ");
+                                }
+                            }
+                        }
+                    }else{
+                        pdh.addCol(row, "session_score"+0, " ");
+                        pdh.addCol(row, "session_score"+1, " ");
+                        pdh.addCol(row, "session_score"+2, " ");
+                        pdh.addCol(row, "session_score"+3, " ");
+                        pdh.addCol(row, "session_score"+4, " ");
+                        pdh.addCol(row, "session_score"+5, " ");
+                    }
+
+                    if (StringUtils.isNotBlank(adherences)) {
+                        String[] results = adherences.split(",");
+                        if(results.length>0) {
+                            for (int x = 0; x < results.length; x++) {
+                                if(x<6){
+                                    pdh.addCol(row, "session_adherence"+x, results[x]);
+                                }else{
+                                    pdh.addCol(row, "session_adherence"+x, " ");
+                                }
+                            }
+                        }
+                    }else{
+                        pdh.addCol(row, "session_adherence"+0, " ");
+                        pdh.addCol(row, "session_adherence"+1, " ");
+                        pdh.addCol(row, "session_adherence"+2, " ");
+                        pdh.addCol(row, "session_adherence"+3, " ");
+                        pdh.addCol(row, "session_adherence"+4, " ");
+                        pdh.addCol(row, "session_adherence"+5, " ");
+                    }
+                    pdh.addCol(row, "VLREPEAT", o[4]);
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", o[5]);
+                    pdh.addCol(row, "VL_AFTER_IAC", o[6]);
+                    pdh.addCol(row, "VL_COPIES", o[7]);
+                    pdh.addCol(row, "RESULTS_RECEIVED", o[8]);
+                    pdh.addCol(row, "HIVDR_RESULTS", o[9]);
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", o[10]);
+                    pdh.addCol(row, "DECISION_DATE", o[11]);
+                    pdh.addCol(row, "DECISION_OUTCOME", o[12]);
+                    pdh.addCol(row, "NEW REGIMEN", o[13]);
+                }else{
+                    pdh.addCol(row, "VLREPEAT", "");
+                    pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", "");
+                    pdh.addCol(row, "VL_AFTER_IAC", "");
+                    pdh.addCol(row, "VL_COPIES", "");
+                    pdh.addCol(row, "RESULTS_RECEIVED", "");
+                    pdh.addCol(row, "HIVDR_RESULTS", "");
+                    pdh.addCol(row, "HIVDR_RESULTS_DATE", "");
+                    pdh.addCol(row, "DECISION_DATE", "");
+                    pdh.addCol(row, "DECISION_OUTCOME", "");
+                    pdh.addCol(row, "NEW REGIMEN", "");
+
+                    pdh.addCol(row, "session_score"+0, " ");
+                    pdh.addCol(row, "session_score"+1, " ");
+                    pdh.addCol(row, "session_score"+2, " ");
+                    pdh.addCol(row, "session_score"+3, " ");
+                    pdh.addCol(row, "session_score"+4, " ");
+                    pdh.addCol(row, "session_score"+5, " ");
+
+                    pdh.addCol(row, "session_date"+0, " ");
+                    pdh.addCol(row, "session_date"+1, " ");
+                    pdh.addCol(row, "session_date"+2, " ");
+                    pdh.addCol(row, "session_date"+3, " ");
+                    pdh.addCol(row, "session_date"+4, " ");
+                    pdh.addCol(row, "session_date"+5, " ");
+
+                    pdh.addCol(row, "session_adherence"+0, " ");
+                    pdh.addCol(row, "session_adherence"+1, " ");
+                    pdh.addCol(row, "session_adherence"+2, " ");
+                    pdh.addCol(row, "session_adherence"+3, " ");
+                    pdh.addCol(row, "session_adherence"+4, " ");
+                    pdh.addCol(row, "session_adherence"+5, " ");
+
+
+                }
+            }
+        }
+    }
+    public static void fillInCurrentARVStartDate(int patientno, Map<Integer, Object> map, PatientDataHelper pdh, DataSetRow row){
+        if(!map.isEmpty()){
+            if(map.containsKey(patientno)){
+                pdh.addCol(row, "Current Regimen Date",  map.get(patientno));
+            }else{
+                pdh.addCol(row, "Current Regimen Date",  "");
+            }
+
+        }else{
+            pdh.addCol(row, "Current Regimen Date",  "");
+        }
+    }
+
+
+
+    public static void fillAdvancedDiseaseStatusData(int patientno, List<Object[]> list, PatientDataHelper pdh, DataSetRow row){
+        if(list.size()>0){
+            for (Object[] o : list) {
+                int patient = (int) o[0];
+                if(patientno==patient) {
+                    pdh.addCol(row, "cd4", o[1]);
+                    pdh.addCol(row, "baseline_cd4", o[2]);
+                    pdh.addCol(row, "TB_LAM", o[3]);
+                    pdh.addCol(row, "TB_CRAG", o[4]);
+                    pdh.addCol(row, "WHO", o[5]);
+                }
+            }
+        }
     }
 
 }

@@ -805,32 +805,40 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
         "label": "HIV Care and Treatment Audit Tool",
-        "url": "reportingui/runReport.page?reportDefinition=138140ef-1dd2-11b2-96d8-6cab73c93472",
+        "url": "reportingui/runReport.page?reportDefinition=b5cbec70-3dcf-4b4b-99f9-45e0f0a9a23b",
         "order": 5
       },
       {
-      "id": "Care and Treatment Audit Tool-PMTCT",
+      "id": "PMTCT Audit Tool",
       "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
       "type": "link",
-      "label": "HIV Care and Treatment Audit Tool-PMTCT",
+      "label": "PMTCT Audit tool",
       "url": "reportingui/runReport.page?reportDefinition=bc18e380-039e-482a-96c0-1555f3fdb773",
       "order": 6
       },
       {
-        "id": "HIV Exposed Infant Audit Tool",
+        "id": "HIV Care and Treatment Audit Tool-Resized",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
-        "label": "HIV Exposed Infant Audit Tool",
-        "url": "reportingui/runReport.page?reportDefinition=13814069-1dd2-11b2-b6fe-eeb59a9a73fa",
-        "order": 10
+        "label": "HIV Care and Treatment Audit Tool-Resized",
+        "url": "reportingui/runReport.page?reportDefinition=2017e2e0-fc1c-4ba2-8816-92f822290c84",
+        "order": 4
       },
       {
-        "id": "Care Audit CQI Indicators Report",
+        "id": "PMTCT Audit Tool-Resized",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
-        "label": "Care Audit CQI Indicators Report",
-        "url": "reportingui/runReport.page?reportDefinition=138140e6-1dd2-11b2-8811-ec47ee6bbc58",
-        "order": 15
+        "label": "PMTCT Audit tool-Resized",
+        "url": "reportingui/runReport.page?reportDefinition=9f629343-0b9b-4717-a824-2ba02f853a96",
+        "order": 7
+      },
+      {
+        "id": "Care and Treatment Audit Summary",
+        "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
+        "type": "link",
+        "label": "Care and Treatment Audit Summary",
+        "url": "reportingui/runReport.page?reportDefinition=d6aecd70-f997-45ab-b43d-cfb270c0b4e1",
+        "order": 8
       },
       {
         "id": "Weekly Surge Report",
