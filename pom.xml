@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version> 2.0.38-SNAPSHOT</version>
+    <version>2.0.38-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>2.0.5</openMRSVersion>
+        <openMRSVersion>2.3.1</openMRSVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- module version defeinitions -->
@@ -160,7 +160,7 @@
                 <version>${uiframeworkModuleVersion}</version>
                 <scope>provided</scope>
             </dependency>
-    
+
             <dependency>
                 <groupId>org.openmrs.module</groupId>
                 <artifactId>webservices.rest-omod-common</artifactId>
@@ -179,40 +179,219 @@
                 <artifactId>commons-math3</artifactId>
                 <version>3.2</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.openmrs.ohri</groupId>
+                <artifactId>ohri-mamba-core</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <build>
+
+        <finalName>${project.parent.artifactId}-${project.parent.version}</finalName>
+
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <target>1.8</target>
-                        <source>1.8</source>
-                        <encoding>UTF-8</encoding>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.openmrs.maven.plugins</groupId>
-                    <artifactId>maven-openmrs-plugin</artifactId>
-                    <version>1.0.1</version>
-                </plugin>
+
+                <!-- 1. Unpack the dependency jar first -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.4</version>
+                    <version>3.2.0</version>
+                    <executions>
+                        <execution>
+                            <id>Expand moduleApplicationContext and messages</id>
+                            <goals>
+                                <goal>unpack-dependencies</goal>
+                            </goals>
+                            <phase>generate-resources</phase>
+                            <configuration>
+                                <includeGroupIds>${project.parent.groupId}</includeGroupIds>
+                                <includeArtifactIds>${project.parent.artifactId}-api</includeArtifactIds>
+                                <excludeTransitive>true</excludeTransitive>
+                                <includes>**\/*.xml,**\/*.properties</includes>
+                                <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>unpack-scripts</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>unpack</goal>
+                            </goals>
+                            <configuration>
+                                <artifactItems>
+                                    <artifactItem>
+                                        <groupId>org.openmrs.ohri</groupId>
+                                        <artifactId>ohri-mamba-core</artifactId>
+                                        <version>1.0.0-SNAPSHOT</version>
+                                        <type>jar</type>
+                                        <outputDirectory>${project.build.directory}/mamba-etl</outputDirectory>
+                                        <includes>_core/**</includes>
+                                    </artifactItem>
+                                </artifactItems>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
+
+                <!-- Step 2 & the last step-->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.2.0</version>
+                    <configuration>
+                        <includeEmptyDirs>true</includeEmptyDirs>
+                    </configuration>
+                    <executions>
+
+                        <!-- 2. Copy contents of the resources directory of the dependency jar to a target location -->
+                        <execution>
+                            <id>copy-scripts</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>${project.basedir}/src/main/resources/_etl</directory>
+                                        <filtering>true</filtering>
+                                    </resource>
+                                </resources>
+                                <outputDirectory>${project.build.directory}/mamba-etl/_etl</outputDirectory>
+                            </configuration>
+                        </execution>
+
+                        <!-- This should execute last - to copy the build script to a location liquibase.xml can access-->
+                        <execution>
+                            <id>copy-final-build-script</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <resources>
+                                    <resource>
+                                        <directory>
+                                            ${project.build.directory}/mamba-etl/_core/database/mysql/build
+                                        </directory>
+                                        <filtering>true</filtering>
+                                    </resource>
+                                </resources>
+                                <outputDirectory>${project.parent.basedir}/api/src/main/resources/mamba
+                                </outputDirectory>
+                            </configuration>
+                        </execution>
+
+                    </executions>
+                </plugin>
+
+                <!-- 3. Make the compiler scripts executable & then run the compiler -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                    <executions>
+
+                        <execution>
+                            <id>set-executable-permission</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>/bin/sh</executable>
+                                <arguments>
+                                    <argument>-c</argument>
+                                    <argument>chmod -R +x ${project.build.directory}/mamba-etl/_core/compiler</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+
+                        <execution>
+                            <id>run-script</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>/bin/sh</executable>
+                                <workingDirectory>${project.build.directory}/mamba-etl/_core/compiler/linux
+                                </workingDirectory>
+                                <arguments>
+                                    <!-- the Engine compiler script -->
+                                    <argument>compile.sh</argument>
+                                    <!-- Database the created stored procedures will run on -->
+                                    <argument>-d alive</argument>
+                                    <!-- File with a list of all files with stored procedures -->
+                                    <!-- Remove this argument after automating core to auto-read this -->
+                                    <argument>-s ../../database/mysql/sp_makefile</argument>
+                                    <!-- a JSON configuration path/folder for all config files for db flattening -->
+                                    <!-- Folder containing configs folder, derived folders and any other ETL related folders -->
+                                    <argument>-t ${project.build.directory}/mamba-etl/_etl/config</argument>
+                                    <!-- Database Vendor/Engine targeted in this ETL -->
+                                    <argument>-n mysql</argument>
+                                    <!-- add any other arguments below -->
+                                    <argument>-b 1</argument>
+
+                                    <argument></argument>
+                                    <argument></argument>
+                                    <argument></argument>
+                                    <argument></argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.openmrs.maven.plugins</groupId>
+                    <artifactId>maven-openmrs-plugin</artifactId>
+                    <extensions>true</extensions>
+                    <executions>
+                        <execution>
+                            <id>init</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>initialize-module</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>pack</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>package-module</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.1</version>
+                    <configuration>
+                        <source>8</source>
+                        <target>8</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.5.3</version>
                     <configuration>
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <tagNameFormat>@{project.version}</tagNameFormat>
                     </configuration>
                 </plugin>
+
             </plugins>
         </pluginManagement>
     </build>

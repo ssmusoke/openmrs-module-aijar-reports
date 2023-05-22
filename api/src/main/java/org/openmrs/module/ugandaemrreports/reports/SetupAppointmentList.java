@@ -11,6 +11,8 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.data.converter.BirthDateConverter;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AppointmentDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.CQIHIVPMTCTToolDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.ARTClinicCohortDefinitionLibrary;
 import org.openmrs.module.ugandaemrreports.library.BasePatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.library.DataFactory;
@@ -120,41 +122,16 @@ public class SetupAppointmentList extends UgandaEMRDataExportManager {
         rd.setUuid(getUuid());
         rd.setName(getName());
         rd.setDescription(getDescription());
-        rd.setParameters(getParameters());
-
-        PatientDataSetDefinition dsd = new PatientDataSetDefinition();
-
-        CohortDefinition definition = df.getPatientsWhoseObsValueDateIsBetweenStartDateAndEndDateAtLocation(hivMetadata.getReturnVisitDate(), Arrays.asList(hivMetadata.getARTEncounterEncounterType()), BaseObsCohortDefinition.TimeModifier.ANY);
-
-        dsd.setName(getName());
-        dsd.setParameters(getParameters());
-        dsd.addRowFilter(Mapped.mapStraightThrough(definition));
-        addColumn(dsd, "Clinic No", hivPatientData.getClinicNumber());
-        addColumn(dsd, "EID No", hivPatientData.getEIDNumber());
-        dsd.addColumn("Patient Name", new PreferredNameDataDefinition(), (String) null);
-        addColumn(dsd, "Sex", builtInPatientData.getGender());
-        dsd.addColumn("Birth Date", builtInPatientData.getBirthdate(), "", new BirthDateConverter());
-        addColumn(dsd, "Age", hivPatientData.getAgeDuringPeriod());
-        addColumn(dsd,"Parish",df.getPreferredAddress("address4"));
-        addColumn(dsd,"Village",df.getPreferredAddress("address5"));
-        addColumn(dsd, "ART Start Date", hivPatientData.getArtStartDate());
-        addColumn(dsd, "Current Regimen", hivPatientData.getCurrentRegimen());
-        addColumn(dsd, "VL Date", hivPatientData.getViralLoadDate());
-        addColumn(dsd, "VL Quantitative",  hivPatientData.getCurrentViralLoad());
-        addColumn(dsd,"VL Qualitative",hivPatientData.getVLQualitativeByEndDate());
-        addColumn(dsd,"DSDM Model", hivPatientData.getDSDMModel());
-        addColumn(dsd,"DSDM Model Enrollment Date",   hivPatientData.getDSDMEnrollmentDate());
-        addColumn(dsd, "Appointment Date", hivPatientData.getExpectedReturnDateDuringPeriodAtLocation());
-        addColumn(dsd, "Telephone", basePatientData.getTelephone());
-
-        rd.addDataSetDefinition("APPOINTMENT_LIST", Mapped.mapStraightThrough(dsd));
-        rd.setBaseCohortDefinition(Mapped.mapStraightThrough(definition));
-
+        rd.addParameters(getParameters());
+        AppointmentDataSetDefinition dataSetDefinition = new AppointmentDataSetDefinition();
+        dataSetDefinition.setName(getName());
+        dataSetDefinition.setParameters(getParameters());
+        rd.addDataSetDefinition("A", Mapped.mapStraightThrough(dataSetDefinition));
         return rd;
     }
 
     @Override
     public String getVersion() {
-        return "4.1.1";
+        return "5.0";
     }
 }
