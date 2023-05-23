@@ -32,13 +32,14 @@ import java.util.List;
 
 
 @Handler(supports = {AppointmentDataSetDefinition.class})
-public class AppointmentDataSetEvaluator implements DataSetEvaluator {
+public class AppointmentsDataSetEvaluator implements DataSetEvaluator {
 
     @Autowired
     EvaluationService evaluationService;
 
     @Autowired
     ConceptService conceptService;
+
 
     @Autowired
     PatientService patientService;
@@ -86,7 +87,7 @@ public class AppointmentDataSetEvaluator implements DataSetEvaluator {
     }
 
     private List<Object[]> getEtl(String startDate ,String endDate) {
-        SQLQuery txCurrQuery = sessionFactory.getCurrentSession().createSQLQuery("sp_fact_encounter_hiv_art_query(:startDate,:endDate)");
+        SQLQuery txCurrQuery = sessionFactory.getCurrentSession().createSQLQuery("CALL sp_fact_encounter_hiv_art_query(:startDate,:endDate)");
         txCurrQuery.setParameter("startDate", startDate);
         txCurrQuery.setParameter("endDate", endDate);
         List<Object[]> txCurrResult = txCurrQuery.list();

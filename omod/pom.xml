@@ -101,35 +101,37 @@
     </dependencies>
 
     <build>
-        <!--                		<resources>-->
-        <!--                			<resource>-->
-        <!--                				<directory>src/main/resources</directory>-->
-        <!--                				<filtering>true</filtering>-->
-        <!--                			</resource>-->
-        <!--                			<resource>-->
-        <!--                				<directory>src/main/webapp</directory>-->
-        <!--                				<filtering>true</filtering>-->
-        <!--                				<excludes>-->
-        <!--                					<exclude>resources</exclude>-->
-        <!--                				</excludes>-->
-        <!--                				<targetPath>web/module</targetPath>-->
-        <!--                			</resource>-->
-        <!--                			<resource>-->
-        <!--                				<directory>src/main/webapp</directory>-->
-        <!--                				<filtering>false</filtering>-->
-        <!--                				<includes>-->
-        <!--                					<include>resources</include>-->
-        <!--                				</includes>-->
-        <!--                				<targetPath>web/module</targetPath>-->
-        <!--                			</resource>-->
-        <!--                		</resources>-->
+        <finalName>${project.parent.artifactId}-${project.parent.version}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>true</filtering>
+                <excludes>
+                    <exclude>resources</exclude>
+                </excludes>
+                <targetPath>web/module</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>resources</include>
+                </includes>
+                <targetPath>web/module</targetPath>
+            </resource>
+        </resources>
 
-        <!--                		<testResources>-->
-        <!--                			<testResource>-->
-        <!--                				<directory>src/test/resources</directory>-->
-        <!--                				<filtering>true</filtering>-->
-        <!--                			</testResource>-->
-        <!--                		</testResources>-->
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
 
         <plugins>
 
