@@ -3,14 +3,14 @@
     
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  fn_calculate_agegroup  ----------------------------
+-- ----------------------  fn_mamba_calculate_agegroup  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP FUNCTION IF EXISTS fn_calculate_agegroup;
+DROP FUNCTION IF EXISTS fn_mamba_calculate_agegroup;
 
 ~
-CREATE FUNCTION fn_calculate_agegroup(age INT) RETURNS VARCHAR(15)
+CREATE FUNCTION fn_mamba_calculate_agegroup(age INT) RETURNS VARCHAR(15)
     DETERMINISTIC
 BEGIN
     DECLARE agegroup VARCHAR(15);
@@ -53,14 +53,14 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  fn_get_obs_value_column  ----------------------------
+-- ----------------------  fn_mamba_get_obs_value_column  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP FUNCTION IF EXISTS fn_get_obs_value_column;
+DROP FUNCTION IF EXISTS fn_mamba_get_obs_value_column;
 
 ~
-CREATE FUNCTION fn_get_obs_value_column(conceptDatatype VARCHAR(20)) RETURNS VARCHAR(20)
+CREATE FUNCTION fn_mamba_get_obs_value_column(conceptDatatype VARCHAR(20)) RETURNS VARCHAR(20)
     DETERMINISTIC
 BEGIN
     DECLARE obsValueColumn VARCHAR(20);
@@ -193,14 +193,14 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_xf_system_execute_etl  ----------------------------
+-- ----------------------  sp_mamba_etl_execute  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_xf_system_execute_etl;
+DROP PROCEDURE IF EXISTS sp_mamba_etl_execute;
 
 ~
-CREATE PROCEDURE sp_xf_system_execute_etl()
+CREATE PROCEDURE sp_mamba_etl_execute()
 BEGIN
     DECLARE error_message VARCHAR(255) DEFAULT 'OK';
     DECLARE error_code CHAR(5) DEFAULT '00000';
@@ -244,7 +244,7 @@ BEGIN
     SET start_date_time = NOW();
     SET @start_time = (UNIX_TIMESTAMP(NOW()) * 1000000 + MICROSECOND(NOW(6)));
 
-    CALL sp_data_processing_etl();
+    CALL sp_mamba_data_processing_etl();
 
     -- Fix end time in microseconds
     SET end_date_time = NOW();
@@ -270,15 +270,15 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_flat_encounter_table_create  ----------------------------
+-- ----------------------  sp_mamba_flat_encounter_table_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_flat_encounter_table_create;
+DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_create;
 
 ~
-CREATE PROCEDURE sp_flat_encounter_table_create(
-    IN flat_encounter_table_name CHAR(255) CHARACTER SET UTF8MB4
+CREATE PROCEDURE sp_mamba_flat_encounter_table_create(
+    IN flat_encounter_table_name VARCHAR(255) CHARSET UTF8MB4
 )
 BEGIN
 
@@ -295,10 +295,10 @@ BEGIN
 
     IF @column_labels IS NULL THEN
         SET @create_table = CONCAT(
-                'CREATE TABLE `', flat_encounter_table_name, '` (encounter_id INT, client_id INT);');
+                'CREATE TABLE `', flat_encounter_table_name, '` (encounter_id INT NOT NULL, client_id INT NOT NULL, encounter_datetime DATETIME NOT NULL);');
     ELSE
         SET @create_table = CONCAT(
-                'CREATE TABLE `', flat_encounter_table_name, '` (encounter_id INT, client_id INT, ', @column_labels,
+                'CREATE TABLE `', flat_encounter_table_name, '` (encounter_id INT NOT NULL, client_id INT NOT NULL, encounter_datetime DATETIME NOT NULL, ', @column_labels,
                 ' TEXT);');
     END IF;
 
@@ -318,15 +318,15 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_flat_encounter_table_create_all  ----------------------------
+-- ----------------------  sp_mamba_flat_encounter_table_create_all  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 -- Flatten all Encounters given in Config folder
 
-DROP PROCEDURE IF EXISTS sp_flat_encounter_table_create_all;
+DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_create_all;
 
 ~
-CREATE PROCEDURE sp_flat_encounter_table_create_all()
+CREATE PROCEDURE sp_mamba_flat_encounter_table_create_all()
 BEGIN
 
     DECLARE tbl_name CHAR(50) CHARACTER SET UTF8MB4;
@@ -347,7 +347,7 @@ BEGIN
             LEAVE computations_loop;
         END IF;
 
-        CALL sp_flat_encounter_table_create(tbl_name);
+        CALL sp_mamba_flat_encounter_table_create(tbl_name);
 
     END LOOP computations_loop;
     CLOSE cursor_flat_tables;
@@ -358,14 +358,14 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_flat_encounter_table_insert  ----------------------------
+-- ----------------------  sp_mamba_flat_encounter_table_insert  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_flat_encounter_table_insert;
+DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_insert;
 
 ~
-CREATE PROCEDURE sp_flat_encounter_table_insert(
+CREATE PROCEDURE sp_mamba_flat_encounter_table_insert(
     IN flat_encounter_table_name CHAR(255) CHARACTER SET UTF8MB4
 )
 BEGIN
@@ -380,20 +380,21 @@ BEGIN
 
     SELECT GROUP_CONCAT(DISTINCT
                         CONCAT(' MAX(CASE WHEN column_label = ''', column_label, ''' THEN ',
-                               fn_get_obs_value_column(concept_datatype), ' END) ', column_label)
-                        ORDER BY concept_metadata_id ASC)
+                               fn_mamba_get_obs_value_column(concept_datatype), ' END) ', column_label)
+                        ORDER BY id ASC)
     INTO @column_labels
     FROM mamba_dim_concept_metadata
     WHERE flat_table_name = @tbl_name;
 
     SET @insert_stmt = CONCAT(
-            'INSERT INTO `', @tbl_name, '` SELECT eo.encounter_id, eo.person_id, ', @column_labels, '
+            'INSERT INTO `', @tbl_name, '` SELECT eo.encounter_id, eo.person_id, eo.encounter_datetime, ',
+            @column_labels, '
             FROM mamba_z_encounter_obs eo
                 INNER JOIN mamba_dim_concept_metadata cm
                 ON IF(cm.concept_answer_obs=1, cm.concept_uuid=eo.obs_value_coded_uuid, cm.concept_uuid=eo.obs_question_uuid)
             WHERE cm.flat_table_name = ''', @tbl_name, '''
             AND eo.encounter_type_uuid = cm.encounter_type_uuid
-            GROUP BY eo.encounter_id, eo.person_id;');
+            GROUP BY eo.encounter_id, eo.person_id, eo.encounter_datetime;');
 
     PREPARE inserttbl FROM @insert_stmt;
     EXECUTE inserttbl;
@@ -405,15 +406,15 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_flat_encounter_table_insert_all  ----------------------------
+-- ----------------------  sp_mamba_flat_encounter_table_insert_all  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 -- Flatten all Encounters given in Config folder
 
-DROP PROCEDURE IF EXISTS sp_flat_encounter_table_insert_all;
+DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_insert_all;
 
 ~
-CREATE PROCEDURE sp_flat_encounter_table_insert_all()
+CREATE PROCEDURE sp_mamba_flat_encounter_table_insert_all()
 BEGIN
 
     DECLARE tbl_name CHAR(50) CHARACTER SET UTF8MB4;
@@ -434,7 +435,7 @@ BEGIN
             LEAVE computations_loop;
         END IF;
 
-        CALL sp_flat_encounter_table_insert(tbl_name);
+        CALL sp_mamba_flat_encounter_table_insert(tbl_name);
 
     END LOOP computations_loop;
     CLOSE cursor_flat_tables;
@@ -445,14 +446,14 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_multiselect_values_update  ----------------------------
+-- ----------------------  sp_mamba_multiselect_values_update  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS `sp_multiselect_values_update`;
+DROP PROCEDURE IF EXISTS `sp_mamba_multiselect_values_update`;
 
 ~
-CREATE PROCEDURE `sp_multiselect_values_update`(
+CREATE PROCEDURE `sp_mamba_multiselect_values_update`(
     IN table_to_update CHAR(100) CHARACTER SET UTF8MB4,
     IN column_names TEXT CHARACTER SET UTF8MB4,
     IN value_yes CHAR(100) CHARACTER SET UTF8MB4,
@@ -498,16 +499,16 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_extract_report_metadata  ----------------------------
+-- ----------------------  sp_mamba_extract_report_metadata  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_extract_report_metadata;
+DROP PROCEDURE IF EXISTS sp_mamba_extract_report_metadata;
 
 ~
-CREATE PROCEDURE sp_extract_report_metadata(
+CREATE PROCEDURE sp_mamba_extract_report_metadata(
     IN report_data MEDIUMTEXT CHARACTER SET UTF8MB4,
-    IN metadata_table CHAR(255) CHARACTER SET UTF8MB4
+    IN metadata_table VARCHAR(255) CHARSET UTF8MB4
 )
 BEGIN
 
@@ -524,6 +525,7 @@ BEGIN
             SELECT JSON_EXTRACT(@report, '$.report_name') INTO @report_name;
             SELECT JSON_EXTRACT(@report, '$.flat_table_name') INTO @flat_table_name;
             SELECT JSON_EXTRACT(@report, '$.encounter_type_uuid') INTO @encounter_type;
+            SELECT JSON_EXTRACT(@report, '$.concepts_locale') INTO @concepts_locale;
             SELECT JSON_EXTRACT(@report, '$.table_columns') INTO @column_array;
 
             SELECT JSON_KEYS(@column_array) INTO @column_keys_array;
@@ -539,12 +541,14 @@ BEGIN
                                                            flat_table_name,
                                                            encounter_type_uuid,
                                                            column_label,
-                                                           concept_uuid)
+                                                           concept_uuid,
+                                                           concepts_locale)
                     VALUES (JSON_UNQUOTE(@report_name),
                             JSON_UNQUOTE(@flat_table_name),
                             JSON_UNQUOTE(@encounter_type),
                             JSON_UNQUOTE(@field_name),
-                            JSON_UNQUOTE(@concept_uuid));
+                            JSON_UNQUOTE(@concept_uuid),
+                            JSON_UNQUOTE(@concepts_locale));
 
                     SET @col_count = @col_count + 1;
                 END WHILE;
@@ -558,24 +562,281 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_load_agegroup  ----------------------------
+-- ----------------------  sp_mamba_load_agegroup  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_load_agegroup;
+DROP PROCEDURE IF EXISTS sp_mamba_load_agegroup;
 
 ~
-CREATE PROCEDURE sp_load_agegroup()
+CREATE PROCEDURE sp_mamba_load_agegroup()
 BEGIN
     DECLARE age INT DEFAULT 0;
     WHILE age <= 120
         DO
-            INSERT INTO dim_agegroup(age, datim_agegroup, normal_agegroup)
-            VALUES (age, fn_calculate_agegroup(age), IF(age < 15, '<15', '15+'));
+            INSERT INTO mamba_dim_agegroup(age, datim_agegroup, normal_agegroup)
+            VALUES (age, fn_mamba_calculate_agegroup(age), IF(age < 15, '<15', '15+'));
             SET age = age + 1;
         END WHILE;
 END~
 
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_location_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_location_create;
+
+~
+CREATE PROCEDURE sp_mamba_dim_location_create()
+BEGIN
+-- $BEGIN
+
+CREATE TABLE mamba_dim_location
+(
+    id              INT          NOT NULL AUTO_INCREMENT,
+    location_id     INT          NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    description     VARCHAR(255) NULL,
+    city_village    VARCHAR(255) NULL,
+    state_province  VARCHAR(255) NULL,
+    postal_code     VARCHAR(50)  NULL,
+    country         VARCHAR(50)  NULL,
+    latitude        VARCHAR(50)  NULL,
+    longitude       VARCHAR(50)  NULL,
+    county_district VARCHAR(255) NULL,
+    address1        VARCHAR(255) NULL,
+    address2        VARCHAR(255) NULL,
+    address3        VARCHAR(255) NULL,
+    address4        VARCHAR(255) NULL,
+    address5        VARCHAR(255) NULL,
+    address6        VARCHAR(255) NULL,
+    address7        VARCHAR(255) NULL,
+    address8        VARCHAR(255) NULL,
+    address9        VARCHAR(255) NULL,
+    address10       VARCHAR(255) NULL,
+    address11       VARCHAR(255) NULL,
+    address12       VARCHAR(255) NULL,
+    address13       VARCHAR(255) NULL,
+    address14       VARCHAR(255) NULL,
+    address15       VARCHAR(255) NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_location_location_id_index
+    ON mamba_dim_location (location_id);
+
+CREATE INDEX mamba_dim_location_name_index
+    ON mamba_dim_location (name);
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_location_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_location_insert;
+
+~
+CREATE PROCEDURE sp_mamba_dim_location_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_location (location_id,
+                                name,
+                                description,
+                                city_village,
+                                state_province,
+                                postal_code,
+                                country,
+                                latitude,
+                                longitude,
+                                county_district,
+                                address1,
+                                address2,
+                                address3,
+                                address4,
+                                address5,
+                                address6,
+                                address7,
+                                address8,
+                                address9,
+                                address10,
+                                address11,
+                                address12,
+                                address13,
+                                address14,
+                                address15)
+SELECT location_id,
+       name,
+       description,
+       city_village,
+       state_province,
+       postal_code,
+       country,
+       latitude,
+       longitude,
+       county_district,
+       address1,
+       address2,
+       address3,
+       address4,
+       address5,
+       address6,
+       address7,
+       address8,
+       address9,
+       address10,
+       address11,
+       address12,
+       address13,
+       address14,
+       address15
+FROM location;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_location_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_location_update;
+
+~
+CREATE PROCEDURE sp_mamba_dim_location_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_location  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_location;
+
+~
+CREATE PROCEDURE sp_mamba_dim_location()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_location_create();
+CALL sp_mamba_dim_location_insert();
+CALL sp_mamba_dim_location_update();
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_type_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_type_create;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_type_create()
+BEGIN
+-- $BEGIN
+
+CREATE TABLE mamba_dim_patient_identifier_type
+(
+    id                         INT         NOT NULL AUTO_INCREMENT,
+    patient_identifier_type_id INT         NOT NULL,
+    name                       VARCHAR(50) NOT NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_patient_identifier_type_id_index
+    ON mamba_dim_patient_identifier_type (patient_identifier_type_id);
+
+CREATE INDEX mamba_dim_patient_identifier_type_name_index
+    ON mamba_dim_patient_identifier_type (name);
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_type_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_type_insert;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_type_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_patient_identifier_type (patient_identifier_type_id,
+                                               name)
+SELECT patient_identifier_type_id,
+       name
+FROM patient_identifier_type c;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_type_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_type_update;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_type_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_type  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_type;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_type()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_patient_identifier_type_create();
+CALL sp_mamba_dim_patient_identifier_type_insert();
+CALL sp_mamba_dim_patient_identifier_type_update();
+
+-- $END
+END~
 
 
         
@@ -593,15 +854,16 @@ BEGIN
 
 CREATE TABLE mamba_dim_concept_datatype
 (
-    concept_datatype_id  int                             NOT NULL AUTO_INCREMENT,
-    external_datatype_id int,
-    datatype_name        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (concept_datatype_id)
-);
+    id                  INT          NOT NULL AUTO_INCREMENT,
+    concept_datatype_id INT          NOT NULL,
+    datatype_name       VARCHAR(255) NOT NULL,
 
-create index mamba_dim_concept_datatype_external_datatype_id_index
-    on mamba_dim_concept_datatype (external_datatype_id);
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
 
+CREATE INDEX mamba_dim_concept_datatype_concept_datatype_id_index
+    ON mamba_dim_concept_datatype (concept_datatype_id);
 
 -- $END
 END~
@@ -620,12 +882,12 @@ CREATE PROCEDURE sp_mamba_dim_concept_datatype_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_concept_datatype (external_datatype_id,
+INSERT INTO mamba_dim_concept_datatype (concept_datatype_id,
                                         datatype_name)
-SELECT dt.concept_datatype_id AS external_datatype_id,
+SELECT dt.concept_datatype_id AS concept_datatype_id,
        dt.name                AS datatype_name
-FROM concept_datatype dt
-WHERE dt.retired = 0;
+FROM concept_datatype dt;
+-- WHERE dt.retired = 0;
 
 -- $END
 END~
@@ -666,19 +928,24 @@ BEGIN
 
 CREATE TABLE mamba_dim_concept
 (
-    concept_id           INT                             NOT NULL AUTO_INCREMENT,
-    uuid                 CHAR(38) CHARACTER SET UTF8MB4  NOT NULL,
-    external_concept_id  INT,
-    external_datatype_id INT, -- make it a FK
-    datatype             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (concept_id)
-);
+    id          INT          NOT NULL AUTO_INCREMENT,
+    concept_id  INT          NOT NULL,
+    uuid        CHAR(38)     NOT NULL,
+    datatype_id INT NOT NULL, -- make it a FK
+    datatype    VARCHAR(100) NULL,
 
-CREATE INDEX mamba_dim_concept_external_concept_id_index
-    ON mamba_dim_concept (external_concept_id);
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
 
-CREATE INDEX mamba_dim_concept_external_datatype_id_index
-    ON mamba_dim_concept (external_datatype_id);
+CREATE INDEX mamba_dim_concept_concept_id_index
+    ON mamba_dim_concept (concept_id);
+
+CREATE INDEX mamba_dim_concept_uuid_index
+    ON mamba_dim_concept (uuid);
+
+CREATE INDEX mamba_dim_concept_datatype_id_index
+    ON mamba_dim_concept (datatype_id);
 
 -- $END
 END~
@@ -698,13 +965,13 @@ BEGIN
 -- $BEGIN
 
 INSERT INTO mamba_dim_concept (uuid,
-                               external_concept_id,
-                               external_datatype_id)
+                               concept_id,
+                               datatype_id)
 SELECT c.uuid        AS uuid,
-       c.concept_id  AS external_concept_id,
-       c.datatype_id AS external_datatype_id
-FROM concept c
-WHERE c.retired = 0;
+       c.concept_id  AS concept_id,
+       c.datatype_id AS datatype_id
+FROM concept c;
+-- WHERE c.retired = 0;
 
 -- $END
 END~
@@ -725,9 +992,9 @@ BEGIN
 
 UPDATE mamba_dim_concept c
     INNER JOIN mamba_dim_concept_datatype dt
-    ON c.external_datatype_id = dt.external_datatype_id
+    ON c.datatype_id = dt.concept_datatype_id
 SET c.datatype = dt.datatype_name
-WHERE c.concept_id > 0;
+WHERE c.id > 0;
 
 -- $END
 END~
@@ -769,12 +1036,21 @@ BEGIN
 
 CREATE TABLE mamba_dim_concept_answer
 (
-    concept_answer_id INT NOT NULL AUTO_INCREMENT,
-    concept_id        INT,
+    id                INT NOT NULL AUTO_INCREMENT,
+    concept_answer_id INT NOT NULL,
+    concept_id        INT NOT NULL,
     answer_concept    INT,
     answer_drug       INT,
-    PRIMARY KEY (concept_answer_id)
-);
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_concept_answer_concept_answer_id_index
+    ON mamba_dim_concept_answer (concept_answer_id);
+
+CREATE INDEX mamba_dim_concept_answer_concept_id_index
+    ON mamba_dim_concept_answer (concept_id);
 
 -- $END
 END~
@@ -793,12 +1069,14 @@ CREATE PROCEDURE sp_mamba_dim_concept_answer_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_concept_answer (concept_id,
+INSERT INTO mamba_dim_concept_answer (concept_answer_id,
+                                      concept_id,
                                       answer_concept,
                                       answer_drug)
-SELECT ca.concept_id     AS concept_id,
-       ca.answer_concept AS answer_concept,
-       ca.answer_drug    AS answer_drug
+SELECT ca.concept_answer_id AS concept_answer_id,
+       ca.concept_id        AS concept_id,
+       ca.answer_concept    AS answer_concept,
+       ca.answer_drug       AS answer_drug
 FROM concept_answer ca;
 
 -- $END
@@ -840,11 +1118,32 @@ BEGIN
 
 CREATE TABLE mamba_dim_concept_name
 (
-    concept_name_id     INT                             NOT NULL AUTO_INCREMENT,
-    external_concept_id INT,
-    concept_name        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (concept_name_id)
-);
+    id                INT          NOT NULL AUTO_INCREMENT,
+    concept_name_id   INT          NOT NULL,
+    concept_id        INT,
+    name              VARCHAR(255) NOT NULL,
+    locale            VARCHAR(50)  not null,
+    locale_preferred  TINYINT,
+    concept_name_type VARCHAR(255),
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_concept_name_concept_name_id_index
+    ON mamba_dim_concept_name (concept_name_id);
+
+CREATE INDEX mamba_dim_concept_name_concept_id_index
+    ON mamba_dim_concept_name (concept_id);
+
+CREATE INDEX mamba_dim_concept_name_concept_name_type_index
+    ON mamba_dim_concept_name (concept_name_type);
+
+CREATE INDEX mamba_dim_concept_name_locale_index
+    ON mamba_dim_concept_name (locale);
+
+CREATE INDEX mamba_dim_concept_name_locale_preferred_index
+    ON mamba_dim_concept_name (locale_preferred);
 
 -- $END
 END~
@@ -863,13 +1162,21 @@ CREATE PROCEDURE sp_mamba_dim_concept_name_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_concept_name (external_concept_id,
-                                    concept_name)
-SELECT cn.concept_id AS external_concept_id,
-       cn.name       AS concept_name
-FROM concept_name cn
-WHERE cn.locale = 'en'
-  AND cn.locale_preferred = 1;
+INSERT INTO mamba_dim_concept_name (concept_name_id,
+                                    concept_id,
+                                    name,
+                                    locale,
+                                    locale_preferred,
+                                    concept_name_type)
+SELECT cn.concept_name_id,
+       cn.concept_id,
+       cn.name,
+       cn.locale,
+       cn.locale_preferred,
+       cn.concept_name_type
+FROM concept_name cn;
+-- WHERE cn.locale = 'en'
+--  AND cn.locale_preferred = 1;
 
 -- $END
 END~
@@ -910,11 +1217,19 @@ BEGIN
 
 CREATE TABLE mamba_dim_encounter_type
 (
-    encounter_type_id          INT                            NOT NULL AUTO_INCREMENT,
-    external_encounter_type_id INT,
-    encounter_type_uuid        CHAR(38) CHARACTER SET UTF8MB4 NOT NULL,
-    PRIMARY KEY (encounter_type_id)
-);
+    id                INT      NOT NULL AUTO_INCREMENT,
+    encounter_type_id INT      NOT NULL,
+    uuid              CHAR(38) NOT NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_encounter_type_encounter_type_id_index
+    ON mamba_dim_encounter_type (encounter_type_id);
+
+CREATE INDEX mamba_dim_encounter_type_uuid_index
+    ON mamba_dim_encounter_type (uuid);
 
 -- $END
 END~
@@ -933,12 +1248,12 @@ CREATE PROCEDURE sp_mamba_dim_encounter_type_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_encounter_type (external_encounter_type_id,
-                                      encounter_type_uuid)
-SELECT et.encounter_type_id AS external_encounter_type_id,
-       et.uuid              AS encounter_type_uuid
-FROM encounter_type et
-WHERE et.retired = 0;
+INSERT INTO mamba_dim_encounter_type (encounter_type_id,
+                                      uuid)
+SELECT et.encounter_type_id,
+       et.uuid
+FROM encounter_type et;
+-- WHERE et.retired = 0;
 
 -- $END
 END~
@@ -979,12 +1294,35 @@ BEGIN
 
 CREATE TABLE mamba_dim_encounter
 (
-    encounter_id               INT                            NOT NULL AUTO_INCREMENT,
-    external_encounter_id      INT,
-    external_encounter_type_id INT,
-    encounter_type_uuid        CHAR(38) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (encounter_id)
-);
+    id                  INT        NOT NULL AUTO_INCREMENT,
+    encounter_id        INT        NOT NULL,
+    uuid                CHAR(38)   NOT NULL,
+    encounter_type      INT        NOT NULL,
+    encounter_type_uuid CHAR(38)   NULL,
+    patient_id          INT        NOT NULL,
+    encounter_datetime  DATETIME   NOT NULL,
+    date_created        DATETIME   NOT NULL,
+    voided              TINYINT NOT NULL,
+    visit_id            INT        NULL,
+
+    CONSTRAINT encounter_encounter_id_index
+        UNIQUE (encounter_id),
+
+    CONSTRAINT encounter_uuid_index
+        UNIQUE (uuid),
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_encounter_encounter_id_index
+    ON mamba_dim_encounter (encounter_id);
+
+CREATE INDEX mamba_dim_encounter_encounter_type_index
+    ON mamba_dim_encounter (encounter_type);
+
+CREATE INDEX mamba_dim_encounter_uuid_index
+    ON mamba_dim_encounter (uuid);
 
 -- $END
 END~
@@ -1003,11 +1341,30 @@ CREATE PROCEDURE sp_mamba_dim_encounter_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_encounter (external_encounter_id,
-                                 external_encounter_type_id)
-SELECT e.encounter_id   AS external_encounter_id,
-       e.encounter_type AS external_encounter_type_id
-FROM encounter e;
+INSERT INTO mamba_dim_encounter (encounter_id,
+                                 uuid,
+                                 encounter_type,
+                                 encounter_type_uuid,
+                                 patient_id,
+                                 encounter_datetime,
+                                 date_created,
+                                 voided,
+                                 visit_id)
+SELECT e.encounter_id,
+       e.uuid,
+       e.encounter_type,
+       et.uuid,
+       e.patient_id,
+       e.encounter_datetime,
+       e.date_created,
+       e.voided,
+       e.visit_id
+FROM encounter e
+         INNER JOIN mamba_dim_encounter_type et
+                    ON e.encounter_type = et.encounter_type_id
+WHERE et.uuid
+          IN (SELECT DISTINCT(md.encounter_type_uuid)
+              FROM mamba_dim_concept_metadata md);
 
 -- $END
 END~
@@ -1025,12 +1382,6 @@ DROP PROCEDURE IF EXISTS sp_mamba_dim_encounter_update;
 CREATE PROCEDURE sp_mamba_dim_encounter_update()
 BEGIN
 -- $BEGIN
-
-UPDATE mamba_dim_encounter e
-    INNER JOIN mamba_dim_encounter_type et
-    ON e.external_encounter_type_id = et.external_encounter_type_id
-SET e.encounter_type_uuid = et.encounter_type_uuid
-WHERE e.encounter_id > 0;
 
 -- $END
 END~
@@ -1072,21 +1423,34 @@ BEGIN
 
 CREATE TABLE mamba_dim_concept_metadata
 (
-    concept_metadata_id INT                             NOT NULL AUTO_INCREMENT,
+    id                  INT          NOT NULL AUTO_INCREMENT,
+    concept_id          INT          NULL,
+    concept_uuid        CHAR(38)     NOT NULL,
+    concept_name        VARCHAR(255) NULL,
+    concepts_locale     VARCHAR(20)  NOT NULL,
     column_number       INT,
-    column_label        CHAR(50) CHARACTER SET UTF8MB4  NOT NULL,
-    concept_uuid        CHAR(38) CHARACTER SET UTF8MB4  NOT NULL,
-    concept_datatype    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    concept_answer_obs  TINYINT(1)                      NOT NULL DEFAULT 0,
-    report_name         CHAR(255) CHARACTER SET UTF8MB4 NOT NULL,
-    flat_table_name     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    encounter_type_uuid CHAR(38) CHARACTER SET UTF8MB4  NOT NULL,
+    column_label        VARCHAR(50)  NOT NULL,
+    concept_datatype    VARCHAR(255) NULL,
+    concept_answer_obs  TINYINT      NOT NULL DEFAULT 0,
+    report_name         VARCHAR(255) NOT NULL,
+    flat_table_name     VARCHAR(255) NULL,
+    encounter_type_uuid CHAR(38)     NOT NULL,
 
-    PRIMARY KEY (concept_metadata_id)
-);
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
 
-create index mamba_dim_concept_metadata_concept_uuid_index
-    on mamba_dim_concept_metadata (concept_uuid);
+CREATE INDEX mamba_dim_concept_metadata_concept_id_index
+    ON mamba_dim_concept_metadata (concept_id);
+
+CREATE INDEX mamba_dim_concept_metadata_concept_uuid_index
+    ON mamba_dim_concept_metadata (concept_uuid);
+
+CREATE INDEX mamba_dim_concept_metadata_encounter_type_uuid_index
+    ON mamba_dim_concept_metadata (encounter_type_uuid);
+
+CREATE INDEX mamba_dim_concept_metadata_concepts_locale_index
+    ON mamba_dim_concept_metadata (concepts_locale);
 
 -- ALTER TABLE `mamba_dim_concept_metadata`
 --     ADD COLUMN `encounter_type_id` INT NULL AFTER `output_table_name`,
@@ -1112,194 +1476,189 @@ BEGIN
 
   SET @report_data = '{"flat_report_metadata":[
   {
-  "report_name": "Clinical_Assessment_Card_Report",
+  "report_name": "ART_Card_Encounter",
   "flat_table_name": "mamba_flat_encounter_art_card",
   "encounter_type_uuid": "8d5b2be0-c2cc-11de-8d13-0010c6dffd0f",
+  "concepts_locale": "en",
   "table_columns": {
-    "hemoglobin": "dc548e89-30ab-102d-86b0-7a5022ba4115",
-    "malnutrition": "dc655734-30ab-102d-86b0-7a5022ba4115",
     "method_of_family_planning": "dc7620b3-30ab-102d-86b0-7a5022ba4115",
-    "oedema": "460AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "cd4_panel": "dc824b7b-30ab-102d-86b0-7a5022ba4115",
-    "cd4_percent": "dc86e9fb-30ab-102d-86b0-7a5022ba4115",
+    "cd4": "dc86e9fb-30ab-102d-86b0-7a5022ba4115",
     "hiv_viral_load": "dc8d83e3-30ab-102d-86b0-7a5022ba4115",
     "historical_drug_start_date": "1190AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "historical_drug_stop_date": "1191AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "current_drugs_used": "dc9b5b8f-30ab-102d-86b0-7a5022ba4115",
     "tests_ordered": "dca07f4a-30ab-102d-86b0-7a5022ba4115",
-    "number_of_weeks_pregnant": "dca0a383-30ab-102d-86b0-7a5022ba4115",
     "medication_orders": "1282AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "viral_load_qualitative": "dca12261-30ab-102d-86b0-7a5022ba4115",
-    "hepatitis_b_test_qualitative": "dca16e53-30ab-102d-86b0-7a5022ba4115",
-    "mid_upper_arm_circumference": "1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "medication_strength": "1444AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "register_serial_number": "1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "hepatitis_b_test___qualitative": "dca16e53-30ab-102d-86b0-7a5022ba4115",
     "duration_units": "1732AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "systolic_blood_pressure": "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "diastolic_blood_pressure": "5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "pulse": "5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "temperature": "5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "weight": "5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "height": "5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "return_visit_date": "dcac04cf-30ab-102d-86b0-7a5022ba4115",
-    "respiratory_rate": "5242AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "head_circumference": "5314AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "cd4_count": "dcbcba2c-30ab-102d-86b0-7a5022ba4115",
     "estimated_date_of_confinement": "dcc033e5-30ab-102d-86b0-7a5022ba4115",
     "pmtct": "dcd7e8e5-30ab-102d-86b0-7a5022ba4115",
     "pregnant": "dcda5179-30ab-102d-86b0-7a5022ba4115",
-    "scheduled_patient_visit": "dcda9857-30ab-102d-86b0-7a5022ba4115",
-    "entry_point_into_hiv_care": "dcdfe3ce-30ab-102d-86b0-7a5022ba4115",
+    "scheduled_patient_visist": "dcda9857-30ab-102d-86b0-7a5022ba4115",
     "who_hiv_clinical_stage": "dcdff274-30ab-102d-86b0-7a5022ba4115",
     "name_of_location_transferred_to": "dce015bb-30ab-102d-86b0-7a5022ba4115",
     "tuberculosis_status": "dce02aa1-30ab-102d-86b0-7a5022ba4115",
     "tuberculosis_treatment_start_date": "dce02eca-30ab-102d-86b0-7a5022ba4115",
-    "adherence_to_cotrim": "dce0370c-30ab-102d-86b0-7a5022ba4115",
-    "arv_adherence_assessment_code": "dce03b2f-30ab-102d-86b0-7a5022ba4115",
-    "reason_for_missing_arv": "dce045a4-30ab-102d-86b0-7a5022ba4115",
+    "adherence_assessment_code": "dce03b2f-30ab-102d-86b0-7a5022ba4115",
+    "reason_for_missing_arv_administration": "dce045a4-30ab-102d-86b0-7a5022ba4115",
     "medication_or_other_side_effects": "dce05b7f-30ab-102d-86b0-7a5022ba4115",
-    "history_of_functional_status": "dce09a15-30ab-102d-86b0-7a5022ba4115",
-    "body_weight": "dce09e2f-30ab-102d-86b0-7a5022ba4115",
     "family_planning_status": "dce0a659-30ab-102d-86b0-7a5022ba4115",
     "symptom_diagnosis": "dce0e02a-30ab-102d-86b0-7a5022ba4115",
-    "address": "dce122f3-30ab-102d-86b0-7a5022ba4115",
-    "date_positive_hiv_test_confirmed": "dce12b4f-30ab-102d-86b0-7a5022ba4115",
-    "treatment_supporter_telephone_number": "dce17480-30ab-102d-86b0-7a5022ba4115",
-    "transferred_out": "dd27a783-30ab-102d-86b0-7a5022ba4115",
+    "transfered_out_to_another_facility": "dd27a783-30ab-102d-86b0-7a5022ba4115",
     "tuberculosis_treatment_stop_date": "dd2adde2-30ab-102d-86b0-7a5022ba4115",
     "current_arv_regimen": "dd2b0b4d-30ab-102d-86b0-7a5022ba4115",
     "art_duration": "9ce522a8-cd6a-4254-babb-ebeb48b8ce2f",
     "current_art_duration": "171de3f4-a500-46f6-8098-8097561dfffb",
-    "antenatal_number": "38460266-6bcd-47e8-844c-649d34323810",
     "mid_upper_arm_circumference_code": "5f86d19d-9546-4466-89c0-6f80c101191b",
     "district_tuberculosis_number": "67e9ec2f-4c72-408b-8122-3706909d77ec",
-    "opportunistic_infection": "b498df96-0e4a-4eaf-9b42-dacf9e486cba",
-    "trimethoprim_days_dispensed": "8352c896-3799-406d-a512-da4d3b04288b",
     "other_medications_dispensed": "b04eaf95-77c9-456a-99fb-f668f58a9386",
     "arv_regimen_days_dispensed": "7593ede6-6574-4326-a8a6-3d742e843659",
-    "trimethoprim_dosage": "38801143-01ac-4328-b0e1-a7b23c84c8a3",
     "ar_regimen_dose": "b0e53f0a-eaca-49e6-b663-d0df61601b70",
     "nutrition_support_and_infant_feeding": "8531d1a7-9793-4c62-adab-f6716cf9fabb",
+    "other_side_effects": "d4f4c0e7-06f5-4aa6-a218-17b1f97c5a44",
+    "other_reason_for_missing_arv": "d14ea061-e36f-40df-ab8c-bd8f933a9e0a",
+    "current_regimen_other": "97c48198-3cf7-4892-a3e6-d61fb1125882",
+    "transfer_out_date": "fc1b1e96-4afb-423b-87e5-bb80d451c967",
+    "cotrim_given": "c3d744f6-00ef-4774-b9a7-d33c58f5b014",
+    "syphilis_test_result_for_partner": "d8bc9915-ed4b-4df9-9458-72ca1bc2cd06",
+    "eid_visit_1_z_score": "01b61dfb-7be9-4de5-8880-b37fefc253ba",
+    "medication_duration": "159368AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "reason_for_appointment": "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "medication_prescribed_per_dose": "160856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "tuberculosis_polymerase": "162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "specimen_sources": "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "estimated_gestational_age": "0b995cb8-7d0d-46c0-bd1a-bd322387c870",
+    "hiv_viral_load_date": "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88",
+    "other_reason_for_appointment": "e17524f4-4445-417e-9098-ecdd134a6b81",
+    "nutrition_assesment": "165050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "differentiated_service_delivery": "73312fee-c321-11e8-a355-529269fb1459",
+    "stable_in_dsdm": "cc183c11-0f94-4992-807c-84f33095ce37",
+    "tpt_start_date": "483939c7-79ba-4ca4-8c3e-346488c97fc7",
+    "tpt_completion_date": "813e21e7-4ccb-4fe9-aaab-3c0e40b6e356",
+    "advanced_disease_status": "17def5f6-d6b4-444b-99ed-40eb05d2c4f8",
+    "tpt_status": "37d4ac43-b3b4-4445-b63b-e3acf47c8910",
+    "rpr_test_results": "d462b4f6-fb37-4e19-8617-e5499626c234",
+    "crag_test_results": "43c33e93-90ff-406b-b7b2-9c655b2a561a",
+    "tb_lam_results": "066b84a0-e18f-4cdd-a0d7-189454f4c7a4",
+    "cervical_cancer_screening": "5029d903-51ba-4c44-8745-e97f320739b6",
+    "intention_to_conceive": "ede98e0d-0e04-49c6-b6bd-902ad759a084",
+    "tb_microscopy_results": "215d1c92-43f4-4aee-9875-31047f30132c",
+    "quantity_unit": "dfc50562-da6a-4ce2-ab80-43c8f2d64d6f",
+    "tpt_side_effects": "23a6dc6e-ac16-4fa6-8029-155522548d04",
+    "lab_number": "0f998893-ab24-4ee4-922a-f197ac5fd6e6",
+    "test": "472b6d0f-3f63-4647-8a5c-8223dd1207f5",
+    "test_result": "2cab2216-1aec-49d2-919b-d910bae973fb",
+    "refill_point_code": "7a22cfcb-a272-4eff-968c-5e9467125a7b",
+    "next_return_date_at_facility": "f6c456f7-1ab4-4b4d-a3b4-e7417c81002a",
+    "indication_for_viral_load_testing": "59f36196-3ebe-4fea-be92-6fc9551c3a11"
+  }
+},
+  {
+  "report_name": "ART_Health_Education_card",
+  "flat_table_name": "mamba_flat_encounter_art_health_education",
+  "encounter_type_uuid": "6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e",
+  "concepts_locale": "en",
+  "table_columns": {
+    "scheduled_patient_visit": "dcda9857-30ab-102d-86b0-7a5022ba4115",
+    "health_education_disclosure": "8bdff534-6b4b-44ca-bc88-d088b3b53431",
+    "clinic_contact_comments": "1648e8a1-ed34-4318-87d8-735da453fb38",
+    "clinical_impression_comment": "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "health_education_setting": "2d5a0641-ef12-4101-be76-533d4ba651df",
+    "intervation_approaches": "eb7c1c34-59e5-46d5-beba-626694badd54",
+    "linkages_and_refferals": "a806304b-bef4-483f-b4d0-9514bfc80621",
+    "depression_status": "fe9a6bfc-b0db-4bf3-bab6-a8800dd93ded",
+    "ovc_screening": "c2f9c9f3-3e46-456c-9f17-7bb23c473f1b",
+    "art_preparation": "47502ce3-fc55-41e6-a61c-54a4404dd0e1",
+    "ovc_assessment": "cb07b087-effb-4679-9e1c-5bcc506b5599",
+    "prevention_components": "d788b8df-f25d-49e7-b946-bf5fe2d9407c",
+    "pss_issues_identified": "1760ea50-8f05-4675-aedd-d55f99541aa8",
+    "other_linkages": "609193dc-ea2a-4746-9074-675661c025d0",
+    "other_phdp_components": "ccaba007-ea6c-4dae-a3b0-07118ddf5008",
+    "gender_based_violance": "23a37400-f855-405b-9268-cb2d25b97f54"
+  }
+},
+  {
+  "report_name": "ART_Summary_card",
+  "flat_table_name": "mamba_flat_encounter_art_summary_card",
+  "encounter_type_uuid": "8d5b27bc-c2cc-11de-8d13-0010c6dffd0f",
+  "concepts_locale": "en",
+  "table_columns": {
+    "allergy": "dc674105-30ab-102d-86b0-7a5022ba4115",
+    "hepatitis_b_test_qualitative": "dca16e53-30ab-102d-86b0-7a5022ba4115",
+    "hepatitis_c_test_qualitative": "dca17ac9-30ab-102d-86b0-7a5022ba4115",
+    "lost_to_followup": "dcb23465-30ab-102d-86b0-7a5022ba4115",
+    "currently_in_school": "dcc3a7e9-30ab-102d-86b0-7a5022ba4115",
+    "pmtct": "dcd7e8e5-30ab-102d-86b0-7a5022ba4115",
+    "entry_point_into_hiv_care": "dcdfe3ce-30ab-102d-86b0-7a5022ba4115",
+    "name_of_location_transferred_from": "dcdffef2-30ab-102d-86b0-7a5022ba4115",
+    "date_lost_to_followup": "dce00b87-30ab-102d-86b0-7a5022ba4115",
+    "name_of_location_transferred_to": "dce015bb-30ab-102d-86b0-7a5022ba4115",
+    "patient_unique_identifier": "dce11a89-30ab-102d-86b0-7a5022ba4115",
+    "address": "dce122f3-30ab-102d-86b0-7a5022ba4115",
+    "date_positive_hiv_test_confirmed": "dce12b4f-30ab-102d-86b0-7a5022ba4115",
+    "hiv_care_status": "dce13f66-30ab-102d-86b0-7a5022ba4115",
+    "treatment_supporter_telephone_number": "dce17480-30ab-102d-86b0-7a5022ba4115",
+    "transfered_out_to_another_facility": "dd27a783-30ab-102d-86b0-7a5022ba4115",
+    "prior_art": "902e30a1-2d10-4e92-8f77-784b6677109a",
+    "post_exposure_prophylaxis": "966db6f2-a9f2-4e47-bba2-051467c77c17",
+    "prior_art_not_transfer": "240edc6a-5c70-46ce-86cf-1732bc21e95c",
     "baseline_regimen": "c3332e8d-2548-4ad6-931d-6855692694a3",
+    "transfer_in_regimen": "9a9314ed-0756-45d0-b37c-ace720ca439c",
     "baseline_weight": "900b8fd9-2039-4efc-897b-9b8ce37396f5",
     "baseline_stage": "39243cef-b375-44b1-9e79-cbf21bd10878",
     "baseline_cd4": "c17bd9df-23e6-4e65-ba42-eb6d9250ca3f",
     "baseline_pregnancy": "b253be65-0155-4b43-ad15-88bc797322c9",
     "name_of_family_member": "e96d0880-e80e-4088-9787-bb2623fd46af",
     "age_of_family_member": "4049d989-b99e-440d-8f70-c222aa9fe45c",
-    "family_member_set": "8452e0ac-a83a-428e-bfda-21cb39eef79f",
     "hiv_test": "ddcd8aad-9085-4a88-a411-f19521be4785",
     "hiv_test_facility": "89d3ee61-7c74-4537-b199-4026bd6a3f67",
-    "other_side_effects": "d4f4c0e7-06f5-4aa6-a218-17b1f97c5a44",
-    "other_tests_ordered": "79447e7c-9778-4b5d-b665-cd63e9035aa5",
-    "care_entry_point_set": "cabfa0e9-ddae-438b-a052-6d5c97164242",
-    "treatment_supporter_tel_no": "201d5b56-2420-4be0-92bc-69cd40ef291b",
-    "other_reason_for_missing_arv": "d14ea061-e36f-40df-ab8c-bd8f933a9e0a",
-    "current_regimen_other": "97c48198-3cf7-4892-a3e6-d61fb1125882",
+    "other_care_entry_point": "adf31c43-c9a0-4ab8-b53a-42097eb3d2b6",
+    "treatment_supporter_telephone_number_owner": "201d5b56-2420-4be0-92bc-69cd40ef291b",
     "treatment_supporter_name": "23e28311-3c17-4137-8eee-69860621b80b",
-    "cd4_classification_for_infants": "d4595dd1-753c-4049-bfeb-c370e4b8d80c",
+    "pep_regimen_start_date": "999dea3b-ad8b-45b4-b858-d7ab98de486c",
+    "pmtct_regimen_start_date": "3f125b4f-7c60-4a08-9f8d-c9936e0bb422",
+    "earlier_arv_not_transfer_regimen_start_date": "5e0d5edc-486c-41f1-8429-fbbad5416629",
+    "transfer_in_regimen_start_date": "f363f153-f659-438b-802f-9cc1828b5fa9",
     "baseline_regimen_start_date": "ab505422-26d9-41f1-a079-c3d222000440",
-    "baseline_regimen_set": "e525c286-74b2-4e30-84ac-c4d5f07c503c",
     "transfer_out_date": "fc1b1e96-4afb-423b-87e5-bb80d451c967",
-    "transfer_out_set": "f233b5e7-163c-495f-9102-8d916a5de833",
-    "health_education_disclosure": "8bdff534-6b4b-44ca-bc88-d088b3b53431",
-    "other_referral_ordered": "9028e51b-0c27-4b72-bde6-fadba72d1396",
-    "age_in_months": "143bcb27-c68b-470d-be1d-35d50c5c8161",
-    "test_result_type": "e3977d09-5f8b-40a1-804e-28b427c0e7a4",
-    "lab_result_txt": "bfd0ac71-cd88-47a3-a320-4fc2e6f5993f",
-    "lab_result_set": "9deeba77-cc1b-47ef-b4ab-84b22fb527f3",
-    "counselling_session_type": "b92b1777-4356-49b2-9c83-a799680dc7d4",
-    "cotrim_given": "c3d744f6-00ef-4774-b9a7-d33c58f5b014",
-    "eid_visit_1_appointment_date": "72339c21-ed50-450d-8adb-20ae62f15265",
-    "feeding_status_at_eid_visit_1": "151283c0-8ef7-442f-8b03-3d7382a9d9cd",
-    "counselling_approach": "ff820a28-1adf-4530-bf27-537bfa9ce0b2",
-    "current_hiv_test_result": "3d292447-d7df-417f-8a71-e53e869ec89d",
-    "results_received_as_a_couple": "2aa9f0c1-3f7e-49cd-86ee-baac0d2d5f2d",
-    "tb_suspect": "b80f04a4-1559-42fd-8923-f8a6d2456a04",
+    "baseline_regimen_other": "cc3d64df-61a5-4c5a-a755-6e95d6ef3295",
+    "transfer_in_regimen_other": "a5bfc18e-c6db-4d5d-81f5-18d61b1355a8",
+    "hep_b_prior_art": "4937ae55-afed-48b0-abb5-aad1152d9d4c",
+    "hep_b_prior_art_regimen_start_date": "ce1d514c-142b-4b93-aea2-6d24b7cc9614",
     "baseline_lactating": "ab7bb4db-1a54-4225-b71c-d8e138b471e9",
-    "inh_dosage": "be211d29-1507-4e2e-9906-4bfeae4ddc1f",
-    "inh_days_dispensed": "7b3e0567-a354-426b-bbc5-3525ac3456c9",
     "age_unit": "33b18e88-0eb9-48f0-8023-2e90caad4469",
-    "syphilis_test_result": "275a6f72-b8a4-4038-977a-727552f69cb8",
-    "syphilis_test_result_for_partner": "d8bc9915-ed4b-4df9-9458-72ca1bc2cd06",
-    "ctx_given_at_eid_visit_1": "5372410c-4268-4a39-a60e-cc4a28363e83",
-    "nvp_given_at_eid_visit_1": "7148f054-fa36-4746-8791-63ea32c06e1c",
-    "eid_visit_1_muac": "d257300b-6aa4-483a-8ab2-acdf13b844e0",
-    "medication_duration": "159368AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "clinical_impression_comment": "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "reason_for_appointment": "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "medication_history": "160741AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "quantity_of_medication": "160856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "tb_with_rifampin_resistance_checking": "162202AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "specimen_sources": "162476AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "eid_immunisation_codes": "c74ce384-60ce-4740-9bdd-9c2a673b5a7d",
-    "clinical_assessment_codes": "f0826902-a6d1-4abb-9783-1aeec0dea9d3",
-    "refiil_of_art_for_the_mother": "958de62d-c1ae-4262-bf19-14671b3094a2",
-    "development_milestone": "e10fdb37-c7bf-4d71-b588-dc68f011596d",
-    "pre_test_counseling_done": "193039f1-c378-4d81-bb72-653b66c69914",
-    "hct_entry_point": "720a1e85-ea1c-4f7b-a31e-cb896978df79",
-    "linked_to_care": "3d620422-0641-412e-ab31-5e45b98bc459",
-    "estimated_gestational_age": "0b995cb8-7d0d-46c0-bd1a-bd322387c870",
-    "eid_concept_type": "046b5fd4-3840-409b-9edb-5e05f2d81bd6",
-    "hiv_viral_load_date": "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88",
+    "eid_enrolled": "e77b5448-129f-4b1a-8464-c684fb7dbde8",
+    "drug_restart_date": "160738AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
     "relationship_to_patient": "164352AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "other_reason_for_appointment": "e17524f4-4445-417e-9098-ecdd134a6b81",
-    "nutrition_assessment": "165050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-    "art_pill_balance": "ed19c180-c4ac-4549-8310-60bffca1575b",
-    "differentiated_service_delivery": "73312fee-c321-11e8-a355-529269fb1459",
-    "stable_in_dsdm": "cc183c11-0f94-4992-807c-84f33095ce37",
-    "reason_for_testing": "2afe1128-c3f6-4b35-b119-d17b9b9958ed",
-    "previous_hiv_tests_date": "34c917f0-356b-40d0-b3d1-cf609517b5fc",
-    "milligram_per_meter_squared": "46648b1d-b099-433b-8f9c-3815ff1e0a0f",
-    "hiv_testing_service_delivery_model": "46648b1d-b099-433b-8f9c-3815ff1e0a0f",
-    "hiv_syphillis_duo": "16091701-69b8-4bc7-82b3-b1726cf5a5df",
-    "prevention_services_received": "73686a14-b55c-4b10-916d-fda2046b803f",
-    "hiv_first_time_tester": "2766c090-c057-44f2-98f0-691b6d0336dc",
-    "previous_hiv_test_results": "49ba801d-b6ff-47cd-8d29-e0ac8649cb7d",
-    "results_received_as_individual": "3437ae80-bcc5-41e2-887e-d56999a1b467",
-    "health_education_setting": "2d5a0641-ef12-4101-be76-533d4ba651df",
-    "health_edu_intervation_approaches": "eb7c1c34-59e5-46d5-beba-626694badd54",
-    "health_education_depression_status": "fe9a6bfc-b0db-4bf3-bab6-a8800dd93ded",
-    "ovc_screening": "c2f9c9f3-3e46-456c-9f17-7bb23c473f1b",
-    "art_preparation_readiness": "47502ce3-fc55-41e6-a61c-54a4404dd0e1",
-    "ovc_assessment": "cb07b087-effb-4679-9e1c-5bcc506b5599",
-    "phdp_components": "d788b8df-f25d-49e7-b946-bf5fe2d9407c",
+    "pre_exposure_prophylaxis": "a75ab6b0-dbe7-4037-93aa-f1dfd3976f10",
+    "hts_special_category": "927563c5-cb91-4536-b23c-563a72d3f829",
+    "special_category": "927563c5-cb91-4536-b23c-563a72d3f829",
+    "other_special_category": "eac4e9c2-a086-43fc-8d43-b5a4e02febb4",
     "tpt_start_date": "483939c7-79ba-4ca4-8c3e-346488c97fc7",
     "tpt_completion_date": "813e21e7-4ccb-4fe9-aaab-3c0e40b6e356",
-    "advanced_disease_status": "17def5f6-d6b4-444b-99ed-40eb05d2c4f8",
+    "treatment_interruption_type": "3aaf3680-6240-4819-a704-e20a93841942",
+    "treatment_interruption": "65d1bdf6-e518-4400-9f61-b7f2b1e80169",
+    "treatment_interruption_stop_date": "ac98d431-8ebc-4397-8c78-78b0eee0ffe7",
+    "treatment_interruption_reason": "af0b99f2-4ef5-49a8-b208-e5585ba5538a",
+    "hepatitis_b_test_date": "53df33eb-4060-4300-8b7e-0f0784947767",
+    "hepatitis_c_test_date": "d8fcb0c7-6e6e-4efc-ac2b-3fae764fd198",
+    "blood_sugar_test_date": "612ab515-94f7-4c56-bb1b-be613bf10543",
+    "pre_exposure_prophylaxis_start_date": "9a7b4b98-4cbb-4f94-80aa-d80a56084181",
+    "prep_duration_in_months": "d11d4ad1-4aa2-4f90-8f2c-83f52155f0fc",
+    "pep_duration_in_months": "0b5fa454-0757-4f6d-b376-fefd60ae42ba",
+    "hep_b_duration_in_months": "33a2a6fb-c02c-4015-810d-71d0761c8dd5",
+    "blood_sugar_test_result": "10a3fc87-f37e-4715-8cd9-7c8ad9e58914",
+    "pmtct_duration_in_months": "0f7e7d9d-d8d1-4ef8-9d61-ae5d17da4d1e",
+    "earlier_arv_not_transfer_duration_in_months": "666afa00-2cbf-4ca0-9576-2c89a19fe466",
     "family_member_hiv_status": "1f98a7e6-4d0a-4008-a6f7-4ec118f08983",
-    "tpt_status": "37d4ac43-b3b4-4445-b63b-e3acf47c8910",
-    "rpr_test_results": "d462b4f6-fb37-4e19-8617-e5499626c234",
-    "crag_test_results": "43c33e93-90ff-406b-b7b2-9c655b2a561a",
-    "tb_lam_results": "066b84a0-e18f-4cdd-a0d7-189454f4c7a4",
-    "gender_based_violance": "23a37400-f855-405b-9268-cb2d25b97f54",
-    "dapsone_ctx_medset": "93b2347e-e590-11e9-81b4-2a2ae2dbcce4",
-    "tuberculosis_medication_set": "a202ecd2-3ae8-4b67-8c4f-779a6ce9d7ff",
-    "fluconazole_medication_set": "651dc8a3-8600-40c9-a082-8403282e23bc",
-    "cervical_cancer_screening": "5029d903-51ba-4c44-8745-e97f320739b6",
-    "intention_to_conceive": "ede98e0d-0e04-49c6-b6bd-902ad759a084",
-    "viral_load_test": "1eb05918-f50c-4cad-a827-3c78f296a10a",
-    "genexpert_test": "2cf5644d-73a7-42f2-b18c-f773f40b648c",
-    "tb_microscopy_results": "215d1c92-43f4-4aee-9875-31047f30132c",
-    "tb_microscopy_test": "5faffe89-397e-470c-a32b-e07d962d01b3",
-    "tb_lam": "5827cc4c-8b35-483e-a460-9b76885cf9de",
-    "rpr_test": "67dbf985-6156-45f0-8b10-9ca6ba3053fd",
-    "crag_test": "daebb483-4eef-42b5-9380-7dbfec2ef6ce",
-    "arv_med_set": "ffe9b82c-d341-47a9-a7ef-89c0f5abba97",
-    "quantity_unit": "dfc50562-da6a-4ce2-ab80-43c8f2d64d6f",
-    "tpt_side_effects": "23a6dc6e-ac16-4fa6-8029-155522548d04",
-    "split_into_drugs": "3df0131c-2747-4d77-9972-44268259f4a8",
-    "lab_number": "0f998893-ab24-4ee4-922a-f197ac5fd6e6",
-    "other_drug_dispensed_set": "7c9bde8d-a5a7-473f-99d5-4991dc6feb01",
-    "test": "472b6d0f-3f63-4647-8a5c-8223dd1207f5",
-    "test_result": "2cab2216-1aec-49d2-919b-d910bae973fb",
-    "other_tests": "e529e61d-9937-42a2-9157-5cb0aac8cf05",
-    "refill_point_code": "7a22cfcb-a272-4eff-968c-5e9467125a7b",
-    "next_return_date_at_facility": "f6c456f7-1ab4-4b4d-a3b4-e7417c81002a"
+    "family_member_hiv_test_date": "b7f597e7-39b5-419e-9ec5-de5901fffb52",
+    "hiv_enrollment_date": "31c5c7aa-4948-473e-890b-67fe2fbbd71a"
   }
 }]}';
 
-  CALL sp_extract_report_metadata(@report_data, 'mamba_dim_concept_metadata');
+  CALL sp_mamba_extract_report_metadata(@report_data, 'mamba_dim_concept_metadata');
 
   -- $END
 END~
@@ -1318,21 +1677,26 @@ CREATE PROCEDURE sp_mamba_dim_concept_metadata_update()
 BEGIN
 -- $BEGIN
 
--- Update the Concept datatypes
+-- Update the Concept datatypes, concept_name and concept_id based on given locale
 UPDATE mamba_dim_concept_metadata md
     INNER JOIN mamba_dim_concept c
     ON md.concept_uuid = c.uuid
-SET md.concept_datatype = c.datatype
-WHERE md.concept_metadata_id > 0;
+    INNER JOIN mamba_dim_concept_name cn
+    ON c.concept_id = cn.concept_id
+SET md.concept_datatype = c.datatype,
+    md.concept_id       = c.concept_id,
+    md.concept_name     = cn.name
+WHERE md.id > 0
+  AND cn.locale = md.concepts_locale
+  AND IF(cn.locale_preferred = 1, cn.locale_preferred = 1, cn.concept_name_type = 'FULLY_SPECIFIED');
+-- Use locale preferred or Fully specified name
 
 -- Update to True if this field is an obs answer to an obs Question
 UPDATE mamba_dim_concept_metadata md
-    INNER JOIN mamba_dim_concept c
-    ON md.concept_uuid = c.uuid
     INNER JOIN mamba_dim_concept_answer ca
-    ON ca.answer_concept = c.external_concept_id
+    ON md.concept_id = ca.answer_concept
 SET md.concept_answer_obs = 1
-WHERE md.concept_metadata_id > 0;
+WHERE md.id > 0;
 
 -- $END
 END~
@@ -1374,14 +1738,23 @@ BEGIN
 
 CREATE TABLE mamba_dim_person
 (
-    person_id          INT                             NOT NULL AUTO_INCREMENT,
-    external_person_id INT,
-    birthdate          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    gender             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (person_id)
-);
-create index mamba_dim_person_external_person_id_index
-    on mamba_dim_person (external_person_id);
+    id                  INT          NOT NULL AUTO_INCREMENT,
+    person_id           INT          NOT NULL,
+    birthdate           VARCHAR(255) NULL,
+    birthdate_estimated TINYINT   NOT NULL,
+    dead                TINYINT   NOT NULL,
+    death_date          DATETIME     NULL,
+    deathdate_estimated TINYINT   NOT NULL,
+    gender              VARCHAR(255) NULL,
+    date_created        DATETIME     NOT NULL,
+    voided              TINYINT   NOT NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_person_person_id_index
+    ON mamba_dim_person (person_id);
 
 -- $END
 END~
@@ -1400,12 +1773,24 @@ CREATE PROCEDURE sp_mamba_dim_person_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person (external_person_id,
+INSERT INTO mamba_dim_person (person_id,
                               birthdate,
-                              gender)
-SELECT psn.person_id AS external_person_id,
-       psn.birthdate AS birthdate,
-       psn.gender    AS gender
+                              birthdate_estimated,
+                              dead,
+                              death_date,
+                              deathdate_estimated,
+                              gender,
+                              date_created,
+                              voided)
+SELECT psn.person_id,
+       psn.birthdate,
+       psn.birthdate_estimated,
+       psn.dead,
+       psn.death_date,
+       psn.deathdate_estimated,
+       psn.gender,
+       psn.date_created,
+       psn.voided
 FROM person psn;
 
 -- $END
@@ -1434,6 +1819,122 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_create;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_create()
+BEGIN
+-- $BEGIN
+
+CREATE TABLE mamba_dim_patient_identifier
+(
+    id                    INT         NOT NULL AUTO_INCREMENT,
+    patient_identifier_id INT,
+    patient_id            INT         NOT NULL,
+    identifier            VARCHAR(50) NOT NULL,
+    identifier_type       INT         NOT NULL,
+    preferred             TINYINT     NOT NULL,
+    location_id           INT         NULL,
+    date_created          DATETIME    NOT NULL,
+    voided                TINYINT     NOT NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_patient_identifier_patient_identifier_id_index
+    ON mamba_dim_patient_identifier (patient_identifier_id);
+
+CREATE INDEX mamba_dim_patient_identifier_patient_id_index
+    ON mamba_dim_patient_identifier (patient_id);
+
+CREATE INDEX mamba_dim_patient_identifier_identifier_index
+    ON mamba_dim_patient_identifier (identifier);
+
+CREATE INDEX mamba_dim_patient_identifier_identifier_type_index
+    ON mamba_dim_patient_identifier (identifier_type);
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_insert;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_patient_identifier (patient_id,
+                                          identifier,
+                                          identifier_type,
+                                          preferred,
+                                          location_id,
+                                          date_created,
+                                          voided)
+SELECT patient_id,
+       identifier,
+       identifier_type,
+       preferred,
+       location_id,
+       date_created,
+       voided
+FROM patient_identifier;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier_update;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_patient_identifier  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_patient_identifier;
+
+~
+CREATE PROCEDURE sp_mamba_dim_patient_identifier()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_patient_identifier_create();
+CALL sp_mamba_dim_patient_identifier_insert();
+CALL sp_mamba_dim_patient_identifier_update();
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_dim_person_name_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -1447,14 +1948,28 @@ BEGIN
 
 CREATE TABLE mamba_dim_person_name
 (
-    person_name_id          INT                             NOT NULL AUTO_INCREMENT,
-    external_person_name_id INT,
-    external_person_id      INT,
-    given_name              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (person_name_id)
-);
-CREATE INDEX mamba_dim_person_name_external_person_id_index
-    ON mamba_dim_person_name (external_person_id);
+    id                 INT         NOT NULL AUTO_INCREMENT,
+    person_name_id     INT         NOT NULL,
+    person_id          INT         NOT NULL,
+    preferred          TINYINT  NOT NULL,
+    prefix             VARCHAR(50) NULL,
+    given_name         VARCHAR(50) NULL,
+    middle_name        VARCHAR(50) NULL,
+    family_name_prefix VARCHAR(50) NULL,
+    family_name        VARCHAR(50) NULL,
+    family_name2       VARCHAR(50) NULL,
+    family_name_suffix VARCHAR(50) NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_person_name_person_name_id_index
+    ON mamba_dim_person_name (person_name_id);
+
+CREATE INDEX mamba_dim_person_name_person_id_index
+    ON mamba_dim_person_name (person_id);
+
 -- $END
 END~
 
@@ -1472,12 +1987,26 @@ CREATE PROCEDURE sp_mamba_dim_person_name_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person_name (external_person_name_id,
-                                   external_person_id,
-                                   given_name)
-SELECT pn.person_name_id AS external_person_name_id,
-       pn.person_id      AS external_person_id,
-       pn.given_name     AS given_name
+INSERT INTO mamba_dim_person_name (person_name_id,
+                                   person_id,
+                                   preferred,
+                                   prefix,
+                                   given_name,
+                                   middle_name,
+                                   family_name_prefix,
+                                   family_name,
+                                   family_name2,
+                                   family_name_suffix)
+SELECT pn.person_name_id,
+       pn.person_id,
+       pn.preferred,
+       pn.prefix,
+       pn.given_name,
+       pn.middle_name,
+       pn.family_name_prefix,
+       pn.family_name,
+       pn.family_name2,
+       pn.family_name_suffix
 FROM person_name pn;
 
 -- $END
@@ -1519,17 +2048,30 @@ BEGIN
 
 CREATE TABLE mamba_dim_person_address
 (
-    person_address_id          INT                             NOT NULL AUTO_INCREMENT,
-    external_person_address_id INT,
-    external_person_id         INT,
-    city_village               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    county_district            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    address1                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    address2                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    PRIMARY KEY (person_address_id)
-);
-create index mamba_dim_person_address_external_person_id_index
-    on mamba_dim_person_address (external_person_id);
+    id                INT          NOT NULL AUTO_INCREMENT,
+    person_address_id INT          NOT NULL,
+    person_id         INT          NULL,
+    preferred         TINYINT      NOT NULL,
+    address1          VARCHAR(255) NULL,
+    address2          VARCHAR(255) NULL,
+    address3          VARCHAR(255) NULL,
+    address4          VARCHAR(255) NULL,
+    address5          VARCHAR(255) NULL,
+    address6          VARCHAR(255) NULL,
+    city_village      VARCHAR(255) NULL,
+    county_district   VARCHAR(255) NULL,
+    state_province    VARCHAR(255) NULL,
+    postal_code       VARCHAR(50)  NULL,
+    country           VARCHAR(50)  NULL,
+    latitude          VARCHAR(50)  NULL,
+    longitude         VARCHAR(50)  NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+CREATE INDEX mamba_dim_person_address_person_address_id_index
+    ON mamba_dim_person_address (person_address_id);
 
 -- $END
 END~
@@ -1548,19 +2090,39 @@ CREATE PROCEDURE sp_mamba_dim_person_address_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person_address (external_person_address_id,
-                                      external_person_id,
+INSERT INTO mamba_dim_person_address (person_address_id,
+                                      person_id,
+                                      preferred,
+                                      address1,
+                                      address2,
+                                      address3,
+                                      address4,
+                                      address5,
+                                      address6,
                                       city_village,
                                       county_district,
-                                      address1,
-                                      address2)
-SELECT pa.person_address_id AS external_person_address_id,
-       pa.person_id         AS external_person_id,
-       pa.city_village      AS city_village,
-       pa.county_district   AS county_district,
-       pa.address1          AS address1,
-       pa.address2          AS address2
-FROM person_address pa;
+                                      state_province,
+                                      postal_code,
+                                      country,
+                                      latitude,
+                                      longitude)
+SELECT person_address_id,
+       person_id,
+       preferred,
+       address1,
+       address2,
+       address3,
+       address4,
+       address5,
+       address6,
+       city_village,
+       county_district,
+       state_province,
+       postal_code,
+       country,
+       latitude,
+       longitude
+FROM person_address;
 
 -- $END
 END~
@@ -1588,82 +2150,61 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_dim_client_create  ----------------------------
+-- ----------------------  sp_mamba_dim_agegroup_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_dim_client_create;
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup_create;
 
 ~
-CREATE PROCEDURE sp_dim_client_create()
+CREATE PROCEDURE sp_mamba_dim_agegroup_create()
 BEGIN
 -- $BEGIN
-CREATE TABLE dim_client
+
+CREATE TABLE mamba_dim_agegroup
 (
-    id            INT                             NOT NULL AUTO_INCREMENT,
-    client_id     INT,
-    date_of_birth DATE                            NULL,
-    age           INT,
-    sex           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    county        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    sub_county    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    ward          CHAR(255) CHARACTER SET UTF8MB4 NULL,
+    id              INT         NOT NULL AUTO_INCREMENT,
+    age             INT         NULL,
+    datim_agegroup  VARCHAR(50) NULL,
+    normal_agegroup VARCHAR(50) NULL,
+
     PRIMARY KEY (id)
-);
+)
+    CHARSET = UTF8MB4;
+
 -- $END
 END~
 
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_dim_client_insert  ----------------------------
+-- ----------------------  sp_mamba_dim_agegroup_insert  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_dim_client_insert;
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup_insert;
 
 ~
-CREATE PROCEDURE sp_dim_client_insert()
+CREATE PROCEDURE sp_mamba_dim_agegroup_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO dim_client (client_id,
-                        date_of_birth,
-                        age,
-                        sex,
-                        county,
-                        sub_county,
-                        ward)
-SELECT `psn`.`person_id`                             AS `client_id`,
-       `psn`.`birthdate`                             AS `date_of_birth`,
-       timestampdiff(YEAR, `psn`.`birthdate`, now()) AS `age`,
-       (CASE `psn`.`gender`
-            WHEN 'M' THEN 'Male'
-            WHEN 'F' THEN 'Female'
-            ELSE '_'
-           END)                                      AS `sex`,
-       `pa`.`county_district`                        AS `county`,
-       `pa`.`city_village`                           AS `sub_county`,
-       `pa`.`address1`                               AS `ward`
-FROM ((`mamba_dim_person` `psn`
-    LEFT JOIN `mamba_dim_person_name` `pn` on ((`psn`.`external_person_id` = `pn`.`external_person_id`)))
-    LEFT JOIN `mamba_dim_person_address` `pa` on ((`psn`.`external_person_id` = `pa`.`external_person_id`)));
-
-
+-- Enter unknown dimension value (in case a person's date of birth is unknown)
+CALL sp_mamba_load_agegroup();
 -- $END
 END~
 
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_dim_client_update  ----------------------------
+-- ----------------------  sp_mamba_dim_agegroup_update  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_dim_client_update;
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup_update;
 
 ~
-CREATE PROCEDURE sp_dim_client_update()
+CREATE PROCEDURE sp_mamba_dim_agegroup_update()
 BEGIN
 -- $BEGIN
 
@@ -1673,67 +2214,60 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_dim_client  ----------------------------
+-- ----------------------  sp_mamba_dim_agegroup  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_dim_client;
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup;
 
 ~
-CREATE PROCEDURE sp_dim_client()
+CREATE PROCEDURE sp_mamba_dim_agegroup()
 BEGIN
 -- $BEGIN
 
-CALL sp_dim_client_create();
-CALL sp_dim_client_insert();
-CALL sp_dim_client_update();
-
--- $END
+CALL sp_mamba_dim_agegroup_create();
+CALL sp_mamba_dim_agegroup_insert();
+-- CALL sp_mamba_dim_agegroup_update();
 END~
 
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_mamba_z_encounter_obs  ----------------------------
+-- ----------------------  sp_mamba_z_encounter_obs_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs;
+DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs_create;
 
 ~
-CREATE PROCEDURE sp_mamba_z_encounter_obs()
+CREATE PROCEDURE sp_mamba_z_encounter_obs_create()
 BEGIN
 -- $BEGIN
 
 CREATE TABLE mamba_z_encounter_obs
 (
-    obs_question_uuid    CHAR(38) CHARACTER SET UTF8MB4,
---    obs_answer_uuid      CHAR(38) CHARACTER SET UTF8MB4,
-    obs_value_coded_uuid CHAR(38) CHARACTER SET UTF8MB4,
-    encounter_type_uuid  CHAR(38) CHARACTER SET UTF8MB4
+    id                      INT           NOT NULL AUTO_INCREMENT,
+    encounter_id            INT           NULL,
+    person_id               INT           NOT NULL,
+    encounter_datetime      DATETIME      NOT NULL,
+    obs_datetime            DATETIME      NOT NULL,
+    obs_question_concept_id INT DEFAULT 0 NOT NULL,
+    obs_value_text          TEXT          NULL,
+    obs_value_numeric       DOUBLE        NULL,
+    obs_value_coded         INT           NULL,
+    obs_value_datetime      DATETIME      NULL,
+    obs_value_complex       VARCHAR(1000) NULL,
+    obs_value_drug          INT           NULL,
+    obs_question_uuid       CHAR(38),
+    obs_answer_uuid         CHAR(38),
+    obs_value_coded_uuid    CHAR(38),
+    encounter_type_uuid     CHAR(38),
+    status                  VARCHAR(16)   NOT NULL,
+    voided                  TINYINT       NOT NULL,
+
+    PRIMARY KEY (id)
 )
-SELECT o.encounter_id         AS encounter_id,
-       o.person_id            AS person_id,
-       o.obs_datetime         AS obs_datetime,
-       o.concept_id           AS obs_question_concept_id,
-       o.value_text           AS obs_value_text,
-       o.value_numeric        AS obs_value_numeric,
-       o.value_coded          AS obs_value_coded,
-       o.value_datetime       AS obs_value_datetime,
-       o.value_complex        AS obs_value_complex,
-       o.value_drug           AS obs_value_drug,
-       et.encounter_type_uuid AS encounter_type_uuid,
-       NULL                   AS obs_question_uuid,
---       NULL                   AS obs_answer_uuid,
-       NULL                   AS obs_value_coded_uuid
-FROM obs o
-         INNER JOIN mamba_dim_encounter e
-                    ON o.encounter_id = e.external_encounter_id
-         INNER JOIN mamba_dim_encounter_type et
-                    ON e.external_encounter_type_id = et.external_encounter_type_id
-WHERE et.encounter_type_uuid
-          IN (SELECT DISTINCT(md.encounter_type_uuid)
-              FROM mamba_dim_concept_metadata md);
+    CHARSET = UTF8MB4;
 
 CREATE INDEX mamba_z_encounter_obs_encounter_id_type_uuid_person_id_index
     ON mamba_z_encounter_obs (encounter_id, encounter_type_uuid, person_id);
@@ -1753,21 +2287,98 @@ CREATE INDEX mamba_z_encounter_obs_value_coded_uuid_index
 CREATE INDEX mamba_z_encounter_obs_question_uuid_index
     ON mamba_z_encounter_obs (obs_question_uuid);
 
+CREATE INDEX mamba_z_encounter_obs_status_index
+    ON mamba_z_encounter_obs (status);
+
+CREATE INDEX mamba_z_encounter_obs_voided_index
+    ON mamba_z_encounter_obs (voided);
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_z_encounter_obs_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs_insert;
+
+~
+CREATE PROCEDURE sp_mamba_z_encounter_obs_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_z_encounter_obs (encounter_id,
+                                   person_id,
+                                   obs_datetime,
+                                   encounter_datetime,
+                                   encounter_type_uuid,
+                                   obs_question_concept_id,
+                                   obs_value_text,
+                                   obs_value_numeric,
+                                   obs_value_coded,
+                                   obs_value_datetime,
+                                   obs_value_complex,
+                                   obs_value_drug,
+                                   obs_question_uuid,
+                                   obs_answer_uuid,
+                                   obs_value_coded_uuid,
+                                   status,
+                                   voided)
+SELECT o.encounter_id,
+       o.person_id,
+       o.obs_datetime,
+       e.encounter_datetime,
+       e.encounter_type_uuid,
+       o.concept_id     AS obs_question_concept_id,
+       o.value_text     AS obs_value_text,
+       o.value_numeric  AS obs_value_numeric,
+       o.value_coded    AS obs_value_coded,
+       o.value_datetime AS obs_value_datetime,
+       o.value_complex  AS obs_value_complex,
+       o.value_drug     AS obs_value_drug,
+       NULL             AS obs_question_uuid,
+       NULL             AS obs_answer_uuid,
+       NULL             AS obs_value_coded_uuid,
+       o.status,
+       o.voided
+FROM obs o
+         INNER JOIN mamba_dim_encounter e
+                    ON o.encounter_id = e.encounter_id
+WHERE o.encounter_id IS NOT NULL;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_z_encounter_obs_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs_update;
+
+~
+CREATE PROCEDURE sp_mamba_z_encounter_obs_update()
+BEGIN
+-- $BEGIN
+
 -- update obs question UUIDs
 UPDATE mamba_z_encounter_obs z
-    INNER JOIN mamba_dim_concept c
-    ON z.obs_question_concept_id = c.external_concept_id
-SET z.obs_question_uuid = c.uuid
+    INNER JOIN mamba_dim_concept_metadata md
+    ON z.obs_question_concept_id = md.concept_id
+SET z.obs_question_uuid = md.concept_uuid
 WHERE TRUE;
 
--- update obs_value_coded (UUIDs & values)
+-- update obs_value_coded (UUIDs & Concept value names)
 UPDATE mamba_z_encounter_obs z
-    INNER JOIN mamba_dim_concept_name cn
-    ON z.obs_value_coded = cn.external_concept_id
-    INNER JOIN mamba_dim_concept c
-    ON z.obs_value_coded = c.external_concept_id
-SET z.obs_value_text       = cn.concept_name,
-    z.obs_value_coded_uuid = c.uuid
+    INNER JOIN mamba_dim_concept_metadata md
+    ON z.obs_value_coded = md.concept_id
+SET z.obs_value_text       = md.concept_name,
+    z.obs_value_coded_uuid = md.concept_uuid
 WHERE z.obs_value_coded IS NOT NULL;
 
 -- $END
@@ -1776,18 +2387,20 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_mamba_z_tables  ----------------------------
+-- ----------------------  sp_mamba_z_encounter_obs  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_mamba_z_tables;
+DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs;
 
 ~
-CREATE PROCEDURE sp_mamba_z_tables()
+CREATE PROCEDURE sp_mamba_z_encounter_obs()
 BEGIN
 -- $BEGIN
 
-CALL sp_mamba_z_encounter_obs;
+CALL sp_mamba_z_encounter_obs_create();
+CALL sp_mamba_z_encounter_obs_insert();
+CALL sp_mamba_z_encounter_obs_update();
 
 -- $END
 END~
@@ -1795,18 +2408,22 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_data_processing_flatten  ----------------------------
+-- ----------------------  sp_mamba_data_processing_flatten  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_data_processing_flatten;
+DROP PROCEDURE IF EXISTS sp_mamba_data_processing_flatten;
 
 ~
-CREATE PROCEDURE sp_data_processing_flatten()
+CREATE PROCEDURE sp_mamba_data_processing_flatten()
 BEGIN
 -- $BEGIN
 -- CALL sp_xf_system_drop_all_tables_in_schema($target_database);
 CALL sp_xf_system_drop_all_tables_in_schema();
+
+CALL sp_mamba_dim_location;
+
+CALL sp_mamba_dim_patient_identifier_type;
 
 CALL sp_mamba_dim_concept_datatype;
 
@@ -1816,11 +2433,11 @@ CALL sp_mamba_dim_concept_name;
 
 CALL sp_mamba_dim_concept;
 
+CALL sp_mamba_dim_concept_metadata;
+
 CALL sp_mamba_dim_encounter_type;
 
 CALL sp_mamba_dim_encounter;
-
-CALL sp_mamba_dim_concept_metadata;
 
 CALL sp_mamba_dim_person;
 
@@ -1828,13 +2445,15 @@ CALL sp_mamba_dim_person_name;
 
 CALL sp_mamba_dim_person_address;
 
-CALL sp_dim_client;
+CALL sp_mamba_dim_patient_identifier;
 
-CALL sp_mamba_z_tables;
+CALL sp_mamba_dim_agegroup;
 
-CALL sp_flat_encounter_table_create_all;
+CALL sp_mamba_z_encounter_obs;
 
-CALL sp_flat_encounter_table_insert_all;
+CALL sp_mamba_flat_encounter_table_create_all;
+
+CALL sp_mamba_flat_encounter_table_insert_all;
 -- $END
 END~
 
@@ -1877,22 +2496,41 @@ END~
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_data_processing_etl  ----------------------------
+-- ----------------------  sp_data_processing_derived_hiv_art_card  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS sp_data_processing_etl;
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_hiv_art_card;
 
 ~
-CREATE PROCEDURE sp_data_processing_etl()
+CREATE PROCEDURE sp_data_processing_derived_hiv_art_card()
+BEGIN
+-- $BEGIN
+-- CALL sp_dim_client_hiv_hts;
+CALL sp_fact_encounter_hiv_art_card;
+CALL sp_fact_encounter_hiv_art_summary;
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_data_processing_etl  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_mamba_data_processing_etl;
+
+~
+CREATE PROCEDURE sp_mamba_data_processing_etl()
 BEGIN
 -- $BEGIN
 -- add base folder SP here --
 -- CALL sp_data_processing_derived_hts();
 
-CALL sp_data_processing_flatten();
+CALL sp_mamba_data_processing_flatten();
 
-CALL sp_data_processing_derived_hiv_art();
+CALL sp_data_processing_derived_hiv_art_card();
 -- $END
 END~
 
@@ -2415,190 +3053,22 @@ DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_query;
 CREATE PROCEDURE sp_fact_encounter_hiv_art_query(IN START_DATE
                                                      DATETIME, END_DATE DATETIME)
 BEGIN
-    SELECT hemoglobin,
-           malnutrition,
-           method_of_family_planning,
-           oedema,
-           cd4_panel,
-           cd4_percent,
-           hiv_viral_load,
-           historical_drug_start_date,
-           historical_drug_stop_date,
-           current_drugs_used,
-           tests_ordered,
-           number_of_weeks_pregnant,
-           medication_orders,
-           viral_load_qualitative,
-           hepatitis_b_test_qualitative,
-           mid_upper_arm_circumference,
-           medication_strength,
-           register_serial_number,
-           duration_units,
-           systolic_blood_pressure,
-           diastolic_blood_pressure,
-           pulse,
-           temperature,
-           weight,
-           height,
-           return_visit_date,
-           respiratory_rate,
-           head_circumference,
-           cd4_count,
-           estimated_date_of_confinement,
-           pmtct,
-           pregnant,
-           scheduled_patient_visit,
-           entry_point_into_hiv_care,
-           who_hiv_clinical_stage,
-           name_of_location_transferred_to,
-           tuberculosis_status,
-           tuberculosis_treatment_start_date,
-           adherence_to_cotrim,
-           arv_adherence_assessment_code,
-           reason_for_missing_arv,
-           medication_or_other_side_effects,
-           history_of_functional_status,
-           body_weight,
-           family_planning_status,
-           symptom_diagnosis,
-           address,
-           date_positive_hiv_test_confirmed,
-           treatment_supporter_telephone_number,
-           transferred_out,
-           tuberculosis_treatment_stop_date,
-           current_arv_regimen,
-           art_duration,
-           current_art_duration,
-           antenatal_number,
-           mid_upper_arm_circumference_code,
-           district_tuberculosis_number,
-           opportunistic_infection,
-           trimethoprim_days_dispensed,
-           other_medications_dispensed,
-           arv_regimen_days_dispensed,
-           trimethoprim_dosage,
-           ar_regimen_dose,
-           nutrition_support_and_infant_feeding,
-           baseline_regimen,
-           baseline_weight,
-           baseline_stage,
-           baseline_cd4,
-           baseline_pregnancy,
-           name_of_family_member,
-           age_of_family_member,
-           family_member_set,
-           hiv_test,
-           hiv_test_facility,
-           other_side_effects,
-           other_tests_ordered,
-           care_entry_point_set,
-           treatment_supporter_tel_no,
-           other_reason_for_missing_arv,
-           current_regimen_other,
-           treatment_supporter_name,
-           cd4_classification_for_infants,
-           baseline_regimen_start_date,
-           baseline_regimen_set,
-           transfer_out_date,
-           transfer_out_set,
-           health_education_disclosure,
-           other_referral_ordered,
-           age_in_months,
-           test_result_type,
-           lab_result_txt,
-           lab_result_set,
-           counselling_session_type,
-           cotrim_given,
-           eid_visit_1_appointment_date,
-           feeding_status_at_eid_visit_1,
-           counselling_approach,
-           current_hiv_test_result,
-           results_received_as_a_couple,
-           tb_suspect,
-           baseline_lactating,
-           inh_dosage,
-           inh_days_dispensed,
-           age_unit,
-           syphilis_test_result,
-           syphilis_test_result_for_partner,
-           ctx_given_at_eid_visit_1,
-           nvp_given_at_eid_visit_1,
-           eid_visit_1_muac,
-           medication_duration,
-           clinical_impression_comment,
-           reason_for_appointment,
-           medication_history,
-           quantity_of_medication,
-           tb_with_rifampin_resistance_checking,
-           specimen_sources,
-           eid_immunisation_codes,
-           clinical_assessment_codes,
-           refiil_of_art_for_the_mother,
-           development_milestone,
-           pre_test_counseling_done,
-           hct_entry_point,
-           linked_to_care,
-           estimated_gestational_age,
-           eid_concept_type,
-           hiv_viral_load_date,
-           relationship_to_patient,
-           other_reason_for_appointment,
-           nutrition_assessment,
-           art_pill_balance,
-           differentiated_service_delivery,
-           stable_in_dsdm,
-           reason_for_testing,
-           previous_hiv_tests_date,
-           milligram_per_meter_squared,
-           hiv_testing_service_delivery_model,
-           hiv_syphillis_duo,
-           prevention_services_received,
-           hiv_first_time_tester,
-           previous_hiv_test_results,
-           results_received_as_individual,
-           health_education_setting,
-           health_edu_intervation_approaches,
-           health_education_depression_status,
-           ovc_screening,
-           art_preparation_readiness,
-           ovc_assessment,
-           phdp_components,
-           tpt_start_date,
-           tpt_completion_date,
-           advanced_disease_status,
-           family_member_hiv_status,
-           tpt_status,
-           rpr_test_results,
-           crag_test_results,
-           tb_lam_results,
-           gender_based_violance,
-           dapsone_ctx_medset,
-           tuberculosis_medication_set,
-           fluconazole_medication_set,
-           cervical_cancer_screening,
-           intention_to_conceive,
-           viral_load_test,
-           genexpert_test,
-           tb_microscopy_results,
-           tb_microscopy_test,
-           tb_lam,
-           rpr_test,
-           crag_test,
-           arv_med_set,
-           quantity_unit,
-           tpt_side_effects,
-           split_into_drugs,
-           lab_number,
-           other_drug_dispensed_set,
-           test,
-           test_result,
-           other_tests,
-           refill_point_code,
-           next_return_date_at_facility
-    FROM mamba_fact_encounter_hiv_art
-
-    WHERE hivart.encounter_date >= START_DATE
-      AND hivart.encounter_dat <= END_DATE;
+    SELECT pn.given_name,
+           TIMESTAMPDIFF(YEAR,p.birthdate,CURRENT_DATE),
+           p.gender,
+            pi.identifier,
+           hivart.return_date,
+           hivart.current_regimen,
+           hivart.who_stage,
+           hivart.no_of_days,
+           hivart.tb_status,
+           hivart.dsdm,
+           hivart.pregnant,
+           hivart.emtct
+    FROM mamba_fact_encounter_hiv_art hivart INNER JOIN mamba_dim_person_name pn on client_id=pn.external_person_id
+     INNER JOIN mamba_dim_person p on client_id= p.external_person_id inner join patient_identifier pi on client_id =pi.patient_id
+    WHERE hivart.return_date >= START_DATE
+      AND hivart.return_date <= END_DATE AND pi.identifier_type=4;
 END~
 
 
@@ -2617,6 +3087,657 @@ BEGIN
 -- $BEGIN
 -- CALL sp_dim_client_hiv_hts;
 CALL sp_fact_encounter_hiv_art;
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_card_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_card_create;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_card_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_fact_encounter_hiv_art_card
+(
+    id                                    INT AUTO_INCREMENT,
+    encounter_id                          INT          NULL,
+    client_id                             INT          NULL,
+    encounter_date                        DATE         NULL,
+
+    method_of_family_planning             VARCHAR(80) NULL,
+    cd4                                   VARCHAR(80) NULL,
+    hiv_viral_load                        VARCHAR(80) NULL,
+    historical_drug_start_date            VARCHAR(80) NULL,
+    historical_drug_stop_date             VARCHAR(80) NULL,
+    tests_ordered                         VARCHAR(80) NULL,
+    medication_orders                     VARCHAR(80) NULL,
+    viral_load_qualitative                VARCHAR(80) NULL,
+    hepatitis_b_test___qualitative        VARCHAR(80) NULL,
+    duration_units                        VARCHAR(80) NULL,
+    return_visit_date                     VARCHAR(80) NULL,
+    cd4_count                             VARCHAR(80) NULL,
+    estimated_date_of_confinement         VARCHAR(80) NULL,
+    pmtct                                 VARCHAR(80) NULL,
+    pregnant                              VARCHAR(80) NULL,
+    scheduled_patient_visist              VARCHAR(80) NULL,
+    who_hiv_clinical_stage                VARCHAR(80) NULL,
+    name_of_location_transferred_to       VARCHAR(80) NULL,
+    tuberculosis_status                   VARCHAR(80) NULL,
+    tuberculosis_treatment_start_date     VARCHAR(80) NULL,
+    adherence_assessment_code             VARCHAR(80) NULL,
+    reason_for_missing_arv_administration VARCHAR(80) NULL,
+    medication_or_other_side_effects      VARCHAR(80) NULL,
+    family_planning_status                VARCHAR(80) NULL,
+    symptom_diagnosis                     VARCHAR(80) NULL,
+    transfered_out_to_another_facility    VARCHAR(80) NULL,
+    tuberculosis_treatment_stop_date      VARCHAR(80) NULL,
+    current_arv_regimen                   VARCHAR(80) NULL,
+    art_duration                          VARCHAR(80) NULL,
+    current_art_duration                  VARCHAR(80) NULL,
+    mid_upper_arm_circumference_code      VARCHAR(80) NULL,
+    district_tuberculosis_number          VARCHAR(80) NULL,
+    other_medications_dispensed           VARCHAR(80) NULL,
+    arv_regimen_days_dispensed            VARCHAR(80) NULL,
+    ar_regimen_dose                       VARCHAR(80) NULL,
+    nutrition_support_and_infant_feeding  VARCHAR(80) NULL,
+    other_side_effects                    VARCHAR(80) NULL,
+    other_reason_for_missing_arv          VARCHAR(80) NULL,
+    current_regimen_other                 VARCHAR(80) NULL,
+    transfer_out_date                     VARCHAR(80) NULL,
+    cotrim_given                          VARCHAR(80) NULL,
+    syphilis_test_result_for_partner      VARCHAR(80) NULL,
+    eid_visit_1_z_score                   VARCHAR(80) NULL,
+    medication_duration                   VARCHAR(80) NULL,
+    reason_for_appointment                VARCHAR(80) NULL,
+    medication_prescribed_per_dose        VARCHAR(80) NULL,
+    tuberculosis_polymerase               VARCHAR(80) NULL,
+    specimen_sources                      VARCHAR(80) NULL,
+    estimated_gestational_age             VARCHAR(80) NULL,
+    hiv_viral_load_date                   VARCHAR(80) NULL,
+    other_reason_for_appointment          VARCHAR(80) NULL,
+    nutrition_assesment                   VARCHAR(80) NULL,
+    differentiated_service_delivery       VARCHAR(80) NULL,
+    stable_in_dsdm                        VARCHAR(80) NULL,
+    tpt_start_date                        VARCHAR(80) NULL,
+    tpt_completion_date                   VARCHAR(80) NULL,
+    advanced_disease_status               VARCHAR(80) NULL,
+    tpt_status                            VARCHAR(80) NULL,
+    rpr_test_results                      VARCHAR(80) NULL,
+    crag_test_results                     VARCHAR(80) NULL,
+    tb_lam_results                        VARCHAR(80) NULL,
+    cervical_cancer_screening             VARCHAR(80) NULL,
+    intention_to_conceive                 VARCHAR(80) NULL,
+    tb_microscopy_results                 VARCHAR(80) NULL,
+    quantity_unit                         VARCHAR(80) NULL,
+    tpt_side_effects                      VARCHAR(80) NULL,
+    lab_number                            VARCHAR(80) NULL,
+    test                                  VARCHAR(80) NULL,
+    test_result                           VARCHAR(80) NULL,
+    refill_point_code                     VARCHAR(80) NULL,
+    next_return_date_at_facility          VARCHAR(80) NULL,
+    indication_for_viral_load_testing     VARCHAR(80) NULL,
+    
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_card_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_card_insert;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_card_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_encounter_hiv_art_card (encounter_id,
+                                               client_id,
+                                               encounter_date,
+                                               method_of_family_planning,
+                                               cd4,
+                                               hiv_viral_load,
+                                               historical_drug_start_date,
+                                               historical_drug_stop_date,
+                                               tests_ordered,
+                                               medication_orders,
+                                               viral_load_qualitative,
+                                               hepatitis_b_test___qualitative,
+                                               duration_units,
+                                               return_visit_date,
+                                               cd4_count,
+                                               estimated_date_of_confinement,
+                                               pmtct,
+                                               pregnant,
+                                               scheduled_patient_visist,
+                                               who_hiv_clinical_stage,
+                                               name_of_location_transferred_to,
+                                               tuberculosis_status,
+                                               tuberculosis_treatment_start_date,
+                                               adherence_assessment_code,
+                                               reason_for_missing_arv_administration,
+                                               medication_or_other_side_effects,
+                                               family_planning_status,
+                                               symptom_diagnosis,
+                                               transfered_out_to_another_facility,
+                                               tuberculosis_treatment_stop_date,
+                                               current_arv_regimen,
+                                               art_duration,
+                                               current_art_duration,
+                                               mid_upper_arm_circumference_code,
+                                               district_tuberculosis_number,
+                                               other_medications_dispensed,
+                                               arv_regimen_days_dispensed,
+                                               ar_regimen_dose,
+                                               nutrition_support_and_infant_feeding,
+                                               other_side_effects,
+                                               other_reason_for_missing_arv,
+                                               current_regimen_other,
+                                               transfer_out_date,
+                                               cotrim_given,
+                                               syphilis_test_result_for_partner,
+                                               eid_visit_1_z_score,
+                                               medication_duration,
+                                               reason_for_appointment,
+                                               medication_prescribed_per_dose,
+                                               tuberculosis_polymerase,
+                                               specimen_sources,
+                                               estimated_gestational_age,
+                                               hiv_viral_load_date,
+                                               other_reason_for_appointment,
+                                               nutrition_assesment,
+                                               differentiated_service_delivery,
+                                               stable_in_dsdm,
+                                               tpt_start_date,
+                                               tpt_completion_date,
+                                               advanced_disease_status,
+                                               tpt_status,
+                                               rpr_test_results,
+                                               crag_test_results,
+                                               tb_lam_results,
+                                               cervical_cancer_screening,
+                                               intention_to_conceive,
+                                               tb_microscopy_results,
+                                               quantity_unit,
+                                               tpt_side_effects,
+                                               lab_number,
+                                               test,
+                                               test_result,
+                                               refill_point_code,
+                                               next_return_date_at_facility,
+                                               indication_for_viral_load_testing)
+SELECT encounter_id,
+       client_id,
+       encounter_datetime,
+       method_of_family_planning,
+       cd4,
+       hiv_viral_load,
+       historical_drug_start_date,
+       historical_drug_stop_date,
+       tests_ordered,
+       medication_orders,
+       viral_load_qualitative,
+       hepatitis_b_test___qualitative,
+       duration_units,
+       return_visit_date,
+       cd4_count,
+       estimated_date_of_confinement,
+       pmtct,
+       pregnant,
+       scheduled_patient_visist,
+       who_hiv_clinical_stage,
+       name_of_location_transferred_to,
+       tuberculosis_status,
+       tuberculosis_treatment_start_date,
+       adherence_assessment_code,
+       reason_for_missing_arv_administration,
+       medication_or_other_side_effects,
+       family_planning_status,
+       symptom_diagnosis,
+       transfered_out_to_another_facility,
+       tuberculosis_treatment_stop_date,
+       current_arv_regimen,
+       art_duration,
+       current_art_duration,
+       mid_upper_arm_circumference_code,
+       district_tuberculosis_number,
+       other_medications_dispensed,
+       arv_regimen_days_dispensed,
+       ar_regimen_dose,
+       nutrition_support_and_infant_feeding,
+       other_side_effects,
+       other_reason_for_missing_arv,
+       current_regimen_other,
+       transfer_out_date,
+       cotrim_given,
+       syphilis_test_result_for_partner,
+       eid_visit_1_z_score,
+       medication_duration,
+       reason_for_appointment,
+       medication_prescribed_per_dose,
+       tuberculosis_polymerase,
+       specimen_sources,
+       estimated_gestational_age,
+       hiv_viral_load_date,
+       other_reason_for_appointment,
+       nutrition_assesment,
+       differentiated_service_delivery,
+       stable_in_dsdm,
+       tpt_start_date,
+       tpt_completion_date,
+       advanced_disease_status,
+       tpt_status,
+       rpr_test_results,
+       crag_test_results,
+       tb_lam_results,
+       cervical_cancer_screening,
+       intention_to_conceive,
+       tb_microscopy_results,
+       quantity_unit,
+       tpt_side_effects,
+       lab_number,
+       test,
+       test_result,
+       refill_point_code,
+       next_return_date_at_facility,
+       indication_for_viral_load_testing
+FROM mamba_flat_encounter_art_card ;
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_card_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_card_update;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_card_update()
+BEGIN
+-- $BEGIN
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_card  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_card;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_card()
+BEGIN
+-- $BEGIN
+CALL sp_fact_encounter_hiv_art_card_create();
+CALL sp_fact_encounter_hiv_art_card_insert();
+CALL sp_fact_encounter_hiv_art_card_update();
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_card_query  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_card_query;
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_card_query(IN START_DATE
+                                                     DATETIME, END_DATE DATETIME)
+BEGIN
+    SELECT *
+    FROM mamba_fact_encounter_hiv_art_card hiv_card WHERE hiv_card.encounter_date >= START_DATE
+      AND hiv_card.encounter_date <= END_DATE ;
+END~
+
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_summary_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_summary_create;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_summary_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_fact_encounter_hiv_art_summary
+(
+    id                                          INT AUTO_INCREMENT,
+    encounter_id                                INT NULL,
+    client_id                                   INT NULL,
+    encounter_datetime                          DATE NULL,
+    allergy                                     VARCHAR(80) NULL,
+    hepatitis_b_test_qualitative                VARCHAR(80) NULL,
+    hepatitis_c_test_qualitative                VARCHAR(80) NULL,
+    lost_to_followup                            VARCHAR(80) NULL,
+    currently_in_school                         VARCHAR(80) NULL,
+    pmtct                                       VARCHAR(80) NULL,
+    entry_point_into_hiv_care                   VARCHAR(80) NULL,
+    name_of_location_transferred_from           VARCHAR(80) NULL,
+    date_lost_to_followup                       VARCHAR(80) NULL,
+    name_of_location_transferred_to             VARCHAR(80) NULL,
+    patient_unique_identifier                   VARCHAR(80) NULL,
+    address                                     VARCHAR(80) NULL,
+    date_positive_hiv_test_confirmed            VARCHAR(80) NULL,
+    hiv_care_status                             VARCHAR(80) NULL,
+    treatment_supporter_telephone_number        VARCHAR(80) NULL,
+    transfered_out_to_another_facility          VARCHAR(80) NULL,
+    prior_art                                   VARCHAR(80) NULL,
+    post_exposure_prophylaxis                   VARCHAR(80) NULL,
+    prior_art_not_transfer                      VARCHAR(80) NULL,
+    baseline_regimen                            VARCHAR(80) NULL,
+    transfer_in_regimen                         VARCHAR(80) NULL,
+    baseline_weight                             VARCHAR(80) NULL,
+    baseline_stage                              VARCHAR(80) NULL,
+    baseline_cd4                                VARCHAR(80) NULL,
+    baseline_pregnancy                          VARCHAR(80) NULL,
+    name_of_family_member                       VARCHAR(80) NULL,
+    age_of_family_member                        VARCHAR(80) NULL,
+    hiv_test                                    VARCHAR(80) NULL,
+    hiv_test_facility                           VARCHAR(80) NULL,
+    other_care_entry_point                      VARCHAR(80) NULL,
+    treatment_supporter_telephone_number_owner  VARCHAR(80) NULL,
+    treatment_supporter_name                    VARCHAR(80) NULL,
+    pep_regimen_start_date                      VARCHAR(80) NULL,
+    pmtct_regimen_start_date                    VARCHAR(80) NULL,
+    earlier_arv_not_transfer_regimen_start_date VARCHAR(80) NULL,
+    transfer_in_regimen_start_date              VARCHAR(80) NULL,
+    baseline_regimen_start_date                 VARCHAR(80) NULL,
+    transfer_out_date                           VARCHAR(80) NULL,
+    baseline_regimen_other                      VARCHAR(80) NULL,
+    transfer_in_regimen_other                   VARCHAR(80) NULL,
+    hep_b_prior_art                             VARCHAR(80) NULL,
+    hep_b_prior_art_regimen_start_date          VARCHAR(80) NULL,
+    baseline_lactating                          VARCHAR(80) NULL,
+    age_unit                                    VARCHAR(80) NULL,
+    eid_enrolled                                VARCHAR(80) NULL,
+    drug_restart_date                           VARCHAR(80) NULL,
+    relationship_to_patient                     VARCHAR(80) NULL,
+    pre_exposure_prophylaxis                    VARCHAR(80) NULL,
+    hts_special_category                        VARCHAR(80) NULL,
+    special_category                            VARCHAR(80) NULL,
+    other_special_category                      VARCHAR(80) NULL,
+    tpt_start_date                              VARCHAR(80) NULL,
+    tpt_completion_date                         VARCHAR(80) NULL,
+    treatment_interruption_type                 VARCHAR(80) NULL,
+    treatment_interruption                      VARCHAR(80) NULL,
+    treatment_interruption_stop_date            VARCHAR(80) NULL,
+    treatment_interruption_reason               VARCHAR(80) NULL,
+    hepatitis_b_test_date                       VARCHAR(80) NULL,
+    hepatitis_c_test_date                       VARCHAR(80) NULL,
+    blood_sugar_test_date                       VARCHAR(80) NULL,
+    pre_exposure_prophylaxis_start_date         VARCHAR(80) NULL,
+    prep_duration_in_months                     VARCHAR(80) NULL,
+    pep_duration_in_months                      VARCHAR(80) NULL,
+    hep_b_duration_in_months                    VARCHAR(80) NULL,
+    blood_sugar_test_result                     VARCHAR(80) NULL,
+    pmtct_duration_in_months                    VARCHAR(80) NULL,
+    earlier_arv_not_transfer_duration_in_months VARCHAR(80) NULL,
+    family_member_hiv_status                    VARCHAR(80) NULL,
+    family_member_hiv_test_date                 VARCHAR(80) NULL,
+    hiv_enrollment_date                         VARCHAR(80) NULL,
+
+    PRIMARY KEY (id)
+) CHARSET = UTF8MB4;
+
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_summary_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_summary_insert;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_summary_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_encounter_hiv_art_summary (encounter_id,
+                                                  client_id,
+                                                  encounter_datetime,
+                                                  allergy,
+                                                  hepatitis_b_test_qualitative,
+                                                  hepatitis_c_test_qualitative,
+                                                  lost_to_followup,
+                                                  currently_in_school,
+                                                  pmtct,
+                                                  entry_point_into_hiv_care,
+                                                  name_of_location_transferred_from,
+                                                  date_lost_to_followup,
+                                                  name_of_location_transferred_to,
+                                                  patient_unique_identifier,
+                                                  address,
+                                                  date_positive_hiv_test_confirmed,
+                                                  hiv_care_status,
+                                                  treatment_supporter_telephone_number,
+                                                  transfered_out_to_another_facility,
+                                                  prior_art,
+                                                  post_exposure_prophylaxis,
+                                                  prior_art_not_transfer,
+                                                  baseline_regimen,
+                                                  transfer_in_regimen,
+                                                  baseline_weight,
+                                                  baseline_stage,
+                                                  baseline_cd4,
+                                                  baseline_pregnancy,
+                                                  name_of_family_member,
+                                                  age_of_family_member,
+                                                  hiv_test,
+                                                  hiv_test_facility,
+                                                  other_care_entry_point,
+                                                  treatment_supporter_telephone_number_owner,
+                                                  treatment_supporter_name,
+                                                  pep_regimen_start_date,
+                                                  pmtct_regimen_start_date,
+                                                  earlier_arv_not_transfer_regimen_start_date,
+                                                  transfer_in_regimen_start_date,
+                                                  baseline_regimen_start_date,
+                                                  transfer_out_date,
+                                                  baseline_regimen_other,
+                                                  transfer_in_regimen_other,
+                                                  hep_b_prior_art,
+                                                  hep_b_prior_art_regimen_start_date,
+                                                  baseline_lactating,
+                                                  age_unit,
+                                                  eid_enrolled,
+                                                  drug_restart_date,
+                                                  relationship_to_patient,
+                                                  pre_exposure_prophylaxis,
+                                                  hts_special_category,
+                                                  special_category,
+                                                  other_special_category,
+                                                  tpt_start_date,
+                                                  tpt_completion_date,
+                                                  treatment_interruption_type,
+                                                  treatment_interruption,
+                                                  treatment_interruption_stop_date,
+                                                  treatment_interruption_reason,
+                                                  hepatitis_b_test_date,
+                                                  hepatitis_c_test_date,
+                                                  blood_sugar_test_date,
+                                                  pre_exposure_prophylaxis_start_date,
+                                                  prep_duration_in_months,
+                                                  pep_duration_in_months,
+                                                  hep_b_duration_in_months,
+                                                  blood_sugar_test_result,
+                                                  pmtct_duration_in_months,
+                                                  earlier_arv_not_transfer_duration_in_months,
+                                                  family_member_hiv_status,
+                                                  family_member_hiv_test_date,
+                                                  hiv_enrollment_date)
+SELECT encounter_id,
+       client_id,
+       encounter_datetime,
+       allergy,
+       hepatitis_b_test_qualitative,
+       hepatitis_c_test_qualitative,
+       lost_to_followup,
+       currently_in_school,
+       pmtct,
+       entry_point_into_hiv_care,
+       name_of_location_transferred_from,
+       date_lost_to_followup,
+       name_of_location_transferred_to,
+       patient_unique_identifier,
+       address,
+       date_positive_hiv_test_confirmed,
+       hiv_care_status,
+       treatment_supporter_telephone_number,
+       transfered_out_to_another_facility,
+       prior_art,
+       post_exposure_prophylaxis,
+       prior_art_not_transfer,
+       baseline_regimen,
+       transfer_in_regimen,
+       baseline_weight,
+       baseline_stage,
+       baseline_cd4,
+       baseline_pregnancy,
+       name_of_family_member,
+       age_of_family_member,
+       hiv_test,
+       hiv_test_facility,
+       other_care_entry_point,
+       treatment_supporter_telephone_number_owner,
+       treatment_supporter_name,
+       pep_regimen_start_date,
+       pmtct_regimen_start_date,
+       earlier_arv_not_transfer_regimen_start_date,
+       transfer_in_regimen_start_date,
+       baseline_regimen_start_date,
+       transfer_out_date,
+       baseline_regimen_other,
+       transfer_in_regimen_other,
+       hep_b_prior_art,
+       hep_b_prior_art_regimen_start_date,
+       baseline_lactating,
+       age_unit,
+       eid_enrolled,
+       drug_restart_date,
+       relationship_to_patient,
+       pre_exposure_prophylaxis,
+       hts_special_category,
+       special_category,
+       other_special_category,
+       tpt_start_date,
+       tpt_completion_date,
+       treatment_interruption_type,
+       treatment_interruption,
+       treatment_interruption_stop_date,
+       treatment_interruption_reason,
+       hepatitis_b_test_date,
+       hepatitis_c_test_date,
+       blood_sugar_test_date,
+       pre_exposure_prophylaxis_start_date,
+       prep_duration_in_months,
+       pep_duration_in_months,
+       hep_b_duration_in_months,
+       blood_sugar_test_result,
+       pmtct_duration_in_months,
+       earlier_arv_not_transfer_duration_in_months,
+       family_member_hiv_status,
+       family_member_hiv_test_date,
+       hiv_enrollment_date
+FROM mamba_flat_encounter_art_summary_card;
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_summary_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_summary_update;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_summary_update()
+BEGIN
+-- $BEGIN
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_summary  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_summary;
+
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_summary()
+BEGIN
+-- $BEGIN
+CALL sp_fact_encounter_hiv_art_summary_create();
+CALL sp_fact_encounter_hiv_art_summary_insert();
+CALL sp_fact_encounter_hiv_art_summary_update();
+-- $END
+END~
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_encounter_hiv_art_summary_query  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_fact_encounter_hiv_art_summary_query;
+~
+CREATE PROCEDURE sp_fact_encounter_hiv_art_summary_query(IN START_DATE
+                                                     DATETIME, END_DATE DATETIME)
+BEGIN
+    SELECT *
+    FROM mamba_fact_encounter_hiv_art_summary hiv_sum WHERE hiv_sum.encounter_date >= START_DATE
+      AND hiv_sum.encounter_date <= END_DATE ;
+END~
+
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_data_processing_derived_hiv_art_card  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_hiv_art_card;
+
+~
+CREATE PROCEDURE sp_data_processing_derived_hiv_art_card()
+BEGIN
+-- $BEGIN
+-- CALL sp_dim_client_hiv_hts;
+CALL sp_fact_encounter_hiv_art_card;
+CALL sp_fact_encounter_hiv_art_summary;
 -- $END
 END~
 

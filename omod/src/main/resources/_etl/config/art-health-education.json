@@ -2,6 +2,7 @@
   "report_name": "ART_Health_Education_card",
   "flat_table_name": "mamba_flat_encounter_art_health_education",
   "encounter_type_uuid": "6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e",
+  "concepts_locale": "en",
   "table_columns": {
     "scheduled_patient_visit": "dcda9857-30ab-102d-86b0-7a5022ba4115",
     "health_education_disclosure": "8bdff534-6b4b-44ca-bc88-d088b3b53431",
