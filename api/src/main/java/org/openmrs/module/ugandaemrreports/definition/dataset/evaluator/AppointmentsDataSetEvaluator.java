@@ -68,14 +68,18 @@ public class AppointmentsDataSetEvaluator implements DataSetEvaluator {
         if (resultSet.size() > 0 && !resultSet.isEmpty()) {
             for (Object[] e : resultSet) {
                 DataSetRow row = new DataSetRow();
-                pdh.addCol(row, "Clinic No", e[0]);
-                pdh.addCol(row, "EID No", e[1]);
-                pdh.addCol(row, "Patient Name", e[2]);
-                pdh.addCol(row, "Sex", e[3]);
-                pdh.addCol(row, "Birth Date", e[4]);
-                pdh.addCol(row, "Age", e[5]);
-                pdh.addCol(row, "Parish", e[6]);
-                pdh.addCol(row, "Village", e[7]);
+                pdh.addCol(row, "Given", e[0]);
+                pdh.addCol(row, "Age", e[1]);
+                pdh.addCol(row, "Gender", e[2]);
+                pdh.addCol(row, "Clinic No", e[3]);
+                pdh.addCol(row, "Appointment Return Date", e[4]);
+                pdh.addCol(row, "Current Regimen", e[5]);
+                pdh.addCol(row, "WHO Stage", e[6]);
+                pdh.addCol(row, "No of pills", e[7]);
+                pdh.addCol(row, "TB Status", e[8]);
+                pdh.addCol(row, "DSDM", e[9]);
+                pdh.addCol(row, "Pregnant", e[10]);
+                pdh.addCol(row, "EMTCT", e[11]);
 
                 dataSet.addRow(row);
 
