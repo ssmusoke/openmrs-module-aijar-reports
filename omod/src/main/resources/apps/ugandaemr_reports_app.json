@@ -821,7 +821,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
         "label": "HIV Care and Treatment Audit Tool-Resized",
-        "url": "reportingui/runReport.page?reportDefinition=2017e2e0-fc1c-4ba2-8816-92f822290c84",
+        "url": "ugandaemrreports/runCohortReport.page?reportDefinition=2017e2e0-fc1c-4ba2-8816-92f822290c84",
         "order": 4
       },
       {

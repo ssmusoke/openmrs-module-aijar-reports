@@ -2,7 +2,7 @@
 
 <% if (context.authenticated) { %>
 
-${ ui.includeFragment("ugandaemrreports", "audittool") }
+${ ui.includeFragment("ugandaemrreports", "runCohortReport") }
 
 
 <% } else { %>
