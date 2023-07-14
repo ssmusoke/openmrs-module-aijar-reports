@@ -78,7 +78,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
     refill_point_code                     VARCHAR(80) NULL,
     next_return_date_at_facility          VARCHAR(80) NULL,
     indication_for_viral_load_testing     VARCHAR(80) NULL,
-
+    
     PRIMARY KEY (id)
 )
     CHARSET = UTF8MB4;

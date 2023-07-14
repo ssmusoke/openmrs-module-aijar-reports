@@ -162,7 +162,7 @@ public class RunCohortReportFragmentController {
         model.addAttribute("breadcrumb", breadcrumb);
 
         model.addAttribute("cohorts", cohorts);
-        return "redirect:" + ui.pageLink("ugandaemrreports", "audittool", SimpleObject.create("reportDefinition", reportDefinition.getUuid()));
+        return "redirect:" + ui.pageLink("ugandaemrreports", "runCohortReport", SimpleObject.create("reportDefinition", reportDefinition.getUuid()));
 
 
     }

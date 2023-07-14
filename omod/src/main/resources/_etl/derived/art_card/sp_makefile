@@ -13,6 +13,26 @@ facts/fact_art_summary/sp_fact_encounter_hiv_art_summary_insert.sql
 facts/fact_art_summary/sp_fact_encounter_hiv_art_summary_update.sql
 facts/fact_art_summary/sp_fact_encounter_hiv_art_summary.sql
 facts/fact_art_summary/sp_fact_encounter_hiv_art_summary_query.sql
+
+facts/fact_art_health_education/sp_fact_encounter_hiv_art_health_education_create.sql
+facts/fact_art_health_education/sp_fact_encounter_hiv_art_health_education_insert.sql
+facts/fact_art_health_education/sp_fact_encounter_hiv_art_health_education_update.sql
+facts/fact_art_health_education/sp_fact_encounter_hiv_art_health_education.sql
+facts/fact_art_health_education/sp_fact_encounter_hiv_art_health_education_query.sql
+
+
+facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date.sql
+facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_create.sql
+facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_insert.sql
+facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_query.sql
+facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_update.sql
+
+
+facts/active_in_care/sp_fact_active_in_care.sql
+facts/active_in_care/sp_fact_active_in_care_create.sql
+facts/active_in_care/sp_fact_active_in_care_insert.sql
+facts/active_in_care/sp_fact_active_in_care_query.sql
+facts/active_in_care/sp_fact_active_in_care_update.sql
 #############################################################################
 ###### A single stored procedure that invokes (CALLs) the above SPs #########
 #############################################################################

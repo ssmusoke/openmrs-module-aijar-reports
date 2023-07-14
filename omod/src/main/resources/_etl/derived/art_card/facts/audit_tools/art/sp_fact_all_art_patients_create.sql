@@ -1,11 +1,63 @@
 -- $BEGIN
-CREATE TABLE mamba_fact_encounter_hiv_art_card
+CREATE TABLE mamba_fact_audit_tool_art_patients
 (
     id                                    INT AUTO_INCREMENT,
-    encounter_id                          INT          NULL,
-    client_id                             INT          NULL,
-    encounter_date                        DATE         NULL,
+    client_id                             INT NULL,
 
+    hiv_clinic_no                         varchar(80) DEFAULT NULL,
+    gender                                varchar(80) DEFAULT NULL,
+    date_of_birth                         datetime    DEFAULT NULL,
+
+    pregnant_Status                       varchar(80) DEFAULT NULL,
+    weight                                INT(8) DEFAULT NULL,
+    dsdm_model                            varchar(80) DEFAULT NULL,
+    visit_type                            varchar(80) DEFAULT NULL,
+    last_visit_type                       datetime    DEFAULT NULL,
+    next_appointment_date                 datetime    DEFAULT NULL,
+    prescription_duration                    int(6) DEFAULT NULL,
+    art_start_date                        DATETIME    DEFAULT NULL,
+    adherence                             varchar(80) DEFAULT NULL,
+    current_regimen                       varchar(80) DEFAULT NULL,
+    vl_quantitative                       int(6) DEFAULT NULL,
+    tpt_status                            varchar(80) DEFAULT NULL,
+    tb_status                             varchar(80) DEFAULT NULL,
+    hep_b_status                          varchar(80) DEFAULT NULL,
+    syphilis_status                       varchar(80) DEFAULT NULL,
+    family_planning                       varchar(80) DEFAULT NULL,
+    advanced_Disease                      varchar(80) DEFAULT NULL,
+    last_viral_load_date                  DATETIME        DEFAULT NULL,
+    child_age                             int(6) DEFAULT NULL,
+    child_known                           int(6) DEFAULT NULL,
+    child_positive                        int(6) DEFAULT NULL,
+    child_on_art                          int(6) DEFAULT NULL,
+    partner_age                           int(6) DEFAULT NULL,
+    partner_known                         int(6) DEFAULT NULL,
+    partner_positive                      int(6) DEFAULT NULL,
+    partner_on_art                        int(6) DEFAULT NULL,
+    pss_codes                             varchar(80) DEFAULT NULL,
+    depression                            varchar(80) DEFAULT NULL,
+    gbv                                   varchar(80) DEFAULT NULL,
+    linkage                               varchar(80) DEFAULT NULL,
+    ovc_screening                         varchar(80) DEFAULT NULL,
+    ovc_enrollment                        varchar(80) DEFAULT NULL,
+    nutrition_status                      varchar(80) DEFAULT NULL,
+    nutrition_support                     varchar(80) DEFAULT NULL,
+    cacx_status                           varchar(80) DEFAULT NULL,
+    stability                             varchar(80) DEFAULT NULL,
+    regimen_line                          int(6) DEFAULT NULL,
+    pp                                    varchar(80) DEFAULT NULL,
+    deceased                              int(6) DEFAULT NULL,
+    transferred_out                       varchar(80) DEFAULT NULL,
+    days_lost                             varchar(50) DEFAULT NULL,
+    duration_on_art                       varchar(50) DEFAULT NULL,
+    iac                                   int(6) DEFAULT NULL,
+    hivdr_date                            varchar(80) DEFAULT NULL,
+    hivdr_sample_collected                varchar(80) DEFAULT NULL,
+    switched_lines                        varchar(80) DEFAULT NULL,
+    new_bled_date                         varchar(80) DEFAULT NULL,
+    health_education_date                 varchar(80) DEFAULT NULL,
+    pss_issues                            varchar(80) DEFAULT NULL,
+    pss_intervation                       varchar(80) DEFAULT NULL,
     method_of_family_planning             VARCHAR(80) NULL,
     cd4                                   VARCHAR(80) NULL,
     hiv_viral_load                        VARCHAR(80) NULL,
@@ -80,8 +132,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
     indication_for_viral_load_testing     VARCHAR(80) NULL,
 
     PRIMARY KEY (id)
-)
-    CHARSET = UTF8MB4;
+) CHARSET = UTF8MB4;
 
 -- $END
 
