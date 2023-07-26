@@ -34,14 +34,10 @@ public class DataEvaluatorRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String DATA_SET = "/dataSet";
 
-    @Autowired
-    ReportDefinitionService reportDefinitionService;
-
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Object getDataSetData(@RequestParam String startDate, @RequestParam String endDate,
                                  @RequestParam(required=false, value="type") Class<? extends DataSetDefinition> type) {
-        String uuid = null;
         try {
             if (!validateDateIsValidFormat(endDate)) {
                 SimpleObject message = new SimpleObject();
@@ -85,9 +81,9 @@ public class DataEvaluatorRestController {
         while (iterator.hasNext()) {
             DataSetRow r = (DataSetRow) iterator.next();
             SimpleObject details = new SimpleObject();
-            details.add("identifier", r.getColumnValue("patientId"));
+            details.add("identifier", r.getColumnValue("identifier"));
             details.add("age", r.getColumnValue("age"));
-            details.add("gender", r.getColumnValue("sex"));
+            details.add("gender", r.getColumnValue("gender"));
             dataList.add(details);
         }
         return dataList;
