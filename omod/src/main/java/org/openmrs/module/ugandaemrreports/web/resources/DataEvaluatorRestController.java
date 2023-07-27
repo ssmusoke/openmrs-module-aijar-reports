@@ -20,10 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * End point will handle dataSet evaluation passed
@@ -37,7 +34,7 @@ public class DataEvaluatorRestController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Object getDataSetData(@RequestParam String startDate, @RequestParam String endDate,
-                                 @RequestParam(required=false, value="type") Class<? extends DataSetDefinition> type) {
+                                 @RequestParam(required = false, value = "type") Class<? extends DataSetDefinition> type) {
         try {
             if (!validateDateIsValidFormat(endDate)) {
                 SimpleObject message = new SimpleObject();
@@ -55,7 +52,7 @@ public class DataEvaluatorRestController {
             ReflectionUtil.setPropertyValue(dataSetDefinition, "startDate", DateUtil.parseYmd(startDate));
             ReflectionUtil.setPropertyValue(dataSetDefinition, "endDate", DateUtil.parseYmd(endDate));
 
-            DataSet dataSet = service.evaluate(dataSetDefinition,context);
+            DataSet dataSet = service.evaluate(dataSetDefinition, context);
 
             List<SimpleObject> traceReportData = new ArrayList<SimpleObject>();
             traceReportData.addAll(getTraceReportData(dataSet));
@@ -77,14 +74,19 @@ public class DataEvaluatorRestController {
 
     public List<SimpleObject> getTraceReportData(DataSet d) {
         Iterator iterator = d.iterator();
+
         List<SimpleObject> dataList = new ArrayList<SimpleObject>();
         while (iterator.hasNext()) {
             DataSetRow r = (DataSetRow) iterator.next();
+            Map<String, Object> columns = r.getColumnValuesByKey();
+            Set<String> keys = columns.keySet();
             SimpleObject details = new SimpleObject();
-            details.add("identifier", r.getColumnValue("identifier"));
-            details.add("age", r.getColumnValue("age"));
-            details.add("gender", r.getColumnValue("gender"));
+
+            for (String key : keys) {
+                details.add(key, r.getColumnValue(key));
+            }
             dataList.add(details);
+
         }
         return dataList;
     }
