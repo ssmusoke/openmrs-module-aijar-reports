@@ -16,7 +16,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     pss_issues_identified       VARCHAR(50)  DEFAULT NULL,
     intervation_approaches      VARCHAR(50)  DEFAULT NULL,
     linkages_and_refferals      VARCHAR(50)  DEFAULT NULL,
-    clinic_contact_comments     VARCHAR(250)  DEFAULT NULL,
+    clinic_contact_comments     TEXT  DEFAULT NULL,
     scheduled_patient_visit     VARCHAR(50)  DEFAULT NULL,
     health_education_setting    VARCHAR(50)  DEFAULT NULL,
     clinical_impression_comment VARCHAR(250)  DEFAULT NULL,
