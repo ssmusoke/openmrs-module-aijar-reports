@@ -27,6 +27,11 @@ facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_sta
 facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_query.sql
 facts/audit_tools/current_arv_regimen_start_date/sp_fact_current_arv_regimen_start_date_update.sql
 
+facts/audit_tools/art/sp_fact_calhiv_patients.sql
+facts/audit_tools/art/sp_fact_calhiv_patients_create.sql
+facts/audit_tools/art/sp_fact_calhiv_patients_insert.sql
+facts/audit_tools/art/sp_fact_calhiv_patients_query.sql
+facts/audit_tools/art/sp_fact_calhiv_patients_update.sql
 
 facts/active_in_care/sp_fact_active_in_care.sql
 facts/active_in_care/sp_fact_active_in_care_create.sql
