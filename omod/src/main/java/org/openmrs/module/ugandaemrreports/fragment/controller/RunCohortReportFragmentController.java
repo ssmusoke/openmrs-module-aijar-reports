@@ -17,6 +17,7 @@ import org.openmrs.api.AdministrationService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.*;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
@@ -26,6 +27,7 @@ import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingMode;
 import org.openmrs.module.reporting.report.service.ReportService;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingAuditToolDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.openmrs.ui.framework.SimpleObject;
 import org.openmrs.ui.framework.UiUtils;
@@ -73,7 +75,6 @@ public class RunCohortReportFragmentController {
     }
 
     public String post(@SpringBean ReportService reportService,
-                     @SpringBean HIVMetadata hivMetadata,
                      @RequestParam(value = "breadcrumb", required = false) String breadcrumb,
                      UiUtils ui,
                      HttpServletRequest request,
@@ -112,49 +113,17 @@ public class RunCohortReportFragmentController {
 
         context.setParameterValues(parameterValues);
 
-        Date startDate = (Date) parameterValues.get("startDate");
-        Date endDate = (Date) parameterValues.get("endDate");
-
-        String periodStartDate = request.getParameter("parameterValues['startDate']");
-        String periodEndDate = request.getParameter("parameterValues['endDate']");
-
-
-        CohortDefinition cohortDefinition =null;
-        Cohort baseCohort = null;
         String cohortSelected = request.getParameter("cohort");
-        System.out.println(cohortSelected+ "selected ");
-        if (cohortSelected != null) {
 
-            if (cohortSelected.equals("Patients with encounters")) {
-                EncounterCohortDefinition cd = new EncounterCohortDefinition();
-                cd.setEncounterTypeList(hivMetadata.getArtEncounterTypes());
-                cd.setOnOrAfter(startDate);
-                cd.setOnOrBefore(endDate);
-                cohortDefinition = cd;
-                baseCohort =Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+        parameterValues.put("cohortList",cohortSelected );
 
-            } else if (cohortSelected.equals("Patients on appointment")) {
-                SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition( "SELECT client_id\n" +
-                        "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
-                        "WHERE returndate BETWEEN '"+ periodStartDate +"' AND '"+ periodEndDate + "]"+"';");
-
-                cohortDefinition= appointmentCohortDefinition;
-                baseCohort =Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
-            }
-            System.out.println(baseCohort.size()+ "is my cohort size ");
-        }
-
-
-        context.setBaseCohort(baseCohort);
-        reportDefinition.setBaseCohortDefinition(cohortDefinition,parameterValues);
 
         ReportRequest reportRequest = new ReportRequest();
-        reportRequest.setReportDefinition(Mapped.mapStraightThrough(reportDefinition));
+        reportRequest.setReportDefinition(new Mapped<ReportDefinition>(reportDefinition, parameterValues));
         reportRequest.setRenderingMode(renderingMode);
 
         reportRequest = reportService.queueReport(reportRequest);
         reportService.processNextQueuedReports();
-
 
 
         model.addAttribute("reportDefinition", reportDefinition);

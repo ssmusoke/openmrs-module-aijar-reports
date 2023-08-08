@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 
+import org.openmrs.Cohort;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -60,6 +61,7 @@ public class SetupHIVCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 		List<Parameter> l = new ArrayList<Parameter>();
 		l.add(new Parameter("startDate", "From:", Date.class));
 		l.add(new Parameter("endDate", "To:", Date.class));
+		l.add(new Parameter("cohortList", "Cohort:", String.class));
 		return l;
 	}
 
@@ -108,6 +110,6 @@ public class SetupHIVCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 
 	@Override
 	public String getVersion() {
-		return "0.1.8.6";
+		return "0.1.9.6";
 	}
 }

@@ -153,7 +153,7 @@
             <fieldset>
                 <legend>${ ui.message("reportingui.runReport.run.legend") }</legend>
 
-                <form method="post" ng-submit="runReport()" id="runreport">
+                <form method="post" ng-submit="runMyReport()" id="runreport">
 
                     ${ui.includeFragment("uicommons", "field/dropDown", [
                             formFieldName : "cohort",
@@ -185,6 +185,7 @@
                                 label: it.labelOrName,
                                 initialValue: it.defaultValue ?: sessionContext.sessionLocation
                         ])}
+                        <% } else if (it.type == java.lang.String) { %>
                         <% } else { %>
                         Unknown parameter type: ${ it.type }
                         <% } %>

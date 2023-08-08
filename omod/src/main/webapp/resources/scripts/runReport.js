@@ -76,7 +76,28 @@ runReportApp.controller('RunCohortReportFragmentController', ['$scope', '$http',
 
 
     $scope.runMyReport = function() {
-       $scope.submitting = true;
+        var form = angular.element('#runreport');
+        var submission = form.serializeArray();
+        var missingParams = [ ];
+        console.log(submission);
+        for (var i = 0; i < submission.length; ++i) {
+            var p = submission[i];
+            if (p.name.indexOf("parameterValues[") == 0) {
+                if (!p.value) {
+                    missingParams.push(p.name);
+                }
+            }
+        }
+        if (missingParams.length > 0) {
+            emr.errorMessage(emr.message("reportingui.runReport.missingParameter", "Missing parameter values"));
+        }
+        else {
+            $scope.submitting = true;
+            console.log(submission);
+            // $.post("runReport.page?reportDefinition=" + $window.reportDefinition.uuid, submission, function() {
+            //     location.href = location.href;
+            // });
+        }
 
     }
 
