@@ -4,12 +4,17 @@ INSERT INTO mamba_fact_active_in_care(client_id,
                                       days_left_to_be_lost,
                                       last_encounter_date,
                                       dead)
-SELECT client_id,
+SELECT a.client_id,
        return_visit_date,
        TIMESTAMPDIFF(DAY, DATE(return_visit_date), DATE(CURRENT_DATE())) AS days_lost,
-       MAX(encounter_date)                                               AS last_encounter_date,
+       encounter_date                                                    AS last_encounter_date,
        dead
-FROM mamba_fact_encounter_hiv_art_card leeft
-         JOIN person p ON client_id = p.person_id
-GROUP BY client_id;
+FROM mamba_fact_encounter_hiv_art_card b
+         JOIN
+     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+      FROM mamba_fact_encounter_hiv_art_card
+      WHERE return_visit_date IS NOT NULL
+      GROUP BY client_id) a
+     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date
+         JOIN person p ON b.client_id = p.person_id;
 -- $END
