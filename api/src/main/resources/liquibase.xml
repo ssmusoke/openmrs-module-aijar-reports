@@ -16,5 +16,17 @@
                  path="mamba/liquibase_create_stored_procedures.sql"/>
 
     </changeSet>
+    <changeSet id="20230811-1312" author="dbaluku">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM scheduler_task_config
+                WHERE schedulable_class = 'org.openmrs.module.ohrimamba.task.FlattenTableTask'
+            </sqlCheck>
+        </preConditions>
+        <comment>Updating schedulable_class for flattening tables </comment>
+        <sql>
+            UPDATE scheduler_task_config SET schedulable_class = 'org.openmrs.module.ohrimamba.task.FlattenTableTask' WHERE schedulable_class = 'org.openmrs.module.ugandaemrsync.tasks.ComputeAndSaveAuditToolDataTask';
+        </sql>
+    </changeSet>
 
 </databaseChangeLog>
