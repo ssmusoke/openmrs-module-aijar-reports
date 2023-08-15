@@ -6,7 +6,7 @@
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
 
-    <changeSet id="ohri-mamba-setup0001" author="Arthur D. Mugume [OHRI]" runAlways="true">
+    <changeSet id="ohri-mamba-setup0004" author="Arthur D. Mugume [OHRI]" runAlways="true">
 
         <comment>
             Installs/deploys all the required Mamba ETL Stored procedures and functions
@@ -15,18 +15,6 @@
         <sqlFile splitStatements="true" stripComments="true" endDelimiter="~"
                  path="mamba/liquibase_create_stored_procedures.sql"/>
 
-    </changeSet>
-    <changeSet id="20230811-1312" author="dbaluku">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM scheduler_task_config
-                WHERE schedulable_class = 'org.openmrs.module.ohrimamba.task.FlattenTableTask'
-            </sqlCheck>
-        </preConditions>
-        <comment>Updating schedulable_class for flattening tables </comment>
-        <sql>
-            UPDATE scheduler_task_config SET schedulable_class = 'org.openmrs.module.ohrimamba.task.FlattenTableTask' WHERE schedulable_class = 'org.openmrs.module.ugandaemrsync.tasks.ComputeAndSaveAuditToolDataTask';
-        </sql>
     </changeSet>
 
 </databaseChangeLog>
