@@ -28,6 +28,8 @@ CALL sp_fact_latest_vl_after_iac_patients;
 CALL sp_fact_latest_who_stage_patients;
 CALL sp_fact_marital_status_patients;
 CALL sp_fact_nationality_patients;
+CALL sp_fact_latest_patient_demographics_patients;
+CALL sp_fact_art_patients;
 CALL sp_fact_current_arv_regimen_start_date;
 CALL sp_fact_calhiv_patients;
 

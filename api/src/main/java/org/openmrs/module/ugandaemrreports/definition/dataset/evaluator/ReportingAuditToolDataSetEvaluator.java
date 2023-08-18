@@ -144,6 +144,7 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "pos_status_children", o[54]);
                 pdh.addCol(row, "known_status_spouse", o[55]);
                 pdh.addCol(row, "po_status_spouse", o[56]);
+                pdh.addCol(row, "age_group", o[57]);
 
 
                 dataSet.addRow(row);
