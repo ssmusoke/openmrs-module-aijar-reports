@@ -7,12 +7,12 @@ CREATE TABLE mamba_fact_audit_tool_art_patients
     nationality                            VARCHAR(80) NULL,
     marital_status                         VARCHAR(80) NULL,
     birthdate                              DATE NULL,
-    age                                   INT NULL,
-    dead                                  BIT NOT NULL,
-    gender                                VARCHAR(10) NULL,
-    last_visit_date                       DATE NULL,
-    return_date                           DATE NULL,
-    client_status                         VARCHAR(50) NULL,
+    age                                    INT NULL,
+    dead                                   BIT NOT NULL,
+    gender                                 VARCHAR(10) NULL,
+    last_visit_date                        DATE NULL,
+    return_date                            DATE NULL,
+    client_status                          VARCHAR(50) NULL,
     transfer_out_date                      DATE NULL,
     current_regimen                        VARCHAR(255) NULL,
     arv_regimen_start_date                 DATE NULL,
@@ -57,8 +57,8 @@ CREATE TABLE mamba_fact_audit_tool_art_patients
     children                               INT NULL,
     known_status_children                  INT NULL,
     partners                               INT NULL,
-    known_status_partners                   INT NULL,
-
+    known_status_partners                  INT NULL,
+    age_group                              VARCHAR(50) NULL,
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 

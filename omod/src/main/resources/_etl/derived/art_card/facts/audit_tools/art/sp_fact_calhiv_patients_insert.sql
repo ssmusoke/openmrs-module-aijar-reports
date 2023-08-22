@@ -54,7 +54,7 @@ INSERT INTO mamba_fact_audit_tool_art_patients (client_id,
                                                 children,
                                                 known_status_children,
                                                 partners,
-                                                known_status_partners)
+                                                known_status_partners,age_group)
 SELECT cohort.client_id,
        identifiers.identifier                                                                  AS identifier,
        nationality,
