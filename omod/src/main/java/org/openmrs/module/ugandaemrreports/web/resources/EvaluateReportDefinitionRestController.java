@@ -118,11 +118,16 @@ public class EvaluateReportDefinitionRestController {
             SimpleObject details = new SimpleObject();
 
             for (String key : keys) {
-                try{
-                    details.add(key, (String) r.getColumnValue(key));
+                Object object = r.getColumnValue(key);
+                if(object ==null){
+                    details.add(key,"" );
+                }else {
+                    try {
+                        details.add(key, object.toString());
 
-                }catch (Exception e ){
-                    e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             dataList.add(details);
