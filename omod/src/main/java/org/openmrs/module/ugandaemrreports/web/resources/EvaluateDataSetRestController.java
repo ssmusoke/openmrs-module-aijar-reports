@@ -8,10 +8,8 @@ import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.service.DataSetDefinitionService;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
-import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,8 +24,8 @@ import java.util.*;
  * End point will handle dataSet evaluation passed
  */
 @Controller
-@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + DataEvaluatorRestController.UGANDAEMRREPORTS + DataEvaluatorRestController.DATA_SET)
-public class DataEvaluatorRestController {
+@RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + EvaluateDataSetRestController.UGANDAEMRREPORTS + EvaluateDataSetRestController.DATA_SET)
+public class EvaluateDataSetRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String DATA_SET = "/dataSet";
 
@@ -55,11 +53,16 @@ public class DataEvaluatorRestController {
             DataSet dataSet = service.evaluate(dataSetDefinition, context);
 
             List<SimpleObject> traceReportData = new ArrayList<SimpleObject>();
-            traceReportData.addAll(getTraceReportData(dataSet));
+            traceReportData.addAll(convertDataSetToSimpleObject(dataSet));
+            if(traceReportData!=null){
+                return new ResponseEntity<List<SimpleObject>>(traceReportData, HttpStatus.OK);
+            }else{
+                return new ResponseEntity<String>("{no data }", HttpStatus.OK);
+            }
 
-            return new ResponseEntity<List<SimpleObject>>(traceReportData, HttpStatus.OK);
         } catch (Exception ex) {
-            return new ResponseEntity<String>(ex.getMessage() + Arrays.toString(ex.getStackTrace()), HttpStatus.INTERNAL_SERVER_ERROR);
+            ex.printStackTrace();
+            return new ResponseEntity<String>(Arrays.toString(ex.getStackTrace()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -72,7 +75,7 @@ public class DataEvaluatorRestController {
         }
     }
 
-    public List<SimpleObject> getTraceReportData(DataSet d) {
+    public List<SimpleObject> convertDataSetToSimpleObject(DataSet d) {
         Iterator iterator = d.iterator();
 
         List<SimpleObject> dataList = new ArrayList<SimpleObject>();
