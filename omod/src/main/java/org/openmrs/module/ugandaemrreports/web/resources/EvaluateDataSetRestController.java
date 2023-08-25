@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.web.resources;
 
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.common.ReflectionUtil;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.*;
 
@@ -29,6 +31,7 @@ public class EvaluateDataSetRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String DATA_SET = "/dataSet";
 
+    @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Object getDataSetData(@RequestParam String startDate, @RequestParam String endDate,
