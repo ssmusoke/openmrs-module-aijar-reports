@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.api;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +50,45 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     @Transactional
     DashboardReportObject saveDashboardReportObject(DashboardReportObject dashboardReportObject) throws APIException;
 
+    /**
+     * @param id to get dashboardReportObject by id
+     * @return DashboardReportObject
+     * @throws APIException
+     */
     @Transactional
     DashboardReportObject getDashboardReportObjectById(Integer id) throws APIException;
 
+
+    /**
+     * @param dashboardReportObject to save Dashboard
+     * @return Dashboard
+     */
+    @Transactional
+    Dashboard saveDashboard(Dashboard dashboard)  throws APIException;
+
+
+    /**
+     * @param uniqueId of Dashboard
+     * @return Dashboard
+     * @throws APIException
+     */
+    @Transactional
+    Dashboard getDashboardByUUID(String uniqueId) throws APIException;
+
+
+    /**
+     * @param id for Dashboard id
+     * @return Dashboard with id above
+     * @throws APIException
+     */
+    @Transactional
+    Dashboard getDashboardById(Integer id) throws APIException;
+
+
+    /**
+     * @return List of Dashboards in database
+     * @throws APIException
+     */
+    @Transactional
+    List<Dashboard> getAllDashboards() throws APIException;
 }

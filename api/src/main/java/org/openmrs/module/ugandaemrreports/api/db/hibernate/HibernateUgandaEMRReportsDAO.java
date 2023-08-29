@@ -7,6 +7,7 @@ import org.hibernate.criterion.Restrictions;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.ugandaemrreports.api.db.UgandaEMRReportsDAO;
+import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -65,6 +66,32 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 				.uniqueResult();
 	}
 
+
+
+	public List<Dashboard> getAllDashboards() {
+		return (List<Dashboard>) getSession().createCriteria(Dashboard.class).list();
+	}
+
+	/**
+	 * @see org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService#saveDashboard(Dashboard) (org.openmrs.module.ugandaemrreports.model.Dashboard)
+	 */
+	public Dashboard getDashboardByUUID(String uuid) {
+		return (Dashboard) getSession().createCriteria(Dashboard.class).add(Restrictions.eq("uuid", uuid))
+				.uniqueResult();
+	}
+
+	/**
+	 * @see org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService#saveDashboard(Dashboard) (org.openmrs.module.ugandaemrrepots.model.Dashboard)
+	 */
+	public Dashboard saveDashboard(Dashboard dashboard) {
+		getSession().saveOrUpdate(dashboard);
+		return dashboard;
+	}
+
+	public Dashboard getDashboardById(Integer id) {
+		return (Dashboard) getSession().createCriteria(Dashboard.class).add(Restrictions.eq("dashboard_id", id))
+				.uniqueResult();
+	}
 
 
 

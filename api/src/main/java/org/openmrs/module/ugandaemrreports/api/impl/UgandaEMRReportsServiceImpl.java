@@ -7,6 +7,7 @@ import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.module.ugandaemrreports.api.db.UgandaEMRReportsDAO;
 import org.openmrs.module.ugandaemrreports.api.db.hibernate.HibernateUgandaEMRReportsDAO;
+import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.springframework.stereotype.Repository;
 
@@ -56,5 +57,25 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	@Override
 	public DashboardReportObject getDashboardReportObjectById(Integer id) throws APIException {
 		return  dao. getDashboardReportObjectById( id);
+	}
+
+	@Override
+	public Dashboard saveDashboard(Dashboard dashboard) throws APIException {
+		return  dao.saveDashboard(dashboard);
+	}
+
+	@Override
+	public Dashboard getDashboardByUUID(String uniqueId) throws APIException {
+		return dao.getDashboardByUUID(uniqueId);
+	}
+
+	@Override
+	public Dashboard getDashboardById(Integer id) throws APIException {
+		return dao.getDashboardById(id);
+	}
+
+	@Override
+	public List<Dashboard> getAllDashboards() throws APIException {
+		return dao.getAllDashboards();
 	}
 }
