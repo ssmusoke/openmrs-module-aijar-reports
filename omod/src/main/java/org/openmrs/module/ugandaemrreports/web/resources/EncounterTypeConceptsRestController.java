@@ -4,19 +4,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import org.openmrs.Concept;
+import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.ConceptMapper;
-import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
-import org.openmrs.module.webservices.rest.web.representation.Representation;
-import org.openmrs.module.webservices.rest.web.resource.impl.DelegatingResourceDescription;
-import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -36,6 +32,7 @@ public class EncounterTypeConceptsRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String DATA_SET = "/concepts/encountertype";
 
+    @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public Object get(HttpServletRequest request, RequestContext context) {
@@ -52,7 +49,7 @@ public class EncounterTypeConceptsRestController {
                             File myFile = getFileContainingEncounterUuid(file, encounterTypeUuid);
                             if (myFile != null) {
                                 conceptsUuids = extractTableColumnsAttributes(myFile);
-                                System.out.println("File of interest: " + file.getName());
+
                             }
                         }
                     }
