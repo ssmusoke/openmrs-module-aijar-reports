@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.9"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
+                  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-1">
+        <createTable tableName="reporting_dashboard_report_object">
+            <column autoIncrement="true" name="dashboard_report_id" type="INT">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="type" type="VARCHAR(255)"/>
+            <column name="cols" type="VARCHAR(255)"/>
+            <column name="rows" type="VARCHAR(255)"/>
+            <column name="aggregator" type="VARCHAR(255)"/>
+            <column name="report_request_object" type="MEDIUMTEXT"/>
+            <column name="creator" type="INT"/>
+            <column name="date_created" type="datetime"/>
+            <column name="changed_by" type="INT"/>
+            <column name="date_changed" type="datetime"/>
+            <column name="voided" type="TINYINT(3)"/>
+            <column name="date_voided" type="datetime"/>
+            <column name="voided_by" type="INT"/>
+            <column name="void_reason" type="VARCHAR(255)"/>
+            <column name="uuid" type="VARCHAR(38)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-3">
+        <createIndex indexName="reporting_dashboard_report_object_creator_user_id_fk" tableName="reporting_dashboard_report_object">
+            <column name="creator"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-4">
+        <createIndex indexName="reporting_dashboard_report_object_editor_user_id_fk_2" tableName="reporting_dashboard_report_object">
+            <column name="changed_by"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-5">
+        <createIndex indexName="reporting_dashboard_report_object_deleted_by_user_id_fk_3" tableName="reporting_dashboard_report_object">
+            <column name="voided_by"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-7">
+        <addForeignKeyConstraint baseColumnNames="creator" baseTableName="reporting_dashboard_report_object"
+                                 constraintName="reporting_dashboard_report_object_creator_user_id_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-8">
+        <addForeignKeyConstraint baseColumnNames="changed_by" baseTableName="reporting_dashboard_report_object"
+                                 constraintName="reporting_dashboard_report_object_editor_user_id_fk_2" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-9">
+        <addForeignKeyConstraint baseColumnNames="voided_by" baseTableName="reporting_dashboard_report_object"
+                                 constraintName="reporting_dashboard_report_object_deleted_by_user_id_fk_3" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-1">
+        <createTable tableName="reporting_dashboard">
+            <column autoIncrement="true" name="dashboard_id" type="INT">
+                <constraints primaryKey="true" unique="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="items" type="VARCHAR(255)"/>
+            <column name="creator" type="INT"/>
+            <column name="date_created" type="datetime"/>
+            <column name="changed_by" type="INT"/>
+            <column name="date_changed" type="datetime"/>
+            <column name="voided" type="TINYINT(3)"/>
+            <column name="date_voided" type="datetime"/>
+            <column name="voided_by" type="INT"/>
+            <column name="void_reason" type="VARCHAR(255)"/>
+            <column name="uuid" type="VARCHAR(38)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-3">
+        <createIndex indexName="reporting_dashboard_creator_user_id_fk" tableName="reporting_dashboard">
+            <column name="creator"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-4">
+        <createIndex indexName="reporting_dashboard_editor_user_id_fk_2" tableName="reporting_dashboard">
+            <column name="changed_by"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-5">
+        <createIndex indexName="reporting_dashboard_deleted_by_user_id_fk_3" tableName="reporting_dashboard">
+            <column name="voided_by"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-7">
+        <addForeignKeyConstraint baseColumnNames="creator" baseTableName="reporting_dashboard"
+                                 constraintName="reporting_dashboard_creator_user_id_fk" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-8">
+        <addForeignKeyConstraint baseColumnNames="changed_by" baseTableName="reporting_dashboard"
+                                 constraintName="reporting_dashboard_editor_user_id_fk_2" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet author="dbaluku" id="ugandaemrreports-2908020231920-9">
+        <addForeignKeyConstraint baseColumnNames="voided_by" baseTableName="reporting_dashboard"
+                                 constraintName="reporting_dashboard_deleted_by_user_id_fk_3" deferrable="false"
+                                 initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION"
+                                 referencedColumnNames="user_id" referencedTableName="users"/>
+    </changeSet>
+
+</databaseChangeLog>
