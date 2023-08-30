@@ -57,7 +57,7 @@ public class EncounterTypeConceptsRestController {
             }
             if (!conceptsUuids.isEmpty()) {
                 List<Concept> conceptList = getConcepts(conceptsUuids);
-                 conceptMapperList= convertConcepts(conceptList);
+                 conceptMapperList= convertConcepts(conceptList,encounterTypeUuid);
             }
             return new ResponseEntity<Object>(conceptMapperList, HttpStatus.OK);
 
@@ -110,13 +110,14 @@ public class EncounterTypeConceptsRestController {
         return concepts;
     }
 
-    private List<ConceptMapper> convertConcepts(List<Concept> conceptList){
+    private List<ConceptMapper> convertConcepts(List<Concept> conceptList,String encounterTypeUuid){
         List<ConceptMapper> conceptMappers = new ArrayList<>();
         for (Concept c:conceptList  ) {
             ConceptMapper conceptMapper = new ConceptMapper();
             conceptMapper.setConceptId(c.getConceptId().toString());
             conceptMapper.setConceptName(c.getName().getName());
             conceptMapper.setUuid(c.getUuid());
+            conceptMapper.setType(encounterTypeUuid);
             conceptMappers.add(conceptMapper);
         }
         return conceptMappers;

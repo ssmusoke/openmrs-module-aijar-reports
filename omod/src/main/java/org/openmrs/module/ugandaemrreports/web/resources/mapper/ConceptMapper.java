@@ -5,6 +5,8 @@ public class ConceptMapper {
     String uuid;
     String conceptId;
 
+    String type;
+
     public String getConceptName() {
         return conceptName;
     }
@@ -27,5 +29,13 @@ public class ConceptMapper {
 
     public void setConceptId(String conceptId) {
         this.conceptId = conceptId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
