@@ -6,7 +6,6 @@ import org.openmrs.BaseOpenmrsData;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity(name = "ugandaemrreports.DashboardReportObject")
 @Table(name = "reporting_dashboard_report_object")
