@@ -5,7 +5,7 @@
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.9
                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.9.xsd">
 
-    <changeSet author="dbaluku" id="ugandaemrreports-2908020230729-1">
+    <changeSet author="dbaluku" id="ugandaemrreports-2808020230729-1">
         <createTable tableName="reporting_dashboard_report_object">
             <column autoIncrement="true" name="dashboard_report_id" type="INT">
                 <constraints primaryKey="true" unique="true"/>
@@ -13,8 +13,8 @@
             <column name="name" type="VARCHAR(255)"/>
             <column name="description" type="VARCHAR(255)"/>
             <column name="type" type="VARCHAR(255)"/>
-            <column name="cols" type="VARCHAR(255)"/>
-            <column name="rows" type="VARCHAR(255)"/>
+            <column name="y_values" type="VARCHAR(255)"/>
+            <column name="x_values" type="VARCHAR(255)"/>
             <column name="aggregator" type="VARCHAR(255)"/>
             <column name="report_request_object" type="MEDIUMTEXT"/>
             <column name="creator" type="INT"/>

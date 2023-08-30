@@ -6,7 +6,6 @@ import org.openmrs.BaseOpenmrsData;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
 
 @Entity(name = "ugandaemrreports.DashboardReportObject")
 @Table(name = "reporting_dashboard_report_object")
@@ -26,10 +25,10 @@ public class DashboardReportObject extends BaseOpenmrsData implements Serializab
     @Column(name = "type")
     private String  type;
 
-    @Column(name = "rows")
+    @Column(name = "x_values")
     private String  rows;
 
-    @Column(name = "cols")
+    @Column(name = "y_values")
     private String  columns;
 
     @Column(name = "aggregator")
