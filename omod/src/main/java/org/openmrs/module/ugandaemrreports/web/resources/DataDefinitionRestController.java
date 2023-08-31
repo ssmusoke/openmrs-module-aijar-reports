@@ -3,9 +3,9 @@ package org.openmrs.module.ugandaemrreports.web.resources;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.ReflectionUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -36,8 +36,6 @@ public class DataDefinitionRestController {
     public static final String DATA_DEFINITION = "/dataDefinition";
 
 
-    EvaluationContext context = new EvaluationContext();
-
     @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
@@ -46,6 +44,7 @@ public class DataDefinitionRestController {
         Cohort reportCohort = payload.getCohort();
         List<Column> columnList = payload.getColumns();
 
+        EvaluationContext context = new EvaluationContext();
         SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
         org.openmrs.Cohort baseCohort = new org.openmrs.Cohort();
         if (reportCohort.getClazz() != null && !columnList.isEmpty()) {
@@ -57,11 +56,13 @@ public class DataDefinitionRestController {
 
                     List<Map<String, Object>> parameters = reportCohort.getParameters();
 
-                    SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition("SELECT client_id\n" +
-                            "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
-                            "WHERE returndate BETWEEN '" + parameters.get(0).get("startDate") + "' AND '" + parameters.get(0).get("endDate") + "';");
+                    Map<String, Object> cohortParameters  = getParameters(parameters);
+                    ReflectionUtil.setPropertyValue(cd, "startDate",  cohortParameters.get("startDate"));
+                    ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
 
-                    baseCohort = Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
+                    context.setParameterValues(cohortParameters);
+
+                    baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
 
                     if (!baseCohort.isEmpty()) {
                         HashMap<String, List<Object[]>> columns = getColumnsData(columnList, baseCohort);
@@ -108,7 +109,7 @@ public class DataDefinitionRestController {
         }
         List<SimpleObject> traceReportData = new ArrayList<SimpleObject>();
         traceReportData.addAll(convertDataSetToSimpleObject(dataSet));
-        return new ResponseEntity<List<SimpleObject>>(traceReportData, HttpStatus.OK);
+        return new ResponseEntity<>(traceReportData, HttpStatus.OK);
 
     }
 
@@ -169,11 +170,6 @@ public class DataDefinitionRestController {
 
     }
 
-    private String[] stripMethodParameters(String parameter) {
-        String[] parts = parameter.split("\\."); // Escaping the dot with a double backslash
-        return parts;
-    }
-
     private HashMap<String, List<Object[]>> getColumnsData(List<Column> columnList, org.openmrs.Cohort baseCohort) {
         HashMap<String, List<Object[]>> columns = new HashMap<>();
         for (Column column : columnList) {
@@ -181,13 +177,16 @@ public class DataDefinitionRestController {
             String type = column.getType();
             String column_label = column.getLabel();
             if (type.equals("PatientIdentifier")) {
+                EvaluationContext context = new EvaluationContext();
                 List<Object[]> identifiers = getIdentifiers(baseCohort, expression, context);
                 columns.put(column_label, identifiers);
 
             } else if (type.equals("PersonName")) {
+                EvaluationContext context = new EvaluationContext();
                 List<Object[]> returnedNames = getPersonNames(baseCohort, expression, context);
                 columns.put(column_label, returnedNames);
             } else if (type.equals("PersonAttribute")) {
+                EvaluationContext context = new EvaluationContext();
                 if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
                     List<Object[]> attributes = getConceptPersonAttributes(baseCohort, expression, context);
                     columns.put(column_label, attributes);
