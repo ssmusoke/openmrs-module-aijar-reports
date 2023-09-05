@@ -12,8 +12,12 @@ import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
+import org.openmrs.module.reporting.report.ReportData;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.Column;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.DataExportMapper;
@@ -47,24 +51,29 @@ public class DataDefinitionRestController {
         EvaluationContext context = new EvaluationContext();
         SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
         org.openmrs.Cohort baseCohort = new org.openmrs.Cohort();
-        if (reportCohort.getClazz() != null && !columnList.isEmpty()) {
+        if (reportCohort.getUuid() != null && !columnList.isEmpty()) {
             try {
-                Class<?> cohortClass = Class.forName(reportCohort.getClazz());
-                Object instance = cohortClass.newInstance();
-                if (instance instanceof CohortDefinition) {
-                    CohortDefinition cd = (CohortDefinition) instance;
+                ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
+                ReportDefinition rd = service.getDefinitionByUuid(reportCohort.getUuid());
 
-                    List<Map<String, Object>> parameters = reportCohort.getParameters();
+                if (rd != null) {
+                    Mapped<? extends CohortDefinition> cd = rd.getBaseCohortDefinition();
 
-                    Map<String, Object> cohortParameters  = getParameters(parameters);
-                    ReflectionUtil.setPropertyValue(cd, "startDate",  cohortParameters.get("startDate"));
-                    ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
+                    if (cd != null) {
+                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
 
-                    context.setParameterValues(cohortParameters);
 
-                    baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                        List<Map<String, Object>> parameters = reportCohort.getParameters();
 
-                    if (!baseCohort.isEmpty()) {
+                        Map<String, Object> cohortParameters = getParameters(parameters);
+                        ReflectionUtil.setPropertyValue(cd, "startDate", cohortParameters.get("startDate"));
+                        ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
+
+                        context.setParameterValues(cohortParameters);
+
+                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+
                         HashMap<String, List<Object[]>> columns = getColumnsData(columnList, baseCohort);
                         for (Integer i : baseCohort.getMemberIds()) {
 
@@ -75,10 +84,10 @@ public class DataDefinitionRestController {
                                 Object obj = "";
                                 List<Object[]> objects = columns.get(key);
                                 for (Object[] object : objects) {
-                                    int patientId =(int) object[0];
+                                    int patientId = (int) object[0];
 
-                                    if (patientId==i) {
-                                         obj = object[1];
+                                    if (patientId == i) {
+                                        obj = object[1];
                                     }
                                 }
                                 pdh.addCol(row, key, obj);
@@ -88,19 +97,11 @@ public class DataDefinitionRestController {
                         }
 
                     } else {
-                        return new ResponseEntity<Object>(" No cohort of patient selected", HttpStatus.INTERNAL_SERVER_ERROR);
+                        return new ResponseEntity<Object>(" No base cohort for this report", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
 
 
                 }
-
-            } catch (ClassNotFoundException e) {
-                System.out.println("Class not found: " + reportCohort.getClazz());
-                return new ResponseEntity<Object>("Class not found: " + reportCohort.getClazz(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-            } catch (InstantiationException | IllegalAccessException e) {
-                System.out.println("Can retrieve cohort selected: " + e.getMessage());
-                return new ResponseEntity<Object>("Can retrieve cohort selected: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
             } catch (EvaluationException e) {
                 return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
