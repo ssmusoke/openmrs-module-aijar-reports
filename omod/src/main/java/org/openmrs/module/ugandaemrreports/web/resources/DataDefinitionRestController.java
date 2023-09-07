@@ -1,6 +1,8 @@
 package org.openmrs.module.ugandaemrreports.web.resources;
 
+import org.openmrs.Concept;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
@@ -15,7 +17,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
-import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
@@ -30,6 +31,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -83,11 +86,13 @@ public class DataDefinitionRestController {
                             for (String key : columns.keySet()) {
                                 Object obj = "";
                                 List<Object[]> objects = columns.get(key);
-                                for (Object[] object : objects) {
-                                    int patientId = (int) object[0];
+                                if(!objects.isEmpty()) {
+                                    for (Object[] object : objects) {
+                                        int patientId = (int) object[0];
 
-                                    if (patientId == i) {
-                                        obj = object[1];
+                                        if (patientId == i) {
+                                            obj = object[1];
+                                        }
                                     }
                                 }
                                 pdh.addCol(row, key, obj);
@@ -173,28 +178,38 @@ public class DataDefinitionRestController {
 
     private HashMap<String, List<Object[]>> getColumnsData(List<Column> columnList, org.openmrs.Cohort baseCohort) {
         HashMap<String, List<Object[]>> columns = new HashMap<>();
+        EvaluationContext context = new EvaluationContext();
         for (Column column : columnList) {
             String expression = column.getExpression();
             String type = column.getType();
             String column_label = column.getLabel();
-            if (type.equals("PatientIdentifier")) {
-                EvaluationContext context = new EvaluationContext();
-                List<Object[]> identifiers = getIdentifiers(baseCohort, expression, context);
-                columns.put(column_label, identifiers);
 
-            } else if (type.equals("PersonName")) {
-                EvaluationContext context = new EvaluationContext();
-                List<Object[]> returnedNames = getPersonNames(baseCohort, expression, context);
-                columns.put(column_label, returnedNames);
-            } else if (type.equals("PersonAttribute")) {
-                EvaluationContext context = new EvaluationContext();
-                if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
-                    List<Object[]> attributes = getConceptPersonAttributes(baseCohort, expression, context);
-                    columns.put(column_label, attributes);
-                } else {
-                    List<Object[]> attributes = getPersonAttributes(baseCohort, expression, context);
-                    columns.put(column_label, attributes);
+            if (isExpressionAConcept(expression)) {
+                try {
+                    List<Object[]> fields = getLatestConceptData(type, expression, baseCohort,context);
+                    columns.put(column_label, fields);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                if (type.equals("PatientIdentifier")) {
 
+                    List<Object[]> identifiers = getIdentifiers(baseCohort, expression, context);
+                    columns.put(column_label, identifiers);
+
+                } else if (type.equals("PersonName")) {
+
+                    List<Object[]> returnedNames = getPersonNames(baseCohort, expression, context);
+                    columns.put(column_label, returnedNames);
+                } else if (type.equals("PersonAttribute")) {
+                    if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
+                        List<Object[]> attributes = getConceptPersonAttributes(baseCohort, expression, context);
+                        columns.put(column_label, attributes);
+                    } else {
+                        List<Object[]> attributes = getPersonAttributes(baseCohort, expression, context);
+                        columns.put(column_label, attributes);
+
+                    }
                 }
             }
 
@@ -221,4 +236,35 @@ public class DataDefinitionRestController {
         return dataList;
     }
 
+    private boolean isExpressionAConcept(String conceptUuid) {
+        boolean isConcept = false;
+        ConceptService conceptService = Context.getConceptService();
+        Concept concept = conceptService.getConceptByUuid(conceptUuid);
+        if (concept != null) {
+            isConcept = true;
+        }
+        return isConcept;
+    }
+
+    private List<Object[]> getLatestConceptData(String encounterTypeUuid, String conceptUuid, org.openmrs.Cohort baseCohort, EvaluationContext context) throws IOException {
+        File[] files = Helper.getMambaConfigFiles();
+        File file = Helper.getFileContainingEncounterUuid(files, encounterTypeUuid);
+        List<Object[]> results = new ArrayList<>();
+        if (file != null) {
+            String columnName = Helper.getColumnNameInTable(conceptUuid, file);
+            String encounterTable = Helper.getMambaTableFromFile(file);
+            String query ="SELECT A.client_id, "+ columnName +" , latest_encounter as obs_ecounter_date from "+ encounterTable + " mfeac inner join\n" +
+                    "(SELECT client_id, MAX(encounter_datetime) latest_encounter\n" +
+                    "FROM "+  encounterTable + " \n" +
+                    "WHERE "+ columnName +" IS NOT NULL\n" +
+                    "GROUP BY client_id)A on A.latest_encounter = mfeac.encounter_datetime and A.client_id=mfeac.client_id "+ " where A.client_id in ( " + baseCohort.getCommaSeparatedPatientIds() + ")   group by client_id";
+
+            EvaluationService evaluationService = Context.getService(EvaluationService.class);
+            SqlQueryBuilder q = new SqlQueryBuilder();
+            q.append(query);
+            results = evaluationService.evaluateToList(q, context);
+
+        }
+        return results;
+    }
 }
