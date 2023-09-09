@@ -1,19 +1,24 @@
 package org.openmrs.module.ugandaemrreports.web.resources;
 
+import org.openmrs.Concept;
 import org.openmrs.api.APIAuthenticationException;
+import org.openmrs.api.ConceptService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
-import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.ReflectionUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.Column;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.DataExportMapper;
@@ -26,6 +31,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 @Controller
@@ -36,8 +43,6 @@ public class DataDefinitionRestController {
     public static final String DATA_DEFINITION = "/dataDefinition";
 
 
-    EvaluationContext context = new EvaluationContext();
-
     @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseBody
@@ -46,24 +51,32 @@ public class DataDefinitionRestController {
         Cohort reportCohort = payload.getCohort();
         List<Column> columnList = payload.getColumns();
 
+        EvaluationContext context = new EvaluationContext();
         SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
         org.openmrs.Cohort baseCohort = new org.openmrs.Cohort();
-        if (reportCohort.getClazz() != null && !columnList.isEmpty()) {
+        if (reportCohort.getUuid() != null && !columnList.isEmpty()) {
             try {
-                Class<?> cohortClass = Class.forName(reportCohort.getClazz());
-                Object instance = cohortClass.newInstance();
-                if (instance instanceof CohortDefinition) {
-                    CohortDefinition cd = (CohortDefinition) instance;
+                ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
+                ReportDefinition rd = service.getDefinitionByUuid(reportCohort.getUuid());
 
-                    List<Map<String, Object>> parameters = reportCohort.getParameters();
+                if (rd != null) {
+                    Mapped<? extends CohortDefinition> cd = rd.getBaseCohortDefinition();
 
-                    SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition("SELECT client_id\n" +
-                            "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
-                            "WHERE returndate BETWEEN '" + parameters.get(0).get("startDate") + "' AND '" + parameters.get(0).get("endDate") + "';");
+                    if (cd != null) {
+                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
 
-                    baseCohort = Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
 
-                    if (!baseCohort.isEmpty()) {
+                        List<Map<String, Object>> parameters = reportCohort.getParameters();
+
+                        Map<String, Object> cohortParameters = getParameters(parameters);
+                        ReflectionUtil.setPropertyValue(cd, "startDate", cohortParameters.get("startDate"));
+                        ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
+
+                        context.setParameterValues(cohortParameters);
+
+                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+
                         HashMap<String, List<Object[]>> columns = getColumnsData(columnList, baseCohort);
                         for (Integer i : baseCohort.getMemberIds()) {
 
@@ -73,11 +86,13 @@ public class DataDefinitionRestController {
                             for (String key : columns.keySet()) {
                                 Object obj = "";
                                 List<Object[]> objects = columns.get(key);
-                                for (Object[] object : objects) {
-                                    int patientId =(int) object[0];
+                                if(!objects.isEmpty()) {
+                                    for (Object[] object : objects) {
+                                        int patientId = (int) object[0];
 
-                                    if (patientId==i) {
-                                         obj = object[1];
+                                        if (patientId == i) {
+                                            obj = object[1];
+                                        }
                                     }
                                 }
                                 pdh.addCol(row, key, obj);
@@ -87,19 +102,11 @@ public class DataDefinitionRestController {
                         }
 
                     } else {
-                        return new ResponseEntity<Object>(" No cohort of patient selected", HttpStatus.INTERNAL_SERVER_ERROR);
+                        return new ResponseEntity<Object>(" No base cohort for this report", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
 
 
                 }
-
-            } catch (ClassNotFoundException e) {
-                System.out.println("Class not found: " + reportCohort.getClazz());
-                return new ResponseEntity<Object>("Class not found: " + reportCohort.getClazz(), HttpStatus.INTERNAL_SERVER_ERROR);
-
-            } catch (InstantiationException | IllegalAccessException e) {
-                System.out.println("Can retrieve cohort selected: " + e.getMessage());
-                return new ResponseEntity<Object>("Can retrieve cohort selected: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 
             } catch (EvaluationException e) {
                 return new ResponseEntity<Object>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -108,7 +115,7 @@ public class DataDefinitionRestController {
         }
         List<SimpleObject> traceReportData = new ArrayList<SimpleObject>();
         traceReportData.addAll(convertDataSetToSimpleObject(dataSet));
-        return new ResponseEntity<List<SimpleObject>>(traceReportData, HttpStatus.OK);
+        return new ResponseEntity<>(traceReportData, HttpStatus.OK);
 
     }
 
@@ -169,32 +176,40 @@ public class DataDefinitionRestController {
 
     }
 
-    private String[] stripMethodParameters(String parameter) {
-        String[] parts = parameter.split("\\."); // Escaping the dot with a double backslash
-        return parts;
-    }
-
     private HashMap<String, List<Object[]>> getColumnsData(List<Column> columnList, org.openmrs.Cohort baseCohort) {
         HashMap<String, List<Object[]>> columns = new HashMap<>();
+        EvaluationContext context = new EvaluationContext();
         for (Column column : columnList) {
             String expression = column.getExpression();
             String type = column.getType();
             String column_label = column.getLabel();
-            if (type.equals("PatientIdentifier")) {
-                List<Object[]> identifiers = getIdentifiers(baseCohort, expression, context);
-                columns.put(column_label, identifiers);
 
-            } else if (type.equals("PersonName")) {
-                List<Object[]> returnedNames = getPersonNames(baseCohort, expression, context);
-                columns.put(column_label, returnedNames);
-            } else if (type.equals("PersonAttribute")) {
-                if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
-                    List<Object[]> attributes = getConceptPersonAttributes(baseCohort, expression, context);
-                    columns.put(column_label, attributes);
-                } else {
-                    List<Object[]> attributes = getPersonAttributes(baseCohort, expression, context);
-                    columns.put(column_label, attributes);
+            if (isExpressionAConcept(expression)) {
+                try {
+                    List<Object[]> fields = getLatestConceptData(type, expression, baseCohort,context);
+                    columns.put(column_label, fields);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                if (type.equals("PatientIdentifier")) {
 
+                    List<Object[]> identifiers = getIdentifiers(baseCohort, expression, context);
+                    columns.put(column_label, identifiers);
+
+                } else if (type.equals("PersonName")) {
+
+                    List<Object[]> returnedNames = getPersonNames(baseCohort, expression, context);
+                    columns.put(column_label, returnedNames);
+                } else if (type.equals("PersonAttribute")) {
+                    if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
+                        List<Object[]> attributes = getConceptPersonAttributes(baseCohort, expression, context);
+                        columns.put(column_label, attributes);
+                    } else {
+                        List<Object[]> attributes = getPersonAttributes(baseCohort, expression, context);
+                        columns.put(column_label, attributes);
+
+                    }
                 }
             }
 
@@ -221,4 +236,35 @@ public class DataDefinitionRestController {
         return dataList;
     }
 
+    private boolean isExpressionAConcept(String conceptUuid) {
+        boolean isConcept = false;
+        ConceptService conceptService = Context.getConceptService();
+        Concept concept = conceptService.getConceptByUuid(conceptUuid);
+        if (concept != null) {
+            isConcept = true;
+        }
+        return isConcept;
+    }
+
+    private List<Object[]> getLatestConceptData(String encounterTypeUuid, String conceptUuid, org.openmrs.Cohort baseCohort, EvaluationContext context) throws IOException {
+        File[] files = Helper.getMambaConfigFiles();
+        File file = Helper.getFileContainingEncounterUuid(files, encounterTypeUuid);
+        List<Object[]> results = new ArrayList<>();
+        if (file != null) {
+            String columnName = Helper.getColumnNameInTable(conceptUuid, file);
+            String encounterTable = Helper.getMambaTableFromFile(file);
+            String query ="SELECT A.client_id, "+ columnName +" , latest_encounter as obs_ecounter_date from "+ encounterTable + " mfeac inner join\n" +
+                    "(SELECT client_id, MAX(encounter_datetime) latest_encounter\n" +
+                    "FROM "+  encounterTable + " \n" +
+                    "WHERE "+ columnName +" IS NOT NULL\n" +
+                    "GROUP BY client_id)A on A.latest_encounter = mfeac.encounter_datetime and A.client_id=mfeac.client_id "+ " where A.client_id in ( " + baseCohort.getCommaSeparatedPatientIds() + ")   group by client_id";
+
+            EvaluationService evaluationService = Context.getService(EvaluationService.class);
+            SqlQueryBuilder q = new SqlQueryBuilder();
+            q.append(query);
+            results = evaluationService.evaluateToList(q, context);
+
+        }
+        return results;
+    }
 }

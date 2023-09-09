@@ -38,89 +38,14 @@ public class EncounterTypeConceptsRestController {
     public Object get(HttpServletRequest request, RequestContext context) {
         try {
             String encounterTypeUuid = request.getParameter("uuid");
-            Set<String> conceptsUuids = new HashSet<>();
-            List<ConceptMapper> conceptMapperList =new ArrayList<>();
-            File folder = FileUtils.toFile(getClass().getClassLoader().getResource("_etl/config"));
-            if (folder.isDirectory()) {
-                File[] files = folder.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        if (file.isFile() && file.getName().endsWith(".json")) {
-                            File myFile = getFileContainingEncounterUuid(file, encounterTypeUuid);
-                            if (myFile != null) {
-                                conceptsUuids = extractTableColumnsAttributes(myFile);
 
-                            }
-                        }
-                    }
-                }
-            }
-            if (!conceptsUuids.isEmpty()) {
-                List<Concept> conceptList = getConcepts(conceptsUuids);
-                 conceptMapperList= convertConcepts(conceptList,encounterTypeUuid);
-            }
+            List<ConceptMapper> conceptMapperList  =  Helper.getConceptByEncounterTypeUuid(encounterTypeUuid);
+
             return new ResponseEntity<Object>(conceptMapperList, HttpStatus.OK);
 
         } catch (Exception ex) {
             return new ResponseEntity<String>(ex.getMessage() + Arrays.toString(ex.getStackTrace()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-
-    private static File getFileContainingEncounterUuid(File file, String targetEncounterTypeUuid) {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        File file1 = null;
-        try {
-            JsonNode fileObject = objectMapper.readTree(file);
-            JsonNode encounterNode = fileObject.path("encounter_type_uuid");
-            if (encounterNode.asText().equals(targetEncounterTypeUuid)) {
-                file1 = file;
-            }
-        } catch (IOException e) {
-            System.err.println("Error reading JSON file: " + file.getName());
-            e.printStackTrace();
-        }
-        return file1;
-    }
-
-    private static Set<String> extractTableColumnsAttributes(File file) throws IOException {
-        Set<String> attributeValues = new HashSet<>();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        JsonNode rootNode = objectMapper.readTree(file);
-        JsonNode tableColumnsNode = rootNode.path("table_columns");
-
-        Iterator<String> fieldNames = tableColumnsNode.fieldNames();
-        while (fieldNames.hasNext()) {
-            String attributeName = fieldNames.next();
-            String attributeValue = tableColumnsNode.get(attributeName).asText();
-            attributeValues.add(attributeValue);
-        }
-
-        return attributeValues;
-    }
-
-    private List<Concept> getConcepts(Set<String> conceptUuids) {
-        List<Concept> concepts = new ArrayList<>();
-        for (String uuid : conceptUuids) {
-            Concept concept =Context.getConceptService().getConceptByUuid(uuid);
-            concepts.add(concept);
-        }
-        return concepts;
-    }
-
-    private List<ConceptMapper> convertConcepts(List<Concept> conceptList,String encounterTypeUuid){
-        List<ConceptMapper> conceptMappers = new ArrayList<>();
-        for (Concept c:conceptList  ) {
-            ConceptMapper conceptMapper = new ConceptMapper();
-            conceptMapper.setConceptId(c.getConceptId().toString());
-            conceptMapper.setConceptName(c.getName().getName());
-            conceptMapper.setUuid(c.getUuid());
-            conceptMapper.setType(encounterTypeUuid);
-            conceptMappers.add(conceptMapper);
-        }
-        return conceptMappers;
     }
 
 
