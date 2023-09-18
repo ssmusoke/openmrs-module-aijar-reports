@@ -119,6 +119,7 @@
                                  referencedColumnNames="user_id" referencedTableName="users"/>
     </changeSet>
 
+
     <changeSet id="ohri-mamba-setup0006" author="Arthur D. Mugume [OHRI]" runAlways="true">
 
         <comment>

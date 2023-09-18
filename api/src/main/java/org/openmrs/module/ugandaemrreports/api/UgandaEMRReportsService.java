@@ -91,4 +91,7 @@ public interface UgandaEMRReportsService extends OpenmrsService {
      */
     @Transactional
     List<Dashboard> getAllDashboards() throws APIException;
+
+
+    void executeFlatteningScript();
 }
