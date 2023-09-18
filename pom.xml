@@ -162,13 +162,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>webservices.rest-omod-common</artifactId>
-                <version>${webservices.restModuleVersion}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>[30.0-jre,)</version>
