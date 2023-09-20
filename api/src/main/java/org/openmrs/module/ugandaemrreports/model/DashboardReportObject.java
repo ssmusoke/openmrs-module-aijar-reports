@@ -6,6 +6,7 @@ import org.openmrs.BaseOpenmrsData;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity(name = "ugandaemrreports.DashboardReportObject")
 @Table(name = "reporting_dashboard_report_object")
@@ -37,6 +38,9 @@ public class DashboardReportObject extends BaseOpenmrsData implements Serializab
     @Column(name = "report_request_object", length = 1000000)
     @Type(type="text")
     private String report_request_object;
+
+    @ManyToMany(mappedBy = "items")
+    private Set<Dashboard> dashboards;
 
 
     public String getName() {
@@ -104,4 +108,14 @@ public class DashboardReportObject extends BaseOpenmrsData implements Serializab
     public void setAggregator(String aggregator) {
         this.aggregator = aggregator;
     }
+
+    public Set<Dashboard> getDashboards() {
+        return dashboards;
+    }
+
+    public void setDashboards(Set<Dashboard> dashboards) {
+        this.dashboards = dashboards;
+    }
+
+
 }
