@@ -18,7 +18,7 @@ FROM (SELECT family.person_id, obs_group_id
     WHERE concept_id = 99075
     AND o.voided = 0) b
     ON family.obs_group_id = b.obs_id
-    WHERE concept_id = 165275) status
+    WHERE concept_id = 165275 and voided =0) status
 ON status.obs_group_id = relationship_spouse.obs_group_id
 GROUP BY status.person_id;
 -- $END

@@ -96,7 +96,7 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "last_visit_date", o[9]);
                 pdh.addCol(row, "next_appointment_date", o[10]);
 
-                pdh.addCol(row, "client_status", o[12]);
+                pdh.addCol(row, "client_status", o[11]);
 
                 pdh.addCol(row, "art_start_date", o[32]);
 //                pdh.addCol(row, "duration_on_art", o[13]);
