@@ -221,6 +221,19 @@ facts/active_in_care/sp_fact_active_in_care_create.sql
 facts/active_in_care/sp_fact_active_in_care_insert.sql
 facts/active_in_care/sp_fact_active_in_care_query.sql
 facts/active_in_care/sp_fact_active_in_care_update.sql
+
+facts/audit_tools/latest_pregnancy_status/sp_fact_latest_pregnancy_status_patients.sql
+facts/audit_tools/latest_pregnancy_status/sp_fact_latest_pregnancy_status_patients_create.sql
+facts/audit_tools/latest_pregnancy_status/sp_fact_latest_pregnancy_status_patients_insert.sql
+facts/audit_tools/latest_pregnancy_status/sp_fact_latest_pregnancy_status_patients_query.sql
+facts/audit_tools/latest_pregnancy_status/sp_fact_latest_pregnancy_status_patients_update.sql
+
+facts/audit_tools/eid_patients/sp_fact_eid_patients.sql
+facts/audit_tools/eid_patients/sp_fact_eid_patients_create.sql
+facts/audit_tools/eid_patients/sp_fact_eid_patients_insert.sql
+facts/audit_tools/eid_patients/sp_fact_eid_patients_query.sql
+facts/audit_tools/eid_patients/sp_fact_eid_patients_update.sql
+
 #############################################################################
 ###### A single stored procedure that invokes (CALLs) the above SPs #########
 #############################################################################

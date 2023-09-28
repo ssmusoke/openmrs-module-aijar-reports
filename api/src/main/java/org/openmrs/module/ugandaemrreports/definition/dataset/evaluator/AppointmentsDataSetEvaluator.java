@@ -1,33 +1,24 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import org.hibernate.type.StandardBasicTypes;
-import org.openmrs.Concept;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.ConceptService;
 import org.openmrs.api.LocationService;
 import org.openmrs.api.PatientService;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.dataset.DataSetColumn;
 import org.openmrs.module.reporting.dataset.DataSetRow;
-import org.openmrs.module.reporting.dataset.MapDataSet;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluator;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
-import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AdherenceDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AppointmentDataSetDefinition;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-import java.util.HashMap;
 import java.util.List;
 
 
