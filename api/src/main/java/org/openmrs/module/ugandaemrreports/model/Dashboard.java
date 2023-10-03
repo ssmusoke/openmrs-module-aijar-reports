@@ -5,6 +5,7 @@ import org.openmrs.BaseOpenmrsData;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "ugandaemrreports.Dashboard")
 @Table(name = "reporting_dashboard")
@@ -21,8 +22,11 @@ public class Dashboard extends BaseOpenmrsData implements Serializable {
     @Column(name = "description")
     private String  description;
 
-    @Column(name = "items")
-    private String  items;
+    @ManyToMany
+    @JoinTable(name = "reporting_dashboard_reports",
+            joinColumns = @JoinColumn(name = "dashboard_id"),
+            inverseJoinColumns = @JoinColumn(name = "dashboard_report_id"))
+    private List<DashboardReportObject> items;
 
 
 
@@ -53,11 +57,11 @@ public class Dashboard extends BaseOpenmrsData implements Serializable {
         this.dashboard_id = id;
     }
 
-    public String getItems() {
+    public List<DashboardReportObject> getItems() {
         return items;
     }
 
-    public void setItems(String items) {
+    public void setItems(List<DashboardReportObject> items) {
         this.items = items;
     }
 }

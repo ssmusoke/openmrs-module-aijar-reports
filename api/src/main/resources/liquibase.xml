@@ -119,4 +119,32 @@
                                  referencedColumnNames="user_id" referencedTableName="users"/>
     </changeSet>
 
+    <changeSet author="dbaluku" id="ugandaemrreports-200920231120-1">
+        <createTable tableName="reporting_dashboard_reports">
+            <column name="dashboard_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dashboard_report_id" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+        </createTable>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-200920231120-2">
+        <addForeignKeyConstraint baseTableName="reporting_dashboard_reports" baseColumnNames="dashboard_id"
+                                 referencedTableName="reporting_dashboard" referencedColumnNames="dashboard_id"
+                                 constraintName="fk_dashboard_reports_dashboard1"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="reporting_dashboard_reports" baseColumnNames="dashboard_report_id"
+                                 referencedTableName="reporting_dashboard_report_object" referencedColumnNames="dashboard_report_id"
+                                 constraintName="fk_dashboard_reports_report1"
+                                 onDelete="CASCADE" onUpdate="CASCADE"/>
+    </changeSet>
+
+    <changeSet author="dbaluku" id="ugandaemrreports-200920231120-3">
+        <dropColumn tableName="reporting_dashboard" columnName="items"/>
+    </changeSet>
+
 </databaseChangeLog>
