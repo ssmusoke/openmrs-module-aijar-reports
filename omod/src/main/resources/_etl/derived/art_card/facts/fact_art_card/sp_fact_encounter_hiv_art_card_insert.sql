@@ -107,7 +107,7 @@ SELECT encounter_id,
        mid_upper_arm_circumference_code,
        district_tuberculosis_number,
        other_medications_dispensed,
-       arv_regimen_days_dispensed,
+       FLOOR(arv_regimen_days_dispensed),
        ar_regimen_dose,
        nutrition_support_and_infant_feeding,
        other_side_effects,
@@ -145,5 +145,5 @@ SELECT encounter_id,
        refill_point_code,
        next_return_date_at_facility,
        indication_for_viral_load_testing
-FROM mamba_flat_encounter_art_card ;
+FROM mamba_flat_encounter_art_card where encounter_datetime >= DATE_SUB(CURRENT_DATE(),INTERVAL 10 YEAR) ;
 -- $END

@@ -59,6 +59,7 @@ CREATE TABLE mamba_fact_audit_tool_art_patients
     partners                               INT NULL,
     known_status_partners                  INT NULL,
     age_group                              VARCHAR(50) NULL,
+    cacx_date                              DATE NULL,
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 

@@ -27,91 +27,143 @@ INSERT INTO mamba_fact_eid_patients (
     RAPID_PCR_RESULT ,
     FINAL_OUTCOME ,
     LINKAGE_NO ,
-    NVP_AT_BIRTH
+    NVP_AT_BIRTH,
+    BREAST_FEEDING_STOPPED,
+    PMTCT_STATUS,
+    PMTCT_ENROLLMENT_DATE,
+    BABY
 )
 SELECT patient,
-                                     IFNULL(EDD.edd_date,''),
-                                     IFNULL(EIDNO.id,'') as EIDNO,
-                                     IFNULL(EIDDOB.dob,'') as EID_DOB,
-                                     IFNULL(TIMESTAMPDIFF(MONTH , EIDDOB.dob, CURRENT_DATE()),'') as EID_age,
-                                     IFNULL(EID_W.value_numeric,'') as EID_Weight,
-                                     IFNULL(EID_NEXT_APPT.value_datetime,'')AS NEXT_APPOINTMENT_DATE,
-                                     IFNULL(EID_FEEDING.name,'') as Feeding,
-                                     IFNULL(CTX.mydate,'') as CTX_START,
-                                     IFNULL(TIMESTAMPDIFF(MONTH, CTX.mydate, CURRENT_DATE()),'') as agectx,
-                                     IFNULL(1stPCR.mydate,'') as 1stPCRDATE,
-                                     IFNULL(TIMESTAMPDIFF(MONTH, 1stPCR.mydate, CURRENT_DATE()),'') as age1stPCR,
-                                     IFNULL(1stPCRResult.name,''),
-                                     IFNULL(1stPCRReceived.mydate,'') as 1stPCRRecieved,
-                                     IFNULL(2ndPCR.mydate,'') as 2ndPCRDATE,
-                                     IFNULL(TIMESTAMPDIFF(MONTH, 2ndPCR.mydate, CURRENT_DATE()),'') as age2ndPCR,
-                                     IFNULL(2ndPCRResult.name,''),
-                                     IFNULL(2ndPCRReceived.mydate,'') as 2ndPCRRecieved,
-                                     IFNULL(repeatPCR.mydate,'') as repeatPCRDATE,
-                                     IFNULL(TIMESTAMPDIFF(MONTH, repeatPCR.mydate, CURRENT_DATE()),'') as age3rdPCR,
-                                     IFNULL(repeatPCRResult.name,''),
-                                     IFNULL(repeatPCRReceived.mydate,'') as repeatPCRRecieved,
-                                     IFNULL(rapidTest.mydate,'') as rapidTestDate,
-                                     IFNULL(TIMESTAMPDIFF(MONTH, rapidTest.mydate, CURRENT_DATE()),'') as ageatRapidTest,
-                                     IFNULL(rapidTestResult.name,''),
-                                     IFNULL(finalOutcome.name,''),
-                                     IFNULL(linkageNo.value_text,''),
-                                     IF(NVP.mydate IS NULL,'', IF(TIMESTAMPDIFF(DAY , NVP.mydate, CURRENT_DATE())<=2,'Y','N')) as NVP
+       edd.edd_date,
+       eidno.id                                                                                  AS eidno,
+       eiddob.dob                                                                                AS eid_dob,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, CURRENT_DATE())                                          AS eid_age,
+       eid_w.value_numeric                                                                       AS eid_weight,
+       eid_next_appt.value_datetime                                                              AS next_appointment_date,
+       eid_feeding.name                                                                          AS feeding,
+       ctx.mydate                                                                                AS ctx_start,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, ctx.mydate)                                              AS agectx,
+       1stpcr.mydate                                                                             AS 1stpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, 1stpcr.mydate)                                           AS age1stpcr,
+       1stpcrresult.name,
+       1stpcrreceived.mydate                                                                     AS 1stpcrrecieved,
+       2ndpcr.mydate                                                                             AS 2ndpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, 2ndpcr.mydate)                                           AS age2ndpcr,
+       2ndpcrresult.name,
+       2ndpcrreceived.mydate                                                                     AS 2ndpcrrecieved,
+       repeatpcr.mydate                                                                          AS repeatpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, repeatpcr.mydate)                                        AS age3rdpcr,
+       repeatpcrresult.name,
+       repeatpcrreceived.mydate                                                                  AS repeatpcrrecieved,
+       rapidtest.mydate                                                                          AS rapidtestdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, rapidtest.mydate)                                        AS ageatrapidtest,
+       rapidtestresult.name,
+       finaloutcome.name,
+       linkageno.value_text,
+       IF(nvp.mydate IS NULL, '', IF(TIMESTAMPDIFF(DAY, eiddob.dob, nvp.mydate) <= 2, 'Y', 'N')) AS nvp,
+       stopped_bf.latest_date                                                                    AS breast_feeding_stopped,
+       cohort.PMTCT,
+       pmtct_enrollment_date,
+       babies                                                                                    AS baby
 
-    FROM  ( select DISTINCT o.person_id as patient from obs o WHERE o.voided = 0 and concept_id=90041 and value_coded in (1065,99601) and obs_datetime<= CURRENT_DATE() and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) union
-                SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et
-                ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= CURRENT_DATE() and encounter_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) cohort join
-        person p on p.person_id = cohort.patient
-        LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as edd_date FROM obs WHERE concept_id=5596 and voided=0 and  obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_id)EDD on patient=EDD.person_id
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')and concept_id=99771 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-        on o.person_id = A.person_b where o.concept_id=99771 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) NVP on patient = NVP.parent
-        LEFT JOIN (SELECT person_a as parent,pi.identifier as id  from relationship left join patient_identifier pi on person_b = patient_id inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR) INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe'  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f') and pi.voided=0) EIDNO on patient = EIDNO.parent
-        LEFT JOIN (SELECT person_a as parent,p.birthdate as dob  from relationship inner join person p on person_b = p.person_id and p.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR) where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f') ) EIDDOB on patient = EIDDOB.parent
-        LEFT JOIN (SELECT parent,value_numeric  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=5089 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-        on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5089 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) EID_W on patient = EID_W.parent
-        LEFT JOIN (SELECT parent,value_datetime from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=5096 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A       on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5096 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) EID_NEXT_APPT on patient = EID_NEXT_APPT.parent
-        LEFT JOIN (SELECT parent,cn.name from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99451 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A       on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99451 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) EID_FEEDING on patient = EID_FEEDING.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99773 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A       on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99773 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) CTX on patient = CTX.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99606 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A       on o.person_id = A.person_b where o.concept_id=99606 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 1stPCR on patient = 1stPCR.parent
-        LEFT JOIN (SELECT parent,cn.name  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)   where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99435 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A       on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99435 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 1stPCRResult on patient = 1stPCRResult.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99438 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=99438 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 1stPCRReceived on patient = 1stPCRReceived.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99436 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=99436 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 2ndPCR on patient = 2ndPCR.parent
-        LEFT JOIN (SELECT parent,cn.name  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99440 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99440 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 2ndPCRResult on patient = 2ndPCRResult.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99442 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=99442 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) 2ndPCRReceived on patient = 2ndPCRReceived.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=165405 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=165405 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) repeatPCR on patient = repeatPCR.parent
-        LEFT JOIN (SELECT parent,cn.name  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=165406 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=165406 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) repeatPCRResult on patient = repeatPCRResult.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=165408 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=165408 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) repeatPCRReceived on patient = repeatPCRReceived.parent
-        LEFT JOIN (SELECT parent,DATE(value_datetime) mydate  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=162879 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=162879 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) rapidTest on patient = rapidTest.parent
-        LEFT JOIN (SELECT parent,cn.name  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=162880 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=162880 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) rapidTestResult on patient = rapidTestResult.parent
-        LEFT JOIN (SELECT parent,cn.name  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-        and concept_id=99797 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99797 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) finalOutcome on patient = finalOutcome.parent
-        LEFT JOIN (SELECT parent,value_text  from obs o inner join (SELECT person_a as parent,person_b,max(obs_datetime)latest_date from relationship inner join obs   on person_id = relationship.person_b inner join person p2 on relationship.person_b = p2.person_id and p2.birthdate >= DATE_SUB(CURRENT_DATE(), INTERVAL 2 YEAR)  where relationship =(select relationship_type_id from relationship_type where uuid= '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-           and concept_id=99751 and obs.voided=0 and obs_datetime<=CURRENT_DATE() AND obs_datetime >=DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) group by person_b)A
-on o.person_id = A.person_b where o.concept_id=99751 and obs_datetime =A.latest_date and o.voided=0 and obs_datetime <=CURRENT_DATE() group by parent) linkageNo on patient = linkageNo.parent;
-
+from (
+         # mothers with babies
+          SELECT person_a AS patient, person_b AS babies, pmtct_enrollment_date, preg_status.status AS pmtct
+          FROM relationship r
+                   INNER JOIN person p ON r.person_a = p.person_id
+                   INNER JOIN relationship_type rt
+                              ON r.relationship = rt.relationship_type_id AND
+                                 rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
+                   LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                              FROM mamba_fact_encounter_hiv_art_card
+                              WHERE pregnant = 'Breast feeding'
+                                 OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                                  AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH)
+                              GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
+                   LEFT JOIN (SELECT client_id, status FROM mamba_fact_patients_latest_pregnancy_status) preg_status
+                             ON preg_status.client_id = person_a
+          WHERE p.gender = 'F'
+            AND r.person_b IN (SELECT DISTINCT e.patient_id
+                               FROM encounter e
+                                        INNER JOIN encounter_type et
+                                                   ON e.encounter_type = et.encounter_type_id
+                               WHERE e.voided = 0
+                                 AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+                                 AND encounter_datetime <= CURRENT_DATE()
+                                 AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH))
+          UNION
+          # mothers without babies
+          SELECT DISTINCT mfehac.client_id   AS patient,
+                          NULL               AS babies,
+                          pmtct_enrollment_date,
+                          preg_status.status AS pmtct
+          FROM mamba_fact_encounter_hiv_art_card mfehac
+                   LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                              FROM mamba_fact_encounter_hiv_art_card
+                              WHERE pregnant = 'Breast feeding'
+                                 OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                                  AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+                              GROUP BY client_id) pmtct_enrollment ON mfehac.client_id = pmtct_enrollment.client_id
+                   INNER JOIN (SELECT client_id, status
+                               FROM mamba_fact_patients_latest_pregnancy_status
+                               WHERE status = 'pregnant'
+                                  OR status = 'Breast feeding') preg_status
+                              ON mfehac.client_id = preg_status.client_id
+          WHERE pregnant = 'Breast feeding'
+             OR pregnant = 'YES'
+              AND mfehac.encounter_date <= CURRENT_DATE()
+              AND mfehac.encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+          UNION
+          # babies without parents in emr
+          SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HIE with caregiver' AS pmtct
+          FROM encounter e
+                   INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id
+          WHERE e.voided = 0
+            AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+            AND encounter_datetime <= CURRENT_DATE()
+            AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH)
+            AND patient_id NOT IN (SELECT person_b AS parent
+                                   FROM relationship r
+                                            INNER JOIN relationship_type rt
+                                                       ON r.relationship = rt.relationship_type_id AND
+                                                          rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f')) cohort
+         LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as edd_date FROM obs WHERE concept_id=5596 and voided=0 and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 16 MONTH) and  obs_datetime<=CURRENT_DATE()  group by person_id)EDD on patient = EDD.person_id
+         LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs  where concept_id=99771 and obs.voided=0 group by person_id)A
+on o.person_id = A.person_id where o.concept_id=99771 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) NVP on babies = NVP.person_id
+    LEFT JOIN (SELECT patient_id ,pi.identifier as id  from  patient_identifier pi  INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe') EIDNO on babies = EIDNO.patient_id
+    LEFT JOIN (SELECT person_id,p.birthdate as dob  from person p ) EIDDOB on babies = EIDDOB.person_id
+    LEFT JOIN (SELECT o.person_id,value_numeric  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where  concept_id=5089 and obs.voided=0  group by person_id)A
+    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5089 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) EID_W on babies = EID_W.person_id
+    LEFT JOIN (SELECT o.person_id,value_datetime from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=5096 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5096 and obs_datetime =A.latest_date and o.voided=0  group by person_id) EID_NEXT_APPT on babies = EID_NEXT_APPT.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99451 and obs.voided=0   group by person_id)A  on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99451 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) EID_FEEDING on babies = EID_FEEDING.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99773 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99773 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) CTX on babies = CTX.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99606 and obs.voided=0   group by person_id)A on o.person_id = A.person_id where o.concept_id=99606 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCR on babies = 1stPCR.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99435 and obs.voided=0   group by person_id)A       on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99435 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCRResult on babies = 1stPCRResult.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99438 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=99438 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCRReceived on babies = 1stPCRReceived.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs  where concept_id=99436 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=99436 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCR on babies = 2ndPCR.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99440 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99440 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCRResult on babies = 2ndPCRResult.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99442 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=99442 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCRReceived on babies = 2ndPCRReceived.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165405 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=165405 and obs_datetime =A.latest_date and o.voided=0  group by person_id) repeatPCR on babies = repeatPCR.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165406 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=165406 and obs_datetime =A.latest_date and o.voided=0  group by person_id) repeatPCRResult on babies = repeatPCRResult.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165408 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=165408 and obs_datetime =A.latest_date and o.voided=0  group by A.person_id) repeatPCRReceived on babies = repeatPCRReceived.person_id
+    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=162879 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=162879 and obs_datetime =A.latest_date and o.voided=0  group by A.person_id) rapidTest on babies = rapidTest.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=162880 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=162880 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) rapidTestResult on babies = rapidTestResult.person_id
+    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99797 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
+    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99797 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) finalOutcome on babies = finalOutcome.person_id
+    LEFT JOIN (SELECT o.person_id,value_text  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs  where concept_id=99751 and obs.voided=0   group by person_id)A
+    on o.person_id = A.person_id where o.concept_id=99751 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) linkageNo on babies= linkageNo.person_id
+    LEFT JOIN (SELECT person_id,min(obs_datetime)latest_date from obs where concept_id=99451 and value_coded=99793 and obs.voided=0  group by person_id)stopped_BF ON babies = stopped_BF.person_id;
 -- $END

@@ -54,7 +54,8 @@ INSERT INTO mamba_fact_audit_tool_art_patients (client_id,
                                                 children,
                                                 known_status_children,
                                                 partners,
-                                                known_status_partners,age_group)
+                                                known_status_partners,age_group,
+                                                cacx_date)
 SELECT cohort.client_id,
        identifiers.identifier                                                                  AS identifier,
        nationality,
@@ -116,7 +117,8 @@ SELECT cohort.client_id,
        mfplitcs.no                                                                             AS known_status_children,
        mfplitp.no                                                                              AS partners,
        mfplitps.no                                                                             AS known_status_partners,
-       cohort.age_group                                                                        AS age_group
+       cohort.age_group                                                                        AS age_group,
+       sub_cervical_cancer_screening.latest_encounter_date                                     AS cacx_date
 
 FROM mamba_fact_art_patients cohort
          LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
@@ -160,7 +162,7 @@ FROM mamba_fact_art_patients cohort
                           GROUP BY client_id) a
                          ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_syphilis_test_result_for_partner
                    ON sub_syphilis_test_result_for_partner.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, cervical_cancer_screening
+         LEFT JOIN (SELECT a.client_id,latest_encounter_date, cervical_cancer_screening
                     FROM mamba_fact_encounter_hiv_art_card b
                              JOIN
                          (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
