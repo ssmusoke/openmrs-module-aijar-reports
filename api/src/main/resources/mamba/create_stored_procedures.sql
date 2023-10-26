@@ -3434,8 +3434,8 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
     mid_upper_arm_circumference_code      VARCHAR(255) NULL,
     district_tuberculosis_number          VARCHAR(255) NULL,
     other_medications_dispensed           TEXT NULL,
-    arv_regimen_days_dispensed            INT NULL,
-    ar_regimen_dose                       INT NULL,
+    arv_regimen_days_dispensed            DOUBLE NULL,
+    ar_regimen_dose                       DOUBLE NULL,
     nutrition_support_and_infant_feeding  VARCHAR(255) NULL,
     other_side_effects                    TEXT NULL,
     other_reason_for_missing_arv          TEXT NULL,
@@ -3477,6 +3477,14 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
 )
     CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_card_client_id_index ON mamba_fact_encounter_hiv_art_card (client_id);
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_card_encounter_id_index ON mamba_fact_encounter_hiv_art_card (encounter_id);
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_card_encounter_date_index ON mamba_fact_encounter_hiv_art_card (encounter_date);
 -- $END
 END //
 
@@ -3794,6 +3802,16 @@ CREATE TABLE mamba_fact_encounter_hiv_art_summary
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_summary_client_id_index ON mamba_fact_encounter_hiv_art_summary (client_id);
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_summary_encounter_id_index ON mamba_fact_encounter_hiv_art_summary (encounter_id);
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_summary_encounter_date_index ON mamba_fact_encounter_hiv_art_summary (encounter_datetime);
+
+
 -- $END
 END //
 
@@ -4057,6 +4075,14 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_health_education_client_id_index ON mamba_fact_encounter_hiv_art_health_education (client_id);
+
+CREATE INDEX
+    mamba_fact_health_education_encounter_id_index ON mamba_fact_encounter_hiv_art_health_education (encounter_id);
+
+
 -- $END
 END //
 
@@ -4217,6 +4243,9 @@ CREATE TABLE mamba_fact_current_arv_regimen_start_date
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_current_arv_regimen_start_date_client_id_index ON mamba_fact_current_arv_regimen_start_date (client_id);
+
 -- $END
 END //
 
@@ -4322,6 +4351,9 @@ CREATE TABLE mamba_fact_patients_latest_adherence
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_adherence_client_id_index ON mamba_fact_patients_latest_adherence (client_id);
 
 -- $END
 END //
@@ -4430,6 +4462,9 @@ CREATE TABLE mamba_fact_patients_latest_advanced_disease
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_advanced_disease_client_id_index ON mamba_fact_patients_latest_advanced_disease (client_id);
 
 -- $END
 END //
@@ -4540,6 +4575,9 @@ CREATE TABLE mamba_fact_patients_latest_arv_days_dispensed
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_arv_days_dispensed_client_id_index ON mamba_fact_patients_latest_arv_days_dispensed (client_id);
+
 -- $END
 END //
 
@@ -4649,6 +4687,9 @@ CREATE TABLE mamba_fact_patients_latest_current_regimen
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_current_regimen_client_id_index ON mamba_fact_patients_latest_current_regimen (client_id);
+
 -- $END
 END //
 
@@ -4756,6 +4797,9 @@ CREATE TABLE mamba_fact_patients_latest_family_planning
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_family_planning_client_id_index ON mamba_fact_patients_latest_family_planning (client_id);
 
 -- $END
 END //
@@ -4868,6 +4912,9 @@ CREATE TABLE mamba_fact_patients_latest_hepatitis_b_test
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_hepatitis_b_test_client_id_index ON mamba_fact_patients_latest_hepatitis_b_test (client_id);
+
 -- $END
 END //
 
@@ -4978,6 +5025,9 @@ CREATE TABLE mamba_fact_patients_latest_viral_load
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_viral_load_client_id_index ON mamba_fact_patients_latest_viral_load (client_id);
 
 -- $END
 END //
@@ -5091,6 +5141,8 @@ CREATE TABLE mamba_fact_patients_latest_iac_decision_outcome
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_iac_decision_outcome_client_id_index ON mamba_fact_patients_latest_iac_decision_outcome (client_id);
 -- $END
 END //
 
@@ -5210,6 +5262,9 @@ CREATE TABLE mamba_fact_patients_latest_iac_sessions
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_iac_sessions_client_id_index ON mamba_fact_patients_latest_iac_sessions (client_id);
+
 -- $END
 END //
 
@@ -5322,6 +5377,9 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_children
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_tested_children_client_id_index ON mamba_fact_patients_latest_index_tested_children (client_id);
 
 -- $END
 END //
@@ -5442,6 +5500,9 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_children_status
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_patients_latest_children_status_client_id_index ON mamba_fact_patients_latest_index_tested_children_status (client_id);
 
 -- $END
 END //
@@ -5571,6 +5632,9 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_partners
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_partners_client_id_index ON mamba_fact_patients_latest_index_tested_partners (client_id);
+
 -- $END
 END //
 
@@ -5671,6 +5735,9 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_partners_status
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_patients_latest_partners_status_client_id_index ON mamba_fact_patients_latest_index_tested_partners_status (client_id);
 
 -- $END
 END //
@@ -5792,6 +5859,9 @@ CREATE TABLE mamba_fact_patients_latest_nutrition_assesment
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_nutrition_assesment_client_id_index ON mamba_fact_patients_latest_nutrition_assesment (client_id);
+
 -- $END
 END //
 
@@ -5901,6 +5971,9 @@ CREATE TABLE mamba_fact_patients_latest_nutrition_support
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_nutrition_support_client_id_index ON mamba_fact_patients_latest_nutrition_support (client_id);
+
 -- $END
 END //
 
@@ -6008,6 +6081,9 @@ CREATE TABLE mamba_fact_patients_latest_regimen_line
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_regimen_line_client_id_index ON mamba_fact_patients_latest_regimen_line (client_id);
 
 -- $END
 END //
@@ -6119,6 +6195,9 @@ CREATE TABLE mamba_fact_patients_latest_return_date
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_return_date_client_id_index ON mamba_fact_patients_latest_return_date (client_id);
+
 -- $END
 END //
 
@@ -6227,6 +6306,9 @@ CREATE TABLE mamba_fact_patients_latest_tb_status
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_tb_status_client_id_index ON mamba_fact_patients_latest_tb_status (client_id);
 
 -- $END
 END //
@@ -6337,6 +6419,9 @@ CREATE TABLE mamba_fact_patients_latest_tpt_status
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_tpt_status_client_id_index ON mamba_fact_patients_latest_tpt_status (client_id);
+
 -- $END
 END //
 
@@ -6446,6 +6531,9 @@ CREATE TABLE mamba_fact_patients_latest_viral_load_ordered
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_viral_load_ordered_client_id_index ON mamba_fact_patients_latest_viral_load_ordered (client_id);
+
 -- $END
 END //
 
@@ -6554,6 +6642,9 @@ CREATE TABLE mamba_fact_patients_latest_vl_after_iac
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_vl_after_iac_client_id_index ON mamba_fact_patients_latest_vl_after_iac (client_id);
 
 -- $END
 END //
@@ -6672,6 +6763,9 @@ CREATE TABLE mamba_fact_patients_latest_who_stage
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_latest_who_stage_client_id_index ON mamba_fact_patients_latest_who_stage (client_id);
+
 -- $END
 END //
 
@@ -6780,6 +6874,9 @@ CREATE TABLE mamba_fact_patients_marital_status
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_marital_status_client_id_index ON mamba_fact_patients_marital_status (client_id);
+
 -- $END
 END //
 
@@ -6887,6 +6984,9 @@ CREATE TABLE mamba_fact_patients_nationality
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_nationality_client_id_index ON mamba_fact_patients_nationality (client_id);
 
 -- $END
 END //
@@ -6998,6 +7098,9 @@ CREATE TABLE mamba_fact_patients_latest_patient_demographics
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_patient_demos_patient_id_index ON mamba_fact_patients_latest_patient_demographics (patient_id);
 
 -- $END
 END //
@@ -7111,6 +7214,9 @@ CREATE TABLE mamba_fact_art_patients
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_art_patients_client_id_index ON mamba_fact_art_patients (client_id);
 
 -- $END
 END //
@@ -7277,6 +7383,9 @@ CREATE TABLE mamba_fact_audit_tool_art_patients
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_audit_tool_art_patients_client_id_index ON mamba_fact_audit_tool_art_patients (client_id);
+
 -- $END
 END //
 
@@ -7355,10 +7464,10 @@ SELECT cohort.client_id,
        identifiers.identifier                                                                  AS identifier,
        nationality,
        marital_status,
-       cohort.birthdate,
-       cohort.age,
-       cohort.dead,
-       cohort.gender,
+       pats.birthdate,
+       pats.age,
+       pats.dead,
+       pats.gender,
        last_visit_date,
        return_date,
        IF(dead = 0 AND (transfer_out_date IS NULL OR last_visit_date > transfer_out_date),
@@ -7412,10 +7521,13 @@ SELECT cohort.client_id,
        mfplitcs.no                                                                             AS known_status_children,
        mfplitp.no                                                                              AS partners,
        mfplitps.no                                                                             AS known_status_partners,
-       cohort.age_group                                                                        AS age_group,
+       pats.age_group                                                                        AS age_group,
        sub_cervical_cancer_screening.latest_encounter_date                                     AS cacx_date
 
-FROM mamba_fact_art_patients cohort
+FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and concept_id=90041 and value_coded in (1065,99601) and obs_datetime<= CURRENT_DATE() and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) union
+      SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et
+                                                                                                                                                                                                                                                                                                                                   ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= CURRENT_DATE() and encounter_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) cohort
+         INNER join mamba_fact_art_patients pats on cohort.client_id= pats.client_id
          LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
          LEFT JOIN mamba_fact_patients_marital_status mfpms ON mfpms.client_id = cohort.client_id
          LEFT JOIN mamba_fact_patients_latest_return_date mfplrd ON mfplrd.client_id = cohort.client_id
@@ -7617,7 +7729,6 @@ FROM mamba_fact_art_patients cohort
                          ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_hiv_vl_date
                    ON sub_hiv_vl_date.client_id = cohort.client_id;
 
-
 -- $END
 END //
 
@@ -7703,6 +7814,10 @@ CREATE TABLE mamba_fact_active_in_care
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_active_in_care_client_id_index ON mamba_fact_active_in_care (client_id);
+
 
 -- $END
 END //
@@ -7819,6 +7934,9 @@ CREATE TABLE mamba_fact_patients_latest_pregnancy_status
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_patients_latest_pregnancy_status_client_id_index ON mamba_fact_patients_latest_pregnancy_status (client_id);
 
 -- $END
 END //
@@ -7959,6 +8077,12 @@ CREATE TABLE mamba_fact_eid_patients
 
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
+
+CREATE INDEX
+    mamba_fact_eid_patients_client_id_index ON mamba_fact_eid_patients (client_id);
+
+CREATE INDEX
+    mamba_fact_eid_patients_baby_id_index ON mamba_fact_eid_patients (BABY);
 
 -- $END
 END //

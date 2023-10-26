@@ -14,5 +14,9 @@ CREATE TABLE mamba_fact_active_in_care
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_active_in_care_client_id_index ON mamba_fact_active_in_care (client_id);
+
+
 -- $END
 

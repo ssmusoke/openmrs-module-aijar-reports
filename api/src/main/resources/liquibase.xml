@@ -120,7 +120,7 @@
     </changeSet>
 
 
-    <changeSet id="ohri-mamba-setup00024" author="Arthur D. Mugume [OHRI]" runAlways="true">
+    <changeSet id="ohri-mamba-setup00025" author="Arthur D. Mugume [OHRI]" runAlways="true">
 
         <comment>
             Installs/deploys all the required Mamba ETL Stored procedures and functions

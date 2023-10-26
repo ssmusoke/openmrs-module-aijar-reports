@@ -8,5 +8,8 @@ CREATE TABLE mamba_fact_patients_nationality
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+CREATE INDEX
+    mamba_fact_patients_nationality_client_id_index ON mamba_fact_patients_nationality (client_id);
+
 -- $END
 

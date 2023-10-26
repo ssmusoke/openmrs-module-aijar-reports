@@ -60,10 +60,10 @@ SELECT cohort.client_id,
        identifiers.identifier                                                                  AS identifier,
        nationality,
        marital_status,
-       cohort.birthdate,
-       cohort.age,
-       cohort.dead,
-       cohort.gender,
+       pats.birthdate,
+       pats.age,
+       pats.dead,
+       pats.gender,
        last_visit_date,
        return_date,
        IF(dead = 0 AND (transfer_out_date IS NULL OR last_visit_date > transfer_out_date),
@@ -117,10 +117,13 @@ SELECT cohort.client_id,
        mfplitcs.no                                                                             AS known_status_children,
        mfplitp.no                                                                              AS partners,
        mfplitps.no                                                                             AS known_status_partners,
-       cohort.age_group                                                                        AS age_group,
+       pats.age_group                                                                        AS age_group,
        sub_cervical_cancer_screening.latest_encounter_date                                     AS cacx_date
 
-FROM mamba_fact_art_patients cohort
+FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and concept_id=90041 and value_coded in (1065,99601) and obs_datetime<= CURRENT_DATE() and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) union
+      SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et
+                                                                                                                                                                                                                                                                                                                                   ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= CURRENT_DATE() and encounter_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) cohort
+         INNER join mamba_fact_art_patients pats on cohort.client_id= pats.client_id
          LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
          LEFT JOIN mamba_fact_patients_marital_status mfpms ON mfpms.client_id = cohort.client_id
          LEFT JOIN mamba_fact_patients_latest_return_date mfplrd ON mfplrd.client_id = cohort.client_id
@@ -321,6 +324,5 @@ FROM mamba_fact_art_patients cohort
                           GROUP BY client_id) a
                          ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_hiv_vl_date
                    ON sub_hiv_vl_date.client_id = cohort.client_id;
-
 
 -- $END

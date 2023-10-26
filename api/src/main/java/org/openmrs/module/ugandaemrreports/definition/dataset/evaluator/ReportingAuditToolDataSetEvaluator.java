@@ -1,5 +1,6 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import org.codehaus.groovy.util.StringUtil;
 import org.hibernate.SQLQuery;
 import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
@@ -52,110 +53,110 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
 
         Cohort baseCohort = null;
 
+        String query = "";
         if (cohortSelected != null) {
 
             if (cohortSelected.equals("Patients with encounters")) {
-                SqlCohortDefinition cd = new SqlCohortDefinition("select client_id from mamba_fact_encounter_hiv_art_card where encounter_date >='"+ startDate + "' and encounter_date <= '"+ endDate+"' group by client_id;");
+
+                query = "select client_id from mamba_fact_encounter_hiv_art_card where encounter_date >='" + startDate + "' and encounter_date <= '" + endDate + "' group by client_id";
+
+                SqlCohortDefinition cd = new SqlCohortDefinition(query);
                 baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
 
                 baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
 
             } else if (cohortSelected.equals("Patients on appointment")) {
-                SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition("SELECT client_id\n" +
+                query = "SELECT client_id\n" +
                         "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
-                        "WHERE returndate BETWEEN '" + startDate + "' AND '" + endDate + "]" + "';");
+                        "WHERE returndate BETWEEN '" + startDate + "' AND '" + endDate + "'";
+                SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition(query);
 
                 baseCohort = Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
             }
 
         }
-        String cohortIds = "";
+        String query1 = "SELECT audit_tool.*\n" +
+                " FROM  (" + query + ")A INNER JOIN mamba_fact_audit_tool_art_patients audit_tool on A.client_id = audit_tool.client_id ";
 
-        if (baseCohort.getMemberIds().size() > 0 && baseCohort != null) {
-            cohortIds = setToCommaSeparatedString(baseCohort.getMemberIds());
+        String ff = "select * from mamba_fact_audit_tool_art_patients where last_visit_date >='2023-01-01' and last_visit_date<= CURRENT_DATE()\n";
+        List<Object[]> results = getEtl(ff);
+        PatientDataHelper pdh = new PatientDataHelper();
+        if (results.size() > 0 && !results.isEmpty()) {
+            for (Object[] o : results) {
+                DataSetRow row = new DataSetRow();
+                pdh.addCol(row, "id", o[2]);
+                pdh.addCol(row, "nationality", o[3]);
+                pdh.addCol(row, "gender", o[8]);
+                pdh.addCol(row, "date_of_birth", o[5]);
+                pdh.addCol(row, "age", o[6]);
+                pdh.addCol(row, "marital_status", o[4]);
 
-            String query = "SELECT *\n" +
-                    "    FROM mamba_fact_audit_tool_art_patients audit_tool where client_id in (" + cohortIds + ")";
+                pdh.addCol(row, "special_category", o[33]);
 
-            List<Object[]> results = getEtl(query);
-            PatientDataHelper pdh = new PatientDataHelper();
-            if (results.size() > 0 && !results.isEmpty()) {
-                for (Object[] o : results) {
-                    DataSetRow row = new DataSetRow();
-                    pdh.addCol(row, "id", o[2]);
-                    pdh.addCol(row, "nationality", o[3]);
-                    pdh.addCol(row, "gender", o[8]);
-                    pdh.addCol(row, "date_of_birth", o[5]);
-                    pdh.addCol(row, "age", o[6]);
-                    pdh.addCol(row, "marital_status", o[4]);
+                pdh.addCol(row, "last_visit_date", o[9]);
+                pdh.addCol(row, "next_appointment_date", o[10]);
 
-                    pdh.addCol(row, "special_category", o[33]);
+                pdh.addCol(row, "client_status", o[11]);
 
-                    pdh.addCol(row, "last_visit_date", o[9]);
-                    pdh.addCol(row, "next_appointment_date", o[10]);
-
-                    pdh.addCol(row, "client_status", o[11]);
-
-                    pdh.addCol(row, "art_start_date", o[32]);
+                pdh.addCol(row, "art_start_date", o[32]);
 //                pdh.addCol(row, "duration_on_art", o[13]);
 
-                    pdh.addCol(row, "current_regimen", o[13]);
-                    pdh.addCol(row, "regimen_line", o[34]);
-                    pdh.addCol(row, "current_arv_regimen_start_date", o[14]);
-                    pdh.addCol(row, "adherence", o[15]);
+                pdh.addCol(row, "current_regimen", o[13]);
+                pdh.addCol(row, "regimen_line", o[34]);
+                pdh.addCol(row, "current_arv_regimen_start_date", o[14]);
+                pdh.addCol(row, "adherence", o[15]);
 //                pdh.addCol(row, "side_effects", o[14]);
-                    pdh.addCol(row, "prescription_duration", o[16]);
+                pdh.addCol(row, "prescription_duration", o[16]);
 //                pdh.addCol(row, "sample_type", o[12]);
 
-                    pdh.addCol(row, "current_vl", o[17]);
-                    pdh.addCol(row, "vl_result_sample_date", o[18]);
-                    pdh.addCol(row, "new_vl_sample_date", o[19]);
+                pdh.addCol(row, "current_vl", o[17]);
+                pdh.addCol(row, "vl_result_sample_date", o[18]);
+                pdh.addCol(row, "new_vl_sample_date", o[19]);
 
 
-                    pdh.addCol(row, "iacs_no", o[44]);
-                    pdh.addCol(row, "repeat_vl_collection_date", o[52]);
-                    pdh.addCol(row, "repeat_vl_results_after_iacs", o[47]);
-                    pdh.addCol(row, "hivdrt_results", o[45]);
-                    pdh.addCol(row, "date_dr_results_received", o[46]);
-                    pdh.addCol(row, "decision", o[48]);
-                    pdh.addCol(row, "pss", o[36]);
-                    pdh.addCol(row, "ovc_screening", o[41]);
-                    pdh.addCol(row, "nutrition_status", o[22]);
-                    pdh.addCol(row, "family_planning_status", o[21]);
-                    pdh.addCol(row, "cacx_screening", o[26]);
+                pdh.addCol(row, "iacs_no", o[44]);
+                pdh.addCol(row, "repeat_vl_collection_date", o[52]);
+                pdh.addCol(row, "repeat_vl_results_after_iacs", o[47]);
+                pdh.addCol(row, "hivdrt_results", o[45]);
+                pdh.addCol(row, "date_dr_results_received", o[46]);
+                pdh.addCol(row, "decision", o[48]);
+                pdh.addCol(row, "pss", o[36]);
+                pdh.addCol(row, "ovc_screening", o[41]);
+                pdh.addCol(row, "nutrition_status", o[22]);
+                pdh.addCol(row, "family_planning_status", o[21]);
+                pdh.addCol(row, "cacx_screening", o[26]);
 //                pdh.addCol(row, "diabetes_status", o[16]);
 //                pdh.addCol(row, "htn_status", o[16]);
 //                pdh.addCol(row, "mental_health_status", o[16]);
-                    pdh.addCol(row, "hepatitis_b_status", o[24]);
-                    pdh.addCol(row, "syphillis_status", o[25]);
+                pdh.addCol(row, "hepatitis_b_status", o[24]);
+                pdh.addCol(row, "syphillis_status", o[25]);
 
-                    pdh.addCol(row, "tpt_status", o[28]);
-                    pdh.addCol(row, "tb_status", o[27]);
+                pdh.addCol(row, "tpt_status", o[28]);
+                pdh.addCol(row, "tb_status", o[27]);
 //                pdh.addCol(row, "cd4_eligibility", o[23]);
-                    pdh.addCol(row, "tb_lam_crag_results", o[29]);
-                    pdh.addCol(row, "who_stage", o[30]);
-                    pdh.addCol(row, "advanced_disease", o[20]);
-                    pdh.addCol(row, "duration_on_art", o[49]);
-                    pdh.addCol(row, "side_effects", o[50]);
-                    pdh.addCol(row, "sample_type", o[51]);
-                    pdh.addCol(row, "known_status_children", o[53]);
-                    pdh.addCol(row, "pos_status_children", o[54]);
-                    pdh.addCol(row, "known_status_spouse", o[55]);
-                    pdh.addCol(row, "po_status_spouse", o[56]);
-                    pdh.addCol(row, "age_group", o[57]);
+                pdh.addCol(row, "tb_lam_crag_results", o[29]);
+                pdh.addCol(row, "who_stage", o[30]);
+                pdh.addCol(row, "advanced_disease", o[20]);
+                pdh.addCol(row, "duration_on_art", o[49]);
+                pdh.addCol(row, "side_effects", o[50]);
+                pdh.addCol(row, "sample_type", o[51]);
+                pdh.addCol(row, "known_status_children", o[53]);
+                pdh.addCol(row, "pos_status_children", o[54]);
+                pdh.addCol(row, "known_status_spouse", o[55]);
+                pdh.addCol(row, "po_status_spouse", o[56]);
+                pdh.addCol(row, "age_group", o[57]);
 
 
-                    dataSet.addRow(row);
-                }
-
-
+                dataSet.addRow(row);
             }
+
         }
+
         return dataSet;
     }
 
 
-    public static String setToCommaSeparatedString(Set<Integer> integerSet) {
+    public static String setToCommaSeparatedString(List<Integer> integerSet) {
         // Convert the set to a sorted list (optional if you want a specific order)
         List<Integer> integerList = new ArrayList<>(integerSet);
         Collections.sort(integerList);
@@ -187,4 +188,13 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
         this.sessionFactory = sessionFactory;
     }
 
+    public static <T> List<List<T>> splitIntoGroups(Set<T> set, int groupSize) {
+        List<T> list = new ArrayList<>(set);
+        List<List<T>> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i += groupSize) {
+            int endIndex = Math.min(i + groupSize, list.size());
+            result.add(list.subList(i, endIndex));
+        }
+        return result;
+    }
 }

@@ -329,7 +329,7 @@
                                     <!-- the Engine compiler script -->
                                     <argument>compile.sh</argument>
                                     <!-- Database the created stored procedures will run on -->
-                                    <argument>-d alex</argument>
+                                    <argument>-d openmrs</argument>
                                     <!-- File with a list of all files with stored procedures -->
                                     <!-- Remove this argument after automating core to auto-read this -->
                                     <argument>-s ../../database/mysql/sp_makefile</argument>

@@ -25,5 +25,13 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     PRIMARY KEY (id)
 ) CHARSET = UTF8MB4;
 
+
+CREATE INDEX
+    mamba_fact_encounter_hiv_art_health_education_client_id_index ON mamba_fact_encounter_hiv_art_health_education (client_id);
+
+CREATE INDEX
+    mamba_fact_health_education_encounter_id_index ON mamba_fact_encounter_hiv_art_health_education (encounter_id);
+
+
 -- $END
 
