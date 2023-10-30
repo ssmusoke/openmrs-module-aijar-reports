@@ -4374,14 +4374,13 @@ BEGIN
 -- $BEGIN
 INSERT INTO mamba_fact_patients_latest_adherence (client_id,
                                                 adherence)
-SELECT a.client_id, adherence_assessment_code
+SELECT b.client_id, adherence_assessment_code
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE adherence_assessment_code IS NOT NULL
-      GROUP BY client_id) a ON encounter_date = latest_encounter_date AND
-                               b.client_id = a.client_id;
+      GROUP BY client_id) a ON b.encounter_id = a.encounter_id;
 -- $END
 END //
 
@@ -4486,14 +4485,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_advanced_disease(client_id,
                                                         encounter_date,
                                                         advanced_disease)
-SELECT a.client_id,encounter_date, advanced_disease_status
+SELECT b.client_id,encounter_date, advanced_disease_status
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE advanced_disease_status IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND latest_encounter_date = encounter_date;
+     ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -4598,15 +4597,13 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_arv_days_dispensed(client_id,
                                                           encounter_date,
                                                           days)
-SELECT a.client_id,encounter_date, arv_regimen_days_dispensed
+SELECT b.client_id,encounter_date, arv_regimen_days_dispensed
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE arv_regimen_days_dispensed IS NOT NULL
-      GROUP BY client_id) a ON a.client_id = b.client_id AND
-                               encounter_date =
-                               latest_encounter_date;
+      GROUP BY client_id) a ON a.encounter_id = b.encounter_id ;
 -- $END
 END //
 
@@ -4709,14 +4706,13 @@ BEGIN
 -- $BEGIN
 INSERT INTO mamba_fact_patients_latest_current_regimen (client_id,
                                                 current_regimen)
-SELECT a.client_id, current_arv_regimen
+SELECT b.client_id, current_arv_regimen
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE current_arv_regimen IS NOT NULL
-      GROUP BY client_id) a ON a.client_id = b.client_id AND
-                               latest_encounter_date = encounter_date;
+      GROUP BY client_id) a ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -4821,16 +4817,16 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_family_planning(client_id,
                                                        encounter_date,
                                                        status)
-SELECT a.client_id,encounter_date,
+SELECT b.client_id,encounter_date,
        IF(family_planning_status='NOT PREGNANT AND NOT ON FAMILY PLANNING','NOT ON FAMILY PLANNING',
            IF(family_planning_status='NOT PREGNANT AND ON FAMILY PLANNING','ON FAMILY PLANNING',family_planning_status)) AS family_planning_status
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE family_planning_status IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -4935,14 +4931,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_hepatitis_b_test(client_id,
                                                         encounter_date,
                                                         result)
-SELECT a.client_id,encounter_date, hepatitis_b_test___qualitative
+SELECT b.client_id,encounter_date, hepatitis_b_test___qualitative
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE hepatitis_b_test___qualitative IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id ;
 -- $END
 END //
 
@@ -5051,15 +5047,14 @@ INSERT INTO mamba_fact_patients_latest_viral_load (client_id,
                                                    hiv_viral_load_copies,
                                                    hiv_viral_collection_date,
                                                    specimen_type)
-SELECT a.client_id,encounter_date, hiv_viral_load, hiv_viral_load_date, specimen_sources
+SELECT b.client_id,encounter_date, hiv_viral_load, hiv_viral_load_date, specimen_sources
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id,
+     (SELECT encounter_id,
              MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE hiv_viral_load IS NOT NULL
-      GROUP BY client_id) a ON a.client_id = b.client_id AND
-                               encounter_date = latest_encounter_date;
+      GROUP BY client_id) a ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -5882,14 +5877,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_nutrition_assesment(client_id,
                                                            encounter_date,
                                                            status)
-SELECT a.client_id,encounter_date, nutrition_assesment
+SELECT b.client_id,encounter_date, nutrition_assesment
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE nutrition_assesment IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -5994,14 +5989,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_nutrition_support(client_id,
                                                          encounter_date,
                                                          support)
-SELECT a.client_id,encounter_date, nutrition_support_and_infant_feeding
+SELECT b.client_id,encounter_date, nutrition_support_and_infant_feeding
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE nutrition_support_and_infant_feeding IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id ;
 -- $END
 END //
 
@@ -6104,7 +6099,7 @@ BEGIN
 -- $BEGIN
 INSERT INTO mamba_fact_patients_latest_regimen_line(client_id,
                                                     regimen)
-SELECT pp.patient_id, program_workflow_state.concept_id AS line
+SELECT DISTINCT pp.patient_id, program_workflow_state.concept_id AS line
 FROM patient_state
          INNER JOIN program_workflow_state
                     ON patient_state.state = program_workflow_state.program_workflow_state_id
@@ -6217,15 +6212,14 @@ BEGIN
 -- $BEGIN
 INSERT INTO mamba_fact_patients_latest_return_date (client_id,
                                                 return_date)
-SELECT a.client_id, return_visit_date
+SELECT b.client_id, b.return_visit_date
 FROM mamba_fact_encounter_hiv_art_card b
-         JOIN (SELECT client_id,
-                      MAX(encounter_date) AS latest_encounter_date
-               FROM mamba_fact_encounter_hiv_art_card
-               WHERE return_visit_date IS NOT NULL
-               GROUP BY client_id) a
-              ON a.client_id = b.client_id AND
-                 encounter_date = latest_encounter_date;
+         INNER JOIN (
+    SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
+    FROM mamba_fact_encounter_hiv_art_card
+    WHERE return_visit_date IS NOT NULL
+    GROUP BY client_id
+) a ON b.encounter_id = a.encounter_id;
 -- $END
 END //
 
@@ -6330,14 +6324,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_tb_status(client_id,
                                                  encounter_date,
                                                  status)
-SELECT a.client_id,encounter_date, tuberculosis_status
+SELECT b.client_id,encounter_date, tuberculosis_status
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE tuberculosis_status IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -6442,14 +6436,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_tpt_status(client_id,
                                                   encounter_date,
                                                   status)
-SELECT a.client_id,encounter_date, tpt_status
+SELECT b.client_id,encounter_date, tpt_status
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE tpt_status IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -6553,15 +6547,15 @@ BEGIN
 -- $BEGIN
 INSERT INTO mamba_fact_patients_latest_viral_load_ordered (client_id,
                                                 encounter_date, order_date)
-SELECT a.client_id,latest_encounter_date, hiv_viral_load_date
+SELECT b.client_id,latest_encounter_date, hiv_viral_load_date
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE hiv_viral_load IS NULL
         AND hiv_viral_load_date IS NOT NULL
       GROUP BY client_id) a
-     ON encounter_date = latest_encounter_date AND a.client_id = b.client_id;
+     ON  a.encounter_id = b.encounter_id;
 -- $END
 END //
 
@@ -6786,14 +6780,14 @@ BEGIN
 INSERT INTO mamba_fact_patients_latest_who_stage(client_id,
                                                  encounter_date,
                                                  stage)
-SELECT a.client_id,encounter_date, who_hiv_clinical_stage
+SELECT b.client_id,encounter_date, who_hiv_clinical_stage
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE who_hiv_clinical_stage IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date;
+     ON a.encounter_id = b.encounter_id ;
 -- $END
 END //
 
@@ -7524,9 +7518,7 @@ SELECT cohort.client_id,
        pats.age_group                                                                        AS age_group,
        sub_cervical_cancer_screening.latest_encounter_date                                     AS cacx_date
 
-FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and concept_id=90041 and value_coded in (1065,99601) and obs_datetime<= CURRENT_DATE() and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR) union
-      SELECT person_a as patient from relationship r inner join person p on r.person_a = p.person_id inner join relationship_type rt on r.relationship = rt.relationship_type_id and rt.uuid='8d91a210-c2cc-11de-8d13-0010c6dffd0f' where p.gender='F' and r.person_b in (SELECT DISTINCT e.patient_id from encounter e INNER JOIN encounter_type et
-                                                                                                                                                                                                                                                                                                                                   ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('9fcfcc91-ad60-4d84-9710-11cc25258719','4345dacb-909d-429c-99aa-045f2db77e2b') and encounter_datetime<= CURRENT_DATE() and encounter_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR))) cohort
+FROM (select DISTINCT e.patient_id as client_id from encounter e INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id WHERE e.voided = 0 and et.uuid in('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f','8d5b2be0-c2cc-11de-8d13-0010c6dffd0f') and encounter_datetime<= CURRENT_DATE() and encounter_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)) cohort
          INNER join mamba_fact_art_patients pats on cohort.client_id= pats.client_id
          LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
          LEFT JOIN mamba_fact_patients_marital_status mfpms ON mfpms.client_id = cohort.client_id
@@ -7560,32 +7552,32 @@ FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and
                     FROM mamba_flat_encounter_art_card
                     GROUP BY client_id) last_encounter ON last_encounter.client_id = cohort.client_id
 
-         LEFT JOIN (SELECT a.client_id, syphilis_test_result_for_partner
+         LEFT JOIN (SELECT b.client_id, syphilis_test_result_for_partner
                     FROM mamba_fact_encounter_hiv_art_card b
                              JOIN
-                         (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_card
                           WHERE syphilis_test_result_for_partner IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_syphilis_test_result_for_partner
+                         ON a.encounter_id = b.encounter_id) sub_syphilis_test_result_for_partner
                    ON sub_syphilis_test_result_for_partner.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id,latest_encounter_date, cervical_cancer_screening
+         LEFT JOIN (SELECT b.client_id,latest_encounter_date, cervical_cancer_screening
                     FROM mamba_fact_encounter_hiv_art_card b
                              JOIN
-                         (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_card
                           WHERE cervical_cancer_screening IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_cervical_cancer_screening
+                         ON a.encounter_id = b.encounter_id ) sub_cervical_cancer_screening
                    ON sub_cervical_cancer_screening.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, crag_test_results
+         LEFT JOIN (SELECT b.client_id, crag_test_results
                     FROM mamba_fact_encounter_hiv_art_card b
                              JOIN
-                         (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_card
                           WHERE crag_test_results IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_crag_test_results
+                         ON a.encounter_id = b.encounter_id ) sub_crag_test_results
                    ON sub_crag_test_results.client_id = cohort.client_id
          LEFT JOIN (SELECT client_id,
                            baseline_cd4,
@@ -7593,82 +7585,82 @@ FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and
                            special_category
                     FROM mamba_fact_encounter_hiv_art_summary
                     GROUP BY client_id) sub_art_summary ON sub_art_summary.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, health_education_setting
+         LEFT JOIN (SELECT b.client_id, health_education_setting
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE health_education_setting IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_health_education_setting
+                         ON a.encounter_id = b.encounter_id ) sub_health_education_setting
                    ON sub_health_education_setting.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, pss_issues_identified
+         LEFT JOIN (SELECT b.client_id, pss_issues_identified
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE pss_issues_identified IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_pss_issues_identified
+                         ON a.encounter_id = b.encounter_id ) sub_pss_issues_identified
                    ON sub_pss_issues_identified.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, art_preparation
+         LEFT JOIN (SELECT b.client_id, art_preparation
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE art_preparation IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_art_preparation
+                         ON a.encounter_id = b.encounter_id) sub_art_preparation
                    ON sub_art_preparation.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, depression_status
+         LEFT JOIN (SELECT b.client_id, depression_status
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE depression_status IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_depression_status
+                         ON a.encounter_id = b.encounter_id) sub_depression_status
                    ON sub_depression_status.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, gender_based_violance
+         LEFT JOIN (SELECT b.client_id, gender_based_violance
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE gender_based_violance IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_gender_based_violance
+                         ON a.encounter_id = b.encounter_id ) sub_gender_based_violance
                    ON sub_gender_based_violance.client_id = cohort.client_id
          LEFT JOIN (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date, health_education_disclosure
                     FROM mamba_fact_encounter_hiv_art_health_education
                     WHERE health_education_disclosure IS NOT NULL
                     GROUP BY client_id) sub_health_education_disclosure
                    ON sub_health_education_disclosure.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, ovc_screening
+         LEFT JOIN (SELECT b.client_id, ovc_screening
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE ovc_screening IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_ovc_screening
+                         ON a.encounter_id = b.encounter_id) sub_ovc_screening
                    ON sub_ovc_screening.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, ovc_assessment
+         LEFT JOIN (SELECT b.client_id, ovc_assessment
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE ovc_assessment IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_ovc_assessment
+                         ON a.encounter_id = b.encounter_id) sub_ovc_assessment
                    ON sub_ovc_assessment.client_id = cohort.client_id
-         LEFT JOIN (SELECT a.client_id, prevention_components
+         LEFT JOIN (SELECT b.client_id, prevention_components
                     FROM mamba_fact_encounter_hiv_art_health_education b
                              JOIN
-                         (SELECT client_id, MAX(encounter_datetime) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_datetime) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_health_education
                           WHERE prevention_components IS NOT NULL
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_datetime = latest_encounter_date) sub_prevention_components
+                         ON a.encounter_id = b.encounter_id) sub_prevention_components
                    ON sub_prevention_components.client_id = cohort.client_id
 
          LEFT JOIN (SELECT client_id, days_left_to_be_lost, transfer_out_date FROM mamba_fact_active_in_care) actives
@@ -7710,13 +7702,13 @@ FROM (select DISTINCT o.person_id as client_id from obs o WHERE o.voided = 0 and
                          ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_date_hivr_results_recieved_at_facility
                    ON sub_date_hivr_results_recieved_at_facility.client_id = cohort.client_id
 
-         LEFT JOIN (SELECT a.client_id, medication_or_other_side_effects
+         LEFT JOIN (SELECT b.client_id, medication_or_other_side_effects
                     FROM mamba_fact_encounter_hiv_art_card b
                              JOIN
-                         (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+                         (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
                           FROM mamba_fact_encounter_hiv_art_card
                           GROUP BY client_id) a
-                         ON a.client_id = b.client_id AND encounter_date = latest_encounter_date
+                         ON a.encounter_id = b.encounter_id
                     WHERE medication_or_other_side_effects IS NOT NULL) sub_side_effects
                    ON sub_side_effects.client_id = cohort.client_id
          LEFT JOIN (SELECT a.client_id, hiv_vl_date
@@ -7841,18 +7833,18 @@ INSERT INTO mamba_fact_active_in_care(client_id,
                                       days_left_to_be_lost,
                                       last_encounter_date,
                                       dead)
-SELECT a.client_id,
+SELECT b.client_id,
        return_visit_date,
        TIMESTAMPDIFF(DAY, DATE(return_visit_date), DATE(CURRENT_DATE())) AS days_lost,
        encounter_date                                                    AS last_encounter_date,
        dead
 FROM mamba_fact_encounter_hiv_art_card b
          JOIN
-     (SELECT client_id, MAX(encounter_date) AS latest_encounter_date
+     (SELECT encounter_id, MAX(encounter_date) AS latest_encounter_date
       FROM mamba_fact_encounter_hiv_art_card
       WHERE return_visit_date IS NOT NULL
       GROUP BY client_id) a
-     ON a.client_id = b.client_id AND encounter_date = latest_encounter_date
+     ON a.encounter_id = b.encounter_id
          JOIN person p ON b.client_id = p.person_id;
 -- $END
 END //
@@ -8199,7 +8191,10 @@ from (
                           NULL               AS babies,
                           pmtct_enrollment_date,
                           preg_status.status AS pmtct
-          FROM mamba_fact_encounter_hiv_art_card mfehac
+                         FROM (SELECT DISTINCT client_id FROM mamba_fact_encounter_hiv_art_card
+                         WHERE pregnant = 'YES'
+                            OR pregnant = 'Breast feeding' AND encounter_date <= CURRENT_DATE() AND
+                               encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)) mfehac
                    LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
                               FROM mamba_fact_encounter_hiv_art_card
                               WHERE pregnant = 'Breast feeding'
@@ -8211,10 +8206,6 @@ from (
                                WHERE status = 'pregnant'
                                   OR status = 'Breast feeding') preg_status
                               ON mfehac.client_id = preg_status.client_id
-          WHERE pregnant = 'Breast feeding'
-             OR pregnant = 'YES'
-              AND mfehac.encounter_date <= CURRENT_DATE()
-              AND mfehac.encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
           UNION
           # babies without parents in emr
           SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HIE with caregiver' AS pmtct
