@@ -62,71 +62,104 @@ SELECT patient,
        linkageno.value_text,
        IF(nvp.mydate IS NULL, '', IF(TIMESTAMPDIFF(DAY, eiddob.dob, nvp.mydate) <= 2, 'Y', 'N')) AS nvp,
        stopped_bf.latest_date                                                                    AS breast_feeding_stopped,
-       cohort.PMTCT,
-       pmtct_enrollment_date,
+       IF(cohort.PMTCT='Not Pregnant Not BreastFeeding', 'Stopped Breast Feeding',cohort.PMTCT) AS PMTCT,
+       enrollment_date,
        babies                                                                                    AS baby
 
 from (
          # mothers with babies
-          SELECT person_a AS patient, person_b AS babies, pmtct_enrollment_date, preg_status.status AS pmtct
-          FROM relationship r
-                   INNER JOIN person p ON r.person_a = p.person_id
-                   INNER JOIN relationship_type rt
-                              ON r.relationship = rt.relationship_type_id AND
-                                 rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
-                   LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
-                              FROM mamba_fact_encounter_hiv_art_card
-                              WHERE pregnant = 'Breast feeding'
-                                 OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
-                                  AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH)
-                              GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
-                   LEFT JOIN (SELECT client_id, status FROM mamba_fact_patients_latest_pregnancy_status) preg_status
-                             ON preg_status.client_id = person_a
-          WHERE p.gender = 'F'
-            AND r.person_b IN (SELECT DISTINCT e.patient_id
-                               FROM encounter e
-                                        INNER JOIN encounter_type et
-                                                   ON e.encounter_type = et.encounter_type_id
-                               WHERE e.voided = 0
-                                 AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
-                                 AND encounter_datetime <= CURRENT_DATE()
-                                 AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH))
-          UNION
-          # mothers without babies
-          SELECT DISTINCT mfehac.client_id   AS patient,
-                          NULL               AS babies,
-                          pmtct_enrollment_date,
-                          preg_status.status AS pmtct
-          FROM mamba_fact_encounter_hiv_art_card mfehac
-                   LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
-                              FROM mamba_fact_encounter_hiv_art_card
-                              WHERE pregnant = 'Breast feeding'
-                                 OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
-                                  AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
-                              GROUP BY client_id) pmtct_enrollment ON mfehac.client_id = pmtct_enrollment.client_id
-                   INNER JOIN (SELECT client_id, status
-                               FROM mamba_fact_patients_latest_pregnancy_status
-                               WHERE status = 'pregnant'
-                                  OR status = 'Breast feeding') preg_status
-                              ON mfehac.client_id = preg_status.client_id
-          WHERE pregnant = 'Breast feeding'
-             OR pregnant = 'YES'
-              AND mfehac.encounter_date <= CURRENT_DATE()
-              AND mfehac.encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-          UNION
-          # babies without parents in emr
-          SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HIE with caregiver' AS pmtct
-          FROM encounter e
-                   INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id
-          WHERE e.voided = 0
-            AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
-            AND encounter_datetime <= CURRENT_DATE()
-            AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 33 MONTH)
-            AND patient_id NOT IN (SELECT person_b AS parent
-                                   FROM relationship r
-                                            INNER JOIN relationship_type rt
-                                                       ON r.relationship = rt.relationship_type_id AND
-                                                          rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f')) cohort
+SELECT person_a AS patient, person_b AS babies, pmtct_enrollment.enrollment_date, preg_status.status AS pmtct
+FROM relationship r
+         INNER JOIN person p ON r.person_a = p.person_id
+         INNER JOIN person p1 ON r.person_b = p1.person_id
+         INNER JOIN relationship_type rt
+                    ON r.relationship = rt.relationship_type_id AND
+                       rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
+         LEFT JOIN (SELECT client_id, MIN(encounter_date) enrollment_date
+                    FROM mamba_fact_encounter_hiv_art_card
+                    WHERE pregnant = 'Breast feeding'
+                       OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                        AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+                    GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
+         LEFT JOIN (SELECT client_id, status FROM mamba_fact_patients_latest_pregnancy_status) preg_status
+                   ON preg_status.client_id = person_a
+WHERE p.gender = 'F'
+  AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
+  AND r.person_b IN (SELECT DISTINCT e.patient_id
+                     FROM encounter e
+                              INNER JOIN encounter_type et
+                                         ON e.encounter_type = et.encounter_type_id
+                     WHERE e.voided = 0
+                       AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+                       AND encounter_datetime <= CURRENT_DATE()
+                       AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))
+  AND r.person_a NOT IN (SELECT DISTINCT person_id from obs where concept_id =99165 and voided = 0)
+  AND r.person_b NOT IN (SELECT DISTINCT person_id from obs where concept_id =99165 and voided = 0)
+
+UNION
+# mothers without babies
+SELECT DISTINCT mfehac.client_id AS patient,
+                NULL             AS babies,
+                pmtct_enrollment_date,
+                'Pregnant'       AS pmtct
+FROM (SELECT client_id
+      FROM mamba_fact_encounter_hiv_art_card
+      WHERE pregnant = 'YES'
+        AND encounter_date <= CURRENT_DATE()
+        AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
+      GROUP BY client_id) mfehac
+         LEFT JOIN (SELECT person_a AS patient
+                    FROM relationship r
+                             INNER JOIN person p ON r.person_a = p.person_id
+                             INNER JOIN person p1 ON r.person_b = p1.person_id
+                             INNER JOIN relationship_type rt
+                                        ON r.relationship = rt.relationship_type_id AND
+                                           rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
+                             LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                                        FROM mamba_fact_encounter_hiv_art_card
+                                        WHERE pregnant = 'Breast feeding'
+                                           OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                                            AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+                                        GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
+                             LEFT JOIN (SELECT client_id, status
+                                        FROM mamba_fact_patients_latest_pregnancy_status) preg_status
+                                       ON preg_status.client_id = person_a
+                    WHERE p.gender = 'F'
+                      AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
+                      AND r.person_b IN (SELECT DISTINCT e.patient_id
+                                         FROM encounter e
+                                                  INNER JOIN encounter_type et
+                                                             ON e.encounter_type = et.encounter_type_id
+                                         WHERE e.voided = 0
+                                           AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+                                           AND encounter_datetime <= CURRENT_DATE()
+                                           AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))) alreadymothers
+                   ON mfehac.client_id = alreadymothers.patient
+         LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                    FROM mamba_fact_encounter_hiv_art_card
+                    WHERE pregnant = 'YES'
+                      AND encounter_date <= CURRENT_DATE()
+                      AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                    GROUP BY client_id) pmtct_enrollment ON mfehac.client_id = pmtct_enrollment.client_id
+WHERE alreadymothers.patient IS NULL
+
+UNION
+# babies without parents in emr
+SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HEI with caregiver' AS pmtct
+FROM encounter e
+         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id
+         INNER JOIN person p ON e.patient_id = p.person_id
+WHERE e.voided = 0
+  AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+  AND encounter_datetime <= CURRENT_DATE()
+  AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+  AND patient_id NOT IN (SELECT person_b AS parent
+                         FROM relationship r
+                                  INNER JOIN relationship_type rt
+                                             ON r.relationship = rt.relationship_type_id AND
+                                                rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
+  AND TIMESTAMPDIFF(MONTH, p.birthdate, CURRENT_DATE()) <= 24
+         ) cohort
          LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as edd_date FROM obs WHERE concept_id=5596 and voided=0 and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 16 MONTH) and  obs_datetime<=CURRENT_DATE()  group by person_id)EDD on patient = EDD.person_id
          LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs  where concept_id=99771 and obs.voided=0 group by person_id)A
 on o.person_id = A.person_id where o.concept_id=99771 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) NVP on babies = NVP.person_id
