@@ -77,7 +77,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_summary
     hiv_enrollment_date                         DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_encounter_hiv_art_summary_client_id_index ON mamba_fact_encounter_hiv_art_summary (client_id);

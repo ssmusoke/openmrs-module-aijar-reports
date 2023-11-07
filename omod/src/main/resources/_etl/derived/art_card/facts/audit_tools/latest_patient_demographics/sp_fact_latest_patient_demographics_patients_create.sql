@@ -9,7 +9,7 @@ CREATE TABLE mamba_fact_patients_latest_patient_demographics
     dead       BIT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_patient_demos_patient_id_index ON mamba_fact_patients_latest_patient_demographics (patient_id);

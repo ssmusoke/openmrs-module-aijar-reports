@@ -31,7 +31,7 @@ CREATE TABLE mamba_fact_encounter_non_suppressed_card
     date_hivr_results_recieved_at_facility DATE NULL,
     hivdr_results                          VARCHAR(80) NULL,
         PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 -- $END
 

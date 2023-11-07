@@ -23,7 +23,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     health_education_disclosure VARCHAR(255)  DEFAULT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 
 CREATE INDEX

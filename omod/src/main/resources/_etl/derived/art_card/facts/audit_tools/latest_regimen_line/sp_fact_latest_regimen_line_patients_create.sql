@@ -6,7 +6,7 @@ CREATE TABLE mamba_fact_patients_latest_regimen_line
     regimen                             VARCHAR(80) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_regimen_line_client_id_index ON mamba_fact_patients_latest_regimen_line (client_id);

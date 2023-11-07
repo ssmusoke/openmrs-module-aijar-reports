@@ -7,7 +7,7 @@ CREATE TABLE mamba_fact_patients_latest_viral_load_ordered
     order_date                             DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_viral_load_ordered_client_id_index ON mamba_fact_patients_latest_viral_load_ordered (client_id);

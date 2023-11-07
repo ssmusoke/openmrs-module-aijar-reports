@@ -82,6 +82,485 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_etract  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS JSON_EXTRACT_1;
+CREATE FUNCTION JSON_EXTRACT_1(json TEXT, key_name VARCHAR(255)) RETURNS VARCHAR(255)
+BEGIN
+  DECLARE start_index INT;
+  DECLARE end_index INT;
+  DECLARE key_length INT;
+  DECLARE key_index INT;
+
+  SET key_name = CONCAT('"', key_name, '":');
+  SET key_length = CHAR_LENGTH(key_name);
+  SET key_index = LOCATE(key_name, json);
+
+  IF key_index = 0 THEN
+    RETURN NULL;
+  END IF;
+
+  SET start_index = key_index + key_length;
+
+CASE
+    WHEN SUBSTRING(json, start_index, 1) = '"' THEN
+      SET start_index = start_index + 1;
+      SET end_index = LOCATE('"', json, start_index);
+ELSE
+      SET end_index = LOCATE(',', json, start_index);
+      IF end_index = 0 THEN
+        SET end_index = LOCATE('}', json, start_index);
+END IF;
+END CASE;
+
+RETURN SUBSTRING(json, start_index, end_index - start_index);
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS JSON_EXTRACT_ARRAY;
+CREATE FUNCTION JSON_EXTRACT_ARRAY(json TEXT, key_name VARCHAR(255)) RETURNS TEXT
+BEGIN
+  DECLARE start_index INT;
+  DECLARE end_index INT;
+  DECLARE array_text TEXT;
+
+  SET key_name = CONCAT('"', key_name, '":');
+  SET start_index = LOCATE(key_name, json);
+
+  IF start_index = 0 THEN
+    RETURN NULL;
+END IF;
+
+  SET start_index = start_index + CHAR_LENGTH(key_name);
+
+  IF SUBSTRING(json, start_index, 1) != '[' THEN
+    RETURN NULL;
+END IF;
+
+  SET start_index = start_index + 1; -- Start after the '['
+  SET end_index = start_index;
+
+  -- Loop to find the matching closing bracket for the array
+  SET @bracket_counter = 1;
+  WHILE @bracket_counter > 0 AND end_index <= CHAR_LENGTH(json) DO
+    SET end_index = end_index + 1;
+    IF SUBSTRING(json, end_index, 1) = '[' THEN
+      SET @bracket_counter = @bracket_counter + 1;
+    ELSEIF SUBSTRING(json, end_index, 1) = ']' THEN
+      SET @bracket_counter = @bracket_counter - 1;
+END IF;
+END WHILE;
+
+  IF @bracket_counter != 0 THEN
+    RETURN NULL; -- The brackets are not balanced, return NULL
+END IF;
+
+  SET array_text = SUBSTRING(json, start_index, end_index - start_index);
+RETURN array_text;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+DROP FUNCTION IF EXISTS JSON_EXTRACT_OBJECT;
+CREATE FUNCTION JSON_EXTRACT_OBJECT(json_string TEXT, key_name VARCHAR(255)) RETURNS TEXT
+BEGIN
+  DECLARE start_index INT;
+  DECLARE end_index INT;
+  DECLARE nested_level INT DEFAULT 0;
+  DECLARE substring_length INT;
+  DECLARE key_str VARCHAR(255);
+  DECLARE result TEXT DEFAULT '';
+
+  SET key_str := CONCAT('"', key_name, '": {');
+
+  -- Find the start position of the key
+  SET start_index := LOCATE(key_str, json_string);
+  IF start_index = 0 THEN
+    RETURN NULL;
+END IF;
+
+  -- Adjust start_index to the start of the value
+  SET start_index := start_index + CHAR_LENGTH(key_str);
+
+  -- Initialize the end_index to start_index
+  SET end_index := start_index;
+
+  -- Find the end of the object
+  WHILE nested_level >= 0 AND end_index <= CHAR_LENGTH(json_string) DO
+    SET end_index := end_index + 1;
+    SET substring_length := end_index - start_index;
+
+    -- Check for nested objects
+    IF SUBSTRING(json_string, end_index, 1) = '{' THEN
+      SET nested_level := nested_level + 1;
+    ELSEIF SUBSTRING(json_string, end_index, 1) = '}' THEN
+      SET nested_level := nested_level - 1;
+END IF;
+END WHILE;
+
+  -- Get the JSON object
+  IF nested_level < 0 THEN
+    -- We found a matching pair of curly braces
+    SET result := SUBSTRING(json_string, start_index, substring_length);
+END IF;
+
+RETURN result;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+DROP FUNCTION IF EXISTS GET_ARRAY_ITEM_BY_INDEX;
+CREATE FUNCTION GET_ARRAY_ITEM_BY_INDEX(array_string TEXT, item_index INT) RETURNS TEXT
+BEGIN
+  DECLARE elem_start INT DEFAULT 1;
+  DECLARE elem_end INT DEFAULT 0;
+  DECLARE current_index INT DEFAULT 0;
+  DECLARE result TEXT DEFAULT '';
+
+  -- If the item_index is less than 1 or the array_string is empty, return an empty string
+  IF item_index < 1 OR array_string = '[]' OR TRIM(array_string) = '' THEN
+    RETURN '';
+END IF;
+
+  -- Loop until we find the start quote of the desired index
+  WHILE current_index < item_index DO
+    -- Find the start quote of the next element
+    SET elem_start = LOCATE('"', array_string, elem_end + 1);
+    -- If we can't find a new element, return an empty string
+    IF elem_start = 0 THEN
+      RETURN '';
+END IF;
+
+    -- Find the end quote of this element
+    SET elem_end = LOCATE('"', array_string, elem_start + 1);
+    -- If we can't find the end quote, return an empty string
+    IF elem_end = 0 THEN
+      RETURN '';
+END IF;
+
+    -- Increment the current_index
+    SET current_index = current_index + 1;
+END WHILE;
+
+  -- When the loop exits, current_index should equal item_index, and elem_start/end should be the positions of the quotes
+  -- Extract the element
+  SET result = SUBSTRING(array_string, elem_start + 1, elem_end - elem_start - 1);
+
+RETURN result;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+DROP FUNCTION IF EXISTS JSON_VALUE_BY_KEY;
+
+CREATE FUNCTION JSON_VALUE_BY_KEY(json TEXT, key_name VARCHAR(255)) RETURNS VARCHAR(255)
+BEGIN
+    DECLARE start_index INT;
+    DECLARE end_index INT;
+    DECLARE key_length INT;
+    DECLARE key_index INT;
+    DECLARE value_length INT;
+    DECLARE extracted_value VARCHAR(255);
+
+    -- Add the key structure to search for in the JSON string
+    SET key_name = CONCAT('"', key_name, '":');
+    SET key_length = CHAR_LENGTH(key_name);
+
+    -- Locate the key within the JSON string
+    SET key_index = LOCATE(key_name, json);
+
+    -- If the key is not found, return NULL
+    IF key_index = 0 THEN
+        RETURN NULL;
+    END IF;
+
+    -- Set the starting index of the value
+    SET start_index = key_index + key_length;
+
+    -- Check if the value is a string (starts with a quote)
+    IF SUBSTRING(json, start_index, 1) = '"' THEN
+        -- Set the start index to the first character of the value (skipping the quote)
+        SET start_index = start_index + 1;
+
+        -- Find the end of the string value (the next quote)
+        SET end_index = LOCATE('"', json, start_index);
+        IF end_index = 0 THEN
+            -- If there's no end quote, the JSON is malformed
+            RETURN NULL;
+        END IF;
+    ELSE
+        -- The value is not a string (e.g., a number, boolean, or null)
+        -- Find the end of the value (either a comma or closing brace)
+        SET end_index = LOCATE(',', json, start_index);
+        IF end_index = 0 THEN
+            SET end_index = LOCATE('}', json, start_index);
+        END IF;
+    END IF;
+
+    -- Calculate the length of the extracted value
+    SET value_length = end_index - start_index;
+
+    -- Extract the value
+    SET extracted_value = SUBSTRING(json, start_index, value_length);
+
+    -- Return the extracted value without leading or trailing quotes
+    RETURN TRIM(BOTH '"' FROM extracted_value);
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_keys  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+DROP FUNCTION IF EXISTS JSON_KEYS_ARRAY;
+CREATE FUNCTION JSON_KEYS_ARRAY(json_object TEXT) RETURNS TEXT
+BEGIN
+    DECLARE finished INT DEFAULT 0;
+    DECLARE start_index INT DEFAULT 1;
+    DECLARE end_index INT DEFAULT 1;
+    DECLARE key_name TEXT DEFAULT '';
+    DECLARE my_keys TEXT DEFAULT '';
+    DECLARE json_length INT;
+    DECLARE key_end_index INT;
+
+    SET json_length = CHAR_LENGTH(json_object);
+
+    -- Initialize the my_keys string as an empty 'array'
+    SET my_keys = '';
+
+    -- This loop goes through the JSON object and extracts the my_keys
+    WHILE NOT finished DO
+            -- Find the start of the key
+            SET start_index = LOCATE('"', json_object, end_index);
+            IF start_index = 0 OR start_index >= json_length THEN
+                SET finished = 1;
+            ELSE
+                -- Find the end of the key
+                SET end_index = LOCATE('"', json_object, start_index + 1);
+                SET key_name = SUBSTRING(json_object, start_index + 1, end_index - start_index - 1);
+
+                -- Append the key to the 'array' of my_keys
+                IF my_keys = ''
+                    THEN
+                    SET my_keys = CONCAT('["', key_name, '"');
+                ELSE
+                    SET my_keys = CONCAT(my_keys, ',"', key_name, '"');
+                END IF;
+
+                -- Move past the current key-value pair
+                SET key_end_index = LOCATE(',', json_object, end_index);
+                IF key_end_index = 0 THEN
+                    SET key_end_index = LOCATE('}', json_object, end_index);
+                END IF;
+                IF key_end_index = 0 THEN
+                    -- Closing brace not found - malformed JSON
+                    SET finished = 1;
+                ELSE
+                    -- Prepare for the next iteration
+                    SET end_index = key_end_index + 1;
+                END IF;
+            END IF;
+        END WHILE;
+
+    -- Close the 'array' of my_keys
+    IF my_keys != '' THEN
+        SET my_keys = CONCAT(my_keys, ']');
+    END IF;
+
+    RETURN my_keys;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_length  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+DROP FUNCTION IF EXISTS JSON_LENGTH_5_6;
+CREATE FUNCTION JSON_LENGTH_5_6(json_array TEXT) RETURNS INT
+BEGIN
+    DECLARE element_count INT DEFAULT 0;
+    DECLARE current_position INT DEFAULT 1;
+
+    WHILE current_position <= LENGTH(json_array) DO
+        SET element_count = element_count + 1;
+        SET current_position = LOCATE(',', json_array, current_position) + 1;
+
+        IF current_position = 0 THEN
+            RETURN element_count;
+        END IF;
+    END WHILE;
+
+RETURN element_count;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+DROP FUNCTION IF EXISTS JSON_ARRAY_LENGTH;
+
+CREATE FUNCTION JSON_ARRAY_LENGTH(json_array TEXT) RETURNS INT
+BEGIN
+    DECLARE array_length INT DEFAULT 0;
+    DECLARE current_pos INT DEFAULT 1;
+    DECLARE char_val CHAR(1);
+
+    IF json_array IS NULL THEN
+        RETURN 0;
+    END IF;
+
+  -- Iterate over the string to count the number of objects based on commas and curly braces
+    WHILE current_pos <= CHAR_LENGTH(json_array) DO
+        SET char_val = SUBSTRING(json_array, current_pos, 1);
+
+    -- Check for the start of an object
+        IF char_val = '{' THEN
+            SET array_length = array_length + 1;
+
+      -- Move current_pos to the end of this object
+            SET current_pos = LOCATE('}', json_array, current_pos) + 1;
+        ELSE
+            SET current_pos = current_pos + 1;
+        END IF;
+    END WHILE;
+
+    RETURN array_length;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS JSON_OBJECT_AT_INDEX;
+CREATE FUNCTION JSON_OBJECT_AT_INDEX(json_array TEXT, index_pos INT) RETURNS TEXT
+BEGIN
+  DECLARE obj_start INT DEFAULT 1;
+  DECLARE obj_end INT DEFAULT 1;
+  DECLARE current_index INT DEFAULT 0;
+  DECLARE obj_text TEXT;
+
+  -- Handle negative index_pos or json_array being NULL
+  IF index_pos < 1 OR json_array IS NULL THEN
+    RETURN NULL;
+END IF;
+
+  -- Find the start of the requested object
+  WHILE obj_start < CHAR_LENGTH(json_array) AND current_index < index_pos DO
+    SET obj_start = LOCATE('{', json_array, obj_end);
+
+    -- If we can't find a new object, return NULL
+    IF obj_start = 0 THEN
+      RETURN NULL;
+END IF;
+
+    SET current_index = current_index + 1;
+    -- If this isn't the object we want, find the end and continue
+    IF current_index < index_pos THEN
+      SET obj_end = LOCATE('}', json_array, obj_start) + 1;
+END IF;
+END WHILE;
+
+  -- Now obj_start points to the start of the desired object
+  -- Find the end of it
+  SET obj_end = LOCATE('}', json_array, obj_start);
+  IF obj_end = 0 THEN
+    -- The object is not well-formed
+    RETURN NULL;
+END IF;
+
+  -- Extract the object
+  SET obj_text = SUBSTRING(json_array, obj_start, obj_end - obj_start + 1);
+RETURN obj_text;
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+DROP FUNCTION IF EXISTS ARRAY_LENGTH;
+CREATE FUNCTION ARRAY_LENGTH(array_string TEXT) RETURNS INT
+BEGIN
+  DECLARE length INT DEFAULT 0;
+  DECLARE i INT DEFAULT 1;
+
+  -- If the array_string is not empty, initialize length to 1
+  IF TRIM(array_string) != '' AND TRIM(array_string) != '[]' THEN
+    SET length = 1;
+END IF;
+
+  -- Count the number of commas in the array string
+  WHILE i <= CHAR_LENGTH(array_string) DO
+    IF SUBSTRING(array_string, i, 1) = ',' THEN
+      SET length = length + 1;
+END IF;
+    SET i = i + 1;
+END WHILE;
+
+RETURN length;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_quote  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+DROP FUNCTION IF EXISTS REMOVE_ALL_WHITESPACE;
+CREATE FUNCTION REMOVE_ALL_WHITESPACE(input_string TEXT) RETURNS TEXT
+BEGIN
+  DECLARE cleaned_string TEXT;
+  SET cleaned_string = input_string;
+
+  -- Replace common whitespace characters
+  SET cleaned_string = REPLACE(cleaned_string, CHAR(9), '');   -- Horizontal tab
+  SET cleaned_string = REPLACE(cleaned_string, CHAR(10), '');  -- Line feed
+  SET cleaned_string = REPLACE(cleaned_string, CHAR(13), '');  -- Carriage return
+  SET cleaned_string = REPLACE(cleaned_string, CHAR(32), '');  -- Space
+  SET cleaned_string = REPLACE(cleaned_string, CHAR(160), ''); -- Non-breaking space
+
+RETURN TRIM(cleaned_string);
+END //
+
+DELIMITER ;
+
+
+DELIMITER //
+DROP FUNCTION IF EXISTS REMOVE_QUOTES;
+CREATE FUNCTION REMOVE_QUOTES(original TEXT) RETURNS TEXT
+BEGIN
+  DECLARE without_quotes TEXT;
+
+  -- Replace both single and double quotes with nothing
+  SET without_quotes = REPLACE(REPLACE(original, '"', ''), '''', '');
+
+RETURN REMOVE_ALL_WHITESPACE(without_quotes);
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_xf_system_drop_all_functions_in_schema  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -90,7 +569,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_xf_system_drop_all_stored_functions_in_schema;
 
 CREATE PROCEDURE sp_xf_system_drop_all_stored_functions_in_schema(
-    IN database_name CHAR(255) CHARACTER SET UTF8MB4
+    IN database_name CHAR(255) CHARACTER SET UTF8
 )
 BEGIN
     DELETE FROM `mysql`.`proc` WHERE `type` = 'FUNCTION' AND `db` = database_name; -- works in mysql before v.8
@@ -110,7 +589,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_xf_system_drop_all_stored_procedures_in_schema;
 
 CREATE PROCEDURE sp_xf_system_drop_all_stored_procedures_in_schema(
-    IN database_name CHAR(255) CHARACTER SET UTF8MB4
+    IN database_name CHAR(255) CHARACTER SET UTF8
 )
 BEGIN
 
@@ -131,7 +610,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_xf_system_drop_all_objects_in_schema;
 
 CREATE PROCEDURE sp_xf_system_drop_all_objects_in_schema(
-    IN database_name CHAR(255) CHARACTER SET UTF8MB4
+    IN database_name CHAR(255) CHARACTER SET UTF8
 )
 BEGIN
 
@@ -154,7 +633,7 @@ DELIMITER //
 
 DROP PROCEDURE IF EXISTS sp_xf_system_drop_all_tables_in_schema;
 
--- CREATE PROCEDURE sp_xf_system_drop_all_tables_in_schema(IN database_name CHAR(255) CHARACTER SET UTF8MB4)
+-- CREATE PROCEDURE sp_xf_system_drop_all_tables_in_schema(IN database_name CHAR(255) CHARACTER SET UTF8)
 CREATE PROCEDURE sp_xf_system_drop_all_tables_in_schema()
 BEGIN
 
@@ -199,84 +678,6 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  sp_mamba_etl_execute  ----------------------------
--- ---------------------------------------------------------------------------------------------
-
-DELIMITER //
-
-DROP PROCEDURE IF EXISTS sp_mamba_etl_execute;
-
-CREATE PROCEDURE sp_mamba_etl_execute()
-BEGIN
-    DECLARE error_message VARCHAR(255) DEFAULT 'OK';
-    DECLARE error_code CHAR(5) DEFAULT '00000';
-
-    DECLARE start_time bigint;
-    DECLARE end_time bigint;
-    DECLARE start_date_time DATETIME;
-    DECLARE end_date_time DATETIME;
-
-    DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
-        BEGIN
-            GET DIAGNOSTICS CONDITION 1
-                error_code = RETURNED_SQLSTATE,
-                error_message = MESSAGE_TEXT;
-
-            -- SET @sql = CONCAT('SIGNAL SQLSTATE ''', error_code, ''' SET MESSAGE_TEXT = ''', error_message, '''');
-            -- SET @sql = CONCAT('SET @signal = ''', @sql, '''');
-
-            -- SET @sql = CONCAT('SIGNAL SQLSTATE ''', error_code, ''' SET MESSAGE_TEXT = ''', error_message, '''');
-            -- PREPARE stmt FROM @sql;
-            -- EXECUTE stmt;
-            -- DEALLOCATE PREPARE stmt;
-
-            INSERT INTO zzmamba_etl_tracker (initial_run_date,
-                                             start_date,
-                                             end_date,
-                                             time_taken_microsec,
-                                             completion_status,
-                                             success_or_error_message,
-                                             next_run_date)
-            SELECT NOW(),
-                   start_date_time,
-                   NOW(),
-                   (((UNIX_TIMESTAMP(NOW()) * 1000000 + MICROSECOND(NOW(6))) - @start_time) / 1000),
-                   'ERROR',
-                   (CONCAT(error_code, ' : ', error_message)),
-                   NOW() + 5;
-        END;
-
-    -- Fix start time in microseconds
-    SET start_date_time = NOW();
-    SET @start_time = (UNIX_TIMESTAMP(NOW()) * 1000000 + MICROSECOND(NOW(6)));
-
-    CALL sp_mamba_data_processing_etl();
-
-    -- Fix end time in microseconds
-    SET end_date_time = NOW();
-    SET @end_time = (UNIX_TIMESTAMP(NOW()) * 1000000 + MICROSECOND(NOW(6)));
-
-    -- Result
-    SET @time_taken = (@end_time - @start_time) / 1000;
-    SELECT @time_taken;
-
-
-    INSERT INTO zzmamba_etl_tracker (initial_run_date,
-                                     start_date,
-                                     end_date,
-                                     time_taken_microsec,
-                                     completion_status,
-                                     success_or_error_message,
-                                     next_run_date)
-    SELECT NOW(), start_date_time, end_date_time, @time_taken, 'SUCCESS', 'OK', NOW() + 5;
-
-END //
-
-DELIMITER ;
-
-
-        
--- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_flat_encounter_table_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -285,7 +686,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_create;
 
 CREATE PROCEDURE sp_mamba_flat_encounter_table_create(
-    IN flat_encounter_table_name VARCHAR(255) CHARSET UTF8MB4
+    IN flat_encounter_table_name VARCHAR(255) CHARSET UTF8
 )
 BEGIN
 
@@ -337,7 +738,7 @@ DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_create_all;
 CREATE PROCEDURE sp_mamba_flat_encounter_table_create_all()
 BEGIN
 
-    DECLARE tbl_name CHAR(50) CHARACTER SET UTF8MB4;
+    DECLARE tbl_name CHAR(50) CHARACTER SET UTF8;
 
     DECLARE done INT DEFAULT FALSE;
 
@@ -375,7 +776,7 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_insert;
 
 CREATE PROCEDURE sp_mamba_flat_encounter_table_insert(
-    IN flat_encounter_table_name CHAR(255) CHARACTER SET UTF8MB4
+    IN flat_encounter_table_name CHAR(255) CHARACTER SET UTF8
 )
 BEGIN
 
@@ -427,7 +828,7 @@ DROP PROCEDURE IF EXISTS sp_mamba_flat_encounter_table_insert_all;
 CREATE PROCEDURE sp_mamba_flat_encounter_table_insert_all()
 BEGIN
 
-    DECLARE tbl_name CHAR(50) CHARACTER SET UTF8MB4;
+    DECLARE tbl_name CHAR(50) CHARACTER SET UTF8;
 
     DECLARE done INT DEFAULT FALSE;
 
@@ -465,10 +866,10 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS `sp_mamba_multiselect_values_update`;
 
 CREATE PROCEDURE `sp_mamba_multiselect_values_update`(
-    IN table_to_update CHAR(100) CHARACTER SET UTF8MB4,
-    IN column_names TEXT CHARACTER SET UTF8MB4,
-    IN value_yes CHAR(100) CHARACTER SET UTF8MB4,
-    IN value_no CHAR(100) CHARACTER SET UTF8MB4
+    IN table_to_update CHAR(100) CHARACTER SET UTF8,
+    IN column_names TEXT CHARACTER SET UTF8,
+    IN value_yes CHAR(100) CHARACTER SET UTF8,
+    IN value_no CHAR(100) CHARACTER SET UTF8
 )
 BEGIN
 
@@ -519,34 +920,35 @@ DELIMITER //
 DROP PROCEDURE IF EXISTS sp_mamba_extract_report_metadata;
 
 CREATE PROCEDURE sp_mamba_extract_report_metadata(
-    IN report_data MEDIUMTEXT CHARACTER SET UTF8MB4,
-    IN metadata_table VARCHAR(255) CHARSET UTF8MB4
+    IN report_data MEDIUMTEXT CHARACTER SET UTF8,
+    IN metadata_table VARCHAR(255) CHARSET UTF8
 )
 BEGIN
 
     SET session group_concat_max_len = 20000;
 
-    SELECT JSON_EXTRACT(report_data, '$.flat_report_metadata') INTO @report_array;
-    SELECT JSON_LENGTH(@report_array) INTO @report_array_len;
+SELECT  JSON_EXTRACT_ARRAY(report_data, 'flat_report_metadata') INTO @report_array;
+SELECT JSON_ARRAY_LENGTH(@report_array) INTO @report_array_len;
 
-    SET @report_count = 0;
-    WHILE @report_count < @report_array_len
+SET @report_count = 1;
+    WHILE @report_count <= @report_array_len
         DO
+            SELECT  JSON_OBJECT_AT_INDEX(@report_array, @report_count) INTO @report;
+            SET @report =  CONCAT(@report,'}');
+            SELECT  JSON_EXTRACT_1(@report, 'report_name') INTO @report_name;
+            SELECT  JSON_EXTRACT_1(@report, 'flat_table_name') INTO @flat_table_name;
+            SELECT  JSON_EXTRACT_1(@report, 'encounter_type_uuid') INTO @encounter_type;
+            SELECT  JSON_EXTRACT_1(@report, 'concepts_locale') INTO @concepts_locale;
+            SELECT  JSON_EXTRACT_OBJECT(@report, 'table_columns') INTO @column_array;
+            SELECT JSON_KEYS_ARRAY(@column_array) INTO @column_keys_array;
+            SELECT ARRAY_LENGTH(@column_keys_array) INTO @column_keys_array_len;
 
-            SELECT JSON_EXTRACT(@report_array, CONCAT('$[', @report_count, ']')) INTO @report;
-            SELECT JSON_EXTRACT(@report, '$.report_name') INTO @report_name;
-            SELECT JSON_EXTRACT(@report, '$.flat_table_name') INTO @flat_table_name;
-            SELECT JSON_EXTRACT(@report, '$.encounter_type_uuid') INTO @encounter_type;
-            SELECT JSON_EXTRACT(@report, '$.concepts_locale') INTO @concepts_locale;
-            SELECT JSON_EXTRACT(@report, '$.table_columns') INTO @column_array;
-
-            SELECT JSON_KEYS(@column_array) INTO @column_keys_array;
-            SELECT JSON_LENGTH(@column_keys_array) INTO @column_keys_array_len;
-            SET @col_count = 0;
-            WHILE @col_count < @column_keys_array_len
+            SET @col_count = 1;
+            SET @column_array = CONCAT('{',@column_array,'}');
+            WHILE @col_count <= @column_keys_array_len
                 DO
-                    SELECT JSON_EXTRACT(@column_keys_array, CONCAT('$[', @col_count, ']')) INTO @field_name;
-                    SELECT JSON_EXTRACT(@column_array, CONCAT('$.', @field_name)) INTO @concept_uuid;
+                    SELECT  GET_ARRAY_ITEM_BY_INDEX(@column_keys_array, @col_count) INTO @field_name;
+                    SELECT JSON_VALUE_BY_KEY(@column_array,  @field_name) INTO @concept_uuid;
 
                     SET @tbl_name = '';
                     INSERT INTO mamba_dim_concept_metadata(report_name,
@@ -555,18 +957,18 @@ BEGIN
                                                            column_label,
                                                            concept_uuid,
                                                            concepts_locale)
-                    VALUES (JSON_UNQUOTE(@report_name),
-                            JSON_UNQUOTE(@flat_table_name),
-                            JSON_UNQUOTE(@encounter_type),
-                            JSON_UNQUOTE(@field_name),
-                            JSON_UNQUOTE(@concept_uuid),
-                            JSON_UNQUOTE(@concepts_locale));
+                    VALUES (REMOVE_QUOTES(@report_name),
+                            REMOVE_QUOTES(@flat_table_name),
+                            REMOVE_QUOTES(@encounter_type),
+                            REMOVE_QUOTES(@field_name),
+                            REMOVE_QUOTES(@concept_uuid),
+                            REMOVE_QUOTES(@concepts_locale));
 
                     SET @col_count = @col_count + 1;
-                END WHILE;
+            END WHILE;
 
             SET @report_count = @report_count + 1;
-        END WHILE;
+    END WHILE;
 
 END //
 
@@ -640,7 +1042,7 @@ CREATE TABLE mamba_dim_location
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_location_location_id_index
     ON mamba_dim_location (location_id);
@@ -784,7 +1186,7 @@ CREATE TABLE mamba_dim_patient_identifier_type
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_patient_identifier_type_id_index
     ON mamba_dim_patient_identifier_type (patient_identifier_type_id);
@@ -882,7 +1284,7 @@ CREATE TABLE mamba_dim_concept_datatype
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_concept_datatype_concept_datatype_id_index
     ON mamba_dim_concept_datatype (concept_datatype_id);
@@ -961,7 +1363,7 @@ CREATE TABLE mamba_dim_concept
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_concept_concept_id_index
     ON mamba_dim_concept (concept_id);
@@ -1073,7 +1475,7 @@ CREATE TABLE mamba_dim_concept_answer
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_concept_answer_concept_answer_id_index
     ON mamba_dim_concept_answer (concept_answer_id);
@@ -1160,7 +1562,7 @@ CREATE TABLE mamba_dim_concept_name
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_concept_name_concept_name_id_index
     ON mamba_dim_concept_name (concept_name_id);
@@ -1258,7 +1660,7 @@ CREATE TABLE mamba_dim_encounter_type
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_encounter_type_encounter_type_id_index
     ON mamba_dim_encounter_type (encounter_type_id);
@@ -1351,7 +1753,7 @@ CREATE TABLE mamba_dim_encounter
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_encounter_encounter_id_index
     ON mamba_dim_encounter (encounter_id);
@@ -1480,7 +1882,7 @@ CREATE TABLE mamba_dim_concept_metadata
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_concept_metadata_concept_id_index
     ON mamba_dim_concept_metadata (concept_id);
@@ -1897,11 +2299,11 @@ WHERE md.id > 0
 -- Use locale preferred or Fully specified name
 
 -- Update to True if this field is an obs answer to an obs Question
--- UPDATE mamba_dim_concept_metadata md
---     INNER JOIN mamba_dim_concept_answer ca
---     ON md.concept_id = ca.answer_concept
--- SET md.concept_answer_obs = 1
--- WHERE md.id > 0;
+UPDATE mamba_dim_concept_metadata md
+    INNER JOIN mamba_dim_concept_answer ca
+    ON md.concept_id = ca.answer_concept
+SET md.concept_answer_obs = 1
+WHERE md.id > 0;
 
 -- $END
 END //
@@ -1958,7 +2360,7 @@ CREATE TABLE mamba_dim_person
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_person_person_id_index
     ON mamba_dim_person (person_id);
@@ -2054,7 +2456,7 @@ CREATE TABLE mamba_dim_patient_identifier
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_patient_identifier_patient_identifier_id_index
     ON mamba_dim_patient_identifier (patient_identifier_id);
@@ -2176,7 +2578,7 @@ CREATE TABLE mamba_dim_person_name
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_person_name_person_name_id_index
     ON mamba_dim_person_name (person_name_id);
@@ -2285,7 +2687,7 @@ CREATE TABLE mamba_dim_person_address
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_person_address_person_address_id_index
     ON mamba_dim_person_address (person_address_id);
@@ -2390,7 +2792,7 @@ CREATE TABLE mamba_dim_agegroup
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 -- $END
 END //
@@ -2491,7 +2893,7 @@ CREATE TABLE mamba_z_encounter_obs
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX mamba_z_encounter_obs_encounter_id_type_uuid_person_id_index
     ON mamba_z_encounter_obs (encounter_id, encounter_type_uuid, person_id);
@@ -2601,12 +3003,10 @@ WHERE TRUE;
 
 -- update obs_value_coded (UUIDs & Concept value names)
 UPDATE mamba_z_encounter_obs z
-    INNER JOIN mamba_dim_concept_name cn
-ON z.obs_value_coded = cn.concept_id
-    INNER JOIN mamba_dim_concept c
-    ON z.obs_value_coded = c.concept_id
-    SET z.obs_value_text       = cn.name,
-        z.obs_value_coded_uuid = c.uuid
+    INNER JOIN mamba_dim_concept_metadata md
+    ON z.obs_value_coded = md.concept_id
+SET z.obs_value_text       = md.concept_name,
+    z.obs_value_coded_uuid = md.concept_uuid
 WHERE z.obs_value_coded IS NOT NULL;
 
 -- $END
@@ -2840,186 +3240,186 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
     client_id                            INT NULL,
     encounter_date                       DATE NULL,
 
-    hemoglobin                           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    malnutrition                         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    method_of_family_planning            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    oedema                               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cd4_panel                            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cd4_percent                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_viral_load                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    historical_drug_start_date           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    historical_drug_stop_date            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    current_drugs_used                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tests_ordered                        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    number_of_weeks_pregnant             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    medication_orders                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    viral_load_qualitative               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hepatitis_b_test_qualitative         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    mid_upper_arm_circumference          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    medication_strength                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    register_serial_number               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    duration_units                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    systolic_blood_pressure              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    diastolic_blood_pressure             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    pulse                                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    temperature                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    weight                               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    height                               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    return_visit_date                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    respiratory_rate                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    head_circumference                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cd4_count                            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    estimated_date_of_confinement        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    pmtct                                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    pregnant                             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    scheduled_patient_visit              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    entry_point_into_hiv_care            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    who_hiv_clinical_stage               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    name_of_location_transferred_to      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tuberculosis_status                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tuberculosis_treatment_start_date    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    adherence_to_cotrim                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    arv_adherence_assessment_code        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    reason_for_missing_arv               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    medication_or_other_side_effects     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    history_of_functional_status         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    body_weight                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    family_planning_status               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    symptom_diagnosis                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    address                              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    date_positive_hiv_test_confirmed     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    treatment_supporter_telephone_number CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    transferred_out                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tuberculosis_treatment_stop_date     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    current_arv_regimen                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    art_duration                         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    current_art_duration                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    antenatal_number                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    mid_upper_arm_circumference_code     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    district_tuberculosis_number         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    opportunistic_infection              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    trimethoprim_days_dispensed          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_medications_dispensed          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    arv_regimen_days_dispensed           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    trimethoprim_dosage                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    ar_regimen_dose                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    nutrition_support_and_infant_feeding CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_regimen                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_weight                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_stage                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_cd4                         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_pregnancy                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    name_of_family_member                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    age_of_family_member                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    family_member_set                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_test                             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_test_facility                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_side_effects                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_tests_ordered                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    care_entry_point_set                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    treatment_supporter_tel_no           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_reason_for_missing_arv         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    current_regimen_other                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    treatment_supporter_name             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cd4_classification_for_infants       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_regimen_start_date          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_regimen_set                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    transfer_out_date                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    transfer_out_set                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    health_education_disclosure          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_referral_ordered               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    age_in_months                        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    test_result_type                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    lab_result_txt                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    lab_result_set                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    counselling_session_type             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cotrim_given                         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    eid_visit_1_appointment_date         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    feeding_status_at_eid_visit_1        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    counselling_approach                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    current_hiv_test_result              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    results_received_as_a_couple         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_suspect                           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    baseline_lactating                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    inh_dosage                           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    inh_days_dispensed                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    age_unit                             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    syphilis_test_result                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    syphilis_test_result_for_partner     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    ctx_given_at_eid_visit_1             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    nvp_given_at_eid_visit_1             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    eid_visit_1_muac                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    medication_duration                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    clinical_impression_comment          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    reason_for_appointment               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    medication_history                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    quantity_of_medication               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_with_rifampin_resistance_checking CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    specimen_sources                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    eid_immunisation_codes               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    clinical_assessment_codes            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    refiil_of_art_for_the_mother         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    development_milestone                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    pre_test_counseling_done             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hct_entry_point                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    linked_to_care                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    estimated_gestational_age            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    eid_concept_type                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_viral_load_date                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    relationship_to_patient              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_reason_for_appointment         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    nutrition_assessment                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    art_pill_balance                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    differentiated_service_delivery      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    stable_in_dsdm                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    reason_for_testing                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    previous_hiv_tests_date              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    milligram_per_meter_squared          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_testing_service_delivery_model   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_syphillis_duo                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    prevention_services_received         CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    hiv_first_time_tester                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    previous_hiv_test_results            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    results_received_as_individual       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    health_education_setting             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    health_edu_intervation_approaches    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    health_education_depression_status   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    ovc_screening                        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    art_preparation_readiness            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    ovc_assessment                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    phdp_components                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tpt_start_date                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tpt_completion_date                  CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    advanced_disease_status              CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    family_member_hiv_status             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tpt_status                           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    rpr_test_results                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    crag_test_results                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_lam_results                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    gender_based_violance                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    dapsone_ctx_medset                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tuberculosis_medication_set          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    fluconazole_medication_set           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    cervical_cancer_screening            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    intention_to_conceive                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    viral_load_test                      CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    genexpert_test                       CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_microscopy_results                CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_microscopy_test                   CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tb_lam                               CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    rpr_test                             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    crag_test                            CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    arv_med_set                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    quantity_unit                        CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    tpt_side_effects                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    split_into_drugs                     CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    lab_number                           CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_drug_dispensed_set             CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    test                                 CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    test_result                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    other_tests                          CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    refill_point_code                    CHAR(255) CHARACTER SET UTF8MB4 NULL,
-    next_return_date_at_facility         CHAR(255) CHARACTER SET UTF8MB4 NULL,
+    hemoglobin                           CHAR(255) CHARACTER SET UTF8 NULL,
+    malnutrition                         CHAR(255) CHARACTER SET UTF8 NULL,
+    method_of_family_planning            CHAR(255) CHARACTER SET UTF8 NULL,
+    oedema                               CHAR(255) CHARACTER SET UTF8 NULL,
+    cd4_panel                            CHAR(255) CHARACTER SET UTF8 NULL,
+    cd4_percent                          CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_viral_load                       CHAR(255) CHARACTER SET UTF8 NULL,
+    historical_drug_start_date           CHAR(255) CHARACTER SET UTF8 NULL,
+    historical_drug_stop_date            CHAR(255) CHARACTER SET UTF8 NULL,
+    current_drugs_used                   CHAR(255) CHARACTER SET UTF8 NULL,
+    tests_ordered                        CHAR(255) CHARACTER SET UTF8 NULL,
+    number_of_weeks_pregnant             CHAR(255) CHARACTER SET UTF8 NULL,
+    medication_orders                    CHAR(255) CHARACTER SET UTF8 NULL,
+    viral_load_qualitative               CHAR(255) CHARACTER SET UTF8 NULL,
+    hepatitis_b_test_qualitative         CHAR(255) CHARACTER SET UTF8 NULL,
+    mid_upper_arm_circumference          CHAR(255) CHARACTER SET UTF8 NULL,
+    medication_strength                  CHAR(255) CHARACTER SET UTF8 NULL,
+    register_serial_number               CHAR(255) CHARACTER SET UTF8 NULL,
+    duration_units                       CHAR(255) CHARACTER SET UTF8 NULL,
+    systolic_blood_pressure              CHAR(255) CHARACTER SET UTF8 NULL,
+    diastolic_blood_pressure             CHAR(255) CHARACTER SET UTF8 NULL,
+    pulse                                CHAR(255) CHARACTER SET UTF8 NULL,
+    temperature                          CHAR(255) CHARACTER SET UTF8 NULL,
+    weight                               CHAR(255) CHARACTER SET UTF8 NULL,
+    height                               CHAR(255) CHARACTER SET UTF8 NULL,
+    return_visit_date                    CHAR(255) CHARACTER SET UTF8 NULL,
+    respiratory_rate                     CHAR(255) CHARACTER SET UTF8 NULL,
+    head_circumference                   CHAR(255) CHARACTER SET UTF8 NULL,
+    cd4_count                            CHAR(255) CHARACTER SET UTF8 NULL,
+    estimated_date_of_confinement        CHAR(255) CHARACTER SET UTF8 NULL,
+    pmtct                                CHAR(255) CHARACTER SET UTF8 NULL,
+    pregnant                             CHAR(255) CHARACTER SET UTF8 NULL,
+    scheduled_patient_visit              CHAR(255) CHARACTER SET UTF8 NULL,
+    entry_point_into_hiv_care            CHAR(255) CHARACTER SET UTF8 NULL,
+    who_hiv_clinical_stage               CHAR(255) CHARACTER SET UTF8 NULL,
+    name_of_location_transferred_to      CHAR(255) CHARACTER SET UTF8 NULL,
+    tuberculosis_status                  CHAR(255) CHARACTER SET UTF8 NULL,
+    tuberculosis_treatment_start_date    CHAR(255) CHARACTER SET UTF8 NULL,
+    adherence_to_cotrim                  CHAR(255) CHARACTER SET UTF8 NULL,
+    arv_adherence_assessment_code        CHAR(255) CHARACTER SET UTF8 NULL,
+    reason_for_missing_arv               CHAR(255) CHARACTER SET UTF8 NULL,
+    medication_or_other_side_effects     CHAR(255) CHARACTER SET UTF8 NULL,
+    history_of_functional_status         CHAR(255) CHARACTER SET UTF8 NULL,
+    body_weight                          CHAR(255) CHARACTER SET UTF8 NULL,
+    family_planning_status               CHAR(255) CHARACTER SET UTF8 NULL,
+    symptom_diagnosis                    CHAR(255) CHARACTER SET UTF8 NULL,
+    address                              CHAR(255) CHARACTER SET UTF8 NULL,
+    date_positive_hiv_test_confirmed     CHAR(255) CHARACTER SET UTF8 NULL,
+    treatment_supporter_telephone_number CHAR(255) CHARACTER SET UTF8 NULL,
+    transferred_out                      CHAR(255) CHARACTER SET UTF8 NULL,
+    tuberculosis_treatment_stop_date     CHAR(255) CHARACTER SET UTF8 NULL,
+    current_arv_regimen                  CHAR(255) CHARACTER SET UTF8 NULL,
+    art_duration                         CHAR(255) CHARACTER SET UTF8 NULL,
+    current_art_duration                 CHAR(255) CHARACTER SET UTF8 NULL,
+    antenatal_number                     CHAR(255) CHARACTER SET UTF8 NULL,
+    mid_upper_arm_circumference_code     CHAR(255) CHARACTER SET UTF8 NULL,
+    district_tuberculosis_number         CHAR(255) CHARACTER SET UTF8 NULL,
+    opportunistic_infection              CHAR(255) CHARACTER SET UTF8 NULL,
+    trimethoprim_days_dispensed          CHAR(255) CHARACTER SET UTF8 NULL,
+    other_medications_dispensed          CHAR(255) CHARACTER SET UTF8 NULL,
+    arv_regimen_days_dispensed           CHAR(255) CHARACTER SET UTF8 NULL,
+    trimethoprim_dosage                  CHAR(255) CHARACTER SET UTF8 NULL,
+    ar_regimen_dose                      CHAR(255) CHARACTER SET UTF8 NULL,
+    nutrition_support_and_infant_feeding CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_regimen                     CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_weight                      CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_stage                       CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_cd4                         CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_pregnancy                   CHAR(255) CHARACTER SET UTF8 NULL,
+    name_of_family_member                CHAR(255) CHARACTER SET UTF8 NULL,
+    age_of_family_member                 CHAR(255) CHARACTER SET UTF8 NULL,
+    family_member_set                    CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_test                             CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_test_facility                    CHAR(255) CHARACTER SET UTF8 NULL,
+    other_side_effects                   CHAR(255) CHARACTER SET UTF8 NULL,
+    other_tests_ordered                  CHAR(255) CHARACTER SET UTF8 NULL,
+    care_entry_point_set                 CHAR(255) CHARACTER SET UTF8 NULL,
+    treatment_supporter_tel_no           CHAR(255) CHARACTER SET UTF8 NULL,
+    other_reason_for_missing_arv         CHAR(255) CHARACTER SET UTF8 NULL,
+    current_regimen_other                CHAR(255) CHARACTER SET UTF8 NULL,
+    treatment_supporter_name             CHAR(255) CHARACTER SET UTF8 NULL,
+    cd4_classification_for_infants       CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_regimen_start_date          CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_regimen_set                 CHAR(255) CHARACTER SET UTF8 NULL,
+    transfer_out_date                    CHAR(255) CHARACTER SET UTF8 NULL,
+    transfer_out_set                     CHAR(255) CHARACTER SET UTF8 NULL,
+    health_education_disclosure          CHAR(255) CHARACTER SET UTF8 NULL,
+    other_referral_ordered               CHAR(255) CHARACTER SET UTF8 NULL,
+    age_in_months                        CHAR(255) CHARACTER SET UTF8 NULL,
+    test_result_type                     CHAR(255) CHARACTER SET UTF8 NULL,
+    lab_result_txt                       CHAR(255) CHARACTER SET UTF8 NULL,
+    lab_result_set                       CHAR(255) CHARACTER SET UTF8 NULL,
+    counselling_session_type             CHAR(255) CHARACTER SET UTF8 NULL,
+    cotrim_given                         CHAR(255) CHARACTER SET UTF8 NULL,
+    eid_visit_1_appointment_date         CHAR(255) CHARACTER SET UTF8 NULL,
+    feeding_status_at_eid_visit_1        CHAR(255) CHARACTER SET UTF8 NULL,
+    counselling_approach                 CHAR(255) CHARACTER SET UTF8 NULL,
+    current_hiv_test_result              CHAR(255) CHARACTER SET UTF8 NULL,
+    results_received_as_a_couple         CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_suspect                           CHAR(255) CHARACTER SET UTF8 NULL,
+    baseline_lactating                   CHAR(255) CHARACTER SET UTF8 NULL,
+    inh_dosage                           CHAR(255) CHARACTER SET UTF8 NULL,
+    inh_days_dispensed                   CHAR(255) CHARACTER SET UTF8 NULL,
+    age_unit                             CHAR(255) CHARACTER SET UTF8 NULL,
+    syphilis_test_result                 CHAR(255) CHARACTER SET UTF8 NULL,
+    syphilis_test_result_for_partner     CHAR(255) CHARACTER SET UTF8 NULL,
+    ctx_given_at_eid_visit_1             CHAR(255) CHARACTER SET UTF8 NULL,
+    nvp_given_at_eid_visit_1             CHAR(255) CHARACTER SET UTF8 NULL,
+    eid_visit_1_muac                     CHAR(255) CHARACTER SET UTF8 NULL,
+    medication_duration                  CHAR(255) CHARACTER SET UTF8 NULL,
+    clinical_impression_comment          CHAR(255) CHARACTER SET UTF8 NULL,
+    reason_for_appointment               CHAR(255) CHARACTER SET UTF8 NULL,
+    medication_history                   CHAR(255) CHARACTER SET UTF8 NULL,
+    quantity_of_medication               CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_with_rifampin_resistance_checking CHAR(255) CHARACTER SET UTF8 NULL,
+    specimen_sources                     CHAR(255) CHARACTER SET UTF8 NULL,
+    eid_immunisation_codes               CHAR(255) CHARACTER SET UTF8 NULL,
+    clinical_assessment_codes            CHAR(255) CHARACTER SET UTF8 NULL,
+    refiil_of_art_for_the_mother         CHAR(255) CHARACTER SET UTF8 NULL,
+    development_milestone                CHAR(255) CHARACTER SET UTF8 NULL,
+    pre_test_counseling_done             CHAR(255) CHARACTER SET UTF8 NULL,
+    hct_entry_point                      CHAR(255) CHARACTER SET UTF8 NULL,
+    linked_to_care                       CHAR(255) CHARACTER SET UTF8 NULL,
+    estimated_gestational_age            CHAR(255) CHARACTER SET UTF8 NULL,
+    eid_concept_type                     CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_viral_load_date                  CHAR(255) CHARACTER SET UTF8 NULL,
+    relationship_to_patient              CHAR(255) CHARACTER SET UTF8 NULL,
+    other_reason_for_appointment         CHAR(255) CHARACTER SET UTF8 NULL,
+    nutrition_assessment                 CHAR(255) CHARACTER SET UTF8 NULL,
+    art_pill_balance                     CHAR(255) CHARACTER SET UTF8 NULL,
+    differentiated_service_delivery      CHAR(255) CHARACTER SET UTF8 NULL,
+    stable_in_dsdm                       CHAR(255) CHARACTER SET UTF8 NULL,
+    reason_for_testing                   CHAR(255) CHARACTER SET UTF8 NULL,
+    previous_hiv_tests_date              CHAR(255) CHARACTER SET UTF8 NULL,
+    milligram_per_meter_squared          CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_testing_service_delivery_model   CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_syphillis_duo                    CHAR(255) CHARACTER SET UTF8 NULL,
+    prevention_services_received         CHAR(255) CHARACTER SET UTF8 NULL,
+    hiv_first_time_tester                CHAR(255) CHARACTER SET UTF8 NULL,
+    previous_hiv_test_results            CHAR(255) CHARACTER SET UTF8 NULL,
+    results_received_as_individual       CHAR(255) CHARACTER SET UTF8 NULL,
+    health_education_setting             CHAR(255) CHARACTER SET UTF8 NULL,
+    health_edu_intervation_approaches    CHAR(255) CHARACTER SET UTF8 NULL,
+    health_education_depression_status   CHAR(255) CHARACTER SET UTF8 NULL,
+    ovc_screening                        CHAR(255) CHARACTER SET UTF8 NULL,
+    art_preparation_readiness            CHAR(255) CHARACTER SET UTF8 NULL,
+    ovc_assessment                       CHAR(255) CHARACTER SET UTF8 NULL,
+    phdp_components                      CHAR(255) CHARACTER SET UTF8 NULL,
+    tpt_start_date                       CHAR(255) CHARACTER SET UTF8 NULL,
+    tpt_completion_date                  CHAR(255) CHARACTER SET UTF8 NULL,
+    advanced_disease_status              CHAR(255) CHARACTER SET UTF8 NULL,
+    family_member_hiv_status             CHAR(255) CHARACTER SET UTF8 NULL,
+    tpt_status                           CHAR(255) CHARACTER SET UTF8 NULL,
+    rpr_test_results                     CHAR(255) CHARACTER SET UTF8 NULL,
+    crag_test_results                    CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_lam_results                       CHAR(255) CHARACTER SET UTF8 NULL,
+    gender_based_violance                CHAR(255) CHARACTER SET UTF8 NULL,
+    dapsone_ctx_medset                   CHAR(255) CHARACTER SET UTF8 NULL,
+    tuberculosis_medication_set          CHAR(255) CHARACTER SET UTF8 NULL,
+    fluconazole_medication_set           CHAR(255) CHARACTER SET UTF8 NULL,
+    cervical_cancer_screening            CHAR(255) CHARACTER SET UTF8 NULL,
+    intention_to_conceive                CHAR(255) CHARACTER SET UTF8 NULL,
+    viral_load_test                      CHAR(255) CHARACTER SET UTF8 NULL,
+    genexpert_test                       CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_microscopy_results                CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_microscopy_test                   CHAR(255) CHARACTER SET UTF8 NULL,
+    tb_lam                               CHAR(255) CHARACTER SET UTF8 NULL,
+    rpr_test                             CHAR(255) CHARACTER SET UTF8 NULL,
+    crag_test                            CHAR(255) CHARACTER SET UTF8 NULL,
+    arv_med_set                          CHAR(255) CHARACTER SET UTF8 NULL,
+    quantity_unit                        CHAR(255) CHARACTER SET UTF8 NULL,
+    tpt_side_effects                     CHAR(255) CHARACTER SET UTF8 NULL,
+    split_into_drugs                     CHAR(255) CHARACTER SET UTF8 NULL,
+    lab_number                           CHAR(255) CHARACTER SET UTF8 NULL,
+    other_drug_dispensed_set             CHAR(255) CHARACTER SET UTF8 NULL,
+    test                                 CHAR(255) CHARACTER SET UTF8 NULL,
+    test_result                          CHAR(255) CHARACTER SET UTF8 NULL,
+    other_tests                          CHAR(255) CHARACTER SET UTF8 NULL,
+    refill_point_code                    CHAR(255) CHARACTER SET UTF8 NULL,
+    next_return_date_at_facility         CHAR(255) CHARACTER SET UTF8 NULL,
     PRIMARY KEY (id)
 );
 
@@ -3475,7 +3875,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
 
     PRIMARY KEY (id)
 )
-    CHARSET = UTF8MB4;
+    CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_encounter_hiv_art_card_client_id_index ON mamba_fact_encounter_hiv_art_card (client_id);
@@ -3800,7 +4200,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_summary
     hiv_enrollment_date                         DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_encounter_hiv_art_summary_client_id_index ON mamba_fact_encounter_hiv_art_summary (client_id);
@@ -4073,7 +4473,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     health_education_disclosure VARCHAR(255)  DEFAULT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 
 CREATE INDEX
@@ -4241,7 +4641,7 @@ CREATE TABLE mamba_fact_current_arv_regimen_start_date
     arv_regimen_start_date                 DATE  NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_current_arv_regimen_start_date_client_id_index ON mamba_fact_current_arv_regimen_start_date (client_id);
@@ -4350,7 +4750,7 @@ CREATE TABLE mamba_fact_patients_latest_adherence
     adherence VARCHAR(250) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_adherence_client_id_index ON mamba_fact_patients_latest_adherence (client_id);
@@ -4460,7 +4860,7 @@ CREATE TABLE mamba_fact_patients_latest_advanced_disease
     advanced_disease                        VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_advanced_disease_client_id_index ON mamba_fact_patients_latest_advanced_disease (client_id);
@@ -4572,7 +4972,7 @@ CREATE TABLE mamba_fact_patients_latest_arv_days_dispensed
     days         INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_arv_days_dispensed_client_id_index ON mamba_fact_patients_latest_arv_days_dispensed (client_id);
@@ -4682,7 +5082,7 @@ CREATE TABLE mamba_fact_patients_latest_current_regimen
     current_regimen VARCHAR(250) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_current_regimen_client_id_index ON mamba_fact_patients_latest_current_regimen (client_id);
@@ -4792,7 +5192,7 @@ CREATE TABLE mamba_fact_patients_latest_family_planning
     status         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_family_planning_client_id_index ON mamba_fact_patients_latest_family_planning (client_id);
@@ -4906,7 +5306,7 @@ CREATE TABLE mamba_fact_patients_latest_hepatitis_b_test
     result         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_hepatitis_b_test_client_id_index ON mamba_fact_patients_latest_hepatitis_b_test (client_id);
@@ -5020,7 +5420,7 @@ CREATE TABLE mamba_fact_patients_latest_viral_load
     specimen_type VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_viral_load_client_id_index ON mamba_fact_patients_latest_viral_load (client_id);
@@ -5133,7 +5533,7 @@ CREATE TABLE mamba_fact_patients_latest_iac_decision_outcome
     decision         TEXT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_iac_decision_outcome_client_id_index ON mamba_fact_patients_latest_iac_decision_outcome (client_id);
@@ -5254,7 +5654,7 @@ CREATE TABLE mamba_fact_patients_latest_iac_sessions
     sessions         INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_iac_sessions_client_id_index ON mamba_fact_patients_latest_iac_sessions (client_id);
@@ -5370,7 +5770,7 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_children
     no                            INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_tested_children_client_id_index ON mamba_fact_patients_latest_index_tested_children (client_id);
@@ -5493,7 +5893,7 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_children_status
     no                            INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_patients_latest_children_status_client_id_index ON mamba_fact_patients_latest_index_tested_children_status (client_id);
@@ -5624,7 +6024,7 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_partners
     no                            INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_partners_client_id_index ON mamba_fact_patients_latest_index_tested_partners (client_id);
@@ -5728,7 +6128,7 @@ CREATE TABLE mamba_fact_patients_latest_index_tested_partners_status
     no                            INT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_patients_latest_partners_status_client_id_index ON mamba_fact_patients_latest_index_tested_partners_status (client_id);
@@ -5851,7 +6251,7 @@ CREATE TABLE mamba_fact_patients_latest_nutrition_assesment
     status         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_nutrition_assesment_client_id_index ON mamba_fact_patients_latest_nutrition_assesment (client_id);
@@ -5963,7 +6363,7 @@ CREATE TABLE mamba_fact_patients_latest_nutrition_support
     support         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_nutrition_support_client_id_index ON mamba_fact_patients_latest_nutrition_support (client_id);
@@ -6074,7 +6474,7 @@ CREATE TABLE mamba_fact_patients_latest_regimen_line
     regimen                             VARCHAR(80) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_regimen_line_client_id_index ON mamba_fact_patients_latest_regimen_line (client_id);
@@ -6187,7 +6587,7 @@ CREATE TABLE mamba_fact_patients_latest_return_date
     return_date                             DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_return_date_client_id_index ON mamba_fact_patients_latest_return_date (client_id);
@@ -6298,7 +6698,7 @@ CREATE TABLE mamba_fact_patients_latest_tb_status
     status         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_tb_status_client_id_index ON mamba_fact_patients_latest_tb_status (client_id);
@@ -6410,7 +6810,7 @@ CREATE TABLE mamba_fact_patients_latest_tpt_status
     status         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_tpt_status_client_id_index ON mamba_fact_patients_latest_tpt_status (client_id);
@@ -6522,7 +6922,7 @@ CREATE TABLE mamba_fact_patients_latest_viral_load_ordered
     order_date                             DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_viral_load_ordered_client_id_index ON mamba_fact_patients_latest_viral_load_ordered (client_id);
@@ -6634,7 +7034,7 @@ CREATE TABLE mamba_fact_patients_latest_vl_after_iac
     results        VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_vl_after_iac_client_id_index ON mamba_fact_patients_latest_vl_after_iac (client_id);
@@ -6754,7 +7154,7 @@ CREATE TABLE mamba_fact_patients_latest_who_stage
     stage         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_who_stage_client_id_index ON mamba_fact_patients_latest_who_stage (client_id);
@@ -6865,7 +7265,7 @@ CREATE TABLE mamba_fact_patients_marital_status
     marital_status VARCHAR(80) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_marital_status_client_id_index ON mamba_fact_patients_marital_status (client_id);
@@ -6976,7 +7376,7 @@ CREATE TABLE mamba_fact_patients_nationality
     nationality                             VARCHAR(80) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_nationality_client_id_index ON mamba_fact_patients_nationality (client_id);
@@ -7090,7 +7490,7 @@ CREATE TABLE mamba_fact_patients_latest_patient_demographics
     dead       BIT NOT NULL DEFAULT 0,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_patient_demos_patient_id_index ON mamba_fact_patients_latest_patient_demographics (patient_id);
@@ -7206,7 +7606,7 @@ CREATE TABLE mamba_fact_art_patients
 
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_art_patients_client_id_index ON mamba_fact_art_patients (client_id);
@@ -7374,7 +7774,7 @@ CREATE TABLE mamba_fact_audit_tool_art_patients
     age_group                              VARCHAR(50) NULL,
     cacx_date                              DATE NULL,
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_audit_tool_art_patients_client_id_index ON mamba_fact_audit_tool_art_patients (client_id);
@@ -7804,7 +8204,7 @@ CREATE TABLE mamba_fact_active_in_care
 
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_active_in_care_client_id_index ON mamba_fact_active_in_care (client_id);
@@ -7924,7 +8324,7 @@ CREATE TABLE mamba_fact_patients_latest_pregnancy_status
     status         VARCHAR(100) NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_pregnancy_status_client_id_index ON mamba_fact_patients_latest_pregnancy_status (client_id);
@@ -8067,7 +8467,7 @@ CREATE TABLE mamba_fact_eid_patients
     BABY INT DEFAULT NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_eid_patients_client_id_index ON mamba_fact_eid_patients (client_id);
@@ -8820,7 +9220,7 @@ CREATE TABLE mamba_fact_encounter_non_suppressed_card
     date_hivr_results_recieved_at_facility DATE NULL,
     hivdr_results                          VARCHAR(80) NULL,
         PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 -- $END
 END //

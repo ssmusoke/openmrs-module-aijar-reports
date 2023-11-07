@@ -6,7 +6,7 @@ CREATE TABLE mamba_fact_patients_latest_return_date
     return_date                             DATE NULL,
 
     PRIMARY KEY (id)
-) CHARSET = UTF8MB4;
+) CHARSET = UTF8;
 
 CREATE INDEX
     mamba_fact_patients_latest_return_date_client_id_index ON mamba_fact_patients_latest_return_date (client_id);
