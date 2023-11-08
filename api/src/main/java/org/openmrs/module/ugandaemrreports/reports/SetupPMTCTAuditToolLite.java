@@ -57,6 +57,9 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(new Parameter("startDate", "From:", Date.class));
+		l.add(new Parameter("endDate", "To:", Date.class));
+		l.add(new Parameter("cohortList", "Cohort:", String.class));
 		return l;
 	}
 
@@ -102,6 +105,6 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1.32";
+		return "0.1.33";
 	}
 }

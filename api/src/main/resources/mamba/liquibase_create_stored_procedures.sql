@@ -2244,11 +2244,11 @@ WHERE md.id > 0
 -- Use locale preferred or Fully specified name
 
 -- Update to True if this field is an obs answer to an obs Question
-UPDATE mamba_dim_concept_metadata md
-    INNER JOIN mamba_dim_concept_answer ca
-    ON md.concept_id = ca.answer_concept
-SET md.concept_answer_obs = 1
-WHERE md.id > 0;
+-- UPDATE mamba_dim_concept_metadata md
+--     INNER JOIN mamba_dim_concept_answer ca
+--     ON md.concept_id = ca.answer_concept
+-- SET md.concept_answer_obs = 1
+-- WHERE md.id > 0;
 
 -- $END
 END~
@@ -2927,11 +2927,14 @@ WHERE TRUE;
 
 -- update obs_value_coded (UUIDs & Concept value names)
 UPDATE mamba_z_encounter_obs z
-    INNER JOIN mamba_dim_concept_metadata md
-    ON z.obs_value_coded = md.concept_id
-SET z.obs_value_text       = md.concept_name,
-    z.obs_value_coded_uuid = md.concept_uuid
-WHERE z.obs_value_coded IS NOT NULL;
+    INNER JOIN mamba_dim_concept_name cn
+ON z.obs_value_coded = cn.concept_id
+    INNER JOIN mamba_dim_concept c
+    ON z.obs_value_coded = c.concept_id
+    SET z.obs_value_text       = cn.name,
+        z.obs_value_coded_uuid = c.uuid
+WHERE z.obs_value_coded IS NOT NULL
+;
 
 -- $END
 END~

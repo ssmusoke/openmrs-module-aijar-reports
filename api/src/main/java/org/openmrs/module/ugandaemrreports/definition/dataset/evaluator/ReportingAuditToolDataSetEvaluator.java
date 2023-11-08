@@ -1,8 +1,10 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-
+import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
-import org.openmrs.api.db.hibernate.DbSessionFactory;
+import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -42,9 +44,34 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
         String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
         String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
 
+        Cohort baseCohort = null;
 
-        String ff = "select * from mamba_fact_audit_tool_art_patients ";
-        List<Object[]> results = getEtl(ff,context);
+        String query = "";
+        if (cohortSelected != null) {
+
+            if (cohortSelected.equals("Patients with encounters")) {
+
+                query = "select client_id from mamba_fact_encounter_hiv_art_card where encounter_date >='" + startDate + "' and encounter_date <= '" + endDate + "' group by client_id";
+
+                SqlCohortDefinition cd = new SqlCohortDefinition(query);
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+            } else if (cohortSelected.equals("Patients on appointment")) {
+                query = "SELECT client_id\n" +
+                        "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
+                        "WHERE returndate BETWEEN '" + startDate + "' AND '" + endDate + "'";
+                SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition(query);
+
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
+            }
+
+        }
+        String query1 = "SELECT audit_tool.*\n" +
+                " FROM  (" + query + ")A INNER JOIN mamba_fact_audit_tool_art_patients audit_tool on A.client_id = audit_tool.client_id ";
+
+        List<Object[]> results = getEtl(query1,context);
         PatientDataHelper pdh = new PatientDataHelper();
         if (results.size() > 0 && !results.isEmpty()) {
             for (Object[] o : results) {
@@ -121,7 +148,22 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
     }
 
 
+    public static String setToCommaSeparatedString(List<Integer> integerSet) {
+        // Convert the set to a sorted list (optional if you want a specific order)
+        List<Integer> integerList = new ArrayList<>(integerSet);
+        Collections.sort(integerList);
 
+        // Convert each integer element to a string
+        List<String> stringList = new ArrayList<>();
+        for (Integer i : integerList) {
+            stringList.add(String.valueOf(i));
+        }
+
+        // Join the elements with commas
+        String resultString = String.join(",", stringList);
+
+        return resultString;
+    }
 
     private List<Object[]> getEtl(String q,EvaluationContext context) {
         SqlQueryBuilder query = new SqlQueryBuilder();
