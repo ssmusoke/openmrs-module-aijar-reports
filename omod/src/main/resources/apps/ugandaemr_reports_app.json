@@ -805,7 +805,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
         "label": "HIV Care and Treatment Audit Tool",
-        "url": "ugandaemrreports/runCohortReport.page?reportDefinition=2017e2e0-fc1c-4ba2-8816-92f822290c84",
+        "url": "reportingui/runReport.page?reportDefinition=2017e2e0-fc1c-4ba2-8816-92f822290c84",
         "order": 4
       },
       {
@@ -813,7 +813,7 @@
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.cqi",
         "type": "link",
         "label": "PMTCT Audit tool",
-        "url": "ugandaemrreports/runCohortReport.page?reportDefinition=9f629343-0b9b-4717-a824-2ba02f853a96",
+        "url": "reportingui/runReport.page?reportDefinition=9f629343-0b9b-4717-a824-2ba02f853a96",
         "order": 7
       },
       {
