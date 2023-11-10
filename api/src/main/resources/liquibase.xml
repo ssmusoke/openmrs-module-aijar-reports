@@ -131,4 +131,33 @@
 
     </changeSet>
 
+    <changeSet id="ugandaemreports-101120231143" author="dbaluku">
+        <delete tableName="scheduler_task_config">
+            <where>name = 'Compute And Save Audit Tool Data'</where>
+        </delete>
+    </changeSet>
+
+    <changeSet id="ugandaemreports-101120231205" author="dbaluku">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                SELECT COUNT(*) FROM scheduler_task_config
+                WHERE schedulable_class = 'org.openmrs.module.ugandaemrreports.tasks.MambaTask'
+            </sqlCheck>
+        </preConditions>
+        <comment>running audit sql script to save data in flat table</comment>
+        <insert tableName="scheduler_task_config">
+            <column name="name" value="Reporting Tables Flattening task" />
+            <column name="description" value="Reporting Tables Flattening task" />
+            <column name="schedulable_class" value="org.openmrs.module.ugandaemrreports.tasks.MambaTask" />
+            <column name="start_time_pattern" value="MM/dd/yyyy HH:mm:ss" />
+            <column name="start_time" valueDate="2023-01-15T19:44:15" />
+            <column name="repeat_interval" value="86400" />
+            <column name="date_created" valueDate="CURRENT_TIMESTAMP" />
+            <column name="created_by" value="1" />
+            <column name="start_on_startup" value="1"/>
+            <column name="started" value="1"/>
+            <column name="uuid" value="f0470b87-7b5e-45eb-a584-5422e43342e1" />
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
