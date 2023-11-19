@@ -230,7 +230,7 @@
                                     <artifactItem>
                                         <groupId>org.openmrs.ohri</groupId>
                                         <artifactId>ohri-mamba-core</artifactId>
-                                        <version>1.0.0-SNAPSHOT</version>
+                                        <version>1.0.1</version>
                                         <type>jar</type>
                                         <outputDirectory>${project.build.directory}/mamba-etl</outputDirectory>
                                         <includes>_core/**</includes>
