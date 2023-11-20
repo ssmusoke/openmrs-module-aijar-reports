@@ -1,0 +1,32 @@
+{
+  "report_name": "non_suppressed_card",
+  "flat_table_name": "mamba_flat_encounter_non_suppressed",
+  "encounter_type_uuid": "38cb2232-30fc-4b1f-8df1-47c795771ee9",
+  "concepts_locale": "en",
+  "table_columns": {
+    "vl_qualitative": "dca12261-30ab-102d-86b0-7a5022ba4115",
+    "register_serial_number": "1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "cd4_count": "dcbcba2c-30ab-102d-86b0-7a5022ba4115",
+    "tuberculosis_status": "dce02aa1-30ab-102d-86b0-7a5022ba4115",
+    "current_arv_regimen": "dd2b0b4d-30ab-102d-86b0-7a5022ba4115",
+    "breast_feeding": "9e5ac0a8-6041-4feb-8c07-fe522ef5f9ab",
+    "eligible_for_art_pregnant": "63d67ada-bb8a-4ba0-a2a0-c60c9b7a00ce",
+    "clinical_impression_comment": "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "hiv_vl_date": "0b434cfa-b11c-4d14-aaa2-9aed6ca2da88",
+    "date_vl_results_received_at_facility": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "session_date": "163154AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "adherence_assessment_score": "1134AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "date_vl_results_given_to_client": "163156AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "serum_crag_screening_result": "164986AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "serum_crag_screening": "164987AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "restarted_iac": "164988AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "hivdr_sample_collected": "164989AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "tb_lam_results": "066b84a0-e18f-4cdd-a0d7-189454f4c7a4",
+    "date_cd4_sample_collected": "1ae6f663-d3b0-4527-bb8f-4ed18a9ca96c",
+    "date_of_vl_sample_collection": "c4389c60-32f5-4390-b7c6-9095ff880df5",
+    "on_fluconazole_treatment": "25a839f2-ab34-4a22-aa4d-558cdbcedc43",
+    "tb_lam_test_done": "8f1ac242-b497-41eb-b140-36ba6ab2d4d4",
+    "date_hivr_results_recieved_at_facility": "b913c0d9-f279-4e43-bb8e-3d1a4cf1ad4d",
+    "hivdr_results": "1c654215-fcc4-439f-a975-ced21995ed15"
+  }
+}

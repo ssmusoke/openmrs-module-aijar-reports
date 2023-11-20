@@ -1,0 +1,14 @@
+#############################################################################
+##################### Non suppressed card Fact Table SPs  ######################
+#############################################################################
+
+facts/facts_non_suppressed/sp_fact_encounter_non_suppressed_card_create.sql
+facts/facts_non_suppressed/sp_fact_encounter_non_suppressed_card_insert.sql
+facts/facts_non_suppressed/sp_fact_encounter_non_suppressed_card_update.sql
+facts/facts_non_suppressed/sp_fact_encounter_non_suppressed_card_query.sql
+facts/facts_non_suppressed/sp_fact_encounter_non_suppressed_card.sql
+
+#############################################################################
+######## A single stored procedure that invokes (CALLs) the above SPs #######
+#############################################################################
+sp_data_processing_derived_non_suppressed.sql

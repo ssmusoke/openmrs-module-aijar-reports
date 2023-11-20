@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -56,6 +57,9 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(new Parameter("startDate", "From:", Date.class));
+		l.add(new Parameter("endDate", "To:", Date.class));
+		l.add(new Parameter("cohortList", "Cohort:", String.class));
 		return l;
 	}
 
@@ -75,7 +79,7 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 	 */
 	@Override
 	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PMTCT_AUDIT_TOOLLite.xls");
+		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "PMTCT_AUDIT_TOOL_New.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
 		props.put("sortWeight", "5000");
@@ -101,6 +105,6 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1.9";
+		return "0.1.33";
 	}
 }

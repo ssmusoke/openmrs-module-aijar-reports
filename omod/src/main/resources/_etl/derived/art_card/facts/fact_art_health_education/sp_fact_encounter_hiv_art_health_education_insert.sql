@@ -1,0 +1,43 @@
+-- $BEGIN
+INSERT INTO mamba_fact_encounter_hiv_art_health_education (encounter_id,
+                                                       client_id,
+                                                       encounter_datetime,
+                                                       ovc_screening,
+                                                       other_linkages,
+                                                       ovc_assessment,
+                                                       art_preparation,
+                                                       depression_status,
+                                                       gender_based_violance,
+                                                       other_phdp_components,
+                                                       prevention_components,
+                                                       pss_issues_identified,
+                                                       intervation_approaches,
+                                                       linkages_and_refferals,
+                                                       clinic_contact_comments,
+                                                       scheduled_patient_visit,
+                                                       health_education_setting,
+                                                       clinical_impression_comment,
+                                                       health_education_disclosure)
+SELECT encounter_id,
+       client_id,
+       encounter_datetime,
+       ovc_screening,
+       other_linkages,
+       ovc_assessment,
+       art_preparation,
+       depression_status,
+       gender_based_violance,
+       other_phdp_components,
+       prevention_components,
+       pss_issues_identified,
+       intervation_approaches,
+       linkages_and_refferals,
+       clinic_contact_comments,
+       scheduled_patient_visit,
+       health_education_setting,
+       clinical_impression_comment,
+       health_education_disclosure
+
+
+FROM mamba_flat_encounter_art_health_education;
+-- $END

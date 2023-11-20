@@ -94,5 +94,9 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 	}
 
 
+	@Override
+	public void executeFlatteningScript() {
+		sessionFactory.getCurrentSession().createSQLQuery("CALL sp_mamba_data_processing_etl()").executeUpdate();
 
+	}
 }

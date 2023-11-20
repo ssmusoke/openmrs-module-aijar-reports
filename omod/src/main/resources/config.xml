@@ -396,5 +396,11 @@
 	</messages>
 	<!-- /Internationalization -->
 
+
+	<globalProperty>
+		<property>ugandaemrreports.mamba.flatten.last.successful.run.date</property>
+		<defaultValue></defaultValue>
+		<description>The last successful run date for mamba flatten</description>
+	</globalProperty>
 </module>
 
