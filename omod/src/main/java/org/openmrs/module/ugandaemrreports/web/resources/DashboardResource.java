@@ -35,8 +35,8 @@ public class DashboardResource extends DelegatingCrudResource<Dashboard> {
     }
 
     @Override
-    public Dashboard save(Dashboard dashboardReportObject) {
-        return Context.getService(UgandaEMRReportsService.class).saveDashboard(dashboardReportObject);
+    public Dashboard save(Dashboard dashboard) {
+        return Context.getService(UgandaEMRReportsService.class).saveDashboard(dashboard);
     }
 
     @Override

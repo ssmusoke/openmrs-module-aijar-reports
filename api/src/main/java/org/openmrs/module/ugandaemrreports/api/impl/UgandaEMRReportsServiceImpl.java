@@ -78,4 +78,9 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	public List<Dashboard> getAllDashboards() throws APIException {
 		return dao.getAllDashboards();
 	}
+
+	@Override
+	public void executeFlatteningScript() {
+		dao.executeFlatteningScript();
+	}
 }

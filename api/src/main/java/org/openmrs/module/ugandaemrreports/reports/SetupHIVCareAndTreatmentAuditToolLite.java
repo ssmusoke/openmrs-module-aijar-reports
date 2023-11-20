@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 
+import org.openmrs.Cohort;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -57,14 +59,21 @@ public class SetupHIVCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 	@Override
 	public List<Parameter> getParameters() {
 		List<Parameter> l = new ArrayList<Parameter>();
+		l.add(new Parameter("startDate", "From:", Date.class));
+		l.add(new Parameter("endDate", "To:", Date.class));
+		l.add(new Parameter("cohortList", "Cohort:", String.class));
 		return l;
 	}
 
 	@Override
 	public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
 		List<ReportDesign> l = new ArrayList<ReportDesign>();
-		l.add(buildReportDesign(reportDefinition));
+		l.add(buildExcelReportDesign(reportDefinition));
 		return l;
+	}
+	@Override
+	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+		return null;
 	}
 
 	/**
@@ -74,8 +83,8 @@ public class SetupHIVCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 	 * @param reportDefinition
 	 * @return The report design
 	 */
-	@Override
-	public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
+
+	public ReportDesign buildExcelReportDesign(ReportDefinition reportDefinition) {
 		ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HIV_AUDIT_TOOL_Lite.xls");
 		Properties props = new Properties();
 		props.put("repeatingSections", "sheet:1,row:2,dataset:A");
@@ -101,6 +110,6 @@ public class SetupHIVCareAndTreatmentAuditToolLite extends UgandaEMRDataExportMa
 
 	@Override
 	public String getVersion() {
-		return "0.1.8";
+		return "0.2.1.3";
 	}
 }

@@ -1,0 +1,24 @@
+{
+  "report_name": "ART_Health_Education_card",
+  "flat_table_name": "mamba_flat_encounter_art_health_education",
+  "encounter_type_uuid": "6d88e370-f2ba-476b-bf1b-d8eaf3b1b67e",
+  "concepts_locale": "en",
+  "table_columns": {
+    "scheduled_patient_visit": "dcda9857-30ab-102d-86b0-7a5022ba4115",
+    "health_education_disclosure": "8bdff534-6b4b-44ca-bc88-d088b3b53431",
+    "clinic_contact_comments": "1648e8a1-ed34-4318-87d8-735da453fb38",
+    "clinical_impression_comment": "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "health_education_setting": "2d5a0641-ef12-4101-be76-533d4ba651df",
+    "intervation_approaches": "eb7c1c34-59e5-46d5-beba-626694badd54",
+    "linkages_and_refferals": "a806304b-bef4-483f-b4d0-9514bfc80621",
+    "depression_status": "fe9a6bfc-b0db-4bf3-bab6-a8800dd93ded",
+    "ovc_screening": "c2f9c9f3-3e46-456c-9f17-7bb23c473f1b",
+    "art_preparation": "47502ce3-fc55-41e6-a61c-54a4404dd0e1",
+    "ovc_assessment": "cb07b087-effb-4679-9e1c-5bcc506b5599",
+    "prevention_components": "d788b8df-f25d-49e7-b946-bf5fe2d9407c",
+    "pss_issues_identified": "1760ea50-8f05-4675-aedd-d55f99541aa8",
+    "other_linkages": "609193dc-ea2a-4746-9074-675661c025d0",
+    "other_phdp_components": "ccaba007-ea6c-4dae-a3b0-07118ddf5008",
+    "gender_based_violance": "23a37400-f855-405b-9268-cb2d25b97f54"
+  }
+}
