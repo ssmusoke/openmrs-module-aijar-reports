@@ -1,6 +1,8 @@
 package org.openmrs.module.ugandaemrreports.web.resources;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -84,6 +86,7 @@ public class EvaluateReportDefinitionRestController {
 
                 return new ResponseEntity<Map<String, List<SimpleObject>>>(listMap, HttpStatus.OK);
             } else {
+
                 List<ReportDesign> reportDesigns = Context.getService(ReportService.class).getReportDesigns(rd, null, false);
 
                 ReportDesign reportDesign = reportDesigns.stream().filter(p -> "JSON".equals(p.getName())).findAny().orElse(null);
@@ -94,9 +97,9 @@ public class EvaluateReportDefinitionRestController {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
 
-                    String report = createJson(reportData, reportDesign);
+                    String report = createJson(reportData, reportDesign,rendertype);
 
-                    return new ResponseEntity<String>(report, HttpStatus.OK);
+                    return new ResponseEntity<Object>(report, HttpStatus.OK);
                 }else{
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -168,7 +171,7 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private String createJson(ReportData reportData, ReportDesign reportDesign) {
+    private String createJson(ReportData reportData, ReportDesign reportDesign,String renderType) {
         HashMap<String, String> map = new HashMap<>();
         String jsonText="";
         try {
@@ -180,6 +183,10 @@ public class EvaluateReportDefinitionRestController {
             TextTemplateRenderer textTemplateRenderer = new TextTemplateRenderer();
             ReportDesignResource reportDesignResource = textTemplateRenderer.getTemplate(reportDesign);
             String templateContents = new String(reportDesignResource.getContents(), StandardCharsets.UTF_8);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(templateContents);
+            templateContents = jsonNode.get(renderType).asText();
 
              jsonText = processJsonPayLoadTemplateWithWebView(pw, templateContents, reportData, reportDesign, fileOutputStream);
 
