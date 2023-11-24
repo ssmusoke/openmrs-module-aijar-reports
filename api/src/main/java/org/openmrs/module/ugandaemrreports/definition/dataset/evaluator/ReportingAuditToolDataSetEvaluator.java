@@ -1,10 +1,11 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
+import org.openmrs.Cohort;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.reporting.cohort.definition.SqlCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -16,6 +17,7 @@ import org.openmrs.module.reporting.evaluation.querybuilder.SqlQueryBuilder;
 import org.openmrs.module.reporting.evaluation.service.EvaluationService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.ReportingAuditToolDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -26,143 +28,147 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
     @Autowired
     EvaluationService evaluationService;
 
+    @Autowired
+    HIVMetadata hivMetadata;
+
+
     @Override
     public DataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext context) throws EvaluationException {
 
         ReportingAuditToolDataSetDefinition definition = (ReportingAuditToolDataSetDefinition) dataSetDefinition;
 
-        CohortDefinitionService cohortDefinitionService =Context.getService(CohortDefinitionService.class);
         SimpleDataSet dataSet = new SimpleDataSet(dataSetDefinition, context);
 
-        String endDate = DateUtil.formatDate(new Date(), "yyyy-MM-dd");
+        String cohortSelected = definition.getCohortList();
 
-        context = ObjectUtil.nvl(context, new EvaluationContext());
-        Date myendDate = new Date();
-        Map<String, Object> parameterValues = new HashMap<String, Object>();
-        Map<String, Object> parameterValuesForPreviousPeriod = new HashMap<String, Object>();
-        Calendar newDate = toCalendar(myendDate);
-        newDate.add(Calendar.MONTH, -3);
-        newDate.add(Calendar.DATE, 1);
+        String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
+        String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
 
-        Date startDate = newDate.getTime();
-        String startDateString = DateUtil.formatDate(startDate, "yyyy-MM-dd");
+        Cohort baseCohort = null;
 
-        parameterValues.put("startDate",startDate);
-        parameterValues.put("endDate", myendDate);
-        EvaluationContext myContext = new EvaluationContext();
-        myContext.setParameterValues(parameterValues);
+        String query = "";
+        if (cohortSelected != null) {
 
-        String dataQuery = "SELECT hiv.*,hiv1.*,ns.* from reporting_audit_tool_hiv hiv " +
-                "left join reporting_audit_tool_hiv1 hiv1 on hiv.PATTIENT_NO = hiv1.PATTIENT_NO left join reporting_audit_tool_non_suppressed ns on hiv.PATTIENT_NO = ns.PATTIENT_NO";
+            if (cohortSelected.equals("Patients with encounters")) {
 
+                query = "select client_id from mamba_fact_encounter_hiv_art_card where encounter_date >='" + startDate + "' and encounter_date <= '" + endDate + "' group by client_id";
 
-        SqlQueryBuilder q = new SqlQueryBuilder();
-        q.append(dataQuery);
-        List<Object[]> results = evaluationService.evaluateToList(q, context);
+                SqlCohortDefinition cd = new SqlCohortDefinition(query);
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+
+            } else if (cohortSelected.equals("Patients on appointment")) {
+                query = "SELECT client_id\n" +
+                        "FROM (SELECT client_id, MAX(return_visit_date) returndate FROM mamba_fact_encounter_hiv_art_card GROUP BY client_id) a\n" +
+                        "WHERE returndate BETWEEN '" + startDate + "' AND '" + endDate + "'";
+                SqlCohortDefinition appointmentCohortDefinition = new SqlCohortDefinition(query);
+
+                baseCohort = Context.getService(CohortDefinitionService.class).evaluate(appointmentCohortDefinition, context);
+            }
+
+        }
+        String query1 = "SELECT audit_tool.*\n" +
+                " FROM  (" + query + ")A INNER JOIN mamba_fact_audit_tool_art_patients audit_tool on A.client_id = audit_tool.client_id ";
+
+        List<Object[]> results = getEtl(query1,context);
         PatientDataHelper pdh = new PatientDataHelper();
-        if(results.size()>0 && !results.isEmpty()) {
+        if (results.size() > 0 && !results.isEmpty()) {
             for (Object[] o : results) {
-                int patientno = (int)o[1];
                 DataSetRow row = new DataSetRow();
-                pdh.addCol(row, "ID", o[2]);
-                pdh.addCol(row, "Gender", o[3]);
-                pdh.addCol(row, "Date of Birth",  o[4]);
-                pdh.addCol(row, "Age", o[5]);
-                pdh.addCol(row, "DSDM", o[8]);
-                pdh.addCol(row, "Last Visit Date",  o[10]);
-                pdh.addCol(row, "Next Appointment Date",  o[11]);
-                pdh.addCol(row, "Prescription Duration", o[12]);
-                pdh.addCol(row, "ART Start Date", o[13]);
-                pdh.addCol(row, "Current Regimen", (String)o[15]);
-                pdh.addCol(row, "Adherence", o[14]);
-                pdh.addCol(row, "VL Quantitative", o[16]);
+                pdh.addCol(row, "id", o[2]);
+                pdh.addCol(row, "nationality", o[3]);
+                pdh.addCol(row, "gender", o[8]);
+                pdh.addCol(row, "date_of_birth", o[5]);
+                pdh.addCol(row, "age", o[6]);
+                pdh.addCol(row, "marital_status", o[4]);
 
-                pdh.addCol(row, "Last TPT Status", o[17]);
-                pdh.addCol(row, "TB Status", o[18]);
-                pdh.addCol(row, "VL Date", o[23]);
-                pdh.addCol(row, "CHILD_AGE", o[24]);
-                pdh.addCol(row, "CHILD_KNOWN", o[25]);
+                pdh.addCol(row, "special_category", o[33]);
 
-                pdh.addCol(row, "PARTNER_AGE", o[28]);
-                pdh.addCol(row, "PARTNER_KNOWN", o[29]);
-                pdh.addCol(row, "PSY_CODES", o[32]);
+                pdh.addCol(row, "last_visit_date", o[9]);
+                pdh.addCol(row, "next_appointment_date", o[10]);
 
-                pdh.addCol(row, "OVC1", o[36]);
-                pdh.addCol(row, "OVC2", o[37]);
-                pdh.addCol(row, "CACX_STATUS", o[40]);
+                pdh.addCol(row, "client_status", o[11]);
+
+                pdh.addCol(row, "art_start_date", o[32]);
+//                pdh.addCol(row, "duration_on_art", o[13]);
+
+                pdh.addCol(row, "current_regimen", o[13]);
+                pdh.addCol(row, "regimen_line", o[34]);
+                pdh.addCol(row, "current_arv_regimen_start_date", o[14]);
+                pdh.addCol(row, "adherence", o[15]);
+//                pdh.addCol(row, "side_effects", o[14]);
+                pdh.addCol(row, "prescription_duration", o[16]);
+//                pdh.addCol(row, "sample_type", o[12]);
+
+                pdh.addCol(row, "current_vl", o[17]);
+                pdh.addCol(row, "vl_result_sample_date", o[18]);
+                pdh.addCol(row, "new_vl_sample_date", o[19]);
 
 
+                pdh.addCol(row, "iacs_no", o[44]);
+                pdh.addCol(row, "repeat_vl_collection_date", o[52]);
+                pdh.addCol(row, "repeat_vl_results_after_iacs", o[47]);
+                pdh.addCol(row, "hivdrt_results", o[45]);
+                pdh.addCol(row, "date_dr_results_received", o[46]);
+                pdh.addCol(row, "decision", o[48]);
+                pdh.addCol(row, "pss", o[36]);
+                pdh.addCol(row, "ovc_screening", o[41]);
+                pdh.addCol(row, "nutrition_status", o[22]);
+                pdh.addCol(row, "family_planning_status", o[21]);
+                pdh.addCol(row, "cacx_screening", o[26]);
+//                pdh.addCol(row, "diabetes_status", o[16]);
+//                pdh.addCol(row, "htn_status", o[16]);
+//                pdh.addCol(row, "mental_health_status", o[16]);
+                pdh.addCol(row, "hepatitis_b_status", o[24]);
+                pdh.addCol(row, "syphillis_status", o[25]);
 
-                //regimen lines
-                pdh.addCol(row, "REGIMEN_LINE", o[42]);
-                String ff = (String)o[43];
-                if(!ff.equals("")){
-                    pdh.addCol(row, "PP", "Priority population(PP)");
-                }else{
-                    pdh.addCol(row, "PP", "");
-                }
-                boolean dead =false;
-                int dead_no = (int)o[44];
-                if(dead_no==1)
-                    dead= true;
-                String TO = (String) o[45];
-                String daysString = (String)o[46];
-                String monthsString = (String)o[47];
-                pdh.addCol(row, "DurationOnART", monthsString);
-                int daysActive=-1;
+                pdh.addCol(row, "tpt_status", o[28]);
+                pdh.addCol(row, "tb_status", o[27]);
+//                pdh.addCol(row, "cd4_eligibility", o[23]);
+                pdh.addCol(row, "tb_lam_crag_results", o[29]);
+                pdh.addCol(row, "who_stage", o[30]);
+                pdh.addCol(row, "advanced_disease", o[20]);
+                pdh.addCol(row, "duration_on_art", o[49]);
+                pdh.addCol(row, "side_effects", o[50]);
+                pdh.addCol(row, "sample_type", o[51]);
+                pdh.addCol(row, "known_status_children", o[53]);
+                pdh.addCol(row, "pos_status_children", o[54]);
+                pdh.addCol(row, "known_status_spouse", o[55]);
+                pdh.addCol(row, "po_status_spouse", o[56]);
+                pdh.addCol(row, "age_group", o[57]);
 
-                try {
-                    if (daysString != "" || !daysString.equals("")) {
-                        daysActive = Integer.parseInt(daysString);
-                    }
-
-                }catch (NumberFormatException e){
-                    daysActive=999;
-                    pdh.addCol(row, "FOLLOWUP", "");
-                    e.printStackTrace();
-                }
-                if(daysActive <=0){
-                           pdh.addCol(row, "CLIENT_STATUS", "Active(TX_CURR)");
-                }else if(daysActive >=1 && daysActive<=7){
-                           pdh.addCol(row, "CLIENT_STATUS", "Missed Appointment(TX_CURR)");
-                }else if(daysActive >=8 && daysActive <= 28){
-                           pdh.addCol(row, "CLIENT_STATUS", "Lost (Pre-IIT)");
-                }else if(daysActive>28 && daysActive<=999) {
-                    pdh.addCol(row, "CLIENT_STATUS", "LTFU(TX-ML)");
-                }else{
-                   pdh.addCol(row, "CLIENT_STATUS", "Lost to Followup");
-                }
-
-                pdh.addCol(row, "IAC", o[48]);
-                pdh.addCol(row, "Current Regimen Date",  o[77]);
-                pdh.addCol(row, "HEALTH_EDUC_DATE", o[53]);
-                pdh.addCol(row, "NEW_BLED_DATE", o[52]);
-                pdh.addCol(row, "ISSUES", o[54]);
-                pdh.addCol(row, "APPROACHES", o[55]);
-                pdh.addCol(row, "PSS4", o[69]);
-
-                pdh.addCol(row, "VL_AFTER_IAC", o[82]);
-                pdh.addCol(row, "VL_COPIES", o[83]);
-                pdh.addCol(row, "HIVDR_SAMPLE_COLLECTED", o[81]);
-                pdh.addCol(row, "RESULTS_RECEIVED", o[84]);
-                pdh.addCol(row, "HIVDR_RESULTS", o[85]);
-                pdh.addCol(row, "HIVDR_RESULTS_DATE", o[86]);
-                pdh.addCol(row, "DECISION_OUTCOME", o[88]);
-                pdh.addCol(row, "NEW REGIMEN", o[89]);
 
                 dataSet.addRow(row);
             }
 
-
         }
+
         return dataSet;
     }
 
-    public static Calendar toCalendar(Date date){
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        return cal;
+
+    public static String setToCommaSeparatedString(List<Integer> integerSet) {
+        // Convert the set to a sorted list (optional if you want a specific order)
+        List<Integer> integerList = new ArrayList<>(integerSet);
+        Collections.sort(integerList);
+
+        // Convert each integer element to a string
+        List<String> stringList = new ArrayList<>();
+        for (Integer i : integerList) {
+            stringList.add(String.valueOf(i));
+        }
+
+        // Join the elements with commas
+        String resultString = String.join(",", stringList);
+
+        return resultString;
     }
 
-
+    private List<Object[]> getEtl(String q,EvaluationContext context) {
+        SqlQueryBuilder query = new SqlQueryBuilder();
+        query.append(q);
+        List<Object[]> results = evaluationService.evaluateToList(query, context);
+        return results;
+    }
 }
