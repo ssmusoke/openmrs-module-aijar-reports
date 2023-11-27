@@ -198,6 +198,6 @@ public class SetupTxCurrent_28Days2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.4.7";
+        return "0.5.1";
     }
 }
