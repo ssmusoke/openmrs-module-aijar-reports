@@ -47,6 +47,9 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
         return "c5e1cdab-399b-461e-ba93-d435a01df03b";
     }
 
+    public String getJSONDesignUuid() {
+        return "cdeedae3-7f8e-4817-8f29-a6a75d0468de";
+    }
     @Override
     public String getUuid() {
         return "de1f5094-10eb-4f3d-af0c-30c286f50f64";
@@ -74,7 +77,10 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -89,6 +95,9 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_PMTCT_STAT_2019.xls");
     }
 
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_TX_TB.json");
+    }
     @Override
     public ReportDefinition constructReportDefinition() {
         CohortDefinitionDimension ageDimension =commonDimensionLibrary.getPMTCT_STAT_AgeGenderGroup();
@@ -118,6 +127,6 @@ public class SetupMERPMTCTSTAT2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.3";
+        return "0.5";
     }
 }

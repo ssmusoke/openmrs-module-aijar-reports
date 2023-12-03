@@ -1,3 +1,1541 @@
 {
-    "json": "{\n        \"resourceType\": \"MeasureReport\",\n        \"id\": \"MER-TX-NEW\",\n        \"status\": \"complete\",\n        \"type\": \"summary\",\n        \"measure\": \"https://ugisl.mets.or.ug/Measure/mer-tx-indicators\",\n        \"meta\": {\n            \"source\": \"UgandaEMR\",\n            \"versionId\": \"#aijar.version#\"\n        },\n        \"identifier\": [\n            {\n                \"id\": \"UID\",\n                \"value\": \"#S.dhis_uuid#\"\n            }\n        ],\n        \"period\": {\n            \"start\": \"#parameter.startDate|YYYY-MM-dd#\",\n            \"end\": \"#parameter.endDate|YYYY-MM-dd#\"\n        },\n        \"group\": [\n            {\n                \"code\": {\n                    \"coding\": [\n                        {\n                            \"code\": \"TXN01\",\n                            \"display\": \"TX_NEW (N, Age/Sex) : Number of adults and children newly enrolled  on ART\"\n                        }\n                    ]\n                },\n                \"measureScore\": {\n                    \"value\":\n                    #\n                    TX.TOTAL\n                    #\n                },\n                \"stratifier\": [\n                    {\n                        \"code\": [\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"AGE_GROUP\",\n                                        \"display\": \"Age group dissaggregation\"\n                                    }\n                                ]\n                            },\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"SEX\",\n                                        \"display\": \"Sex dissaggregation\"\n                                    }\n                                ]\n                            }\n                        ],\n                        \"stratum\": [\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P0Y--P1Y\",\n                                                    \"display\": \"No  of Children < 1 years\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.2a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P0Y--P1Y\",\n                                                    \"display\": \"No  of Children < 1 years\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.2b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P1Y--P5Y\",\n                                                    \"display\": \"No of Children 1 - 4 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.3a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P1Y--P5Y\",\n                                                    \"display\": \"No of Children 1 - 4 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.3b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P5Y--P10Y\",\n                                                    \"display\": \"No. of Children 5 - 9 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.4a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P5Y--P10Y\",\n                                                    \"display\": \"No. of Children 5 - 9 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.4b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P10Y--P15Y\",\n                                                    \"display\": \"No. of Children 10 - 14 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.5a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P10Y--P15Y\",\n                                                    \"display\": \"No. of Children 10 - 14 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.5b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P15Y--P20Y\",\n                                                    \"display\": \"No. of Children 15 - 19 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.6a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P15Y--P20Y\",\n                                                    \"display\": \"No. of Children 15 - 19 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.6b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P20Y--P25Y\",\n                                                    \"display\": \"No. of Individuals 20 - 24 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.7a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P20Y--P25Y\",\n                                                    \"display\": \"No. of Individuals 20 - 24 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.7b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P25Y--P30Y\",\n                                                    \"display\": \"No. of Individuals 25 - 29 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.8a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P25Y--P30Y\",\n                                                    \"display\": \"No. of Individuals 25 - 29 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.8b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P30Y--P35Y\",\n                                                    \"display\": \"No. of Individuals 30 - 34 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.9a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P30Y--P35Y\",\n                                                    \"display\": \"No. of Individuals 30 - 34 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.9b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P35Y--P40Y\",\n                                                    \"display\": \"No. of Individuals 35 - 39 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.10a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P35Y--P40Y\",\n                                                    \"display\": \"No. of Individuals 35 - 39 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.10b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P40Y--P45Y\",\n                                                    \"display\": \"No. of Individuals 40 - 44 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.11a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P40Y--P45Y\",\n                                                    \"display\": \"No. of Individuals 40 - 44 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.11b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P45Y--P50Y\",\n                                                    \"display\": \"No. of Individuals 45 – 49 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.12a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P45Y--P50Y\",\n                                                    \"display\": \"No. of Individuals 45 – 49 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.12b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P50Y--P55Y\",\n                                                    \"display\": \"No. of Individuals 50 - 54 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.13a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P50Y--P55Y\",\n                                                    \"display\": \"No. of Individuals 50 - 54 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.13b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P55Y--P60Y\",\n                                                    \"display\": \"No. of Individuals 55 - 59 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.14a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P55Y--P60Y\",\n                                                    \"display\": \"No. of Individuals 55 - 59 yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.14b\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P60Y--P9999Y\",\n                                                    \"display\": \"No. of Individuals 60+ yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.15a\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"AGE_GROUP\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"P60Y--P9999Y\",\n                                                    \"display\": \"No. of Individuals 60+ yrs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.15b\n                                    #\n                                }\n                            }\n                        ]\n                    }\n                ]\n            },\n            {\n                \"code\": {\n                    \"coding\": [\n                        {\n                            \"code\": \"TXN02\",\n                            \"display\": \"TX_NEW (N, Breast feeding at initiation of ART ,Sex) : Number of adults and children newly enrolled on ART\"\n                        }\n                    ]\n                },\n                \"measureScore\": {\n                    \"value\":\n                    #\n                    TX.LAC\n                    #\n                },\n                \"stratifier\": [\n                    {\n                        \"code\": [\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"SEX\",\n                                        \"display\": \"Sex dissaggregation\"\n                                    }\n                                ]\n                            }\n                        ],\n                        \"stratum\": [\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.LAC\n                                    #\n                                }\n                            }\n                        ]\n                    }\n                ]\n            },\n            {\n                \"code\": {\n                    \"coding\": [\n                        {\n                            \"code\": \"TXN03\",\n                            \"display\": \"TX_NEW (N, Key Population/Sex) : Number of adults and children newly enrolled on ART\"\n                        }\n                    ]\n                },\n                \"measureScore\": {\n                    \"value\":\n                    #\n                    TX.TOTAL_KP\n                    #\n                },\n                \"stratifier\": [\n                    {\n                        \"code\": [\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"KEY_POPULATION\",\n                                        \"display\": \"Key Population dissaggregation\"\n                                    }\n                                ]\n                            },\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"SEX\",\n                                        \"display\": \"Sex dissaggregation\"\n                                    }\n                                ]\n                            }\n                        ],\n                        \"stratum\": [\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"KEY_POPULATION\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"PWID\",\n                                                    \"display\": \"People who inject Drugs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.PWIDSf\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"KEY_POPULATION\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"PWID\",\n                                                    \"display\": \"People who inject Drugs\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.PWIDSm\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"KEY_POPULATION\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"PIPs\",\n                                                    \"display\": \"People in prisons and other closed settings (PIPs)\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.PIPf\n                                    #\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"KEY_POPULATION\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"PIPs\",\n                                                    \"display\": \"People in prisons and other closed settings (PIPs)\"\n                                                }\n                                            ]\n                                        }\n                                    },\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\":\n                                    #\n                                    TX.PIPm\n                                    #\n                                }\n                            }\n                        ]\n                    }\n                ]\n            },\n            {\n                \"code\": {\n                    \"coding\": [\n                        {\n                            \"code\": \"TXN05\",\n                            \"display\": \"TX_NEW (N, Sex) : Focused Population\"\n                        }\n                    ]\n                },\n                \"measureScore\": {\n                    \"value\": 0\n                },\n                \"stratifier\": [\n                    {\n                        \"code\": [\n                            {\n                                \"coding\": [\n                                    {\n                                        \"code\": \"SEX\",\n                                        \"display\": \"Sex dissaggregation\"\n                                    }\n                                ]\n                            }\n                        ],\n                        \"stratum\": [\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"F\",\n                                                    \"display\": \"Female\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\": 0\n                                }\n                            },\n                            {\n                                \"component\": [\n                                    {\n                                        \"code\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"SEX\"\n                                                }\n                                            ]\n                                        },\n                                        \"value\": {\n                                            \"coding\": [\n                                                {\n                                                    \"code\": \"M\",\n                                                    \"display\": \"Male\"\n                                                }\n                                            ]\n                                        }\n                                    }\n                                ],\n                                \"measureScore\": {\n                                    \"value\": 0\n                                }\n                            }\n                        ]\n                    }\n                ]\n            }\n        ]\n    }",
-    "html": "<table><thead><tr><th></th><th colspan=\"5\">HIBRID&nbsp;&nbsp;&nbsp;Data Collection Tool: MER 2.0 Indicator - TX_NEW (Based&nbsp;&nbsp;&nbsp;on MER 2 0 Indicator Reference Guide September 2020 v2.6)</th></tr></thead><tbody><tr><td>Indicator&nbsp;&nbsp;&nbsp;Code</td><td colspan=\"2\">Indicator&nbsp;&nbsp;&nbsp;Name &amp; Disaggregation's</td><td>Female</td><td>Male</td><td>Total</td></tr><tr><td rowspan=\"21\">TX_NEW</td><td colspan=\"2\">Numerator:&nbsp;&nbsp;&nbsp;Number of adults and children newly enrolled on antiretroviral therapy<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ART)</td><td>0</td><td>0</td><td>0</td></tr><tr><td rowspan=\"12\">Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by age and sex (finer Disaggregates)</td><td>&lt;&nbsp;&nbsp;&nbsp;1 year</td><td>#TX.2a#</td><td>#TX.2b#</td><td>0</td></tr><tr><td>1\u00AD 4 years</td><td>#TX.3a#</td><td>#TX.3b#</td><td>0</td></tr><tr><td>5\u00AD 9 years</td><td>#TX.4a#</td><td>#TX.4b#</td><td>0</td></tr><tr><td>10\u00AD14 years</td><td>#TX.5a#</td><td>#TX.5b#</td><td>0</td></tr><tr><td>15\u00AD19 years</td><td>#TX.6a#</td><td>#TX.6b#</td><td>0</td></tr><tr><td>20\u00AD24 years</td><td>#TX.7a#</td><td>#TX.7b#</td><td>0</td></tr><tr><td>25\u00AD29 years</td><td>#TX.8a#</td><td>#TX.8b#</td><td>0</td></tr><tr><td>30\u00AD34 years</td><td>#TX.9a#</td><td>#TX.9b#</td><td>0</td></tr><tr><td>35\u00AD39 years</td><td>#TX.10a#</td><td>#TX.10b#</td><td>0</td></tr><tr><td>40-44 years</td><td>#TX.11a#</td><td>#TX.11b#</td><td>0</td></tr><tr><td>45\u00AD49 years</td><td>#TX.12a#</td><td>#TX.12b#</td><td>0</td></tr><tr><td>50-54 years</td><td>#TX.13a#</td><td>#TX.13b#</td><td>0</td></tr><tr><td> </td><td>55-59&nbsp;&nbsp;&nbsp;years</td><td>#TX.14a#</td><td>#TX.14b#</td><td>0</td></tr><tr><td> </td><td>60+years</td><td>#TX.15a#</td><td>#TX.15b#</td><td>0</td></tr><tr><td>Number of adults and children newly enrolled on ART&nbsp;&nbsp;&nbsp;disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Breastfeeding Status</td><td>Breast&nbsp;&nbsp;&nbsp;feeding at initiation of ART</td><td>#TX.LAC#</td><td> </td><td>0</td></tr><tr><td rowspan=\"5\">Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Key  Population<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(KP should be counted in only one KP group to avoid&nbsp;&nbsp;&nbsp;double-counting.)</td><td>People&nbsp;&nbsp;&nbsp;who inject Drugs (PWID)</td><td>#TX.PWIDSf#</td><td>#TX.PWIDSm#</td><td>0</td></tr><tr><td>Men who have Sex with men (MSM)</td><td> </td><td> </td><td>0</td></tr><tr><td>Transgender people (TG)</td><td> </td><td> </td><td>0</td></tr><tr><td>Female Sex Workers (FSW)</td><td> </td><td> </td><td>0</td></tr><tr><td>People in prisons and other enclosed settings&nbsp;&nbsp;&nbsp;(Incarcerated Population) </td><td>#TX.PIPf#</td><td>#TX.PIPm#</td><td>0</td></tr><tr><td></td><td>Focused&nbsp;&nbsp;&nbsp;population</td><td> </td><td> </td><td> </td><td>0</td></tr></tbody></table>"}
+    "json": {
+        "resourceType": "MeasureReport",
+        "id": "MER-TX-NEW",
+        "status": "complete",
+        "type": "summary",
+        "measure": "https://ugisl.mets.or.ug/Measure/mer-tx-indicators",
+        "meta": {
+            "source": "UgandaEMR",
+            "versionId": "#aijar.version#"
+        },
+        "identifier": [
+            {
+                "id": "UID",
+                "value": "#S.dhis_uuid#"
+            }
+        ],
+        "period": {
+            "start": "#parameter.startDate|YYYY-MM-dd#",
+            "end": "#parameter.endDate|YYYY-MM-dd#"
+        },
+        "group": [
+            {
+                "code": {
+                    "coding": [
+                        {
+                            "code": "TXN01",
+                            "display": "TX_NEW (N, Age/Sex) : Number of adults and children newly enrolled  on ART"
+                        }
+                    ]
+                },
+                "measureScore": {
+                    "value": #TX.TOTAL#
+                },
+                "stratifier": [
+                    {
+                        "code": [
+                            {
+                                "coding": [
+                                    {
+                                        "code": "AGE_GROUP",
+                                        "display": "Age group dissaggregation"
+                                    }
+                                ]
+                            },
+                            {
+                                "coding": [
+                                    {
+                                        "code": "SEX",
+                                        "display": "Sex dissaggregation"
+                                    }
+                                ]
+                            }
+                        ],
+                        "stratum": [
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P0Y--P1Y",
+                                                    "display": "No  of Children < 1 years"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.2a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P0Y--P1Y",
+                                                    "display": "No  of Children < 1 years"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.2b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P1Y--P5Y",
+                                                    "display": "No of Children 1 - 4 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.3a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P1Y--P5Y",
+                                                    "display": "No of Children 1 - 4 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.3b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P5Y--P10Y",
+                                                    "display": "No. of Children 5 - 9 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.4a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P5Y--P10Y",
+                                                    "display": "No. of Children 5 - 9 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.4b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P10Y--P15Y",
+                                                    "display": "No. of Children 10 - 14 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.5a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P10Y--P15Y",
+                                                    "display": "No. of Children 10 - 14 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.5b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P15Y--P20Y",
+                                                    "display": "No. of Children 15 - 19 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.6a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P15Y--P20Y",
+                                                    "display": "No. of Children 15 - 19 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.6b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P20Y--P25Y",
+                                                    "display": "No. of Individuals 20 - 24 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.7a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P20Y--P25Y",
+                                                    "display": "No. of Individuals 20 - 24 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.7b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P25Y--P30Y",
+                                                    "display": "No. of Individuals 25 - 29 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.8a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P25Y--P30Y",
+                                                    "display": "No. of Individuals 25 - 29 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.8b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P30Y--P35Y",
+                                                    "display": "No. of Individuals 30 - 34 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.9a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P30Y--P35Y",
+                                                    "display": "No. of Individuals 30 - 34 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.9b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P35Y--P40Y",
+                                                    "display": "No. of Individuals 35 - 39 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.10a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P35Y--P40Y",
+                                                    "display": "No. of Individuals 35 - 39 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.10b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P40Y--P45Y",
+                                                    "display": "No. of Individuals 40 - 44 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.11a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P40Y--P45Y",
+                                                    "display": "No. of Individuals 40 - 44 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.11b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P45Y--P50Y",
+                                                    "display": "No. of Individuals 45 – 49 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.12a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P45Y--P50Y",
+                                                    "display": "No. of Individuals 45 – 49 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.12b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P50Y--P55Y",
+                                                    "display": "No. of Individuals 50 - 54 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.13a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P50Y--P55Y",
+                                                    "display": "No. of Individuals 50 - 54 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.13b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P55Y--P60Y",
+                                                    "display": "No. of Individuals 55 - 59 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.14a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P55Y--P60Y",
+                                                    "display": "No. of Individuals 55 - 59 yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.14b#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P60Y--P9999Y",
+                                                    "display": "No. of Individuals 60+ yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.15a#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "AGE_GROUP"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "P60Y--P9999Y",
+                                                    "display": "No. of Individuals 60+ yrs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.15b#
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "code": {
+                    "coding": [
+                        {
+                            "code": "TXN02",
+                            "display": "TX_NEW (N, Breast feeding at initiation of ART ,Sex) : Number of adults and children newly enrolled on ART"
+                        }
+                    ]
+                },
+                "measureScore": {
+                    "value": #TX.LAC#
+                },
+                "stratifier": [
+                    {
+                        "code": [
+                            {
+                                "coding": [
+                                    {
+                                        "code": "SEX",
+                                        "display": "Sex dissaggregation"
+                                    }
+                                ]
+                            }
+                        ],
+                        "stratum": [
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.LAC#
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "code": {
+                    "coding": [
+                        {
+                            "code": "TXN03",
+                            "display": "TX_NEW (N, Key Population/Sex) : Number of adults and children newly enrolled on ART"
+                        }
+                    ]
+                },
+                "measureScore": {
+                    "value":  #TX.TOTAL_KP#
+                },
+                "stratifier": [
+                    {
+                        "code": [
+                            {
+                                "coding": [
+                                    {
+                                        "code": "KEY_POPULATION",
+                                        "display": "Key Population dissaggregation"
+                                    }
+                                ]
+                            },
+                            {
+                                "coding": [
+                                    {
+                                        "code": "SEX",
+                                        "display": "Sex dissaggregation"
+                                    }
+                                ]
+                            }
+                        ],
+                        "stratum": [
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "KEY_POPULATION"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "PWID",
+                                                    "display": "People who inject Drugs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value":  #TX.PWIDSf#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "KEY_POPULATION"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "PWID",
+                                                    "display": "People who inject Drugs"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.PWIDSm#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "KEY_POPULATION"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "PIPs",
+                                                    "display": "People in prisons and other closed settings (PIPs)"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.PIPf#
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "KEY_POPULATION"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "PIPs",
+                                                    "display": "People in prisons and other closed settings (PIPs)"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": #TX.PIPm#
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "code": {
+                    "coding": [
+                        {
+                            "code": "TXN05",
+                            "display": "TX_NEW (N, Sex) : Focused Population"
+                        }
+                    ]
+                },
+                "measureScore": {
+                    "value": 0
+                },
+                "stratifier": [
+                    {
+                        "code": [
+                            {
+                                "coding": [
+                                    {
+                                        "code": "SEX",
+                                        "display": "Sex dissaggregation"
+                                    }
+                                ]
+                            }
+                        ],
+                        "stratum": [
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "F",
+                                                    "display": "Female"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": 0
+                                }
+                            },
+                            {
+                                "component": [
+                                    {
+                                        "code": {
+                                            "coding": [
+                                                {
+                                                    "code": "SEX"
+                                                }
+                                            ]
+                                        },
+                                        "value": {
+                                            "coding": [
+                                                {
+                                                    "code": "M",
+                                                    "display": "Male"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "measureScore": {
+                                    "value": 0
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    "html": "<table><thead><tr><th></th><th colspan='5'>HIBRID&nbsp;&nbsp;&nbsp;Data Collection Tool: MER 2.0 Indicator - TX_NEW (Based&nbsp;&nbsp;&nbsp;on MER 2 0 Indicator Reference Guide September 2020 v2.6)</th></tr></thead><tbody><tr><td>Indicator&nbsp;&nbsp;&nbsp;Code</td><td colspan='2'>Indicator&nbsp;&nbsp;&nbsp;Name &amp; Disaggregation's</td><td>Female</td><td>Male</td><td>Total</td></tr><tr><td rowspan='21'>TX_NEW</td><td colspan='2'>Numerator:&nbsp;&nbsp;&nbsp;Number of adults and children newly enrolled on antiretroviral therapy<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ART)</td><td>0</td><td>0</td><td>0</td></tr><tr><td rowspan='12'>Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by age and sex (finer Disaggregates)</td><td>&lt;&nbsp;&nbsp;&nbsp;1 year</td><td>#TX.2a#</td><td>#TX.2b#</td><td>0</td></tr><tr><td>1\u00AD 4 years</td><td>#TX.3a#</td><td>#TX.3b#</td><td>0</td></tr><tr><td>5\u00AD 9 years</td><td>#TX.4a#</td><td>#TX.4b#</td><td>0</td></tr><tr><td>10\u00AD14 years</td><td>#TX.5a#</td><td>#TX.5b#</td><td>0</td></tr><tr><td>15\u00AD19 years</td><td>#TX.6a#</td><td>#TX.6b#</td><td>0</td></tr><tr><td>20\u00AD24 years</td><td>#TX.7a#</td><td>#TX.7b#</td><td>0</td></tr><tr><td>25\u00AD29 years</td><td>#TX.8a#</td><td>#TX.8b#</td><td>0</td></tr><tr><td>30\u00AD34 years</td><td>#TX.9a#</td><td>#TX.9b#</td><td>0</td></tr><tr><td>35\u00AD39 years</td><td>#TX.10a#</td><td>#TX.10b#</td><td>0</td></tr><tr><td>40-44 years</td><td>#TX.11a#</td><td>#TX.11b#</td><td>0</td></tr><tr><td>45\u00AD49 years</td><td>#TX.12a#</td><td>#TX.12b#</td><td>0</td></tr><tr><td>50-54 years</td><td>#TX.13a#</td><td>#TX.13b#</td><td>0</td></tr><tr><td> </td><td>55-59&nbsp;&nbsp;&nbsp;years</td><td>#TX.14a#</td><td>#TX.14b#</td><td>0</td></tr><tr><td> </td><td>60+years</td><td>#TX.15a#</td><td>#TX.15b#</td><td>0</td></tr><tr><td>Number of adults and children newly enrolled on ART&nbsp;&nbsp;&nbsp;disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Breastfeeding Status</td><td>Breast&nbsp;&nbsp;&nbsp;feeding at initiation of ART</td><td>#TX.LAC#</td><td> </td><td>0</td></tr><tr><td rowspan='5'>Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Key  Population<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(KP should be counted in only one KP group to avoid&nbsp;&nbsp;&nbsp;double-counting.)</td><td>People&nbsp;&nbsp;&nbsp;who inject Drugs (PWID)</td><td>#TX.PWIDSf#</td><td>#TX.PWIDSm#</td><td>0</td></tr><tr><td>Men who have Sex with men (MSM)</td><td> </td><td> </td><td>0</td></tr><tr><td>Transgender people (TG)</td><td> </td><td> </td><td>0</td></tr><tr><td>Female Sex Workers (FSW)</td><td> </td><td> </td><td>0</td></tr><tr><td>People in prisons and other enclosed settings&nbsp;&nbsp;&nbsp;(Incarcerated Population) </td><td>#TX.PIPf#</td><td>#TX.PIPm#</td><td>0</td></tr><tr><td></td><td>Focused&nbsp;&nbsp;&nbsp;population</td><td> </td><td> </td><td> </td><td>0</td></tr></tbody></table>"}

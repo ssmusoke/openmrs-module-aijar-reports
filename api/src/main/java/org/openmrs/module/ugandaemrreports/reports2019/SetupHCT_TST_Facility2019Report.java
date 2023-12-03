@@ -55,6 +55,9 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
     public String getExcelDesignUuid() {
         return "c531e014-4a14-4fde-bd15-19f4c36b4d77";
     }
+    public String getJSONDesignUuid() {
+        return "b177a052-2d2e-40bb-889b-d85c3ac21bf7";
+    }
 
     @Override
     public String getUuid() {
@@ -82,7 +85,10 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -97,6 +103,9 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_HTS_TST_Facility_2019.xls");
     }
 
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_HTS_TST.json");
+    }
     @Override
     public ReportDefinition constructReportDefinition() {
 
@@ -248,6 +257,6 @@ public class SetupHCT_TST_Facility2019Report extends UgandaEMRDataExportManager 
 
     @Override
     public String getVersion() {
-        return "0.3.2";
+        return "0.3.4";
     }
 }
