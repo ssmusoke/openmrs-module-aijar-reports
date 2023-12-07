@@ -12,6 +12,13 @@ derived/art_card/sp_data_processing_derived_hiv_art_card.sql
 derived/non_suppressed/sp_data_processing_derived_non_suppressed.sql
 
 #############################################################################
+############################ dimensions folder SPs  ############################
+#############################################################################
+dimensions/dim_concept_name/sp_mamba_dim_concept_name.sql
+dimensions/dim_concept_name/sp_mamba_dim_concept_name_create.sql
+dimensions/dim_concept_name/sp_mamba_dim_concept_name_insert.sql
+
+#############################################################################
 ##### A single SP that CALLs all SPs inside the derived & base folders ######
 #############################################################################
 sp_mamba_data_processing_etl.sql
