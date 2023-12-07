@@ -1,0 +1,15 @@
+#############################################################################
+##################### HTS/ART Fact Encounter Table SPs  #####################
+#############################################################################
+facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_create.sql
+facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_insert.sql
+facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment.sql
+facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_query.sql
+facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_update.sql
+
+
+
+#############################################################################
+###### A single stored procedure that invokes (CALLs) the above SPs #########
+#############################################################################
+sp_data_processing_derived_IIT.sql
