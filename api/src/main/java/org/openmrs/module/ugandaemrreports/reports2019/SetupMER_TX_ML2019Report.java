@@ -53,6 +53,9 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
         return "adba307c-742d-46e1-8cf2-980054a7b35f";
     }
 
+    public String getJSONDesignUuid() {
+        return "1fb2bcc5-11f0-4dc2-8987-fce4dc979392";
+    }
     @Override
     public String getUuid() {
         return "5b922f62-f844-4962-9465-61cf8f52f4b7";
@@ -80,9 +83,15 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_TX_ML_2019.json");
+    }
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding
      * properties and other metadata to the report design
@@ -195,6 +204,6 @@ public class SetupMER_TX_ML2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.2.3";
+        return "3.2.5";
     }
 }

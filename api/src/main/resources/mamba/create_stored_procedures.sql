@@ -82,7 +82,63 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  fn_json_etract  ----------------------------
+-- ----------------------  fn_mamba_age_calculator  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS fn_mamba_age_calculator;
+
+CREATE FUNCTION fn_mamba_age_calculator (birthdate DATE,deathDate DATE) RETURNS  Integer
+    DETERMINISTIC
+BEGIN
+    DECLARE onDate DATE;
+    DECLARE today DATE;
+    DECLARE bday DATE;
+    DECLARE age INT;
+    DECLARE todaysMonth INT;
+    DECLARE bdayMonth INT;
+    DECLARE todaysDay INT;
+    DECLARE bdayDay INT;
+
+    SET onDate = NULL ;
+
+    IF birthdate IS NULL THEN
+        RETURN NULL;
+    ELSE
+        SET today = CURDATE();
+
+        IF onDate IS NOT NULL THEN
+            SET today = onDate;
+        END IF;
+
+        IF deathDate IS NOT NULL AND today > deathDate THEN
+            SET today = deathDate;
+        END IF;
+
+        SET bday = birthdate;
+        SET age = YEAR(today) - YEAR(bday);
+        SET todaysMonth = MONTH(today);
+        SET bdayMonth = MONTH(bday);
+        SET todaysDay = DAY(today);
+        SET bdayDay = DAY(bday);
+
+        IF todaysMonth < bdayMonth THEN
+            SET age = age - 1;
+        ELSEIF todaysMonth = bdayMonth AND todaysDay < bdayDay THEN
+            SET age = age - 1;
+        END IF;
+
+        RETURN age;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_extract  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 DELIMITER //
@@ -788,10 +844,11 @@ BEGIN
                     WHERE TABLE_NAME = @tbl_name
                       AND TABLE_SCHEMA = Database());
 
-    SELECT GROUP_CONCAT(DISTINCT
-                        CONCAT(' MAX(CASE WHEN column_label = ''', column_label, ''' THEN ',
-                               fn_mamba_get_obs_value_column(concept_datatype), ' END) ', column_label)
-                        ORDER BY id ASC)
+    SELECT
+        GROUP_CONCAT(DISTINCT
+            CONCAT(' MAX(CASE WHEN column_label = ''', column_label, ''' THEN ',
+                fn_mamba_get_obs_value_column(concept_datatype), ' END) ', column_label)
+            ORDER BY id ASC)
     INTO @column_labels
     FROM mamba_dim_concept_metadata
     WHERE flat_table_name = @tbl_name;
@@ -951,12 +1008,15 @@ SET @report_count = 1;
                     SELECT JSON_VALUE_BY_KEY(@column_array,  @field_name) INTO @concept_uuid;
 
                     SET @tbl_name = '';
-                    INSERT INTO mamba_dim_concept_metadata(report_name,
-                                                           flat_table_name,
-                                                           encounter_type_uuid,
-                                                           column_label,
-                                                           concept_uuid,
-                                                           concepts_locale)
+                    INSERT INTO mamba_dim_concept_metadata
+                        (
+                            report_name,
+                            flat_table_name,
+                            encounter_type_uuid,
+                            column_label,
+                            concept_uuid,
+                            concepts_locale
+                        )
                     VALUES (REMOVE_QUOTES(@report_name),
                             REMOVE_QUOTES(@flat_table_name),
                             REMOVE_QUOTES(@encounter_type),
@@ -1183,6 +1243,8 @@ CREATE TABLE mamba_dim_patient_identifier_type
     id                         INT         NOT NULL AUTO_INCREMENT,
     patient_identifier_type_id INT         NOT NULL,
     name                       VARCHAR(50) NOT NULL,
+    description                TEXT        NULL,
+    uuid                       CHAR(38)    NOT NULL,
 
     PRIMARY KEY (id)
 )
@@ -1193,6 +1255,9 @@ CREATE INDEX mamba_dim_patient_identifier_type_id_index
 
 CREATE INDEX mamba_dim_patient_identifier_type_name_index
     ON mamba_dim_patient_identifier_type (name);
+
+CREATE INDEX mamba_dim_patient_identifier_type_uuid_index
+    ON mamba_dim_patient_identifier_type (uuid);
 
 -- $END
 END //
@@ -1213,10 +1278,14 @@ BEGIN
 -- $BEGIN
 
 INSERT INTO mamba_dim_patient_identifier_type (patient_identifier_type_id,
-                                               name)
+                                               name,
+                                               description,
+                                               uuid)
 SELECT patient_identifier_type_id,
-       name
-FROM patient_identifier_type c;
+       name,
+       description,
+       uuid
+FROM patient_identifier_type;
 
 -- $END
 END //
@@ -1556,7 +1625,7 @@ CREATE TABLE mamba_dim_concept_name
     concept_name_id   INT          NOT NULL,
     concept_id        INT,
     name              VARCHAR(255) NOT NULL,
-    locale            VARCHAR(50)  not null,
+    locale            VARCHAR(50)  NOT NULL,
     locale_preferred  TINYINT,
     concept_name_type VARCHAR(255),
 
@@ -1609,9 +1678,10 @@ SELECT cn.concept_name_id,
        cn.locale,
        cn.locale_preferred,
        cn.concept_name_type
-FROM concept_name cn;
--- WHERE cn.locale = 'en'
---  AND cn.locale_preferred = 1;
+FROM concept_name cn
+ WHERE cn.locale = 'en'
+  AND cn.locale_preferred = 1
+    AND cn.voided = 0;
 
 -- $END
 END //
@@ -2296,6 +2366,7 @@ SET md.concept_datatype = c.datatype,
 WHERE md.id > 0
   AND cn.locale = md.concepts_locale
   AND IF(cn.locale_preferred = 1, cn.locale_preferred = 1, cn.concept_name_type = 'FULLY_SPECIFIED');
+
 -- Use locale preferred or Fully specified name
 
 -- Update to True if this field is an obs answer to an obs Question
@@ -2349,21 +2420,27 @@ CREATE TABLE mamba_dim_person
 (
     id                  INT          NOT NULL AUTO_INCREMENT,
     person_id           INT          NOT NULL,
-    birthdate           VARCHAR(255) NULL,
-    birthdate_estimated TINYINT   NOT NULL,
-    dead                TINYINT   NOT NULL,
+    birthdate           DATE         NULL,
+    birthdate_estimated TINYINT      NOT NULL,
+    age                 INT          NULL,
+    dead                TINYINT      NOT NULL,
     death_date          DATETIME     NULL,
-    deathdate_estimated TINYINT   NOT NULL,
+    deathdate_estimated TINYINT      NOT NULL,
     gender              VARCHAR(255) NULL,
     date_created        DATETIME     NOT NULL,
-    voided              TINYINT   NOT NULL,
+    person_name_short   VARCHAR(255) NULL,
+    person_name_long    TEXT         NULL,
+    uuid                CHAR(38)     NOT NULL,
+    voided              TINYINT      NOT NULL,
 
     PRIMARY KEY (id)
-)
-    CHARSET = UTF8;
+) CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_person_person_id_index
     ON mamba_dim_person (person_id);
+
+CREATE INDEX mamba_dim_person_uuid_index
+    ON mamba_dim_person (uuid);
 
 -- $END
 END //
@@ -2383,26 +2460,65 @@ CREATE PROCEDURE sp_mamba_dim_person_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person (person_id,
-                              birthdate,
-                              birthdate_estimated,
-                              dead,
-                              death_date,
-                              deathdate_estimated,
-                              gender,
-                              date_created,
-                              voided)
+INSERT INTO mamba_dim_person
+(person_id,
+ birthdate,
+ birthdate_estimated,
+ age,
+ dead,
+ death_date,
+ deathdate_estimated,
+ gender,
+ date_created,
+ person_name_short,
+ person_name_long,
+ uuid,
+ voided)
+
 SELECT psn.person_id,
        psn.birthdate,
        psn.birthdate_estimated,
+       fn_mamba_age_calculator(birthdate, death_date)               AS age,
        psn.dead,
        psn.death_date,
        psn.deathdate_estimated,
        psn.gender,
        psn.date_created,
+       CONCAT_WS(' ', prefix, given_name, middle_name, family_name) AS person_name_short,
+       CONCAT_WS(' ', prefix, given_name, middle_name, family_name_prefix, family_name, family_name2,
+                 family_name_suffix, degree)
+                                                                    AS person_name_long,
+       psn.uuid,
        psn.voided
-FROM person psn;
+FROM person psn
+         INNER JOIN person_name pn
+                    on psn.person_id = pn.person_id
+where pn.preferred=1;
 
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_person_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_person_update;
+
+CREATE PROCEDURE sp_mamba_dim_person_update()
+BEGIN
+-- $BEGIN
+UPDATE mamba_dim_person dp
+    INNER JOIN person psn  on psn.person_id = dp.person_id
+    INNER JOIN  person_name pn on psn.person_id = pn.person_id
+    SET   person_name_short = CONCAT_WS(' ',prefix,given_name,middle_name,family_name),
+        person_name_long = CONCAT_WS(' ',prefix,given_name, middle_name,family_name_prefix, family_name,family_name2,family_name_suffix, degree)
+WHERE  pn.preferred=1
+;
 -- $END
 END //
 
@@ -2423,7 +2539,7 @@ BEGIN
 
 CALL sp_mamba_dim_person_create();
 CALL sp_mamba_dim_person_insert();
-
+CALL sp_mamba_dim_person_update();
 -- $END
 END //
 
@@ -2452,6 +2568,7 @@ CREATE TABLE mamba_dim_patient_identifier
     preferred             TINYINT     NOT NULL,
     location_id           INT         NULL,
     date_created          DATETIME    NOT NULL,
+    uuid                  CHAR(38)    NOT NULL,
     voided                TINYINT     NOT NULL,
 
     PRIMARY KEY (id)
@@ -2469,6 +2586,9 @@ CREATE INDEX mamba_dim_patient_identifier_identifier_index
 
 CREATE INDEX mamba_dim_patient_identifier_identifier_type_index
     ON mamba_dim_patient_identifier (identifier_type);
+
+CREATE INDEX mamba_dim_patient_identifier_uuid_index
+    ON mamba_dim_patient_identifier (uuid);
 
 -- $END
 END //
@@ -2494,6 +2614,7 @@ INSERT INTO mamba_dim_patient_identifier (patient_id,
                                           preferred,
                                           location_id,
                                           date_created,
+                                          uuid,
                                           voided)
 SELECT patient_id,
        identifier,
@@ -2501,6 +2622,7 @@ SELECT patient_id,
        preferred,
        location_id,
        date_created,
+       uuid,
        voided
 FROM patient_identifier;
 
@@ -2604,27 +2726,32 @@ CREATE PROCEDURE sp_mamba_dim_person_name_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person_name (person_name_id,
-                                   person_id,
-                                   preferred,
-                                   prefix,
-                                   given_name,
-                                   middle_name,
-                                   family_name_prefix,
-                                   family_name,
-                                   family_name2,
-                                   family_name_suffix)
-SELECT pn.person_name_id,
-       pn.person_id,
-       pn.preferred,
-       pn.prefix,
-       pn.given_name,
-       pn.middle_name,
-       pn.family_name_prefix,
-       pn.family_name,
-       pn.family_name2,
-       pn.family_name_suffix
-FROM person_name pn;
+INSERT INTO mamba_dim_person_name
+    (
+        person_name_id,
+        person_id,
+        preferred,
+        prefix,
+        given_name,
+        middle_name,
+        family_name_prefix,
+        family_name,
+        family_name2,
+        family_name_suffix
+    )
+    SELECT
+        pn.person_name_id,
+        pn.person_id,
+        pn.preferred,
+        pn.prefix,
+        pn.given_name,
+        pn.middle_name,
+        pn.family_name_prefix,
+        pn.family_name,
+        pn.family_name2,
+        pn.family_name_suffix
+    FROM
+        person_name pn;
 
 -- $END
 END //
@@ -2772,6 +2899,270 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_create;
+
+CREATE PROCEDURE sp_mamba_dim_user_create()
+BEGIN
+-- $BEGIN
+    CREATE TABLE mamba_dim_users
+    (
+        id            INT          NOT NULL AUTO_INCREMENT,
+        user_id       INT          NOT NULL,
+        system_id     VARCHAR(50)  NOT NULL,
+        username      VARCHAR(50)  NULL,
+        creator       INT          NOT NULL,
+        date_created  DATETIME     NOT NULL,
+        changed_by    INT          NULL,
+        date_changed  DATETIME     NULL,
+        person_id     INT          NOT NULL,
+        retired       TINYINT(1)   NOT NULL,
+        retired_by    INT          NULL,
+        date_retired  DATETIME     NULL,
+        retire_reason VARCHAR(255) NULL,
+        uuid          CHAR(38)     NOT NULL,
+        email         VARCHAR(255) NULL,
+
+        PRIMARY KEY (id)
+    )
+        CHARSET = UTF8;
+
+    CREATE INDEX mamba_dim_users_user_id_index
+        ON mamba_dim_users (user_id);
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_insert;
+
+CREATE PROCEDURE sp_mamba_dim_user_insert()
+BEGIN
+-- $BEGIN
+    INSERT INTO mamba_dim_users
+        (
+            user_id,
+            system_id,
+            username,
+            creator,
+            date_created,
+            changed_by,
+            date_changed,
+            person_id,
+            retired,
+            retired_by,
+            date_retired,
+            retire_reason,
+            uuid,
+            email
+        )
+        SELECT
+            user_id,
+            system_id,
+            username,
+            creator,
+            date_created,
+            changed_by,
+            date_changed,
+            person_id,
+            retired,
+            retired_by,
+            date_retired,
+            retire_reason,
+            uuid,
+            email
+        FROM users c;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_update;
+
+CREATE PROCEDURE sp_mamba_dim_user_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user;
+
+CREATE PROCEDURE sp_mamba_dim_user()
+BEGIN
+-- $BEGIN
+    CALL sp_mamba_dim_user_create();
+    CALL sp_mamba_dim_user_insert();
+    CALL sp_mamba_dim_user_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_create;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_dim_relationship
+(
+    relationship_id INT                  NOT NULL AUTO_INCREMENT,
+    person_a        INT                  NOT NULL,
+    relationship    INT                  NOT NULL,
+    person_b        INT                  NOT NULL,
+    start_date      DATETIME             NULL,
+    end_date        DATETIME             NULL,
+    creator         INT                  NOT NULL,
+    date_created    DATETIME             NOT NULL,
+    date_changed    DATETIME             NULL,
+    changed_by      INT                  NULL,
+    voided          TINYINT(1)           NOT NULL ,
+    voided_by       INT                  NULL,
+    date_voided     DATETIME             NULL,
+    void_reason     VARCHAR(255)         NULL,
+    uuid            CHAR(38)             NOT NULL,
+
+    PRIMARY KEY (relationship_id)
+)
+
+    CHARSET = UTF8MB3;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_insert;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_relationship
+    (
+        relationship_id,
+        person_a,
+        relationship,
+        person_b,
+        start_date,
+        end_date,
+        creator,
+        date_created,
+        date_changed,
+        changed_by,
+        voided,
+        voided_by,
+        date_voided,
+        void_reason,
+        uuid
+    )
+SELECT
+    relationship_id,
+    person_a,
+    relationship,
+    person_b,
+    start_date,
+    end_date,
+    creator,
+    date_created,
+    date_changed,
+    changed_by,
+    voided,
+    voided_by,
+    date_voided,
+    void_reason,
+    uuid
+FROM relationship;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_update;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship;
+
+CREATE PROCEDURE sp_mamba_dim_relationship()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_relationship_create();
+CALL sp_mamba_dim_relationship_insert();
+CALL sp_mamba_dim_relationship_update();
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_dim_agegroup_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -2788,7 +3179,9 @@ CREATE TABLE mamba_dim_agegroup
     id              INT         NOT NULL AUTO_INCREMENT,
     age             INT         NULL,
     datim_agegroup  VARCHAR(50) NULL,
+    datim_age_val   INT         NULL,
     normal_agegroup VARCHAR(50) NULL,
+    normal_age_val   INT        NULL,
 
     PRIMARY KEY (id)
 )
@@ -2832,6 +3225,28 @@ CREATE PROCEDURE sp_mamba_dim_agegroup_update()
 BEGIN
 -- $BEGIN
 
+-- update age_value b
+UPDATE mamba_dim_agegroup a
+SET datim_age_val =
+    CASE
+        WHEN a.datim_agegroup = '<1' THEN 1
+        WHEN a.datim_agegroup = '1-4' THEN 2
+        WHEN a.datim_agegroup = '5-9' THEN 3
+        WHEN a.datim_agegroup = '10-14' THEN 4
+        WHEN a.datim_agegroup = '15-19' THEN 5
+        WHEN a.datim_agegroup = '20-24' THEN 6
+        WHEN a.datim_agegroup = '25-29' THEN 7
+        WHEN a.datim_agegroup = '30-34' THEN 8
+        WHEN a.datim_agegroup = '35-39' THEN 9
+        WHEN a.datim_agegroup = '40-44' THEN 10
+        WHEN a.datim_agegroup = '45-49' THEN 11
+        WHEN a.datim_agegroup = '50-54' THEN 12
+        WHEN a.datim_agegroup = '55-59' THEN 13
+        WHEN a.datim_agegroup = '60-64' THEN 14
+        WHEN a.datim_agegroup = '65+' THEN 15
+    END
+WHERE a.datim_agegroup IS NOT NULL;
+
 -- $END
 END //
 
@@ -2852,7 +3267,7 @@ BEGIN
 
 CALL sp_mamba_dim_agegroup_create();
 CALL sp_mamba_dim_agegroup_insert();
--- CALL sp_mamba_dim_agegroup_update();
+CALL sp_mamba_dim_agegroup_update();
 END //
 
 DELIMITER ;
@@ -2937,44 +3352,47 @@ CREATE PROCEDURE sp_mamba_z_encounter_obs_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_z_encounter_obs (encounter_id,
-                                   person_id,
-                                   obs_datetime,
-                                   encounter_datetime,
-                                   encounter_type_uuid,
-                                   obs_question_concept_id,
-                                   obs_value_text,
-                                   obs_value_numeric,
-                                   obs_value_coded,
-                                   obs_value_datetime,
-                                   obs_value_complex,
-                                   obs_value_drug,
-                                   obs_question_uuid,
-                                   obs_answer_uuid,
-                                   obs_value_coded_uuid,
-                                   status,
-                                   voided)
-SELECT o.encounter_id,
-       o.person_id,
-       o.obs_datetime,
-       e.encounter_datetime,
-       e.encounter_type_uuid,
-       o.concept_id     AS obs_question_concept_id,
-       o.value_text     AS obs_value_text,
-       o.value_numeric  AS obs_value_numeric,
-       o.value_coded    AS obs_value_coded,
-       o.value_datetime AS obs_value_datetime,
-       o.value_complex  AS obs_value_complex,
-       o.value_drug     AS obs_value_drug,
-       NULL             AS obs_question_uuid,
-       NULL             AS obs_answer_uuid,
-       NULL             AS obs_value_coded_uuid,
-       o.status,
-       o.voided
-FROM obs o
-         INNER JOIN mamba_dim_encounter e
-                    ON o.encounter_id = e.encounter_id
-WHERE o.encounter_id IS NOT NULL;
+INSERT INTO mamba_z_encounter_obs
+    (
+        encounter_id,
+        person_id,
+        obs_datetime,
+        encounter_datetime,
+        encounter_type_uuid,
+        obs_question_concept_id,
+        obs_value_text,
+        obs_value_numeric,
+        obs_value_coded,
+        obs_value_datetime,
+        obs_value_complex,
+        obs_value_drug,
+        obs_question_uuid,
+        obs_answer_uuid,
+        obs_value_coded_uuid,
+        status,
+        voided
+    )
+    SELECT o.encounter_id,
+           o.person_id,
+           o.obs_datetime,
+           e.encounter_datetime,
+           e.encounter_type_uuid,
+           o.concept_id     AS obs_question_concept_id,
+           o.value_text     AS obs_value_text,
+           o.value_numeric  AS obs_value_numeric,
+           o.value_coded    AS obs_value_coded,
+           o.value_datetime AS obs_value_datetime,
+           o.value_complex  AS obs_value_complex,
+           o.value_drug     AS obs_value_drug,
+           NULL             AS obs_question_uuid,
+           NULL             AS obs_answer_uuid,
+           NULL             AS obs_value_coded_uuid,
+           o.status,
+           o.voided
+    FROM obs o
+             INNER JOIN mamba_dim_encounter e
+                        ON o.encounter_id = e.encounter_id
+    WHERE o.encounter_id IS NOT NULL;
 
 -- $END
 END //
@@ -3004,11 +3422,11 @@ WHERE TRUE;
 -- update obs_value_coded (UUIDs & Concept value names)
 UPDATE mamba_z_encounter_obs z
     INNER JOIN mamba_dim_concept_name cn
-ON z.obs_value_coded = cn.concept_id
+    ON z.obs_value_coded = cn.concept_id
     INNER JOIN mamba_dim_concept c
     ON z.obs_value_coded = c.concept_id
-    SET z.obs_value_text       = cn.name,
-        z.obs_value_coded_uuid = c.uuid
+SET z.obs_value_text       = cn.name,
+    z.obs_value_coded_uuid = c.uuid
 WHERE z.obs_value_coded IS NOT NULL
 ;
 
@@ -3077,6 +3495,10 @@ CALL sp_mamba_dim_person;
 CALL sp_mamba_dim_person_name;
 
 CALL sp_mamba_dim_person_address;
+
+CALL sp_mamba_dim_user;
+
+CALL sp_mamba_dim_relationship;
 
 CALL sp_mamba_dim_patient_identifier;
 

@@ -58,6 +58,9 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
         return "94478e16-3916-4c88-a4ac-0f279dab1a80";
     }
 
+    public String getJSONDesignUuid() {
+        return "686314c0-c373-4304-9e36-0e0cd9982107";
+    }
     @Override
     public String getUuid() {
         return "d055029b-655f-4adb-84a0-405351892e09";
@@ -85,7 +88,10 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -98,6 +104,10 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_TX_TB.xls");
+    }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_TX_TB.json");
     }
 
     @Override
@@ -181,6 +191,6 @@ public class SetupMER_TX_TBReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.0";
+        return "0.2.2";
     }
 }
