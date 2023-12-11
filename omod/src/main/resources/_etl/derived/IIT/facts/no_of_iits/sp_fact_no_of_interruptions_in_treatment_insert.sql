@@ -2,7 +2,7 @@
 INSERT INTO mamba_fact_patients_no_of_interruptions(client_id,
                                                         encounter_date,
                                                         return_date,
-                                                    no_of_interruptions)
+                                                    days_interrupted)
 SELECT
     client_id,
     encounter_date,

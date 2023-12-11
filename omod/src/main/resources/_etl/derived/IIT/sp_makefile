@@ -7,7 +7,11 @@ facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment.sql
 facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_query.sql
 facts/no_of_iits/sp_fact_no_of_interruptions_in_treatment_update.sql
 
-
+facts/patient_interruption_details/sp_fact_patient_interruption_details.sql
+facts/patient_interruption_details/sp_fact_patient_interruption_details_create.sql
+facts/patient_interruption_details/sp_fact_patient_interruption_details_insert.sql
+facts/patient_interruption_details/sp_fact_patient_interruption_details_query.sql
+facts/patient_interruption_details/sp_fact_patient_interruption_details_update.sql
 
 #############################################################################
 ###### A single stored procedure that invokes (CALLs) the above SPs #########
