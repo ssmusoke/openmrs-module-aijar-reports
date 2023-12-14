@@ -1,0 +1,43 @@
+{
+  "report_uuid": "640d1942-0943-46d2-8cca-109db963b1e5",
+  "report_name": "HMIS 1061A",
+  "report_fields": [
+    {
+      "indicator_name": "HC01",
+      "database_table": "mamba_fact_audit_tool_art_patients",
+      "base_column": "client_id",
+      "table_column": "baseline_regimen_start_date",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "parameters": [
+        "startDate",
+        "endDate"
+      ],
+      "operation": "between",
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "1a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "1b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "1c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "1d"
+        }
+      ]
+    }
+  ]
+}
