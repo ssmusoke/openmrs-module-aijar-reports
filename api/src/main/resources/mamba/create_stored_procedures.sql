@@ -3648,6 +3648,37 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_agegroup_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup_create;
+
+CREATE PROCEDURE sp_mamba_dim_agegroup_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_dim_agegroup
+(
+    id              INT         NOT NULL AUTO_INCREMENT,
+    age             INT         NULL,
+    datim_agegroup  VARCHAR(50) NULL,
+    datim_age_val   INT         NULL,
+    normal_agegroup VARCHAR(50) NULL,
+    normal_age_val   INT        NULL,
+    moh_age_group VARCHAR(50) NULL,
+    moh_age_val   INT        NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_fact_encounter_hiv_art_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -9599,6 +9630,74 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_mamba_calculate_moh_age_group  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS fn_mamba_calculate_moh_age_group;
+
+DELIMITER //
+
+CREATE FUNCTION fn_mamba_calculate_moh_age_group(age INT) RETURNS VARCHAR(15)
+    DETERMINISTIC
+BEGIN
+    DECLARE agegroup VARCHAR(15);
+    IF (age < 1) THEN
+        SET agegroup = '<1';
+    ELSEIF age between 1 and 4 THEN
+        SET agegroup = '1-4';
+    ELSEIF age between 5 and 9 THEN
+        SET agegroup = '5-9';
+    ELSEIF age between 10 and 14 THEN
+        SET agegroup = '10-14';
+    ELSEIF age between 15 and 19 THEN
+        SET agegroup = '15-19';
+    ELSEIF age between 20 and 24 THEN
+        SET agegroup = '20-24';
+    ELSEIF age between 25 and 29 THEN
+        SET agegroup = '25-29';
+    ELSEIF age between 30 and 34 THEN
+        SET agegroup = '30-34';
+    ELSEIF age between 35 and 39 THEN
+        SET agegroup = '35-39';
+    ELSEIF age between 40 and 44 THEN
+        SET agegroup = '40-44';
+    ELSEIF age between 45 and 49 THEN
+        SET agegroup = '45-49';
+    ELSE
+        SET agegroup = '50+';
+    END IF;
+
+    RETURN (agegroup);
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_insert_age_group  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS sp_mamba_load_agegroup;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_mamba_load_agegroup()
+BEGIN
+    DECLARE age INT DEFAULT 0;
+    WHILE age <= 120
+        DO
+            INSERT INTO mamba_dim_agegroup(age, datim_agegroup, normal_agegroup,moh_age_group)
+            VALUES (age, fn_mamba_calculate_agegroup(age), IF(age < 15, '<15', '15+'),fn_mamba_calculate_moh_age_group(age));
+            SET age = age + 1;
+END WHILE;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_fact_encounter_non_suppressed_card_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -9776,6 +9875,208 @@ CREATE PROCEDURE sp_data_processing_derived_non_suppressed()
 BEGIN
 -- $BEGIN
 CALL sp_fact_encounter_non_suppressed_card;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in;
+
+CREATE PROCEDURE sp_fact_transfer_in()
+BEGIN
+-- $BEGIN
+CALL sp_fact_transfer_in_create();
+CALL sp_fact_transfer_in_insert();
+CALL sp_fact_transfer_in_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_create;
+
+CREATE PROCEDURE sp_fact_transfer_in_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE IF NOT EXISTS mamba_fact_transfer_in
+(
+    id                       INT AUTO_INCREMENT,
+    client_id                         INT           NULL,
+    encounter_date                    DATE          NOT NULL,
+    transfer_in_date                  DATE    NOT NULL,
+
+    PRIMARY KEY (id)
+
+);
+
+CREATE INDEX
+    mamba_fact_transfer_in_client_id_index ON mamba_fact_transfer_in (client_id);
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_insert;
+
+CREATE PROCEDURE sp_fact_transfer_in_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_transfer_in (
+                                  client_id,
+                                  encounter_date,
+                                  transfer_in_date
+                                 )
+SELECT person_id, obs_datetime, value_datetime from obs where concept_id=99160 and voided =0 ;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_update;
+
+CREATE PROCEDURE sp_fact_transfer_in_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out;
+
+CREATE PROCEDURE sp_fact_transfer_out()
+BEGIN
+-- $BEGIN
+CALL sp_fact_transfer_out_create();
+CALL sp_fact_transfer_out_insert();
+CALL sp_fact_transfer_out_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_create;
+
+CREATE PROCEDURE sp_fact_transfer_out_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE IF NOT EXISTS mamba_fact_transfer_out
+(
+    id                       INT AUTO_INCREMENT,
+    client_id                         INT           NULL,
+    encounter_date                    DATE          NOT NULL,
+    transfer_out_date                  DATE    NOT NULL,
+
+    PRIMARY KEY (id)
+
+);
+
+CREATE INDEX
+    mamba_fact_transfer_out_client_id_index ON mamba_fact_transfer_out (client_id);
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_insert;
+
+CREATE PROCEDURE sp_fact_transfer_out_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_transfer_out (
+                                  client_id,
+                                  encounter_date,
+                                  transfer_out_date
+                                 )
+SELECT person_id, obs_datetime, value_datetime from obs where concept_id=99165 and voided =0 ;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_update;
+
+CREATE PROCEDURE sp_fact_transfer_out_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_data_processing_derived_transfers  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_transfers;
+
+CREATE PROCEDURE sp_data_processing_derived_transfers()
+BEGIN
+-- $BEGIN
+
+CALL sp_fact_transfer_in;
+CALL sp_fact_transfer_out;
 -- $END
 END //
 

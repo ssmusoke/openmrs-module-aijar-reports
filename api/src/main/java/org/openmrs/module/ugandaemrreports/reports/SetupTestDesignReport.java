@@ -4,16 +4,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
+import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AggregateReportDataSetDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
 
 /**
  */
@@ -51,19 +56,16 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<ReportDesign>();
+        l.add(buildReportDesign(reportDefinition));
+        return l;
     }
 
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
-        ReportDesign rd = createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1BReport.xls");
-        Properties props = new Properties();
-        props.put("repeatingSections", "sheet:1,row:8,dataset:HMIS106A1B");
-        props.put("sortWeight", "5000");
-        rd.setProperties(props);
-        return rd;
-
+        return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "106A1A2019Report.xls");
     }
+
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -78,8 +80,15 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
         dsd.setName(getName());
         dsd.setParameters(getParameters());
         dsd.setReportDesign(getJsonReportDesign());
-        rd.addDataSetDefinition("HMIS106A1B", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("x", Mapped.mapStraightThrough(dsd));
+        rd.addDataSetDefinition("aijar",Mapped.mapStraightThrough(getUgandaEMRVersion()));
+        rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         return rd;
+    }
+
+    public static DataSetDefinition getUgandaEMRVersion(){
+        EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
+        return dsd;
     }
 
     @Override
@@ -89,6 +98,6 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.8.0";
+        return "0.1.5";
     }
 }

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.annotation.Handler;
 import org.openmrs.module.reporting.common.DateUtil;
-import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
@@ -36,8 +35,9 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
 
         AggregateReportDataSetDefinition definition = (AggregateReportDataSetDefinition) dataSetDefinition;
 
-        SimpleDataSet dataSet =getReportQuery(definition,evaluationContext);
-
+        SimpleDataSet dataSet = new SimpleDataSet(definition, evaluationContext);
+        DataSetRow row =  getReportQuery(definition,evaluationContext);
+        dataSet.addRow(row);
 
 //        List<Object[]> resultSet = getEtl(startDate,endDate);
 
@@ -54,8 +54,8 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
         return results;
     }
 
-    private SimpleDataSet getReportQuery(AggregateReportDataSetDefinition definition,EvaluationContext evaluationContext) {
-        SimpleDataSet dataSet = new SimpleDataSet(definition, evaluationContext);
+    private DataSetRow getReportQuery(AggregateReportDataSetDefinition definition,EvaluationContext evaluationContext) {
+        DataSetRow row = new DataSetRow();
         String startDate = DateUtil.formatDate(definition.getStartDate(), "yyyy-MM-dd");
         String endDate = DateUtil.formatDate(definition.getEndDate(), "yyyy-MM-dd");
         File file = definition.getReportDesign();
@@ -120,7 +120,7 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
 
                 List<ValueHolder> convertedResults = convertToValueHolderList(results);
                 List<ValueHolder> values = new ArrayList<ValueHolder>();
-                dataSet = placesValuesToDataSet(reportField, convertedResults,dataSet);
+                row = placesValuesToDataSetRow(reportField, convertedResults,row);
 
                 int cols_no = disaggregationValues.size()+1;
 
@@ -128,15 +128,15 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return dataSet;
+        return row;
     }
 
-    private static SimpleDataSet placesValuesToDataSet(JsonNode reportField, List<ValueHolder> values,SimpleDataSet dataSet) {
+    private static DataSetRow placesValuesToDataSetRow(JsonNode reportField, List<ValueHolder> values,DataSetRow row) {
         JsonNode valuesArray = reportField.path("values");
         PatientDataHelper pdh = new PatientDataHelper();
 
+
         for (JsonNode valueObject : valuesArray) {
-            DataSetRow row = new DataSetRow();
             String dissaggregations1 = valueObject.path("dissaggregations1").asText();
             String dissaggregations2 = valueObject.path("dissaggregations2").asText();
             String valuePlaceHolder = valueObject.path("value_place_holder").asText();
@@ -150,10 +150,9 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row,valuePlaceHolder,count);
             }
             System.out.println("Row " + valuePlaceHolder + "with value" + count);
-            dataSet.addRow(row);
 
         }
-        return dataSet;
+        return row;
     }
 
     public static List<ValueHolder> convertToValueHolderList(List<Object[]> results) {

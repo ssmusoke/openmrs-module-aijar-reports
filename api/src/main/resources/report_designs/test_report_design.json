@@ -36,6 +36,244 @@
           "dissaggregations1": "1-4",
           "dissaggregations2": "F",
           "value_place_holder": "1d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "1e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "1f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "1g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "1h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "1i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "1j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "1k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "1l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "1m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "1n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "1o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "1p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "1q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "1r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "1s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "1t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "1u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "1v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "1w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "1x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC02",
+      "database_table": "mamba_fact_audit_tool_art_patients",
+      "base_column": "client_id",
+      "table_column": "baseline_regimen_start_date",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "parameters": [
+        "startDate",
+        "endDate"
+      ],
+      "operation": "between",
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "1a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "1b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "1c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "1d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "1e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "1f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "1g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "1h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "1i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "1j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "1k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "1l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "1m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "1n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "1o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "1p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "1q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "1r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "1s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "1t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "1u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "1v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "1w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "1x"
         }
       ]
     }
