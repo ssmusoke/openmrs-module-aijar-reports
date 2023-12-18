@@ -4,18 +4,11 @@
   "report_fields": [
     {
       "indicator_name": "HC01",
-      "database_table": "mamba_fact_audit_tool_art_patients",
-      "base_column": "client_id",
-      "table_column": "baseline_regimen_start_date",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(a.client_id)\nFROM mamba_fact_encounter_hiv_art_summary a\n         LEFT JOIN (SELECT * FROM mamba_fact_transfer_in WHERE transfer_in_date BETWEEN ':startDate' AND ':endDate') b\n                   ON a.client_id = b.client_id\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\nWHERE encounter_datetime BETWEEN ':startDate' AND ':endDate'\n  AND b.client_id IS NULL\nGROUP BY age_group, gender",
       "dissaggregations": [
         "age_group",
         "gender"
       ],
-      "parameters": [
-        "startDate",
-        "endDate"
-      ],
-      "operation": "between",
       "values": [
         {
           "dissaggregations1": "<1",
@@ -142,138 +135,57 @@
 
     {
       "indicator_name": "HC02",
-      "database_table": "mamba_fact_audit_tool_art_patients",
-      "base_column": "client_id",
-      "table_column": "baseline_regimen_start_date",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(a.client_id)\nFROM mamba_fact_encounter_hiv_art_summary a\n         LEFT JOIN (SELECT * FROM mamba_fact_transfer_in WHERE transfer_in_date BETWEEN ':startDate' AND ':endDate') b\n                   ON a.client_id = b.client_id\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\nWHERE encounter_datetime BETWEEN ':startDate' AND ':endDate'\n  AND b.client_id IS NULL\nGROUP BY age_group, gender",
       "dissaggregations": [
         "age_group",
         "gender"
       ],
-      "parameters": [
-        "startDate",
-        "endDate"
-      ],
-      "operation": "between",
       "values": [
-        {
-          "dissaggregations1": "<1",
-          "dissaggregations2": "M",
-          "value_place_holder": "1a"
-        },
-        {
-          "dissaggregations1": "<1",
-          "dissaggregations2": "F",
-          "value_place_holder": "1b"
-        },
-        {
-          "dissaggregations1": "1-4",
-          "dissaggregations2": "M",
-          "value_place_holder": "1c"
-        },
-        {
-          "dissaggregations1": "1-4",
-          "dissaggregations2": "F",
-          "value_place_holder": "1d"
-        },
-        {
-          "dissaggregations1": "5-9",
-          "dissaggregations2": "M",
-          "value_place_holder": "1e"
-        },
-        {
-          "dissaggregations1": "5-9",
-          "dissaggregations2": "F",
-          "value_place_holder": "1f"
-        },
-        {
-          "dissaggregations1": "10-14",
-          "dissaggregations2": "M",
-          "value_place_holder": "1g"
-        },
+
         {
           "dissaggregations1": "10-14",
           "dissaggregations2": "F",
-          "value_place_holder": "1h"
-        },
-        {
-          "dissaggregations1": "15-19",
-          "dissaggregations2": "M",
-          "value_place_holder": "1i"
+          "value_place_holder": "2h"
         },
         {
           "dissaggregations1": "15-19",
           "dissaggregations2": "F",
-          "value_place_holder": "1j"
-        },
-        {
-          "dissaggregations1": "20-24",
-          "dissaggregations2": "M",
-          "value_place_holder": "1k"
+          "value_place_holder": "2j"
         },
         {
           "dissaggregations1": "20-24",
           "dissaggregations2": "F",
-          "value_place_holder": "1l"
-        },
-        {
-          "dissaggregations1": "25-29",
-          "dissaggregations2": "M",
-          "value_place_holder": "1m"
+          "value_place_holder": "2l"
         },
         {
           "dissaggregations1": "25-29",
           "dissaggregations2": "F",
-          "value_place_holder": "1n"
-        },
-        {
-          "dissaggregations1": "30-34",
-          "dissaggregations2": "M",
-          "value_place_holder": "1o"
+          "value_place_holder": "2n"
         },
         {
           "dissaggregations1": "30-34",
           "dissaggregations2": "F",
-          "value_place_holder": "1p"
-        },
-        {
-          "dissaggregations1": "35-39",
-          "dissaggregations2": "M",
-          "value_place_holder": "1q"
+          "value_place_holder": "2p"
         },
         {
           "dissaggregations1": "35-39",
           "dissaggregations2": "F",
-          "value_place_holder": "1r"
-        },
-        {
-          "dissaggregations1": "40-44",
-          "dissaggregations2": "M",
-          "value_place_holder": "1s"
+          "value_place_holder": "2r"
         },
         {
           "dissaggregations1": "40-44",
           "dissaggregations2": "F",
-          "value_place_holder": "1t"
-        },
-        {
-          "dissaggregations1": "45-49",
-          "dissaggregations2": "M",
-          "value_place_holder": "1u"
+          "value_place_holder": "2t"
         },
         {
           "dissaggregations1": "45-49",
           "dissaggregations2": "F",
-          "value_place_holder": "1v"
-        },
-        {
-          "dissaggregations1": "50+",
-          "dissaggregations2": "M",
-          "value_place_holder": "1w"
+          "value_place_holder": "2v"
         },
         {
           "dissaggregations1": "50+",
           "dissaggregations2": "F",
-          "value_place_holder": "1x"
+          "value_place_holder": "2x"
         }
       ]
     }

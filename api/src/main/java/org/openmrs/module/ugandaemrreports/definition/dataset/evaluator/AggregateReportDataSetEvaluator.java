@@ -1,10 +1,13 @@
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
 
+import antlr.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang.StringUtils;
+import groovy.json.StringEscapeUtils;
+import org.hibernate.SQLQuery;
 import org.openmrs.annotation.Handler;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.reporting.common.DateUtil;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.dataset.SimpleDataSet;
@@ -29,6 +32,8 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
     @Autowired
     EvaluationService evaluationService;
 
+    @Autowired
+    private DbSessionFactory sessionFactory;
 
     @Override
     public SimpleDataSet evaluate(DataSetDefinition dataSetDefinition, EvaluationContext evaluationContext) throws EvaluationException {
@@ -48,8 +53,8 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
     }
 
     private List<Object[]> getEtl(String q, EvaluationContext context) {
-        SqlQueryBuilder query = new SqlQueryBuilder();
-        query.append(q);
+        SqlQueryBuilder query = new SqlQueryBuilder(q);
+        System.out.println(query.getSqlQuery());
         List<Object[]> results = evaluationService.evaluateToList(query, context);
         return results;
     }
@@ -61,68 +66,28 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
         File file = definition.getReportDesign();
 
         ObjectMapper objectMapper = new ObjectMapper();
-        String query ="";
         try {
             JsonNode rootNode = objectMapper.readTree(file);
             JsonNode reportFieldsArray = rootNode.path("report_fields");
 
             for (JsonNode reportField : reportFieldsArray) {
-                // Get all fields of the current object
+
                 String indicatorName = reportField.path("indicator_name").asText();
-                String databaseTable = reportField.path("database_table").asText();
-                String base_column = reportField.path("base_column").asText();
-                String field = reportField.path("table_column").asText();
-                String operation = reportField.path("operation").asText();
+                String sqlQuery = reportField.path("sqlQuery").toString();
+                sqlQuery = sqlQuery.replace("\\n", " ");
+                sqlQuery = sqlQuery.replace("\"", " ");
 
-                // Get dissaggregations array
-                JsonNode disaggregationArray = reportField.path("dissaggregations");
-                StringBuilder group_by_columnns = new StringBuilder();
-                List<String> disaggregationValues = new ArrayList<>();
-                for (JsonNode disaggregation : disaggregationArray) {
-                    String disaggregationValue = disaggregation.asText();
-                    group_by_columnns.append(disaggregationValue);
-                    group_by_columnns.append(",");
-                    disaggregationValues.add(disaggregationValue);
-                }
-                String group_by = StringUtils.stripEnd(group_by_columnns.toString(), ",");
 
-                // Get parameters array
-                JsonNode parametersArray = reportField.path("parameters");
-                List<String> parameterValues = new ArrayList<>();
-                for (JsonNode parameter : parametersArray) {
-                    String parameterValue = parameter.asText();
-                    parameterValues.add(parameterValue);
-                }
+                // Replace placeholders with real dates
+                String query = sqlQuery.replace(":startDate", startDate)
+                        .replace(":endDate", endDate);
+                System.out.println(query);
 
-                 query = "SELECT " + group_by + ", count(" + base_column + ") FROM " + databaseTable ;
-
-                // this part only works for date fields
-                if(!parameterValues.isEmpty()){
-                       String whereClause = " WHERE " + field + " " ;
-                       if(operation.equals("between")&& parameterValues.contains("startDate")&& parameterValues.contains("endDate")){
-                          whereClause =  whereClause + " >= '" +startDate + "' AND " +  " "+ field + " <= '" + endDate+ "'";
-
-                       }else if (operation.equals("lessOrEqual")&& parameterValues.contains("endDate")){
-                           whereClause =  whereClause + " <= '" +endDate +"'";
-                       }else if (operation.equals("greaterOrEqual")&& parameterValues.contains("startDate")){
-                           whereClause =  whereClause + " >= '" +startDate+"'" ;
-                       }
-                       query =query + whereClause;
-                }
-
-                if(!disaggregationValues.isEmpty()){
-                    String grouped_by = " GROUP BY "+ group_by ;
-                    query = query + grouped_by;
-                }
-                System.err.println(query);
-
-                List<Object[]> results = getEtl(query,evaluationContext);
+                List<Object[]> results = getList(query);
 
                 List<ValueHolder> convertedResults = convertToValueHolderList(results);
-                List<ValueHolder> values = new ArrayList<ValueHolder>();
                 row = placesValuesToDataSetRow(reportField, convertedResults,row);
 
-                int cols_no = disaggregationValues.size()+1;
 
             }
         } catch (Exception e) {
@@ -131,6 +96,18 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
         return row;
     }
 
+    private List<Object[]> getList(String query) {
+        SQLQuery txCurrQuery = sessionFactory.getCurrentSession().createSQLQuery(query);
+        List<Object[]> txCurrResult = txCurrQuery.list();
+        return txCurrResult;
+    }
+
+    public DbSessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+    public void setSessionFactory(DbSessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
     private static DataSetRow placesValuesToDataSetRow(JsonNode reportField, List<ValueHolder> values,DataSetRow row) {
         JsonNode valuesArray = reportField.path("values");
         PatientDataHelper pdh = new PatientDataHelper();
@@ -149,7 +126,6 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
             }else{
                 pdh.addCol(row,valuePlaceHolder,count);
             }
-            System.out.println("Row " + valuePlaceHolder + "with value" + count);
 
         }
         return row;

@@ -98,6 +98,6 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.5";
+        return "0.1.7.4.3";
     }
 }
