@@ -190,6 +190,6 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.4";
+        return "0.2.9";
     }
 }

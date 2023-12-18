@@ -218,6 +218,6 @@ public class Setup106A1A2019SectionHC49ToHC52Report extends UgandaEMRDataExportM
 
     @Override
     public String getVersion() {
-        return "1.0.1";
+        return "1.0.2";
     }
 }

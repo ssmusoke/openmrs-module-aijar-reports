@@ -57,6 +57,9 @@ public class SetupPMTCTART2019Report extends UgandaEMRDataExportManager {
         return "c4fb676e-dcc6-40b9-9ad5-babf6cf912fd";
     }
 
+    public String getJSONDesignUuid() {
+        return "f7f6cd5f-fb51-4159-9b1d-5e70a17a2d30";
+    }
     @Override
     public String getUuid() {
         return "47246504-69df-4060-b202-e2903305c456";
@@ -84,7 +87,10 @@ public class SetupPMTCTART2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -97,6 +103,10 @@ public class SetupPMTCTART2019Report extends UgandaEMRDataExportManager {
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "MER_PMTCT_ART_2019.xls");
+    }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "MER_PMTCT_ART_2019.json");
     }
 
     @Override
@@ -128,6 +138,6 @@ public class SetupPMTCTART2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.1";
+        return "0.1.4";
     }
 }

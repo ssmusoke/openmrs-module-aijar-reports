@@ -27,9 +27,11 @@ import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.util.OpenmrsUtil;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -54,7 +56,9 @@ public class EvaluateReportDefinitionRestController {
             if (!validateDateIsValidFormat(endDate)) {
                 SimpleObject message = new SimpleObject();
                 message.put("error", "given date " + endDate + "is not valid");
-                return new ResponseEntity<SimpleObject>(message, HttpStatus.BAD_REQUEST);
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON).body(message);
 
             }
             EvaluationContext context = new EvaluationContext();
@@ -84,12 +88,15 @@ public class EvaluateReportDefinitionRestController {
                     listMap.put(key, simpleObjectList);
                 }
 
-                return new ResponseEntity<Map<String, List<SimpleObject>>>(listMap, HttpStatus.OK);
+
+                return  ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON).body(listMap);
             } else {
 
                 List<ReportDesign> reportDesigns = Context.getService(ReportService.class).getReportDesigns(rd, null, false);
 
                 ReportDesign reportDesign = reportDesigns.stream().filter(p -> "JSON".equals(p.getName())).findAny().orElse(null);
+
                 if (reportDesign != null) {
                     String reportRendergingMode = JSON_REPORT_RENDERER_TYPE + "!" + reportDesign.getUuid();
                     RenderingMode renderingMode = new RenderingMode(reportRendergingMode);
@@ -97,9 +104,17 @@ public class EvaluateReportDefinitionRestController {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
 
-                    String report = createJson(reportData, reportDesign,rendertype);
+                    JsonNode report = createPayload(reportData, reportDesign,rendertype);
 
-                    return new ResponseEntity<Object>(report, HttpStatus.OK);
+                    if(rendertype.equals("html")) {
+
+                        return ResponseEntity.status(HttpStatus.OK)
+                                .contentType(MediaType.TEXT_HTML).body(report.asText());
+                    }else{
+                        return ResponseEntity.status(HttpStatus.OK)
+                                .contentType(MediaType.APPLICATION_JSON).body(report.toString());
+                    }
+
                 }else{
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
@@ -171,9 +186,9 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private String createJson(ReportData reportData, ReportDesign reportDesign,String renderType) {
+    private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
         HashMap<String, String> map = new HashMap<>();
-        String jsonText="";
+        JsonNode payLoad = null;
         try {
 
             File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "sendReports");
@@ -184,21 +199,23 @@ public class EvaluateReportDefinitionRestController {
             ReportDesignResource reportDesignResource = textTemplateRenderer.getTemplate(reportDesign);
             String templateContents = new String(reportDesignResource.getContents(), StandardCharsets.UTF_8);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(templateContents);
-            templateContents = jsonNode.get(renderType).asText();
+            templateContents = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
+            String wholePayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
 
-             jsonText = processJsonPayLoadTemplateWithWebView(pw, templateContents, reportData, reportDesign, fileOutputStream);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(wholePayLoad);
+
+            payLoad = jsonNode.get(renderType);
 
             pw.close();
         } catch (Exception e) {
             e.fillInStackTrace();
         }
-        return jsonText;
+        return payLoad;
     }
 
 
-    private String processJsonPayLoadTemplateWithWebView(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
+    private String fillTemplateWithReportData(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
 
         try {
             TextTemplateRenderer textTemplateRenderer = new TextTemplateRenderer();

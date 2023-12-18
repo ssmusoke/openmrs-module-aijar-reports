@@ -55,6 +55,10 @@ public class SetupHTSRecency2019Report extends UgandaEMRDataExportManager {
         return "819191e8-f762-4d49-b125-f67f1051c361";
     }
 
+    public String getJSONDesignUuid() {
+        return "b36697ff-54e6-4742-bdad-c4ccd9db9e9c";
+    }
+
     @Override
     public String getUuid() {
         return "43636326-36c5-4104-b358-b912a038ee9d";
@@ -81,7 +85,10 @@ public class SetupHTSRecency2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
-        return Arrays.asList(buildReportDesign(reportDefinition));
+        List<ReportDesign> l = new ArrayList<>();
+        l.add(buildReportDesign(reportDefinition));
+        l.add(buildJSONReportDesign(reportDefinition));
+        return l;
     }
 
     /**
@@ -94,6 +101,10 @@ public class SetupHTSRecency2019Report extends UgandaEMRDataExportManager {
     @Override
     public ReportDesign buildReportDesign(ReportDefinition reportDefinition) {
         return createExcelTemplateDesign(getExcelDesignUuid(), reportDefinition, "HTS_Recency_Report.xls");
+    }
+
+    public ReportDesign buildJSONReportDesign(ReportDefinition reportDefinition) {
+        return createJSONTemplateDesign(getJSONDesignUuid(), reportDefinition, "HTS_Recency_Report.json");
     }
 
     @Override
@@ -190,6 +201,6 @@ public class SetupHTSRecency2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "3.0.0";
+        return "3.0.3";
     }
 }
