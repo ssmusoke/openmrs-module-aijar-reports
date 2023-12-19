@@ -74,16 +74,16 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
 
                 String indicatorName = reportField.path("indicator_name").asText();
                 String sqlQuery = reportField.path("sqlQuery").toString();
-                sqlQuery = sqlQuery.replace("\\n", " ");
-                sqlQuery = sqlQuery.replace("\"", " ");
+                String clean_sqlQuery = sqlQuery.replace("\\n", " ");
+                sqlQuery = clean_sqlQuery.replace("\"", " ");
 
 
                 // Replace placeholders with real dates
                 String query = sqlQuery.replace(":startDate", startDate)
                         .replace(":endDate", endDate);
-                System.out.println(query);
+                System.out.println(query + "my new query");
 
-                List<Object[]> results = getList(query);
+                List<Object[]> results = getEtl(query,evaluationContext);
 
                 List<ValueHolder> convertedResults = convertToValueHolderList(results);
                 row = placesValuesToDataSetRow(reportField, convertedResults,row);
