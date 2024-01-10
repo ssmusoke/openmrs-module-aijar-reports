@@ -11,6 +11,8 @@ derived/art/sp_data_processing_derived_hiv_art.sql
 derived/art_card/sp_data_processing_derived_hiv_art_card.sql
 derived/non_suppressed/sp_data_processing_derived_non_suppressed.sql
 
+derived/z_obs/sp_mamba_z_encounter_obs_insert.sql
+
 #############################################################################
 ##### A single SP that CALLs all SPs inside the derived & base folders ######
 #############################################################################
