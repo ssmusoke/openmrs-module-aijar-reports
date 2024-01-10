@@ -1,10 +1,5 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
-import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.dataset.definition.DataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
@@ -15,7 +10,6 @@ import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVers
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
@@ -98,6 +92,6 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.7.4.8";
+        return "0.1.7.6.5";
     }
 }

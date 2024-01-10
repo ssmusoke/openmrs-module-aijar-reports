@@ -843,6 +843,1245 @@
           "value_place_holder": "8x"
         }
       ]
-    }
+    },
+
+    {
+      "indicator_name": "HC10",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\nWHERE date_positive_hiv_test_confirmed >= ':startDate'\n  AND date_positive_hiv_test_confirmed <= ':endDate'\n  AND baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "10a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "10b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "10c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "10d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "10e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "10f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "10g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "10h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "10i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "10j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "10k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "10l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "10m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "10n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "10o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "10p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "10s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "10t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "10u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "10v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "10w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "10x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC11",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate' AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "11a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "11b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "11c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "11d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "11e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "11f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "11g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "11h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "11i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "11j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "11k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "11l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "11m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "11n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "11o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "11p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "11q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "11r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "11u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "11v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "11w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "11x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC12",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate' AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  and entry_point_into_hiv_care='PMTCT'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "12h"
+        },
+
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "12j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "12l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "12n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "12p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "12r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "12t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "12x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC13",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate' AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  and baseline_cd4 is NOT null\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "13a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "13b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "13c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "13d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "13e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "13f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "13g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "13h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "13i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "13j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "13k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "13l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "13m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "13n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "13o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "13p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "13q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "13r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "13s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "13t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "13u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "13v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "13w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "13x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16a",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.tb_lam_results IS NOT NULL\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16a-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a-x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16b",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.tb_lam_results like '%positive%'\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16b-x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16c",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac_tb ON mfehac_tb.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.tb_lam_results LIKE '%positive%'\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n\n  AND mfehac_tb.tuberculosis_status = 'Currently on TB treatment'\n  AND mfehac_tb.encounter_date >= ':startDate'\n  AND mfehac_tb.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16c-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c-x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16d",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.crag_test_results IS NOT NULL\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16d-x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16e",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.crag_test_results LIKE '%positive%'\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16e-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e-x"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "HC16f",
+      "sqlQuery": "SELECT mda.moh_age_group AS age_group, gender, COUNT(DISTINCT mfehas.client_id)\nFROM mamba_fact_encounter_hiv_art_summary mfehas\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON mfehas.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac ON mfehac.client_id = mfehas.client_id\n         INNER JOIN mamba_fact_encounter_hiv_art_card mfehac_b ON mfehac_b.client_id = mfehas.client_id\n         LEFT JOIN (SELECT client_id\n                    FROM mamba_fact_transfer_in\n                    WHERE transfer_in_date >= ':startDate'\n                      AND transfer_in_date <= ':endDate') mfti ON\n    mfti.client_id = mfehas.client_id\nWHERE baseline_regimen_start_date >= ':startDate'\n  AND baseline_regimen_start_date <= ':endDate'\n  AND baseline_cd4 <= 200\n  AND mfehac.crag_test_results like '%positive%'\n  AND mfehac.encounter_date >= ':startDate'\n  AND mfehac.encounter_date <= ':endDate'\n\n  AND mfehac_b.medication_orders = 'fluconazole'\n  AND mfehac_b.encounter_date >= ':startDate'\n  AND mfehac_b.encounter_date <= ':endDate'\n  AND mfti.client_id IS NULL\nGROUP BY age_group, gender;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-a"
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-v"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f-w"
+        },
+        {
+          "dissaggregations1": "50+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16f-x"
+        }
+      ]
+    },
+
+
   ]
 }
