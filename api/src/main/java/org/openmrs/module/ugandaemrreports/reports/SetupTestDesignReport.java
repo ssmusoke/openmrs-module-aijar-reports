@@ -86,12 +86,7 @@ public class SetupTestDesignReport extends AggregateReportDataExportManager {
     }
 
     @Override
-    public File getJsonReportDesign() {
-         return getReportDesignFile(getUuid());
-    }
-
-    @Override
     public String getVersion() {
-        return "0.1.7.6.5";
+        return "0.1.7.6.6";
     }
 }

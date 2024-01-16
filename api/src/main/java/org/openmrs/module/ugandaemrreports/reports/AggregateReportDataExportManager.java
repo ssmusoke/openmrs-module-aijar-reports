@@ -39,7 +39,9 @@ public abstract class AggregateReportDataExportManager extends UgandaEMRDataExpo
 	/**
 	 * @return the json file for the report design for use in data set evaluator
 	 */
-	public abstract File getJsonReportDesign();
+	public  File getJsonReportDesign(){
+		return 	getReportDesignFile(this.getUuid());
+	}
 
 	public File getReportDesignFile(String report_uuid) {
 
