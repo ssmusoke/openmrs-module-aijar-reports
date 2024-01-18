@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.web.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -12,6 +13,7 @@ import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationUtil;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
@@ -26,6 +28,8 @@ import org.openmrs.module.reporting.report.service.ReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -45,32 +50,50 @@ public class EvaluateReportDefinitionRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String SET = "/reportingDefinition";
 
+    @Autowired
+    public GenericConversionService conversionService;
+
 
     @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Object getReportData(@RequestParam String startDate, @RequestParam String endDate,
+    public Object getReportData(HttpServletRequest request,
                                 @RequestParam(required = true, value = "uuid") String reportDefinitionUuid,
                                 @RequestParam(required = false, value = "renderType") String rendertype) {
         try {
-            if (!validateDateIsValidFormat(endDate)) {
+            if (!validateDateIsValidFormat(request.getParameter("endDate"))) {
                 SimpleObject message = new SimpleObject();
-                message.put("error", "given date " + endDate + "is not valid");
+                message.put("error", "given date " + request.getParameter("endDate") + "is not valid");
 
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .contentType(MediaType.APPLICATION_JSON).body(message);
 
             }
             EvaluationContext context = new EvaluationContext();
-
             ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
             ReportDefinition rd = service.getDefinitionByUuid(reportDefinitionUuid);
             ReportData reportData = null;
             if (rd != null) {
+                Collection<Parameter> missingParameters = new ArrayList<Parameter>();
                 Map<String, Object> parameterValues = new HashMap<String, Object>();
 
-                parameterValues.put("endDate", DateUtil.parseYmd(endDate));
-                parameterValues.put("startDate", DateUtil.parseYmd(startDate));
+                for (Parameter parameter : rd.getParameters()) {
+                    String submitted = request.getParameter(parameter.getName());
+                    if (parameter.getCollectionType() != null) {
+                        throw new IllegalStateException("Collection parameters not yet implemented");
+                    }
+                    Object converted;
+                    if (StringUtils.isEmpty(submitted)) {
+                        converted = parameter.getDefaultValue();
+                    } else {
+                        converted = conversionService.convert(submitted, parameter.getType());
+                    }
+                    if (converted == null) {
+                        System.out.println("converted is null");
+                        missingParameters.add(parameter);
+                    }
+                    parameterValues.put(parameter.getName(), converted);
+                }
 
                 context.setParameterValues(parameterValues);
 
@@ -89,7 +112,7 @@ public class EvaluateReportDefinitionRestController {
                 }
 
 
-                return  ResponseEntity.status(HttpStatus.OK)
+                return ResponseEntity.status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON).body(listMap);
             } else {
 
@@ -104,24 +127,24 @@ public class EvaluateReportDefinitionRestController {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
 
-                    JsonNode report = createPayload(reportData, reportDesign,rendertype);
+                    JsonNode report = createPayload(reportData, reportDesign, rendertype);
 
-                    if(rendertype.equals("html")) {
+                    if (rendertype.equals("html")) {
 
                         return ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.TEXT_HTML).body(report.asText());
-                    }else{
+                    } else {
                         return ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON).body(report.toString());
                     }
 
-                }else{
+                } else {
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
 
         } catch (Exception ex) {
-            return new ResponseEntity<String>("{Error: " + ex.getMessage()+"}", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("{Error: " + ex.getMessage() + "}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -243,6 +266,14 @@ public class EvaluateReportDefinitionRestController {
             throw var17;
         } catch (Throwable var18) {
             throw new RenderingException("Unable to render results due to: " + var18, var18);
+        }
+    }
+
+    public <T> T convert(String value, Class<T> valueType) {
+        try {
+            return (T) valueType.getDeclaredMethod("valueOf", String.class).invoke(null, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
