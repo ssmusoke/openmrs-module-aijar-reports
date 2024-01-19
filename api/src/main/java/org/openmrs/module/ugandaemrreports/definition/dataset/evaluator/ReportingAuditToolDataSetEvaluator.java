@@ -111,10 +111,10 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
         String advanced_diziz_flag = "IF(advanced_disease IS NULL, 'Y', 'N')";
         String  ovc_flag ="IF(age >= 18, 'NA', IF((age < 18 AND ovc_screening IS NULL), 'Y', 'N'))";
 
-        String xlsfunctions  = index_testing_children +"," +index_testing_spouse +"," +vl_profiling +"," +vl_updated+"," +next_vl_date+
-                ", " + followup+ ", " +index_testing_children_flag +", "+ index_testing_spouse_flag+", "+ mmd_flag+", "+vl_coverage+", "+
-                vl_bleeding+", "+vl_tat+", "+iac+", "+hivdrt_sample+"," +hivdr_tat+ ", "+ switched+","+ pss+", "+nutrition_support+", "+family_planning_assessment+", "+
-                tpt_flag+", "+ tb_flag+","+ cacx_flag+", "+hep_b_flag+", "+syphilis_flag+", "+advanced_diziz_flag+", "+ovc_flag+" ";
+        String xlsfunctions  = index_testing_children +" AS index_children_tested," +index_testing_spouse +" AS index_spouse_tested," +vl_profiling +" AS vl_profiling," +vl_updated+" AS vl_updated," +next_vl_date+
+                "AS Next_vl_date, " + followup+ " AS followup, " +index_testing_children_flag +"AS  index_testing_children_flag, "+ index_testing_spouse_flag+" AS index_testing_spouse_flag, "+ mmd_flag+"AS mmd_flag  , "+vl_coverage+" AS vl_coverage, "+
+                vl_bleeding+" AS vl_bleeding, "+vl_tat+"AS vl_tat , "+iac+"AS iac , "+hivdrt_sample+"AS hivdrt_sample," +hivdr_tat+ "AS hivdr_tat , "+ switched+" AS switched,"+ pss+" AS pss, "+nutrition_support+" AS nutrition_support, "+family_planning_assessment+"AS family_planning_flag, "+
+                tpt_flag+"AS tpt_flag, "+ tb_flag+"AS tb_flag ,"+ cacx_flag+"AS cacx_flag, "+hep_b_flag+"AS hep_b_flag, "+syphilis_flag+"AS syphilis_flag, "+advanced_diziz_flag+"AS advanced_diziz_flag, "+ovc_flag+"AS ovc_flag ";
         String query = "";
         if (cohortSelected != null) {
 
@@ -139,7 +139,7 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
         }
         String query1 = "SELECT audit_tool.*, " + xlsfunctions +
                 " FROM  (" + query + ")A INNER JOIN mamba_fact_audit_tool_art_patients audit_tool on A.client_id = audit_tool.client_id ";
-
+        System.out.println(query1);
         List<Object[]> results = getEtl(query1, context);
         PatientDataHelper pdh = new PatientDataHelper();
         if (results.size() > 0 && !results.isEmpty()) {
@@ -206,6 +206,32 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "known_status_spouse", o[55]);
                 pdh.addCol(row, "po_status_spouse", o[56]);
                 pdh.addCol(row, "age_group", o[57]);
+//                pdh.addCol(row, "cacx_date", o[58]);
+                pdh.addCol(row, "index_children_tested", o[59]);
+                pdh.addCol(row, "index_spouse_tested", o[60]);
+                pdh.addCol(row, "vl_profiling", o[61]);
+                pdh.addCol(row, "vl_updated", o[62]);
+                pdh.addCol(row, "next_vl_date", o[63]);
+                pdh.addCol(row, "followup", o[64]);
+                pdh.addCol(row, "child_Tested_flag", o[65]);
+                pdh.addCol(row, "spouses_Tested_flag", o[66]);
+                pdh.addCol(row, "mmd_flag", o[67]);
+                pdh.addCol(row, "vl_coverage", o[68]);
+                pdh.addCol(row, "vl_bleeding", o[69]);
+                pdh.addCol(row, "vl_tat", o[70]);
+                pdh.addCol(row, "iac", o[71]);
+                pdh.addCol(row, "HIVDR_sampling", o[72]);
+                pdh.addCol(row, "HIVDR_tat", o[73]);
+                pdh.addCol(row, "switched", o[74]);
+                pdh.addCol(row, "pss", o[75]);
+                pdh.addCol(row, "nutrition_support_flag", o[76]);
+                pdh.addCol(row, "family_planning_flag", o[77]);
+                pdh.addCol(row, "tpt_flag", o[78]);
+                pdh.addCol(row, "cacx_flag", o[79]);
+                pdh.addCol(row, "hep_b_flag", o[80]);
+                pdh.addCol(row, "syphilis_flag", o[81]);
+                pdh.addCol(row, "adv_disease_flag", o[82]);
+                pdh.addCol(row, "ovc_flag", o[83]);
 
 
                 dataSet.addRow(row);
