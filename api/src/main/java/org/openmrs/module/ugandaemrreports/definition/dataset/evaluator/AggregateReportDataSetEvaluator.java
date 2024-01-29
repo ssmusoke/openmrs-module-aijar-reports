@@ -117,8 +117,12 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
             String dissaggregations1 = valueObject.path("dissaggregations1").asText();
             String dissaggregations2 = valueObject.path("dissaggregations2").asText();
             String valuePlaceHolder = valueObject.path("value_place_holder").asText();
-            ValueHolder valueHolder = values.stream().filter(v -> v.getDisag1().equals(dissaggregations1)).filter(v -> v.getDisag2().equals(dissaggregations2)).findFirst().orElse(null);
-
+            ValueHolder valueHolder;
+            if(!values.isEmpty()) {
+                valueHolder = values.stream().filter(v -> v.getDisag1().equals(dissaggregations1)).filter(v -> v.getDisag2().equals(dissaggregations2)).findFirst().orElse(null);
+            }else{
+                valueHolder = null;
+            }
             int count =0;
             if(valueHolder!=null){
                  count =Integer.parseInt(valueHolder.getPlaceholder());
@@ -134,16 +138,17 @@ public class AggregateReportDataSetEvaluator implements DataSetEvaluator {
     public static List<ValueHolder> convertToValueHolderList(List<Object[]> results) {
         List<ValueHolder> valueHolderList = new ArrayList<>();
 
-        for (Object[] result : results) {
-            // Assuming the order in the Object[] array is disag1, disag2, placeholder
-            String disag1 = result[0].toString();
-            String disag2 = result[1].toString();
-            String placeholder = result[2].toString();
+        if(results.size()>0) {
+            for (Object[] result : results) {
+                // Assuming the order in the Object[] array is disag1, disag2, placeholder
+                String disag1 = result[0].toString();
+                String disag2 = result[1].toString();
+                String placeholder = result[2].toString();
 
-            ValueHolder valueHolder = new ValueHolder(disag1, disag2, placeholder);
-            valueHolderList.add(valueHolder);
+                ValueHolder valueHolder = new ValueHolder(disag1, disag2, placeholder);
+                valueHolderList.add(valueHolder);
+            }
         }
-
         return valueHolderList;
     }
 }

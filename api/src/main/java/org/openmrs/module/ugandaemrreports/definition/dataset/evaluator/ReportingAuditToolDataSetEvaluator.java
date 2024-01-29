@@ -227,11 +227,12 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "nutrition_support_flag", o[76]);
                 pdh.addCol(row, "family_planning_flag", o[77]);
                 pdh.addCol(row, "tpt_flag", o[78]);
-                pdh.addCol(row, "cacx_flag", o[79]);
-                pdh.addCol(row, "hep_b_flag", o[80]);
-                pdh.addCol(row, "syphilis_flag", o[81]);
-                pdh.addCol(row, "adv_disease_flag", o[82]);
-                pdh.addCol(row, "ovc_flag", o[83]);
+                pdh.addCol(row, "tb_flag", o[79]);
+                pdh.addCol(row, "cacx_flag", o[80]);
+                pdh.addCol(row, "hep_b_flag", o[81]);
+                pdh.addCol(row, "syphilis_flag", o[82]);
+                pdh.addCol(row, "adv_disease_flag", o[83]);
+                pdh.addCol(row, "ovc_flag", o[84]);
 
 
                 dataSet.addRow(row);
