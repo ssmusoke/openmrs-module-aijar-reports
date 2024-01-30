@@ -97,7 +97,7 @@ public class ReportingPMTCTDataSetEvaluator implements DataSetEvaluator {
                 if (results.size() > 0 && !results.isEmpty()) {
                     for (Object[] o : results) {
                         DataSetRow row = new DataSetRow();
-                        pdh.addCol(row, "id", o[2]);
+                        pdh.addCol(row, "ART_No", o[2]);
                         pdh.addCol(row, "nationality", o[3]);
                         pdh.addCol(row, "gender", o[8]);
                         pdh.addCol(row, "date_of_birth", o[5]);
