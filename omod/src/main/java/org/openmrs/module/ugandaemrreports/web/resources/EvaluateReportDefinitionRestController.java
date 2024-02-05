@@ -13,10 +13,12 @@ import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationUtil;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
+import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingException;
@@ -41,17 +43,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + EvaluateReportDefinitionRestController.UGANDAEMRREPORTS + EvaluateReportDefinitionRestController.SET)
 public class EvaluateReportDefinitionRestController {
     public static final String JSON_REPORT_RENDERER_TYPE = "org.openmrs.module.reporting.report.renderer.TextTemplateRenderer";
+    public static final String EXCEL_REPORT_RENDERER_TYPE = "org.openmrs.module.reporting.report.renderer.XlsReportRenderer";
 
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String SET = "/reportingDefinition";
 
     @Autowired
     public GenericConversionService conversionService;
+
+    @Autowired
+    public ReportService reportService;
 
 
     @ExceptionHandler(APIAuthenticationException.class)
@@ -89,7 +97,6 @@ public class EvaluateReportDefinitionRestController {
                         converted = conversionService.convert(submitted, parameter.getType());
                     }
                     if (converted == null) {
-                        System.out.println("converted is null");
                         missingParameters.add(parameter);
                     }
                     parameterValues.put(parameter.getName(), converted);
@@ -97,6 +104,7 @@ public class EvaluateReportDefinitionRestController {
 
                 context.setParameterValues(parameterValues);
 
+//                makeExcelReportRequest(rd,parameterValues);
                 reportData = getReportDefinitionService().evaluate(rd, context);
 
             }
@@ -269,12 +277,25 @@ public class EvaluateReportDefinitionRestController {
         }
     }
 
-    public <T> T convert(String value, Class<T> valueType) {
-        try {
-            return (T) valueType.getDeclaredMethod("valueOf", String.class).invoke(null, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+
+    private ReportRequest makeExcelReportRequest(ReportDefinition rd, Map<String, Object> parameterValues) {
+        ReportRequest reportRequest = new ReportRequest();
+        reportRequest.setReportDefinition(new Mapped<ReportDefinition>(rd, parameterValues));
+        reportRequest.setStatus(ReportRequest.Status.REQUESTED);
+        List<ReportDesign> reportDesigns = reportService.getReportDesigns(rd, null, false);
+
+        ReportDesign reportDesign = reportDesigns.stream().filter(p -> "Excel".equals(p.getName())).findAny().orElse(null);
+        RenderingMode renderingMode = null;
+        if (reportDesign != null) {
+            String reportRendergingMode = EXCEL_REPORT_RENDERER_TYPE + "!" + reportDesign.getUuid();
+            renderingMode = new RenderingMode(reportRendergingMode);
+            if (!renderingMode.getRenderer().canRender(rd)) {
+                throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
+            }
+            reportRequest.setRenderingMode(renderingMode);
         }
+        reportRequest = reportService.queueReport(reportRequest);
+        return reportRequest;
     }
 
 }
