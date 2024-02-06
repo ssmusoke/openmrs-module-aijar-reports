@@ -3625,6 +3625,132 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_data_processing_derived_IIT  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_IIT;
+
+CREATE PROCEDURE sp_data_processing_derived_IIT()
+BEGIN
+-- $BEGIN
+-- CALL sp_dim_client_hiv_hts;
+
+CALL sp_fact_no_of_interruptions_in_treatment;
+CALL sp_fact_patient_interruption_details;
+
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_concept_name  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_concept_name;
+
+CREATE PROCEDURE sp_mamba_dim_concept_name()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_concept_name_create();
+CALL sp_mamba_dim_concept_name_insert();
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_concept_name_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_concept_name_create;
+
+CREATE PROCEDURE sp_mamba_dim_concept_name_create()
+BEGIN
+-- $BEGIN
+
+CREATE TABLE mamba_dim_concept_name
+(
+    id                INT          NOT NULL AUTO_INCREMENT,
+    concept_name_id   INT          NOT NULL,
+    concept_id        INT,
+    name              VARCHAR(255) NOT NULL,
+    locale            VARCHAR(50)  NOT NULL,
+    locale_preferred  TINYINT,
+    concept_name_type VARCHAR(255),
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8;
+
+CREATE INDEX mamba_dim_concept_name_concept_name_id_index
+    ON mamba_dim_concept_name (concept_name_id);
+
+CREATE INDEX mamba_dim_concept_name_concept_id_index
+    ON mamba_dim_concept_name (concept_id);
+
+CREATE INDEX mamba_dim_concept_name_concept_name_type_index
+    ON mamba_dim_concept_name (concept_name_type);
+
+CREATE INDEX mamba_dim_concept_name_locale_index
+    ON mamba_dim_concept_name (locale);
+
+CREATE INDEX mamba_dim_concept_name_locale_preferred_index
+    ON mamba_dim_concept_name (locale_preferred);
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_concept_name_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_concept_name_insert;
+
+CREATE PROCEDURE sp_mamba_dim_concept_name_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_concept_name (concept_name_id,
+                                    concept_id,
+                                    name,
+                                    locale,
+                                    locale_preferred,
+                                    concept_name_type)
+SELECT cn.concept_name_id,
+       cn.concept_id,
+       cn.name,
+       cn.locale,
+       cn.locale_preferred,
+       cn.concept_name_type
+FROM concept_name cn
+ WHERE cn.locale = 'en'
+    AND cn.voided = 0
+    AND IF(cn.locale_preferred = 1, cn.locale_preferred = 1, cn.concept_name_type = 'FULLY_SPECIFIED');
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_z_encounter_obs_insert  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -3702,7 +3828,322 @@ CALL sp_mamba_data_processing_flatten();
 CALL sp_data_processing_derived_transfers();
 CALL sp_data_processing_derived_non_suppressed();
 CALL sp_data_processing_derived_hiv_art_card();
+CALL sp_data_processing_derived_IIT();
     -- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_no_of_interruptions_in_treatment_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_no_of_interruptions_in_treatment_create;
+
+CREATE PROCEDURE sp_fact_no_of_interruptions_in_treatment_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_fact_patients_no_of_interruptions
+(
+    id                                      INT AUTO_INCREMENT,
+    client_id                               INT NOT NULL,
+    encounter_date                          DATE NULL,
+    return_date                             DATE NULL,
+    days_interrupted                        INT NULL,
+
+    PRIMARY KEY (id)
+) CHARSET = UTF8;
+
+CREATE INDEX
+    mamba_fact_patients_no_of_interruptions_client_id_index ON mamba_fact_patients_no_of_interruptions (client_id);
+CREATE INDEX
+    mamba_fact_patients_no_of_interruptions_encounter_date_index ON mamba_fact_patients_no_of_interruptions (encounter_date);
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_no_of_interruptions_in_treatment_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_no_of_interruptions_in_treatment_insert;
+
+CREATE PROCEDURE sp_fact_no_of_interruptions_in_treatment_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_patients_no_of_interruptions(client_id,
+                                                        encounter_date,
+                                                        return_date,
+                                                    days_interrupted)
+SELECT
+    client_id,
+    encounter_date,
+    return_visit_date,
+    DATEDIFF(
+            encounter_date,
+            (SELECT return_visit_date
+             FROM mamba_fact_encounter_hiv_art_card AS sub
+             WHERE sub.client_id = main.client_id
+               AND sub.encounter_date < main.encounter_date
+             ORDER BY sub.encounter_date DESC
+                LIMIT 1)
+    ) AS Days
+FROM
+    mamba_fact_encounter_hiv_art_card AS main
+ORDER BY
+    client_id, encounter_date;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_no_of_interruptions_in_treatment  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_no_of_interruptions_in_treatment;
+
+CREATE PROCEDURE sp_fact_no_of_interruptions_in_treatment()
+BEGIN
+-- $BEGIN
+CALL sp_fact_no_of_interruptions_in_treatment_create();
+CALL sp_fact_no_of_interruptions_in_treatment_insert();
+CALL sp_fact_no_of_interruptions_in_treatment_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_no_of_interruptions_in_treatment_query  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_no_of_interruptions_in_treatment_query;
+CREATE PROCEDURE sp_fact_no_of_interruptions_in_treatment_query()
+BEGIN
+    SELECT *
+    FROM mamba_fact_patients_no_of_interruptions;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_no_of_interruptions_in_treatment_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_no_of_interruptions_in_treatment_update;
+
+CREATE PROCEDURE sp_fact_no_of_interruptions_in_treatment_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_patient_interruption_details  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_patient_interruption_details;
+
+CREATE PROCEDURE sp_fact_patient_interruption_details()
+BEGIN
+-- $BEGIN
+CALL sp_fact_patient_interruption_details_create();
+CALL sp_fact_patient_interruption_details_insert();
+CALL sp_fact_patient_interruption_details_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_patient_interruption_details_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_patient_interruption_details_create;
+
+CREATE PROCEDURE sp_fact_patient_interruption_details_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_fact_patients_interruptions_details
+(
+    id                               INT AUTO_INCREMENT,
+    client_id                        INT          NOT NULL,
+    case_id                          VARCHAR(250) NOT NULL,
+    art_enrollment_date              DATE NULL,
+    days_since_initiation            INT NULL,
+    last_dispense_date               DATE NULL,
+    last_dispense_amount             INT NULL,
+    current_regimen_start_date       DATE NULL,
+    last_VL_result                   INT NULL,
+    VL_last_date                     DATE NULL,
+    last_dispense_description        VARCHAR(250) NULL,
+    all_interruptions                INT NULL,
+    iit_in_last_12Months             INT NULL,
+    longest_IIT_ever                 INT NULL,
+    last_IIT_duration                INT NULL,
+    last_encounter_interruption_date DATE NULL,
+
+
+    PRIMARY KEY (id)
+) CHARSET = UTF8;
+
+CREATE INDEX
+    mamba_fact_patients_interruptions_details_client_id_index ON mamba_fact_patients_interruptions_details (client_id);
+CREATE INDEX
+    mamba_fact_patients_interruptions_details_case_id_index ON mamba_fact_patients_interruptions_details (case_id);
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_patient_interruption_details_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_patient_interruption_details_insert;
+
+CREATE PROCEDURE sp_fact_patient_interruption_details_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_patients_interruptions_details(client_id, case_id, art_enrollment_date, days_since_initiation,
+                                                      last_dispense_date, last_dispense_amount,
+                                                      current_regimen_start_date, last_VL_result, VL_last_date,
+                                                      last_dispense_description, all_interruptions,
+                                                      iit_in_last_12Months, longest_IIT_ever, last_IIT_duration,
+                                                      last_encounter_interruption_date)
+
+SELECT person_id,
+       uuid                                                            AS case_id,
+       baseline_regimen_start_date                                     as art_enrollment_date,
+       TIMESTAMPDIFF(DAY,baseline_regimen_start_date, last_visit_date) as days_since_initiation,
+       last_visit_date                                                 as last_dispense_date,
+       arv_days_dispensed                                              as last_dispense_amount,
+       arv_regimen_start_date                                          as current_regimen_start_date,
+       hiv_viral_load_copies                                           as last_VL_result,
+       hiv_viral_collection_date                                       as VL_last_date,
+       current_regimen                                                 as last_dispense_description,
+       all_interruptions,
+       iit_in_last_12Months,
+       longest_IIT_ever,
+       max_encounter_days_interrupted                                  AS last_IIT_duration,
+       max_encounter_date                                              AS last_IIT_return_date
+
+FROM mamba_dim_person
+         INNER JOIN mamba_fact_audit_tool_art_patients a ON a.client_id = person_id
+         LEFT JOIN (SELECT client_id, COUNT(days_interrupted) all_interruptions
+                    FROM mamba_fact_patients_no_of_interruptions
+                    WHERE days_interrupted >= 28
+                    GROUP BY client_id) all_iits ON a.client_id = all_iits.client_id
+         LEFT JOIN (SELECT client_id, COUNT(days_interrupted) iit_in_last_12months
+                    FROM mamba_fact_patients_no_of_interruptions
+                    WHERE days_interrupted >= 28
+                      AND encounter_date BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH) AND CURRENT_DATE()
+                    GROUP BY client_id) mfpnoi1 ON a.client_id = mfpnoi1.client_id
+         LEFT JOIN (SELECT client_id, MAX(days_interrupted) longest_IIT_ever
+                    FROM mamba_fact_patients_no_of_interruptions
+                    WHERE days_interrupted >= 28
+                    GROUP BY client_id) mfpnoi ON a.client_id = mfpnoi.client_id
+         LEFT JOIN (SELECT m.client_id,
+                           max_encounter_date,
+                           m.days_interrupted AS max_encounter_days_interrupted
+                    FROM mamba_fact_patients_no_of_interruptions m
+                             JOIN (SELECT client_id,
+                                          MAX(encounter_date) AS max_encounter_date
+                                   FROM mamba_fact_patients_no_of_interruptions
+                                   WHERE days_interrupted >= 28
+                                   GROUP BY client_id) subquery
+                                  ON m.client_id = subquery.client_id AND
+                                     m.encounter_date = subquery.max_encounter_date) long_interruptions
+                   ON a.client_id = long_interruptions.client_id;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_patient_interruption_details_query  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_patients_interruptions_details_query;
+CREATE PROCEDURE sp_fact_patients_interruptions_details_query()
+BEGIN
+    SELECT *
+    FROM mamba_fact_patients_interruptions_details;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_patient_interruption_details_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_patient_interruption_details_update;
+
+CREATE PROCEDURE sp_fact_patient_interruption_details_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_data_processing_derived_IIT  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_IIT;
+
+CREATE PROCEDURE sp_data_processing_derived_IIT()
+BEGIN
+-- $BEGIN
+-- CALL sp_dim_client_hiv_hts;
+
+CALL sp_fact_no_of_interruptions_in_treatment;
+CALL sp_fact_patient_interruption_details;
+
+
+-- $END
 END //
 
 DELIMITER ;
