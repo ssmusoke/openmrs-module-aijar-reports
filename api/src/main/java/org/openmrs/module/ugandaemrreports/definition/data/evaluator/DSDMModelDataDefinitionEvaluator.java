@@ -20,7 +20,7 @@ import org.openmrs.module.ugandaemrreports.library.HIVPatientDataLibrary;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -73,7 +73,7 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
         for (Object[] row : results) {
             Integer patientId = Integer.valueOf(String.valueOf(row[0]));
             String progId = String.valueOf(row[1]);
-            Date obs_datetime = (Date) (row[2]) ;
+            LocalDateTime obs_datetime = (LocalDateTime) row[2] ;
             if(obs_datetime!=null)
             {
                 c.addData(patientId, new DSDMModel(obs_datetime,progId));

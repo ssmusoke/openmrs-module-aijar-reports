@@ -2,32 +2,33 @@ package org.openmrs.module.ugandaemrreports.common;
 
 import org.openmrs.module.reporting.common.DateUtil;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
  */
 public class DSDMModel {
-    private Date dateOfEnrollment;
+    private LocalDateTime dateOfEnrollment;
     private String progId;
 
-    public DSDMModel(Date dateOfEnrollment) {
+    public DSDMModel(LocalDateTime dateOfEnrollment) {
         this.dateOfEnrollment = dateOfEnrollment;
     }
 
     public String toString() {
-        return DateUtil.formatDate(dateOfEnrollment, "MMM dd, yyyy", "");
+        return dateOfEnrollment.toLocalDate().atStartOfDay().toString();
     }
 
-    public DSDMModel(Date dateOfEnrollment, String progId) {
+    public DSDMModel(LocalDateTime dateOfEnrollment, String progId) {
         this.dateOfEnrollment = dateOfEnrollment;
         this.progId = progId;
     }
 
-    public Date getdateOfEnrollment() {
+    public LocalDateTime getdateOfEnrollment() {
         return dateOfEnrollment;
     }
 
-    public void setdateOfEnrollment(Date dateOfEnrollment) {
+    public void setdateOfEnrollment(LocalDateTime dateOfEnrollment) {
         this.dateOfEnrollment = dateOfEnrollment;
     }
 

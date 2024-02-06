@@ -1,6 +1,9 @@
 package org.openmrs.module.ugandaemrreports.web.resources;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -10,9 +13,12 @@ import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationUtil;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
+import org.openmrs.module.reporting.report.ReportRequest;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
 import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
 import org.openmrs.module.reporting.report.renderer.RenderingException;
@@ -24,50 +30,81 @@ import org.openmrs.module.reporting.report.service.ReportService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.util.OpenmrsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + EvaluateReportDefinitionRestController.UGANDAEMRREPORTS + EvaluateReportDefinitionRestController.SET)
 public class EvaluateReportDefinitionRestController {
     public static final String JSON_REPORT_RENDERER_TYPE = "org.openmrs.module.reporting.report.renderer.TextTemplateRenderer";
+    public static final String EXCEL_REPORT_RENDERER_TYPE = "org.openmrs.module.reporting.report.renderer.XlsReportRenderer";
 
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String SET = "/reportingDefinition";
+
+    @Autowired
+    public GenericConversionService conversionService;
+
+    @Autowired
+    public ReportService reportService;
 
 
     @ExceptionHandler(APIAuthenticationException.class)
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public Object getReportData(@RequestParam String startDate, @RequestParam String endDate,
+    public Object getReportData(HttpServletRequest request,
                                 @RequestParam(required = true, value = "uuid") String reportDefinitionUuid,
                                 @RequestParam(required = false, value = "renderType") String rendertype) {
         try {
-            if (!validateDateIsValidFormat(endDate)) {
+            if (!validateDateIsValidFormat(request.getParameter("endDate"))) {
                 SimpleObject message = new SimpleObject();
-                message.put("error", "given date " + endDate + "is not valid");
-                return new ResponseEntity<SimpleObject>(message, HttpStatus.BAD_REQUEST);
+                message.put("error", "given date " + request.getParameter("endDate") + "is not valid");
+
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .contentType(MediaType.APPLICATION_JSON).body(message);
 
             }
             EvaluationContext context = new EvaluationContext();
-
             ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
             ReportDefinition rd = service.getDefinitionByUuid(reportDefinitionUuid);
             ReportData reportData = null;
             if (rd != null) {
+                Collection<Parameter> missingParameters = new ArrayList<Parameter>();
                 Map<String, Object> parameterValues = new HashMap<String, Object>();
 
-                parameterValues.put("endDate", DateUtil.parseYmd(endDate));
-                parameterValues.put("startDate", DateUtil.parseYmd(startDate));
+                for (Parameter parameter : rd.getParameters()) {
+                    String submitted = request.getParameter(parameter.getName());
+                    if (parameter.getCollectionType() != null) {
+                        throw new IllegalStateException("Collection parameters not yet implemented");
+                    }
+                    Object converted;
+                    if (StringUtils.isEmpty(submitted)) {
+                        converted = parameter.getDefaultValue();
+                    } else {
+                        converted = conversionService.convert(submitted, parameter.getType());
+                    }
+                    if (converted == null) {
+                        missingParameters.add(parameter);
+                    }
+                    parameterValues.put(parameter.getName(), converted);
+                }
 
                 context.setParameterValues(parameterValues);
 
+//                makeExcelReportRequest(rd,parameterValues);
                 reportData = getReportDefinitionService().evaluate(rd, context);
 
             }
@@ -82,11 +119,15 @@ public class EvaluateReportDefinitionRestController {
                     listMap.put(key, simpleObjectList);
                 }
 
-                return new ResponseEntity<Map<String, List<SimpleObject>>>(listMap, HttpStatus.OK);
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .contentType(MediaType.APPLICATION_JSON).body(listMap);
             } else {
+
                 List<ReportDesign> reportDesigns = Context.getService(ReportService.class).getReportDesigns(rd, null, false);
 
                 ReportDesign reportDesign = reportDesigns.stream().filter(p -> "JSON".equals(p.getName())).findAny().orElse(null);
+
                 if (reportDesign != null) {
                     String reportRendergingMode = JSON_REPORT_RENDERER_TYPE + "!" + reportDesign.getUuid();
                     RenderingMode renderingMode = new RenderingMode(reportRendergingMode);
@@ -94,16 +135,24 @@ public class EvaluateReportDefinitionRestController {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
 
-                    String report = createJson(reportData, reportDesign);
+                    JsonNode report = createPayload(reportData, reportDesign, rendertype);
 
-                    return new ResponseEntity<String>(report, HttpStatus.OK);
-                }else{
+                    if (rendertype.equals("html")) {
+
+                        return ResponseEntity.status(HttpStatus.OK)
+                                .contentType(MediaType.TEXT_HTML).body(report.asText());
+                    } else {
+                        return ResponseEntity.status(HttpStatus.OK)
+                                .contentType(MediaType.APPLICATION_JSON).body(report.toString());
+                    }
+
+                } else {
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
 
         } catch (Exception ex) {
-            return new ResponseEntity<String>("{Error: " + ex.getMessage()+"}", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("{Error: " + ex.getMessage() + "}", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -168,9 +217,9 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private String createJson(ReportData reportData, ReportDesign reportDesign) {
+    private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
         HashMap<String, String> map = new HashMap<>();
-        String jsonText="";
+        JsonNode payLoad = null;
         try {
 
             File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "sendReports");
@@ -181,17 +230,23 @@ public class EvaluateReportDefinitionRestController {
             ReportDesignResource reportDesignResource = textTemplateRenderer.getTemplate(reportDesign);
             String templateContents = new String(reportDesignResource.getContents(), StandardCharsets.UTF_8);
 
-             jsonText = processJsonPayLoadTemplateWithWebView(pw, templateContents, reportData, reportDesign, fileOutputStream);
+            templateContents = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
+            String wholePayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(wholePayLoad);
+
+            payLoad = jsonNode.get(renderType);
 
             pw.close();
         } catch (Exception e) {
             e.fillInStackTrace();
         }
-        return jsonText;
+        return payLoad;
     }
 
 
-    private String processJsonPayLoadTemplateWithWebView(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
+    private String fillTemplateWithReportData(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
 
         try {
             TextTemplateRenderer textTemplateRenderer = new TextTemplateRenderer();
@@ -220,6 +275,27 @@ public class EvaluateReportDefinitionRestController {
         } catch (Throwable var18) {
             throw new RenderingException("Unable to render results due to: " + var18, var18);
         }
+    }
+
+
+    private ReportRequest makeExcelReportRequest(ReportDefinition rd, Map<String, Object> parameterValues) {
+        ReportRequest reportRequest = new ReportRequest();
+        reportRequest.setReportDefinition(new Mapped<ReportDefinition>(rd, parameterValues));
+        reportRequest.setStatus(ReportRequest.Status.REQUESTED);
+        List<ReportDesign> reportDesigns = reportService.getReportDesigns(rd, null, false);
+
+        ReportDesign reportDesign = reportDesigns.stream().filter(p -> "Excel".equals(p.getName())).findAny().orElse(null);
+        RenderingMode renderingMode = null;
+        if (reportDesign != null) {
+            String reportRendergingMode = EXCEL_REPORT_RENDERER_TYPE + "!" + reportDesign.getUuid();
+            renderingMode = new RenderingMode(reportRendergingMode);
+            if (!renderingMode.getRenderer().canRender(rd)) {
+                throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
+            }
+            reportRequest.setRenderingMode(renderingMode);
+        }
+        reportRequest = reportService.queueReport(reportRequest);
+        return reportRequest;
     }
 
 }

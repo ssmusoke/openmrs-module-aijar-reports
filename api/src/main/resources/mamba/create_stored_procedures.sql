@@ -82,7 +82,63 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
--- ----------------------  fn_json_etract  ----------------------------
+-- ----------------------  fn_mamba_age_calculator  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP FUNCTION IF EXISTS fn_mamba_age_calculator;
+
+CREATE FUNCTION fn_mamba_age_calculator (birthdate DATE,deathDate DATE) RETURNS  Integer
+    DETERMINISTIC
+BEGIN
+    DECLARE onDate DATE;
+    DECLARE today DATE;
+    DECLARE bday DATE;
+    DECLARE age INT;
+    DECLARE todaysMonth INT;
+    DECLARE bdayMonth INT;
+    DECLARE todaysDay INT;
+    DECLARE bdayDay INT;
+
+    SET onDate = NULL ;
+
+    IF birthdate IS NULL THEN
+        RETURN NULL;
+    ELSE
+        SET today = CURDATE();
+
+        IF onDate IS NOT NULL THEN
+            SET today = onDate;
+        END IF;
+
+        IF deathDate IS NOT NULL AND today > deathDate THEN
+            SET today = deathDate;
+        END IF;
+
+        SET bday = birthdate;
+        SET age = YEAR(today) - YEAR(bday);
+        SET todaysMonth = MONTH(today);
+        SET bdayMonth = MONTH(bday);
+        SET todaysDay = DAY(today);
+        SET bdayDay = DAY(bday);
+
+        IF todaysMonth < bdayMonth THEN
+            SET age = age - 1;
+        ELSEIF todaysMonth = bdayMonth AND todaysDay < bdayDay THEN
+            SET age = age - 1;
+        END IF;
+
+        RETURN age;
+    END IF;
+END//
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_json_extract  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
 DELIMITER //
@@ -788,10 +844,11 @@ BEGIN
                     WHERE TABLE_NAME = @tbl_name
                       AND TABLE_SCHEMA = Database());
 
-    SELECT GROUP_CONCAT(DISTINCT
-                        CONCAT(' MAX(CASE WHEN column_label = ''', column_label, ''' THEN ',
-                               fn_mamba_get_obs_value_column(concept_datatype), ' END) ', column_label)
-                        ORDER BY id ASC)
+    SELECT
+        GROUP_CONCAT(DISTINCT
+            CONCAT(' MAX(CASE WHEN column_label = ''', column_label, ''' THEN ',
+                fn_mamba_get_obs_value_column(concept_datatype), ' END) ', column_label)
+            ORDER BY id ASC)
     INTO @column_labels
     FROM mamba_dim_concept_metadata
     WHERE flat_table_name = @tbl_name;
@@ -951,12 +1008,15 @@ SET @report_count = 1;
                     SELECT JSON_VALUE_BY_KEY(@column_array,  @field_name) INTO @concept_uuid;
 
                     SET @tbl_name = '';
-                    INSERT INTO mamba_dim_concept_metadata(report_name,
-                                                           flat_table_name,
-                                                           encounter_type_uuid,
-                                                           column_label,
-                                                           concept_uuid,
-                                                           concepts_locale)
+                    INSERT INTO mamba_dim_concept_metadata
+                        (
+                            report_name,
+                            flat_table_name,
+                            encounter_type_uuid,
+                            column_label,
+                            concept_uuid,
+                            concepts_locale
+                        )
                     VALUES (REMOVE_QUOTES(@report_name),
                             REMOVE_QUOTES(@flat_table_name),
                             REMOVE_QUOTES(@encounter_type),
@@ -1183,6 +1243,8 @@ CREATE TABLE mamba_dim_patient_identifier_type
     id                         INT         NOT NULL AUTO_INCREMENT,
     patient_identifier_type_id INT         NOT NULL,
     name                       VARCHAR(50) NOT NULL,
+    description                TEXT        NULL,
+    uuid                       CHAR(38)    NOT NULL,
 
     PRIMARY KEY (id)
 )
@@ -1193,6 +1255,9 @@ CREATE INDEX mamba_dim_patient_identifier_type_id_index
 
 CREATE INDEX mamba_dim_patient_identifier_type_name_index
     ON mamba_dim_patient_identifier_type (name);
+
+CREATE INDEX mamba_dim_patient_identifier_type_uuid_index
+    ON mamba_dim_patient_identifier_type (uuid);
 
 -- $END
 END //
@@ -1213,10 +1278,14 @@ BEGIN
 -- $BEGIN
 
 INSERT INTO mamba_dim_patient_identifier_type (patient_identifier_type_id,
-                                               name)
+                                               name,
+                                               description,
+                                               uuid)
 SELECT patient_identifier_type_id,
-       name
-FROM patient_identifier_type c;
+       name,
+       description,
+       uuid
+FROM patient_identifier_type;
 
 -- $END
 END //
@@ -1556,7 +1625,7 @@ CREATE TABLE mamba_dim_concept_name
     concept_name_id   INT          NOT NULL,
     concept_id        INT,
     name              VARCHAR(255) NOT NULL,
-    locale            VARCHAR(50)  not null,
+    locale            VARCHAR(50)  NOT NULL,
     locale_preferred  TINYINT,
     concept_name_type VARCHAR(255),
 
@@ -1609,9 +1678,10 @@ SELECT cn.concept_name_id,
        cn.locale,
        cn.locale_preferred,
        cn.concept_name_type
-FROM concept_name cn;
--- WHERE cn.locale = 'en'
---  AND cn.locale_preferred = 1;
+FROM concept_name cn
+ WHERE cn.locale = 'en'
+  AND cn.locale_preferred = 1
+    AND cn.voided = 0;
 
 -- $END
 END //
@@ -2296,6 +2366,7 @@ SET md.concept_datatype = c.datatype,
 WHERE md.id > 0
   AND cn.locale = md.concepts_locale
   AND IF(cn.locale_preferred = 1, cn.locale_preferred = 1, cn.concept_name_type = 'FULLY_SPECIFIED');
+
 -- Use locale preferred or Fully specified name
 
 -- Update to True if this field is an obs answer to an obs Question
@@ -2349,21 +2420,27 @@ CREATE TABLE mamba_dim_person
 (
     id                  INT          NOT NULL AUTO_INCREMENT,
     person_id           INT          NOT NULL,
-    birthdate           VARCHAR(255) NULL,
-    birthdate_estimated TINYINT   NOT NULL,
-    dead                TINYINT   NOT NULL,
+    birthdate           DATE         NULL,
+    birthdate_estimated TINYINT      NOT NULL,
+    age                 INT          NULL,
+    dead                TINYINT      NOT NULL,
     death_date          DATETIME     NULL,
-    deathdate_estimated TINYINT   NOT NULL,
+    deathdate_estimated TINYINT      NOT NULL,
     gender              VARCHAR(255) NULL,
     date_created        DATETIME     NOT NULL,
-    voided              TINYINT   NOT NULL,
+    person_name_short   VARCHAR(255) NULL,
+    person_name_long    TEXT         NULL,
+    uuid                CHAR(38)     NOT NULL,
+    voided              TINYINT      NOT NULL,
 
     PRIMARY KEY (id)
-)
-    CHARSET = UTF8;
+) CHARSET = UTF8;
 
 CREATE INDEX mamba_dim_person_person_id_index
     ON mamba_dim_person (person_id);
+
+CREATE INDEX mamba_dim_person_uuid_index
+    ON mamba_dim_person (uuid);
 
 -- $END
 END //
@@ -2383,26 +2460,65 @@ CREATE PROCEDURE sp_mamba_dim_person_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person (person_id,
-                              birthdate,
-                              birthdate_estimated,
-                              dead,
-                              death_date,
-                              deathdate_estimated,
-                              gender,
-                              date_created,
-                              voided)
+INSERT INTO mamba_dim_person
+(person_id,
+ birthdate,
+ birthdate_estimated,
+ age,
+ dead,
+ death_date,
+ deathdate_estimated,
+ gender,
+ date_created,
+ person_name_short,
+ person_name_long,
+ uuid,
+ voided)
+
 SELECT psn.person_id,
        psn.birthdate,
        psn.birthdate_estimated,
+       fn_mamba_age_calculator(birthdate, death_date)               AS age,
        psn.dead,
        psn.death_date,
        psn.deathdate_estimated,
        psn.gender,
        psn.date_created,
+       CONCAT_WS(' ', prefix, given_name, middle_name, family_name) AS person_name_short,
+       CONCAT_WS(' ', prefix, given_name, middle_name, family_name_prefix, family_name, family_name2,
+                 family_name_suffix, degree)
+                                                                    AS person_name_long,
+       psn.uuid,
        psn.voided
-FROM person psn;
+FROM person psn
+         INNER JOIN person_name pn
+                    on psn.person_id = pn.person_id
+where pn.preferred=1;
 
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_person_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_person_update;
+
+CREATE PROCEDURE sp_mamba_dim_person_update()
+BEGIN
+-- $BEGIN
+UPDATE mamba_dim_person dp
+    INNER JOIN person psn  on psn.person_id = dp.person_id
+    INNER JOIN  person_name pn on psn.person_id = pn.person_id
+    SET   person_name_short = CONCAT_WS(' ',prefix,given_name,middle_name,family_name),
+        person_name_long = CONCAT_WS(' ',prefix,given_name, middle_name,family_name_prefix, family_name,family_name2,family_name_suffix, degree)
+WHERE  pn.preferred=1
+;
 -- $END
 END //
 
@@ -2423,7 +2539,7 @@ BEGIN
 
 CALL sp_mamba_dim_person_create();
 CALL sp_mamba_dim_person_insert();
-
+CALL sp_mamba_dim_person_update();
 -- $END
 END //
 
@@ -2452,6 +2568,7 @@ CREATE TABLE mamba_dim_patient_identifier
     preferred             TINYINT     NOT NULL,
     location_id           INT         NULL,
     date_created          DATETIME    NOT NULL,
+    uuid                  CHAR(38)    NOT NULL,
     voided                TINYINT     NOT NULL,
 
     PRIMARY KEY (id)
@@ -2469,6 +2586,9 @@ CREATE INDEX mamba_dim_patient_identifier_identifier_index
 
 CREATE INDEX mamba_dim_patient_identifier_identifier_type_index
     ON mamba_dim_patient_identifier (identifier_type);
+
+CREATE INDEX mamba_dim_patient_identifier_uuid_index
+    ON mamba_dim_patient_identifier (uuid);
 
 -- $END
 END //
@@ -2494,6 +2614,7 @@ INSERT INTO mamba_dim_patient_identifier (patient_id,
                                           preferred,
                                           location_id,
                                           date_created,
+                                          uuid,
                                           voided)
 SELECT patient_id,
        identifier,
@@ -2501,6 +2622,7 @@ SELECT patient_id,
        preferred,
        location_id,
        date_created,
+       uuid,
        voided
 FROM patient_identifier;
 
@@ -2604,27 +2726,32 @@ CREATE PROCEDURE sp_mamba_dim_person_name_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_dim_person_name (person_name_id,
-                                   person_id,
-                                   preferred,
-                                   prefix,
-                                   given_name,
-                                   middle_name,
-                                   family_name_prefix,
-                                   family_name,
-                                   family_name2,
-                                   family_name_suffix)
-SELECT pn.person_name_id,
-       pn.person_id,
-       pn.preferred,
-       pn.prefix,
-       pn.given_name,
-       pn.middle_name,
-       pn.family_name_prefix,
-       pn.family_name,
-       pn.family_name2,
-       pn.family_name_suffix
-FROM person_name pn;
+INSERT INTO mamba_dim_person_name
+    (
+        person_name_id,
+        person_id,
+        preferred,
+        prefix,
+        given_name,
+        middle_name,
+        family_name_prefix,
+        family_name,
+        family_name2,
+        family_name_suffix
+    )
+    SELECT
+        pn.person_name_id,
+        pn.person_id,
+        pn.preferred,
+        pn.prefix,
+        pn.given_name,
+        pn.middle_name,
+        pn.family_name_prefix,
+        pn.family_name,
+        pn.family_name2,
+        pn.family_name_suffix
+    FROM
+        person_name pn;
 
 -- $END
 END //
@@ -2772,6 +2899,270 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_create;
+
+CREATE PROCEDURE sp_mamba_dim_user_create()
+BEGIN
+-- $BEGIN
+    CREATE TABLE mamba_dim_users
+    (
+        id            INT          NOT NULL AUTO_INCREMENT,
+        user_id       INT          NOT NULL,
+        system_id     VARCHAR(50)  NOT NULL,
+        username      VARCHAR(50)  NULL,
+        creator       INT          NOT NULL,
+        date_created  DATETIME     NOT NULL,
+        changed_by    INT          NULL,
+        date_changed  DATETIME     NULL,
+        person_id     INT          NOT NULL,
+        retired       TINYINT(1)   NOT NULL,
+        retired_by    INT          NULL,
+        date_retired  DATETIME     NULL,
+        retire_reason VARCHAR(255) NULL,
+        uuid          CHAR(38)     NOT NULL,
+        email         VARCHAR(255) NULL,
+
+        PRIMARY KEY (id)
+    )
+        CHARSET = UTF8;
+
+    CREATE INDEX mamba_dim_users_user_id_index
+        ON mamba_dim_users (user_id);
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_insert;
+
+CREATE PROCEDURE sp_mamba_dim_user_insert()
+BEGIN
+-- $BEGIN
+    INSERT INTO mamba_dim_users
+        (
+            user_id,
+            system_id,
+            username,
+            creator,
+            date_created,
+            changed_by,
+            date_changed,
+            person_id,
+            retired,
+            retired_by,
+            date_retired,
+            retire_reason,
+            uuid,
+            email
+        )
+        SELECT
+            user_id,
+            system_id,
+            username,
+            creator,
+            date_created,
+            changed_by,
+            date_changed,
+            person_id,
+            retired,
+            retired_by,
+            date_retired,
+            retire_reason,
+            uuid,
+            email
+        FROM users c;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user_update;
+
+CREATE PROCEDURE sp_mamba_dim_user_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_user  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_user;
+
+CREATE PROCEDURE sp_mamba_dim_user()
+BEGIN
+-- $BEGIN
+    CALL sp_mamba_dim_user_create();
+    CALL sp_mamba_dim_user_insert();
+    CALL sp_mamba_dim_user_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_create;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_dim_relationship
+(
+    relationship_id INT                  NOT NULL AUTO_INCREMENT,
+    person_a        INT                  NOT NULL,
+    relationship    INT                  NOT NULL,
+    person_b        INT                  NOT NULL,
+    start_date      DATETIME             NULL,
+    end_date        DATETIME             NULL,
+    creator         INT                  NOT NULL,
+    date_created    DATETIME             NOT NULL,
+    date_changed    DATETIME             NULL,
+    changed_by      INT                  NULL,
+    voided          TINYINT(1)           NOT NULL ,
+    voided_by       INT                  NULL,
+    date_voided     DATETIME             NULL,
+    void_reason     VARCHAR(255)         NULL,
+    uuid            CHAR(38)             NOT NULL,
+
+    PRIMARY KEY (relationship_id)
+)
+
+    CHARSET = UTF8MB3;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_insert;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_dim_relationship
+    (
+        relationship_id,
+        person_a,
+        relationship,
+        person_b,
+        start_date,
+        end_date,
+        creator,
+        date_created,
+        date_changed,
+        changed_by,
+        voided,
+        voided_by,
+        date_voided,
+        void_reason,
+        uuid
+    )
+SELECT
+    relationship_id,
+    person_a,
+    relationship,
+    person_b,
+    start_date,
+    end_date,
+    creator,
+    date_created,
+    date_changed,
+    changed_by,
+    voided,
+    voided_by,
+    date_voided,
+    void_reason,
+    uuid
+FROM relationship;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship_update;
+
+CREATE PROCEDURE sp_mamba_dim_relationship_update()
+BEGIN
+-- $BEGIN
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_relationship  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_relationship;
+
+CREATE PROCEDURE sp_mamba_dim_relationship()
+BEGIN
+-- $BEGIN
+
+CALL sp_mamba_dim_relationship_create();
+CALL sp_mamba_dim_relationship_insert();
+CALL sp_mamba_dim_relationship_update();
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_dim_agegroup_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -2788,7 +3179,9 @@ CREATE TABLE mamba_dim_agegroup
     id              INT         NOT NULL AUTO_INCREMENT,
     age             INT         NULL,
     datim_agegroup  VARCHAR(50) NULL,
+    datim_age_val   INT         NULL,
     normal_agegroup VARCHAR(50) NULL,
+    normal_age_val   INT        NULL,
 
     PRIMARY KEY (id)
 )
@@ -2832,6 +3225,28 @@ CREATE PROCEDURE sp_mamba_dim_agegroup_update()
 BEGIN
 -- $BEGIN
 
+-- update age_value b
+UPDATE mamba_dim_agegroup a
+SET datim_age_val =
+    CASE
+        WHEN a.datim_agegroup = '<1' THEN 1
+        WHEN a.datim_agegroup = '1-4' THEN 2
+        WHEN a.datim_agegroup = '5-9' THEN 3
+        WHEN a.datim_agegroup = '10-14' THEN 4
+        WHEN a.datim_agegroup = '15-19' THEN 5
+        WHEN a.datim_agegroup = '20-24' THEN 6
+        WHEN a.datim_agegroup = '25-29' THEN 7
+        WHEN a.datim_agegroup = '30-34' THEN 8
+        WHEN a.datim_agegroup = '35-39' THEN 9
+        WHEN a.datim_agegroup = '40-44' THEN 10
+        WHEN a.datim_agegroup = '45-49' THEN 11
+        WHEN a.datim_agegroup = '50-54' THEN 12
+        WHEN a.datim_agegroup = '55-59' THEN 13
+        WHEN a.datim_agegroup = '60-64' THEN 14
+        WHEN a.datim_agegroup = '65+' THEN 15
+    END
+WHERE a.datim_agegroup IS NOT NULL;
+
 -- $END
 END //
 
@@ -2852,7 +3267,7 @@ BEGIN
 
 CALL sp_mamba_dim_agegroup_create();
 CALL sp_mamba_dim_agegroup_insert();
--- CALL sp_mamba_dim_agegroup_update();
+CALL sp_mamba_dim_agegroup_update();
 END //
 
 DELIMITER ;
@@ -2937,44 +3352,47 @@ CREATE PROCEDURE sp_mamba_z_encounter_obs_insert()
 BEGIN
 -- $BEGIN
 
-INSERT INTO mamba_z_encounter_obs (encounter_id,
-                                   person_id,
-                                   obs_datetime,
-                                   encounter_datetime,
-                                   encounter_type_uuid,
-                                   obs_question_concept_id,
-                                   obs_value_text,
-                                   obs_value_numeric,
-                                   obs_value_coded,
-                                   obs_value_datetime,
-                                   obs_value_complex,
-                                   obs_value_drug,
-                                   obs_question_uuid,
-                                   obs_answer_uuid,
-                                   obs_value_coded_uuid,
-                                   status,
-                                   voided)
-SELECT o.encounter_id,
-       o.person_id,
-       o.obs_datetime,
-       e.encounter_datetime,
-       e.encounter_type_uuid,
-       o.concept_id     AS obs_question_concept_id,
-       o.value_text     AS obs_value_text,
-       o.value_numeric  AS obs_value_numeric,
-       o.value_coded    AS obs_value_coded,
-       o.value_datetime AS obs_value_datetime,
-       o.value_complex  AS obs_value_complex,
-       o.value_drug     AS obs_value_drug,
-       NULL             AS obs_question_uuid,
-       NULL             AS obs_answer_uuid,
-       NULL             AS obs_value_coded_uuid,
-       o.status,
-       o.voided
-FROM obs o
-         INNER JOIN mamba_dim_encounter e
-                    ON o.encounter_id = e.encounter_id
-WHERE o.encounter_id IS NOT NULL;
+INSERT INTO mamba_z_encounter_obs
+    (
+        encounter_id,
+        person_id,
+        obs_datetime,
+        encounter_datetime,
+        encounter_type_uuid,
+        obs_question_concept_id,
+        obs_value_text,
+        obs_value_numeric,
+        obs_value_coded,
+        obs_value_datetime,
+        obs_value_complex,
+        obs_value_drug,
+        obs_question_uuid,
+        obs_answer_uuid,
+        obs_value_coded_uuid,
+        status,
+        voided
+    )
+    SELECT o.encounter_id,
+           o.person_id,
+           o.obs_datetime,
+           e.encounter_datetime,
+           e.encounter_type_uuid,
+           o.concept_id     AS obs_question_concept_id,
+           o.value_text     AS obs_value_text,
+           o.value_numeric  AS obs_value_numeric,
+           o.value_coded    AS obs_value_coded,
+           o.value_datetime AS obs_value_datetime,
+           o.value_complex  AS obs_value_complex,
+           o.value_drug     AS obs_value_drug,
+           NULL             AS obs_question_uuid,
+           NULL             AS obs_answer_uuid,
+           NULL             AS obs_value_coded_uuid,
+           o.status,
+           o.voided
+    FROM obs o
+             INNER JOIN mamba_dim_encounter e
+                        ON o.encounter_id = e.encounter_id
+    WHERE o.encounter_id IS NOT NULL;
 
 -- $END
 END //
@@ -3004,11 +3422,11 @@ WHERE TRUE;
 -- update obs_value_coded (UUIDs & Concept value names)
 UPDATE mamba_z_encounter_obs z
     INNER JOIN mamba_dim_concept_name cn
-ON z.obs_value_coded = cn.concept_id
+    ON z.obs_value_coded = cn.concept_id
     INNER JOIN mamba_dim_concept c
     ON z.obs_value_coded = c.concept_id
-    SET z.obs_value_text       = cn.name,
-        z.obs_value_coded_uuid = c.uuid
+SET z.obs_value_text       = cn.name,
+    z.obs_value_coded_uuid = c.uuid
 WHERE z.obs_value_coded IS NOT NULL
 ;
 
@@ -3077,6 +3495,10 @@ CALL sp_mamba_dim_person;
 CALL sp_mamba_dim_person_name;
 
 CALL sp_mamba_dim_person_address;
+
+CALL sp_mamba_dim_user;
+
+CALL sp_mamba_dim_relationship;
 
 CALL sp_mamba_dim_patient_identifier;
 
@@ -3203,6 +3625,66 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_z_encounter_obs_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_z_encounter_obs_insert;
+
+CREATE PROCEDURE sp_mamba_z_encounter_obs_insert()
+BEGIN
+-- $BEGIN
+
+INSERT INTO mamba_z_encounter_obs
+(
+    encounter_id,
+    person_id,
+    obs_datetime,
+    encounter_datetime,
+    encounter_type_uuid,
+    obs_question_concept_id,
+    obs_value_text,
+    obs_value_numeric,
+    obs_value_coded,
+    obs_value_datetime,
+    obs_value_complex,
+    obs_value_drug,
+    obs_question_uuid,
+    obs_answer_uuid,
+    obs_value_coded_uuid,
+    status,
+    voided
+)
+SELECT o.encounter_id,
+       o.person_id,
+       o.obs_datetime,
+       e.encounter_datetime,
+       e.encounter_type_uuid,
+       o.concept_id     AS obs_question_concept_id,
+       o.value_text     AS obs_value_text,
+       o.value_numeric  AS obs_value_numeric,
+       o.value_coded    AS obs_value_coded,
+       o.value_datetime AS obs_value_datetime,
+       o.value_complex  AS obs_value_complex,
+       o.value_drug     AS obs_value_drug,
+       NULL             AS obs_question_uuid,
+       NULL             AS obs_answer_uuid,
+       NULL             AS obs_value_coded_uuid,
+       o.status,
+       o.voided
+FROM obs o
+         INNER JOIN mamba_dim_encounter e
+                    ON o.encounter_id = e.encounter_id
+WHERE o.encounter_id IS NOT NULL and o.voided =0;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_mamba_data_processing_etl  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -3217,9 +3699,41 @@ BEGIN
 -- CALL sp_data_processing_derived_hts();
 
 CALL sp_mamba_data_processing_flatten();
+CALL sp_data_processing_derived_transfers();
 CALL sp_data_processing_derived_non_suppressed();
 CALL sp_data_processing_derived_hiv_art_card();
     -- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_dim_agegroup_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_mamba_dim_agegroup_create;
+
+CREATE PROCEDURE sp_mamba_dim_agegroup_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE mamba_dim_agegroup
+(
+    id              INT         NOT NULL AUTO_INCREMENT,
+    age             INT         NULL,
+    datim_agegroup  VARCHAR(50) NULL,
+    datim_age_val   INT         NULL,
+    normal_agegroup VARCHAR(50) NULL,
+    normal_age_val   INT        NULL,
+    moh_age_group VARCHAR(50) NULL,
+    moh_age_val   INT        NULL,
+
+    PRIMARY KEY (id)
+)
+    CHARSET = UTF8MB4;
+-- $END
 END //
 
 DELIMITER ;
@@ -8491,206 +9005,422 @@ DROP PROCEDURE IF EXISTS sp_fact_eid_patients_insert;
 CREATE PROCEDURE sp_fact_eid_patients_insert()
 BEGIN
 -- $BEGIN
-INSERT INTO mamba_fact_eid_patients (
-    client_id,
-    EDD ,
-    EID_NO ,
-    EID_DOB,
-    EID_AGE ,
-    EID_WEIGHT ,
-    EID_NEXT_APPT ,
-    EID_FEEDING ,
-    CTX_START ,
-    CTX_AGE ,
-    1ST_PCR_DATE ,
-    1ST_PCR_AGE ,
-    1ST_PCR_RESULT ,
-    1ST_PCR_RECEIVED ,
-    2ND_PCR_DATE ,
-    2ND_PCR_AGE ,
-    2ND_PCR_RESULT ,
-    2ND_PCR_RECEIVED ,
-    REPEAT_PCR_DATE ,
-    REPEAT_PCR_AGE ,
-    REPEAT_PCR_RESULT ,
-    REPEAT_PCR_RECEIVED ,
-    RAPID_PCR_DATE ,
-    RAPID_PCR_AGE ,
-    RAPID_PCR_RESULT ,
-    FINAL_OUTCOME ,
-    LINKAGE_NO ,
-    NVP_AT_BIRTH,
-    BREAST_FEEDING_STOPPED,
-    PMTCT_STATUS,
-    PMTCT_ENROLLMENT_DATE,
-    BABY
-)
+INSERT INTO mamba_fact_eid_patients (client_id,
+                                     edd,
+                                     eid_no,
+                                     eid_dob,
+                                     eid_age,
+                                     eid_weight,
+                                     eid_next_appt,
+                                     eid_feeding,
+                                     ctx_start,
+                                     ctx_age,
+                                     1st_pcr_date,
+                                     1st_pcr_age,
+                                     1st_pcr_result,
+                                     1st_pcr_received,
+                                     2nd_pcr_date,
+                                     2nd_pcr_age,
+                                     2nd_pcr_result,
+                                     2nd_pcr_received,
+                                     repeat_pcr_date,
+                                     repeat_pcr_age,
+                                     repeat_pcr_result,
+                                     repeat_pcr_received,
+                                     rapid_pcr_date,
+                                     rapid_pcr_age,
+                                     rapid_pcr_result,
+                                     final_outcome,
+                                     linkage_no,
+                                     nvp_at_birth,
+                                     breast_feeding_stopped,
+                                     pmtct_status,
+                                     pmtct_enrollment_date,
+                                     baby)
 SELECT patient,
        edd.edd_date,
-       eidno.id                                                                                  AS eidno,
-       eiddob.dob                                                                                AS eid_dob,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, CURRENT_DATE())                                          AS eid_age,
-       eid_w.value_numeric                                                                       AS eid_weight,
-       eid_next_appt.value_datetime                                                              AS next_appointment_date,
-       eid_feeding.name                                                                          AS feeding,
-       ctx.mydate                                                                                AS ctx_start,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, ctx.mydate)                                              AS agectx,
-       1stpcr.mydate                                                                             AS 1stpcrdate,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, 1stpcr.mydate)                                           AS age1stpcr,
+       eidno.id                                                                                    AS eidno,
+       eiddob.dob                                                                                  AS eid_dob,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, CURRENT_DATE())                                            AS eid_age,
+       eid_w.value_numeric                                                                         AS eid_weight,
+       eid_next_appt.value_datetime                                                                AS next_appointment_date,
+       eid_feeding.name                                                                            AS feeding,
+       ctx.mydate                                                                                  AS ctx_start,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, ctx.mydate)                                                AS agectx,
+       1stpcr.mydate                                                                               AS 1stpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, 1stpcr.mydate)                                             AS age1stpcr,
        1stpcrresult.name,
-       1stpcrreceived.mydate                                                                     AS 1stpcrrecieved,
-       2ndpcr.mydate                                                                             AS 2ndpcrdate,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, 2ndpcr.mydate)                                           AS age2ndpcr,
+       1stpcrreceived.mydate                                                                       AS 1stpcrrecieved,
+       2ndpcr.mydate                                                                               AS 2ndpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, 2ndpcr.mydate)                                             AS age2ndpcr,
        2ndpcrresult.name,
-       2ndpcrreceived.mydate                                                                     AS 2ndpcrrecieved,
-       repeatpcr.mydate                                                                          AS repeatpcrdate,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, repeatpcr.mydate)                                        AS age3rdpcr,
+       2ndpcrreceived.mydate                                                                       AS 2ndpcrrecieved,
+       repeatpcr.mydate                                                                            AS repeatpcrdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, repeatpcr.mydate)                                          AS age3rdpcr,
        repeatpcrresult.name,
-       repeatpcrreceived.mydate                                                                  AS repeatpcrrecieved,
-       rapidtest.mydate                                                                          AS rapidtestdate,
-       TIMESTAMPDIFF(MONTH, eiddob.dob, rapidtest.mydate)                                        AS ageatrapidtest,
+       repeatpcrreceived.mydate                                                                    AS repeatpcrrecieved,
+       rapidtest.mydate                                                                            AS rapidtestdate,
+       TIMESTAMPDIFF(MONTH, eiddob.dob, rapidtest.mydate)                                          AS ageatrapidtest,
        rapidtestresult.name,
        finaloutcome.name,
        linkageno.value_text,
-       IF(nvp.mydate IS NULL, '', IF(TIMESTAMPDIFF(DAY, eiddob.dob, nvp.mydate) <= 2, 'Y', 'N')) AS nvp,
-       stopped_bf.latest_date                                                                    AS breast_feeding_stopped,
-       IF(cohort.PMTCT='Not Pregnant Not BreastFeeding', 'Stopped Breast Feeding',cohort.PMTCT) AS PMTCT,
+       IF(nvp.mydate IS NULL, '', IF(TIMESTAMPDIFF(DAY, eiddob.dob, nvp.mydate) <= 2, 'Y', 'N'))   AS nvp,
+       stopped_bf.latest_date                                                                      AS breast_feeding_stopped,
+       IF(cohort.pmtct = 'Not Pregnant Not BreastFeeding', 'Stopped Breast Feeding', cohort.pmtct) AS pmtct,
        enrollment_date,
-       babies                                                                                    AS baby
+       babies                                                                                      AS baby
 
-from (
+FROM (
          # mothers with babies
-SELECT person_a AS patient, person_b AS babies, pmtct_enrollment.enrollment_date, preg_status.status AS pmtct
-FROM relationship r
-         INNER JOIN person p ON r.person_a = p.person_id
-         INNER JOIN person p1 ON r.person_b = p1.person_id
-         INNER JOIN relationship_type rt
-                    ON r.relationship = rt.relationship_type_id AND
-                       rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
-         LEFT JOIN (SELECT client_id, MIN(encounter_date) enrollment_date
-                    FROM mamba_fact_encounter_hiv_art_card
-                    WHERE pregnant = 'Breast feeding'
-                       OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
-                        AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
-                    GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
-         LEFT JOIN (SELECT client_id, status FROM mamba_fact_patients_latest_pregnancy_status) preg_status
-                   ON preg_status.client_id = person_a
-WHERE p.gender = 'F'
-  AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
-  AND r.person_b IN (SELECT DISTINCT e.patient_id
-                     FROM encounter e
-                              INNER JOIN encounter_type et
-                                         ON e.encounter_type = et.encounter_type_id
-                     WHERE e.voided = 0
-                       AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
-                       AND encounter_datetime <= CURRENT_DATE()
-                       AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))
-  AND r.person_a NOT IN (SELECT DISTINCT person_id from obs where concept_id =99165 and voided = 0)
-  AND r.person_b NOT IN (SELECT DISTINCT person_id from obs where concept_id =99165 and voided = 0)
+         SELECT person_a AS patient, person_b AS babies, pmtct_enrollment.enrollment_date, preg_status.status AS pmtct
+         FROM relationship r
+                  INNER JOIN person p ON r.person_a = p.person_id
+                  INNER JOIN person p1 ON r.person_b = p1.person_id
+                  INNER JOIN relationship_type rt
+                             ON r.relationship = rt.relationship_type_id AND
+                                rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
+                  LEFT JOIN (SELECT client_id, MIN(encounter_date) enrollment_date
+                             FROM mamba_fact_encounter_hiv_art_card
+                             WHERE pregnant = 'Breast feeding'
+                                OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                                 AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+                             GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
+                  LEFT JOIN (SELECT client_id, status FROM mamba_fact_patients_latest_pregnancy_status) preg_status
+                            ON preg_status.client_id = person_a
+         WHERE p.gender = 'F'
+           AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
+           AND r.person_b IN (SELECT DISTINCT e.patient_id
+                              FROM encounter e
+                                       INNER JOIN encounter_type et
+                                                  ON e.encounter_type = et.encounter_type_id
+                              WHERE e.voided = 0
+                                AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+                                AND encounter_datetime <= CURRENT_DATE()
+                                AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))
+           AND r.person_a NOT IN (SELECT DISTINCT person_id FROM obs WHERE concept_id = 99165 AND voided = 0)
+           AND r.person_b NOT IN (SELECT DISTINCT person_id FROM obs WHERE concept_id = 99165 AND voided = 0)
 
-UNION
+         UNION
 # mothers without babies
-SELECT DISTINCT mfehac.client_id AS patient,
-                NULL             AS babies,
-                pmtct_enrollment_date,
-                'Pregnant'       AS pmtct
-FROM (SELECT client_id
-      FROM mamba_fact_encounter_hiv_art_card
-      WHERE pregnant = 'YES'
-        AND encounter_date <= CURRENT_DATE()
-        AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
-      GROUP BY client_id) mfehac
-         LEFT JOIN (SELECT person_a AS patient
-                    FROM relationship r
-                             INNER JOIN person p ON r.person_a = p.person_id
-                             INNER JOIN person p1 ON r.person_b = p1.person_id
-                             INNER JOIN relationship_type rt
-                                        ON r.relationship = rt.relationship_type_id AND
-                                           rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
-                             LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
-                                        FROM mamba_fact_encounter_hiv_art_card
-                                        WHERE pregnant = 'Breast feeding'
-                                           OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
-                                            AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
-                                        GROUP BY client_id) pmtct_enrollment ON pmtct_enrollment.client_id = person_a
-                             LEFT JOIN (SELECT client_id, status
-                                        FROM mamba_fact_patients_latest_pregnancy_status) preg_status
-                                       ON preg_status.client_id = person_a
-                    WHERE p.gender = 'F'
-                      AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
-                      AND r.person_b IN (SELECT DISTINCT e.patient_id
-                                         FROM encounter e
-                                                  INNER JOIN encounter_type et
-                                                             ON e.encounter_type = et.encounter_type_id
-                                         WHERE e.voided = 0
-                                           AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
-                                           AND encounter_datetime <= CURRENT_DATE()
-                                           AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))) alreadymothers
-                   ON mfehac.client_id = alreadymothers.patient
-         LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
-                    FROM mamba_fact_encounter_hiv_art_card
-                    WHERE pregnant = 'YES'
-                      AND encounter_date <= CURRENT_DATE()
-                      AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
-                    GROUP BY client_id) pmtct_enrollment ON mfehac.client_id = pmtct_enrollment.client_id
-WHERE alreadymothers.patient IS NULL
+         SELECT DISTINCT mfehac.client_id AS patient,
+                         NULL             AS babies,
+                         pmtct_enrollment_date,
+                         'Pregnant'       AS pmtct
+         FROM (SELECT client_id
+               FROM mamba_fact_encounter_hiv_art_card
+               WHERE pregnant = 'YES'
+                 AND encounter_date <= CURRENT_DATE()
+                 AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
+               GROUP BY client_id) mfehac
+                  LEFT JOIN (SELECT person_a AS patient
+                             FROM relationship r
+                                      INNER JOIN person p ON r.person_a = p.person_id
+                                      INNER JOIN person p1 ON r.person_b = p1.person_id
+                                      INNER JOIN relationship_type rt
+                                                 ON r.relationship = rt.relationship_type_id AND
+                                                    rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f'
+                                      LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                                                 FROM mamba_fact_encounter_hiv_art_card
+                                                 WHERE pregnant = 'Breast feeding'
+                                                    OR pregnant = 'YES' AND encounter_date <= CURRENT_DATE()
+                                                     AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+                                                 GROUP BY client_id) pmtct_enrollment
+                                                ON pmtct_enrollment.client_id = person_a
+                                      LEFT JOIN (SELECT client_id, status
+                                                 FROM mamba_fact_patients_latest_pregnancy_status) preg_status
+                                                ON preg_status.client_id = person_a
+                             WHERE p.gender = 'F'
+                               AND TIMESTAMPDIFF(MONTH, p1.birthdate, CURRENT_DATE()) <= 24
+                               AND r.person_b IN (SELECT DISTINCT e.patient_id
+                                                  FROM encounter e
+                                                           INNER JOIN encounter_type et
+                                                                      ON e.encounter_type = et.encounter_type_id
+                                                  WHERE e.voided = 0
+                                                    AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+                                                    AND encounter_datetime <= CURRENT_DATE()
+                                                    AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH))) alreadymothers
+                            ON mfehac.client_id = alreadymothers.patient
+                  LEFT JOIN (SELECT client_id, MIN(encounter_date) pmtct_enrollment_date
+                             FROM mamba_fact_encounter_hiv_art_card
+                             WHERE pregnant = 'YES'
+                               AND encounter_date <= CURRENT_DATE()
+                               AND encounter_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 12 MONTH)
+                             GROUP BY client_id) pmtct_enrollment ON mfehac.client_id = pmtct_enrollment.client_id
+         WHERE alreadymothers.patient IS NULL
 
-UNION
+         UNION
 # babies without parents in emr
-SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HEI with caregiver' AS pmtct
-FROM encounter e
-         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id
-         INNER JOIN person p ON e.patient_id = p.person_id
-WHERE e.voided = 0
-  AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
-  AND encounter_datetime <= CURRENT_DATE()
-  AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
-  AND patient_id NOT IN (SELECT person_b AS parent
-                         FROM relationship r
-                                  INNER JOIN relationship_type rt
-                                             ON r.relationship = rt.relationship_type_id AND
-                                                rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
-  AND TIMESTAMPDIFF(MONTH, p.birthdate, CURRENT_DATE()) <= 24
-         ) cohort
-         LEFT JOIN (SELECT person_id, max(DATE (value_datetime))as edd_date FROM obs WHERE concept_id=5596 and voided=0 and obs_datetime>= DATE_SUB(CURRENT_DATE(), INTERVAL 16 MONTH) and  obs_datetime<=CURRENT_DATE()  group by person_id)EDD on patient = EDD.person_id
-         LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs  where concept_id=99771 and obs.voided=0 group by person_id)A
-on o.person_id = A.person_id where o.concept_id=99771 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) NVP on babies = NVP.person_id
-    LEFT JOIN (SELECT patient_id ,pi.identifier as id  from  patient_identifier pi  INNER JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id and pit.uuid='2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe') EIDNO on babies = EIDNO.patient_id
-    LEFT JOIN (SELECT person_id,p.birthdate as dob  from person p ) EIDDOB on babies = EIDDOB.person_id
-    LEFT JOIN (SELECT o.person_id,value_numeric  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where  concept_id=5089 and obs.voided=0  group by person_id)A
-    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5089 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) EID_W on babies = EID_W.person_id
-    LEFT JOIN (SELECT o.person_id,value_datetime from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=5096 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=5096 and obs_datetime =A.latest_date and o.voided=0  group by person_id) EID_NEXT_APPT on babies = EID_NEXT_APPT.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99451 and obs.voided=0   group by person_id)A  on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99451 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) EID_FEEDING on babies = EID_FEEDING.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99773 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99773 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) CTX on babies = CTX.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99606 and obs.voided=0   group by person_id)A on o.person_id = A.person_id where o.concept_id=99606 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCR on babies = 1stPCR.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99435 and obs.voided=0   group by person_id)A       on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99435 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCRResult on babies = 1stPCRResult.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99438 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=99438 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) 1stPCRReceived on babies = 1stPCRReceived.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs  where concept_id=99436 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=99436 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCR on babies = 2ndPCR.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=99440 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99440 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCRResult on babies = 2ndPCRResult.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99442 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=99442 and obs_datetime =A.latest_date and o.voided=0  group by person_id) 2ndPCRReceived on babies = 2ndPCRReceived.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165405 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=165405 and obs_datetime =A.latest_date and o.voided=0  group by person_id) repeatPCR on babies = repeatPCR.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165406 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=165406 and obs_datetime =A.latest_date and o.voided=0  group by person_id) repeatPCRResult on babies = repeatPCRResult.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=165408 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=165408 and obs_datetime =A.latest_date and o.voided=0  group by A.person_id) repeatPCRReceived on babies = repeatPCRReceived.person_id
-    LEFT JOIN (SELECT o.person_id,DATE(value_datetime) mydate  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from  obs where concept_id=162879 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=162879 and obs_datetime =A.latest_date and o.voided=0  group by A.person_id) rapidTest on babies = rapidTest.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=162880 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=162880 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) rapidTestResult on babies = rapidTestResult.person_id
-    LEFT JOIN (SELECT o.person_id,cn.name  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs where concept_id=99797 and obs.voided=0   group by person_id)A on o.person_id = A.person_id
-    LEFT JOIN concept_name cn ON value_coded = cn.concept_id and cn.concept_name_type='FULLY_SPECIFIED' and cn.locale='en' where o.concept_id=99797 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) finalOutcome on babies = finalOutcome.person_id
-    LEFT JOIN (SELECT o.person_id,value_text  from obs o inner join (SELECT person_id,max(obs_datetime)latest_date from obs  where concept_id=99751 and obs.voided=0   group by person_id)A
-    on o.person_id = A.person_id where o.concept_id=99751 and obs_datetime =A.latest_date and o.voided=0  group by o.person_id) linkageNo on babies= linkageNo.person_id
-    LEFT JOIN (SELECT person_id,min(obs_datetime)latest_date from obs where concept_id=99451 and value_coded=99793 and obs.voided=0  group by person_id)stopped_BF ON babies = stopped_BF.person_id;
+         SELECT NULL AS patient, e.patient_id AS babies, NULL AS pmtct_enrollment_date, 'HEI with caregiver' AS pmtct
+         FROM encounter e
+                  INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id
+                  INNER JOIN person p ON e.patient_id = p.person_id
+         WHERE e.voided = 0
+           AND et.uuid = '9fcfcc91-ad60-4d84-9710-11cc25258719'
+           AND encounter_datetime <= CURRENT_DATE()
+           AND encounter_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 24 MONTH)
+           AND patient_id NOT IN (SELECT person_b AS parent
+                                  FROM relationship r
+                                           INNER JOIN relationship_type rt
+                                                      ON r.relationship = rt.relationship_type_id AND
+                                                         rt.uuid = '8d91a210-c2cc-11de-8d13-0010c6dffd0f')
+           AND TIMESTAMPDIFF(MONTH, p.birthdate, CURRENT_DATE()) <= 24) cohort
+         LEFT JOIN (SELECT person_id, MAX(DATE(value_datetime)) AS edd_date
+                    FROM obs
+                    WHERE concept_id = 5596
+                      AND voided = 0
+                      AND obs_datetime >= DATE_SUB(CURRENT_DATE(), INTERVAL 16 MONTH)
+                      AND obs_datetime <= CURRENT_DATE()
+                    GROUP BY person_id) edd ON patient = edd.person_id
+         LEFT JOIN (SELECT o.person_id, DATE(value_datetime) mydate
+    FROM obs o
+                             INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
+                                         FROM obs
+                                         WHERE concept_id = 99771
+                                           AND obs.voided = 0
+                                         GROUP BY person_id) a
+ON o.person_id = a.person_id
+WHERE o.concept_id = 99771
+  AND obs_datetime = a.latest_date
+  AND o.voided = 0
+GROUP BY o.person_id) nvp
+ON babies = nvp.person_id
+    LEFT JOIN (SELECT patient_id, pi.identifier AS id
+    FROM patient_identifier pi
+    INNER JOIN patient_identifier_type pit
+    ON pi.identifier_type = pit.patient_identifier_type_id AND
+    pit.uuid = '2c5b695d-4bf3-452f-8a7c-fe3ee3432ffe') eidno
+    ON babies = eidno.patient_id
+    LEFT JOIN (SELECT person_id, p.birthdate AS dob FROM person p) eiddob ON babies = eiddob.person_id
+    LEFT JOIN (SELECT o.person_id, value_numeric
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 5089
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 5089
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) eid_w ON babies = eid_w.person_id
+    LEFT JOIN (SELECT o.person_id, value_datetime
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 5096
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 5096
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) eid_next_appt ON babies = eid_next_appt.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99451
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 99451
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) eid_feeding ON babies = eid_feeding.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99773
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 99773
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) ctx ON babies = ctx.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99606
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    WHERE o.concept_id = 99606
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) 1stpcr ON babies = 1stpcr.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99435
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 99435
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) 1stpcrresult ON babies = 1stpcrresult.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99438
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 99438
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) 1stpcrreceived ON babies = 1stpcrreceived.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99436
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 99436
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) 2ndpcr ON babies = 2ndpcr.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99440
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 99440
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) 2ndpcrresult ON babies = 2ndpcrresult.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99442
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 99442
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) 2ndpcrreceived ON babies = 2ndpcrreceived.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 165405
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 165405
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) repeatpcr ON babies = repeatpcr.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 165406
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 165406
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY person_id) repeatpcrresult ON babies = repeatpcrresult.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 165408
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 165408
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY a.person_id) repeatpcrreceived ON babies = repeatpcrreceived.person_id
+    LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 162879
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 162879
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY a.person_id) rapidtest ON babies = rapidtest.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 162880
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 162880
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) rapidtestresult ON babies = rapidtestresult.person_id
+    LEFT JOIN (SELECT o.person_id, cn.name
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99797
+    AND obs.voided = 0
+    GROUP BY person_id) a ON o.person_id = a.person_id
+    LEFT JOIN concept_name cn
+    ON value_coded = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND
+    cn.locale = 'en'
+    WHERE o.concept_id = 99797
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) finaloutcome ON babies = finaloutcome.person_id
+    LEFT JOIN (SELECT o.person_id, value_text
+    FROM obs o
+    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99751
+    AND obs.voided = 0
+    GROUP BY person_id) a
+    ON o.person_id = a.person_id
+    WHERE o.concept_id = 99751
+    AND obs_datetime = a.latest_date
+    AND o.voided = 0
+    GROUP BY o.person_id) linkageno ON babies = linkageno.person_id
+    LEFT JOIN (SELECT person_id, MIN (obs_datetime) latest_date
+    FROM obs
+    WHERE concept_id = 99451
+    AND value_coded = 99793
+    AND obs.voided = 0
+    GROUP BY person_id) stopped_bf ON babies = stopped_bf.person_id;
 -- $END
 END //
 
@@ -9177,6 +9907,74 @@ DELIMITER ;
 
         
 -- ---------------------------------------------------------------------------------------------
+-- ----------------------  fn_mamba_calculate_moh_age_group  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS fn_mamba_calculate_moh_age_group;
+
+DELIMITER //
+
+CREATE FUNCTION fn_mamba_calculate_moh_age_group(age INT) RETURNS VARCHAR(15)
+    DETERMINISTIC
+BEGIN
+    DECLARE agegroup VARCHAR(15);
+    IF (age < 1) THEN
+        SET agegroup = '<1';
+    ELSEIF age between 1 and 4 THEN
+        SET agegroup = '1-4';
+    ELSEIF age between 5 and 9 THEN
+        SET agegroup = '5-9';
+    ELSEIF age between 10 and 14 THEN
+        SET agegroup = '10-14';
+    ELSEIF age between 15 and 19 THEN
+        SET agegroup = '15-19';
+    ELSEIF age between 20 and 24 THEN
+        SET agegroup = '20-24';
+    ELSEIF age between 25 and 29 THEN
+        SET agegroup = '25-29';
+    ELSEIF age between 30 and 34 THEN
+        SET agegroup = '30-34';
+    ELSEIF age between 35 and 39 THEN
+        SET agegroup = '35-39';
+    ELSEIF age between 40 and 44 THEN
+        SET agegroup = '40-44';
+    ELSEIF age between 45 and 49 THEN
+        SET agegroup = '45-49';
+    ELSE
+        SET agegroup = '50+';
+    END IF;
+
+    RETURN (agegroup);
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_mamba_insert_age_group  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS sp_mamba_load_agegroup;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_mamba_load_agegroup()
+BEGIN
+    DECLARE age INT DEFAULT 0;
+    WHILE age <= 120
+        DO
+            INSERT INTO mamba_dim_agegroup(age, datim_agegroup, normal_agegroup,moh_age_group)
+            VALUES (age, fn_mamba_calculate_agegroup(age), IF(age < 15, '<15', '15+'),fn_mamba_calculate_moh_age_group(age));
+            SET age = age + 1;
+END WHILE;
+END //
+
+DELIMITER ;
+
+
+        
+-- ---------------------------------------------------------------------------------------------
 -- ----------------------  sp_fact_encounter_non_suppressed_card_create  ----------------------------
 -- ---------------------------------------------------------------------------------------------
 
@@ -9354,6 +10152,208 @@ CREATE PROCEDURE sp_data_processing_derived_non_suppressed()
 BEGIN
 -- $BEGIN
 CALL sp_fact_encounter_non_suppressed_card;
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in;
+
+CREATE PROCEDURE sp_fact_transfer_in()
+BEGIN
+-- $BEGIN
+CALL sp_fact_transfer_in_create();
+CALL sp_fact_transfer_in_insert();
+CALL sp_fact_transfer_in_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_create;
+
+CREATE PROCEDURE sp_fact_transfer_in_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE IF NOT EXISTS mamba_fact_transfer_in
+(
+    id                       INT AUTO_INCREMENT,
+    client_id                         INT           NULL,
+    encounter_date                    DATE          NOT NULL,
+    transfer_in_date                  DATE    NOT NULL,
+
+    PRIMARY KEY (id)
+
+);
+
+CREATE INDEX
+    mamba_fact_transfer_in_client_id_index ON mamba_fact_transfer_in (client_id);
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_insert;
+
+CREATE PROCEDURE sp_fact_transfer_in_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_transfer_in (
+                                  client_id,
+                                  encounter_date,
+                                  transfer_in_date
+                                 )
+SELECT person_id, obs_datetime, value_datetime from obs where concept_id=99160 and voided =0 ;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_in_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_in_update;
+
+CREATE PROCEDURE sp_fact_transfer_in_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out;
+
+CREATE PROCEDURE sp_fact_transfer_out()
+BEGIN
+-- $BEGIN
+CALL sp_fact_transfer_out_create();
+CALL sp_fact_transfer_out_insert();
+CALL sp_fact_transfer_out_update();
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_create  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_create;
+
+CREATE PROCEDURE sp_fact_transfer_out_create()
+BEGIN
+-- $BEGIN
+CREATE TABLE IF NOT EXISTS mamba_fact_transfer_out
+(
+    id                       INT AUTO_INCREMENT,
+    client_id                         INT           NULL,
+    encounter_date                    DATE          NOT NULL,
+    transfer_out_date                  DATE    NOT NULL,
+
+    PRIMARY KEY (id)
+
+);
+
+CREATE INDEX
+    mamba_fact_transfer_out_client_id_index ON mamba_fact_transfer_out (client_id);
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_insert  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_insert;
+
+CREATE PROCEDURE sp_fact_transfer_out_insert()
+BEGIN
+-- $BEGIN
+INSERT INTO mamba_fact_transfer_out (
+                                  client_id,
+                                  encounter_date,
+                                  transfer_out_date
+                                 )
+SELECT person_id, obs_datetime, value_datetime from obs where concept_id=99165 and voided =0 ;
+
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_fact_transfer_out_update  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_fact_transfer_out_update;
+
+CREATE PROCEDURE sp_fact_transfer_out_update()
+BEGIN
+-- $BEGIN
+-- $END
+END //
+
+DELIMITER ;
+
+        
+-- ---------------------------------------------------------------------------------------------
+-- ----------------------  sp_data_processing_derived_transfers  ----------------------------
+-- ---------------------------------------------------------------------------------------------
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS sp_data_processing_derived_transfers;
+
+CREATE PROCEDURE sp_data_processing_derived_transfers()
+BEGIN
+-- $BEGIN
+
+CALL sp_fact_transfer_in;
+CALL sp_fact_transfer_out;
 -- $END
 END //
 
