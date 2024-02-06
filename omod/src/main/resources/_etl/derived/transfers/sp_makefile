@@ -1,0 +1,19 @@
+
+
+#############################################################################
+##################### Transfers  Fact Table SPs  ######################
+#############################################################################
+facts/fact_transfer_in/sp_fact_transfer_in.sql
+facts/fact_transfer_in/sp_fact_transfer_in_create.sql
+facts/fact_transfer_in/sp_fact_transfer_in_insert.sql
+facts/fact_transfer_in/sp_fact_transfer_in_update.sql
+
+facts/fact_transfer_out/sp_fact_transfer_out.sql
+facts/fact_transfer_out/sp_fact_transfer_out_create.sql
+facts/fact_transfer_out/sp_fact_transfer_out_insert.sql
+facts/fact_transfer_out/sp_fact_transfer_out_update.sql
+
+#############################################################################
+######## A single stored procedure that invokes (CALLs) the above SPs #######
+#############################################################################
+sp_data_processing_derived_transfers.sql

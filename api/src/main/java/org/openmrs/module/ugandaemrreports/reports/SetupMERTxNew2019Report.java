@@ -1,25 +1,20 @@
 package org.openmrs.module.ugandaemrreports.reports;
 
 import org.openmrs.module.reporting.ReportingConstants;
-import org.openmrs.module.reporting.cohort.definition.BaseObsCohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.definition.CohortIndicatorDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
-import org.openmrs.module.reporting.indicator.dimension.CohortDefinitionDimension;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AggregateReportDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
-import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
-import org.openmrs.module.ugandaemrreports.reporting.library.cohort.ARTCohortLibrary;
-import org.openmrs.module.ugandaemrreports.reporting.metadata.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
@@ -29,27 +24,13 @@ import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.g
  *  TX Current Report
  */
 @Component
-public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
+public class SetupMERTxNew2019Report extends AggregateReportDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-    @Autowired
-    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
-
-    @Autowired
-    private CommonDimensionLibrary commonDimensionLibrary;
-
-    @Autowired
-    private ARTCohortLibrary artCohortLibrary;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
 
 
     /**
@@ -122,51 +103,14 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
-        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        AggregateReportDataSetDefinition dsd = new AggregateReportDataSetDefinition();
 
         dsd.setParameters(getParameters());
+        dsd.setReportDesign(getJsonReportDesign());
         rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
 
-        CohortDefinitionDimension ageDimension = commonDimensionLibrary.getFinerAgeWith55And65Ranges();
-        dsd.addDimension("age", Mapped.mapStraightThrough(ageDimension));
-
-        CohortDefinition males = cohortDefinitionLibrary.males();
-        CohortDefinition females = cohortDefinitionLibrary.females();
-
-        CohortDefinition havingArtStartDateDuringQuarter = df.getPatientsNotIn(hivCohortDefinitionLibrary.getArtStartDateBetweenPeriod(),hivCohortDefinitionLibrary.getTransferredInToCareDuringPeriod());
-        CohortDefinition lactating = addParameters(artCohortLibrary.lactatingAtARTStart());
-
-
-        CohortDefinition lactatingAtStartOfArt = df.getPatientsInAll(lactating, havingArtStartDateDuringQuarter);
-
-        CohortDefinition PWIDS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
-                Arrays.asList(Dictionary.getConcept("160666AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
-
-        CohortDefinition PIPS = df.getPatientsWithCodedObsDuringPeriod(Dictionary.getConcept("927563c5-cb91-4536-b23c-563a72d3f829"),hivMetadata.getARTSummaryPageEncounterType(),
-                Arrays.asList(Dictionary.getConcept("162277AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), BaseObsCohortDefinition.TimeModifier.LAST);
-
-        addIndicator(dsd,"15a","All newly started on ART above 60 female",df.getPatientsInAll(havingArtStartDateDuringQuarter,females,cohortDefinitionLibrary.agedAtLeast(60)),"");
-        addIndicator(dsd,"15b","All newly started on ART above 60 male",df.getPatientsInAll(havingArtStartDateDuringQuarter,males,cohortDefinitionLibrary.agedAtLeast(60)),"");
-
-
-        Helper.addGender(dsd, "a", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
-        Helper.addGender(dsd, "b", "All Newly started  on ART ", havingArtStartDateDuringQuarter);
-
-
-        addIndicator(dsd, "LAC", "Lactating At start on Art", lactatingAtStartOfArt, "");
-        addIndicator(dsd, "TOTAL", "Total At start on Art", havingArtStartDateDuringQuarter, "");
-
-        addIndicator(dsd,"PWIDSf","PWIDs TX Curr on ART female",df.getPatientsInAll(females,PWIDS,havingArtStartDateDuringQuarter),"");
-        addIndicator(dsd,"PWIDSm","PWIDs TX Curr on ART male",df.getPatientsInAll(males,PWIDS,havingArtStartDateDuringQuarter),"");
-
-       addIndicator(dsd,"PIPf","PIPs TX Curr on ART female",df.getPatientsInAll(females,PIPS,havingArtStartDateDuringQuarter),"");
-       addIndicator(dsd,"PIPm","PIPs TX Curr on ART male",df.getPatientsInAll(males,PIPS,havingArtStartDateDuringQuarter),"");
-
-        addIndicator(dsd,"PWIDS","PWIDs TX Curr on ART",df.getPatientsInAll(PWIDS,havingArtStartDateDuringQuarter),"");
-        addIndicator(dsd,"PIPS","PIPs TX Curr on ART",df.getPatientsInAll(PIPS,havingArtStartDateDuringQuarter),"");
-       addIndicator(dsd,"TOTAL_KP","TOTAL KP",df.getPatientsInAll(df.getPatientsInAny(PIPS,PWIDS),havingArtStartDateDuringQuarter),"");
 
 
         return rd;
@@ -190,6 +134,6 @@ public class SetupMERTxNew2019Report extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.9";
+        return "0.2.9.2";
     }
 }

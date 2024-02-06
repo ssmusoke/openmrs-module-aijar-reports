@@ -13,12 +13,15 @@
  */
 package org.openmrs.module.ugandaemrreports.activator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.ugandaemrreports.reports.AggregateReportDataExportManager;
 
 /**
  * This class contains the logic that is run every time this module is either started or stopped.
@@ -27,6 +30,7 @@ public class UgandaEMRReportsActivator extends BaseModuleActivator {
 	
 	protected Log log = LogFactory.getLog(getClass());
 
+	File folder = FileUtils.toFile(UgandaEMRReportsActivator.class.getClassLoader().getResource("report_designs"));
 	public List<Initializer> getInitializers() {
 		List<Initializer> l = new ArrayList<Initializer>();
 		l.add(new AppConfigInitializer());
