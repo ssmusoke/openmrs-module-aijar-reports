@@ -105,6 +105,6 @@ public class SetupPMTCTAuditToolLite extends UgandaEMRDataExportManager {
 
 	@Override
 	public String getVersion() {
-		return "0.1.33";
+		return "0.1.4";
 	}
 }

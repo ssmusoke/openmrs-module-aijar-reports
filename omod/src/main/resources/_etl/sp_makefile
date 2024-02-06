@@ -19,6 +19,8 @@ dimensions/dim_concept_name/sp_mamba_dim_concept_name.sql
 dimensions/dim_concept_name/sp_mamba_dim_concept_name_create.sql
 dimensions/dim_concept_name/sp_mamba_dim_concept_name_insert.sql
 
+derived/z_obs/sp_mamba_z_encounter_obs_insert.sql
+
 #############################################################################
 ##### A single SP that CALLs all SPs inside the derived & base folders ######
 #############################################################################
