@@ -33,7 +33,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_summary
     name_of_family_member                       VARCHAR(255) NULL,
     age_of_family_member                        VARCHAR(255) NULL,
     hiv_test                                    VARCHAR(255) NULL,
-    hiv_test_facility                           VARCHAR(255) NULL,
+    hiv_test_facility                           TEXT NULL,
     other_care_entry_point                      TEXT NULL,
     treatment_supporter_tel_no_owner            TEXT NULL,
     treatment_supporter_name                    TEXT NULL,
