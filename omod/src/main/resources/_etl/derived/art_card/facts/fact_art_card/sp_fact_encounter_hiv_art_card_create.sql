@@ -71,7 +71,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_card
     quantity_unit                         VARCHAR(255) NULL,
     tpt_side_effects                      VARCHAR(255) NULL,
     lab_number                            TEXT NULL,
-    test                                  VARCHAR(255) NULL,
+    test                                  TEXT NULL,
     test_result                           VARCHAR(255) NULL,
     refill_point_code                     VARCHAR(80) NULL,
     next_return_date_at_facility          DATE NULL,
