@@ -134,6 +134,6 @@ public class SetupMERTxNew2019Report extends AggregateReportDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.2.9.3";
+        return "0.2.9.4";
     }
 }

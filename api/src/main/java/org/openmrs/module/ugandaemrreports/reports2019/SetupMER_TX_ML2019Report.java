@@ -123,6 +123,6 @@ public class SetupMER_TX_ML2019Report extends AggregateReportDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "3.2.8.5";
+        return "3.2.8.6";
     }
 }
