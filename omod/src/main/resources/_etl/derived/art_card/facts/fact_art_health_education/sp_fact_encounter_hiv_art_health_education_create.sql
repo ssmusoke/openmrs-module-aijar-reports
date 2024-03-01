@@ -19,7 +19,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_health_education
     clinic_contact_comments     TEXT  DEFAULT NULL,
     scheduled_patient_visit     VARCHAR(255)  DEFAULT NULL,
     health_education_setting    VARCHAR(255)  DEFAULT NULL,
-    clinical_impression_comment VARCHAR(2255)  DEFAULT NULL,
+    clinical_impression_comment TEXT  DEFAULT NULL,
     health_education_disclosure VARCHAR(255)  DEFAULT NULL,
 
     PRIMARY KEY (id)

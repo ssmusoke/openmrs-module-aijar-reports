@@ -1,0 +1,2162 @@
+{
+  "report_uuid": "5b922f62-f844-4962-9465-61cf8f52f4b7",
+  "report_name": "TX ML",
+  "report_fields": [
+    {
+      "indicator_name": "TX-ML dead",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id\n                     FROM person\n                     WHERE dead = 1\n                       AND death_date BETWEEN ':startDate' AND ':endDate') dead\n                    ON dead.person_id = a.client_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2a"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2b"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3a"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3b"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4a"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4b"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5a"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5b"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6a"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6b"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7a"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7b"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8a"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8b"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9a"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9b"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10a"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10b"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11a"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11b"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12a"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12b"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13a"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13b"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14a"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14b"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15a"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15b"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16a"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16b"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML Transfer out",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT mf_to.client_id\n                     FROM mamba_fact_transfer_out mf_to\n                     WHERE transfer_out_date <= ':endDate'\n                       AND transfer_out_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)) mfto\n                    ON a.client_id = mfto.client_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2c"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2d"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3c"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3d"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4c"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4d"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5c"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5d"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6c"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6d"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7c"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7d"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8c"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8d"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9c"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9d"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10c"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10d"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11c"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11d"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12c"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12d"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13c"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13d"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14c"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14d"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15c"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15d"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16c"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16d"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML IIT < 3",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) < 3\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2e"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2f"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3e"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3f"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4e"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4f"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5e"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5f"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6e"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6f"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7e"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7f"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8e"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8f"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9e"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9f"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10e"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10f"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11e"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11f"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12e"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12f"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13e"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13f"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14e"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14f"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15e"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15f"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16e"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16f"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML IIT for 3 to 5 months ",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) BETWEEN 3 AND 5\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2g"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2h"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3g"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3h"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4g"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4h"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5g"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5h"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6g"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6h"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7g"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7h"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8g"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8h"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9g"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9h"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10g"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10h"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11g"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11h"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12g"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12h"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13g"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13h"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14g"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14h"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15g"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15h"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16g"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16h"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML IIT for more than 5 months",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) > 5\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2i"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2j"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3i"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3j"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4i"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4j"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5i"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5j"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6i"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6j"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7i"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7j"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8i"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8j"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9i"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9j"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10i"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10j"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11i"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11j"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12i"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12j"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13i"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13j"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14i"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14j"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15i"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15j"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16i"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16j"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML stopped treatment",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\nWHERE mfehas.treatment_interruption = 'STOPPED'\n  AND mfehas.treatment_interruption_stop_date BETWEEN ':startDate' AND ':endDate'\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2k"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2l"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3k"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3l"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4k"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4l"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5k"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5l"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6k"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6l"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7k"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7l"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8k"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8l"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9k"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9l"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10k"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10l"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11k"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11l"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12k"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12l"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13k"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13l"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14k"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14l"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15k"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15l"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16k"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16l"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is TB",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 58  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2m"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2n"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3m"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3n"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4m"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4n"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5m"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5n"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6m"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6n"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7m"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7n"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8m"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8n"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9m"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9n"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10m"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10n"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11m"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11n"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12m"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12n"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13m"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13n"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14m"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14n"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15m"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15n"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16m"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16n"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is cancer",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 116030  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2o"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2p"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3o"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3p"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4o"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4p"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5o"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5p"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6o"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6p"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7o"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7p"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8o"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8p"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9o"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9p"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10o"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10p"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11o"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11p"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12o"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12p"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13o"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13p"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14o"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14p"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15o"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15p"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16o"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16p"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is other infectious disease",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\nFROM (SELECT client_id,\n             MAX(return_visit_date) return_date\n      FROM mamba_fact_encounter_hiv_art_card\n      WHERE encounter_date <= ':endDate'\n        AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n      GROUP BY client_id) a\nWHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n  AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 165374  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2q"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2r"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3q"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3r"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4q"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4r"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5q"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5r"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6q"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6r"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7q"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7r"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8q"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8r"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9q"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9r"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10q"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10r"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11q"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11r"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12q"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12r"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13q"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13r"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14q"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14r"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15q"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15r"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16q"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16r"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is HIV disease",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 99288  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2s"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2t"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3s"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3t"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4s"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4t"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5s"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5t"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6s"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6t"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7s"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7t"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8s"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8t"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9s"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9t"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10s"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10t"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11s"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11t"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12s"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12t"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13s"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13t"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14s"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14t"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15s"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15t"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16s"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16t"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is natural causes",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 165376  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2u"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2v"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3u"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3v"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4u"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4v"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5u"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5v"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6u"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6v"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7u"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7v"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8u"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8v"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9u"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9v"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10u"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10v"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11u"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11v"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12u"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12v"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13u"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13v"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14u"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14v"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15u"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15v"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16u"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16v"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is non-natural causes",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 165377  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2w"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2x"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3w"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3x"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4w"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4x"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5w"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5x"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6w"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6x"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7w"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7x"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8w"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8x"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9w"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9x"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10w"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10x"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11w"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11x"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12w"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12x"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13w"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13x"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14w"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14x"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15w"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15x"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16w"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16x"
+        }
+      ]
+    },
+    {
+      "indicator_name": "TX-ML death cause is unknown",
+      "sqlQuery": "SELECT mda.datim_agegroup AS age_group, mdp.gender AS sex, COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         LEFT JOIN mamba_dim_agegroup mda ON mda.age = mdp.age\n         INNER JOIN (SELECT person_id FROM person WHERE cause_of_death = 90001  AND dead = 1 AND death_date BETWEEN ':startDate' AND ':endDate') death_cause\n                    ON a.client_id = death_cause.person_id\nGROUP BY age_group, sex;",
+      "dissaggregations": [
+        "age_group",
+        "gender"
+      ],
+      "values": [
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "F",
+          "value_place_holder": "2y"
+
+        },
+        {
+          "dissaggregations1": "<1",
+          "dissaggregations2": "M",
+          "value_place_holder": "2z"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "F",
+          "value_place_holder": "3y"
+        },
+        {
+          "dissaggregations1": "1-4",
+          "dissaggregations2": "M",
+          "value_place_holder": "3z"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "F",
+          "value_place_holder": "4y"
+        },
+        {
+          "dissaggregations1": "5-9",
+          "dissaggregations2": "M",
+          "value_place_holder": "4z"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "F",
+          "value_place_holder": "5y"
+        },
+        {
+          "dissaggregations1": "10-14",
+          "dissaggregations2": "M",
+          "value_place_holder": "5z"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "F",
+          "value_place_holder": "6y"
+        },
+        {
+          "dissaggregations1": "15-19",
+          "dissaggregations2": "M",
+          "value_place_holder": "6z"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "F",
+          "value_place_holder": "7y"
+        },
+        {
+          "dissaggregations1": "20-24",
+          "dissaggregations2": "M",
+          "value_place_holder": "7z"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "F",
+          "value_place_holder": "8y"
+        },
+        {
+          "dissaggregations1": "25-29",
+          "dissaggregations2": "M",
+          "value_place_holder": "8z"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "F",
+          "value_place_holder": "9y"
+        },
+        {
+          "dissaggregations1": "30-34",
+          "dissaggregations2": "M",
+          "value_place_holder": "9z"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "F",
+          "value_place_holder": "10y"
+        },
+        {
+          "dissaggregations1": "35-39",
+          "dissaggregations2": "M",
+          "value_place_holder": "10z"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "F",
+          "value_place_holder": "11y"
+        },
+        {
+          "dissaggregations1": "40-44",
+          "dissaggregations2": "M",
+          "value_place_holder": "11z"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "F",
+          "value_place_holder": "12y"
+        },
+        {
+          "dissaggregations1": "45-49",
+          "dissaggregations2": "M",
+          "value_place_holder": "12z"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "F",
+          "value_place_holder": "13y"
+        },
+        {
+          "dissaggregations1": "50-54",
+          "dissaggregations2": "M",
+          "value_place_holder": "13z"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "F",
+          "value_place_holder": "14y"
+        },
+        {
+          "dissaggregations1": "55-59",
+          "dissaggregations2": "M",
+          "value_place_holder": "14z"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "F",
+          "value_place_holder": "15y"
+        },
+        {
+          "dissaggregations1": "60-64",
+          "dissaggregations2": "M",
+          "value_place_holder": "15z"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "F",
+          "value_place_holder": "16y"
+        },
+        {
+          "dissaggregations1": "65+",
+          "dissaggregations2": "M",
+          "value_place_holder": "16z"
+        }
+      ]
+    },
+
+    {
+      "indicator_name": "TX-ML-KP PWID DEAD",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id, MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id\n         INNER JOIN (SELECT person_id\n                     FROM person\n                     WHERE dead = 1\n                       AND death_date BETWEEN ':startDate' AND ':endDate') dead\n                    ON dead.person_id = a.client_id;",
+      "value_place_holder":"PWIDS_dead"
+    },
+    {
+      "indicator_name": "TX-ML-KP PWID IIT  < 3 months",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id, MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) < 3;",
+      "value_place_holder":"PWIDS_3"
+    },
+    {
+      "indicator_name": "TX-ML-KP PWID IIT 3to5 months",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id, MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) BETWEEN 3 AND 5;",
+      "value_place_holder":"PWIDS_3to5"
+    },
+    {
+      "indicator_name": "TX-ML-KP PWID  > 5 months",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id, MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id\nWHERE TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) > 5;",
+      "value_place_holder":"PWIDS_6"
+    },
+    {
+      "indicator_name": "TX-ML-KP PWID  transferred out",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN (SELECT mf_to.client_id\n                     FROM mamba_fact_transfer_out mf_to\n                              LEFT JOIN mamba_fact_transfer_in mf_ti ON mf_to.client_id = mf_ti.client_id\n                     WHERE transfer_out_date <= ':endDate'\n                       AND transfer_out_date >= ':startDate'\n                       AND (transfer_out_date > transfer_in_date OR mf_ti.client_id IS NULL)) mfto\n                    ON a.client_id = mfto.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id;",
+      "value_place_holder":"PWIDS_TO"
+    },
+    {
+      "indicator_name": "TX-ML-KP PWID  stopped tx ",
+      "sqlQuery": "SELECT 'PWIDS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'Current drug user') special_category\n                    ON a.client_id = special_category.client_id\nWHERE  mfehas.treatment_interruption = 'STOPPED'\n  AND mfehas.treatment_interruption_stop_date BETWEEN ':startDate' AND ':endDate';",
+      "value_place_holder":"PWIDS_Stopped"
+    },
+
+
+    {
+      "indicator_name": "TX-ML-KP PIP DEAD",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id\n\nWHERE  mdp.dead = 1;",
+      "value_place_holder":"PIPS_dead"
+    },
+    {
+      "indicator_name": "TX-ML-KP PIP IIT  < 3 months",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id\nWHERE  TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) < 3;",
+      "value_place_holder":"PIPS_3"
+    },
+    {
+      "indicator_name": "TX-ML-KP PIP IIT 3to5 months",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id\nWHERE  TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) BETWEEN 3 and 5 ;",
+      "value_place_holder":"PIPS_3to5"
+    },
+    {
+      "indicator_name": "TX-ML-KP PIP  > 5 months",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id, MAX(encounter_datetime) AS last_visit_date\n                     FROM mamba_flat_encounter_art_card\n                     GROUP BY client_id) last_encounter ON last_encounter.client_id = a.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id\nWHERE  TIMESTAMPDIFF(MONTH, baseline_regimen_start_date, last_visit_date) > 5 ;",
+      "value_place_holder":"PIPS_6"
+    },
+    {
+      "indicator_name": "TX-ML-KP PIP  transferred out",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN (SELECT mf_to.client_id\n                     FROM mamba_fact_transfer_out mf_to\n                              LEFT JOIN mamba_fact_transfer_in mf_ti ON mf_to.client_id = mf_ti.client_id\n                     WHERE transfer_out_date <= ':endDate'\n                       AND transfer_out_date >= ':startDate'\n                       AND (transfer_out_date > transfer_in_date OR mf_ti.client_id IS NULL)) mfto\n                    ON a.client_id = mfto.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id;",
+      "value_place_holder":"PIPS_TO"
+    },
+    {
+      "indicator_name": "TX-ML-KP PIP  stopped tx ",
+      "sqlQuery": "SELECT 'PIPS', COUNT(DISTINCT a.client_id)\nFROM (SELECT a.client_id, return_date\n      FROM (SELECT client_id,\n                   MAX(return_visit_date) return_date\n            FROM mamba_fact_encounter_hiv_art_card\n            WHERE encounter_date <= ':endDate'\n              AND return_visit_date >= DATE_SUB(':startDate', INTERVAL 3 MONTH)\n            GROUP BY client_id) a\n      WHERE TIMESTAMPDIFF(DAY, return_date, ':endDate') > 28\n        AND TIMESTAMPDIFF(DAY, return_date, DATE_SUB(':endDate', INTERVAL 3 MONTH)) <= 28) a\n         INNER JOIN mamba_fact_patients_latest_patient_demographics mdp ON a.client_id = mdp.patient_id\n         INNER JOIN mamba_fact_encounter_hiv_art_summary mfehas ON a.client_id = mfehas.client_id\n         INNER JOIN (SELECT client_id\n                     FROM mamba_fact_encounter_hiv_art_summary\n                     WHERE special_category = 'In prison') special_category\n                    ON a.client_id = special_category.client_id\nWHERE  mfehas.treatment_interruption = 'STOPPED'\n  AND mfehas.treatment_interruption_stop_date BETWEEN ':startDate' AND ':endDate';",
+      "value_place_holder":"PIPS_Stopped"
+    }
+  ]
+}
