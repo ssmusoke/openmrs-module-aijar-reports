@@ -187,7 +187,7 @@ ON babies = nvp.person_id
     LEFT JOIN (SELECT person_id, p.birthdate AS dob FROM person p) eiddob ON babies = eiddob.person_id
     LEFT JOIN (SELECT o.person_id, value_numeric
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 5089
     AND obs.voided = 0
@@ -202,7 +202,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) eid_w ON babies = eid_w.person_id
     LEFT JOIN (SELECT o.person_id, value_datetime
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 5096
     AND obs.voided = 0
@@ -216,7 +216,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) eid_next_appt ON babies = eid_next_appt.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99451
     AND obs.voided = 0
@@ -230,7 +230,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) eid_feeding ON babies = eid_feeding.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99773
     AND obs.voided = 0
@@ -244,7 +244,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) ctx ON babies = ctx.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99606
     AND obs.voided = 0
@@ -255,7 +255,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) 1stpcr ON babies = 1stpcr.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99435
     AND obs.voided = 0
@@ -269,7 +269,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) 1stpcrresult ON babies = 1stpcrresult.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99438
     AND obs.voided = 0
@@ -281,7 +281,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) 1stpcrreceived ON babies = 1stpcrreceived.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99436
     AND obs.voided = 0
@@ -293,7 +293,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) 2ndpcr ON babies = 2ndpcr.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99440
     AND obs.voided = 0
@@ -307,7 +307,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) 2ndpcrresult ON babies = 2ndpcrresult.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99442
     AND obs.voided = 0
@@ -319,7 +319,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) 2ndpcrreceived ON babies = 2ndpcrreceived.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 165405
     AND obs.voided = 0
@@ -331,7 +331,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) repeatpcr ON babies = repeatpcr.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 165406
     AND obs.voided = 0
@@ -346,7 +346,7 @@ ON babies = nvp.person_id
     GROUP BY person_id) repeatpcrresult ON babies = repeatpcrresult.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 165408
     AND obs.voided = 0
@@ -358,7 +358,7 @@ ON babies = nvp.person_id
     GROUP BY a.person_id) repeatpcrreceived ON babies = repeatpcrreceived.person_id
     LEFT JOIN (SELECT o.person_id, DATE (value_datetime) mydate
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 162879
     AND obs.voided = 0
@@ -370,7 +370,7 @@ ON babies = nvp.person_id
     GROUP BY a.person_id) rapidtest ON babies = rapidtest.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 162880
     AND obs.voided = 0
@@ -385,7 +385,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) rapidtestresult ON babies = rapidtestresult.person_id
     LEFT JOIN (SELECT o.person_id, cn.name
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99797
     AND obs.voided = 0
@@ -399,7 +399,7 @@ ON babies = nvp.person_id
     GROUP BY o.person_id) finaloutcome ON babies = finaloutcome.person_id
     LEFT JOIN (SELECT o.person_id, value_text
     FROM obs o
-    INNER JOIN (SELECT person_id, MAX (obs_datetime) latest_date
+    INNER JOIN (SELECT person_id, MAX(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99751
     AND obs.voided = 0
@@ -409,7 +409,7 @@ ON babies = nvp.person_id
     AND obs_datetime = a.latest_date
     AND o.voided = 0
     GROUP BY o.person_id) linkageno ON babies = linkageno.person_id
-    LEFT JOIN (SELECT person_id, MIN (obs_datetime) latest_date
+    LEFT JOIN (SELECT person_id, MIN(obs_datetime) latest_date
     FROM obs
     WHERE concept_id = 99451
     AND value_coded = 99793
