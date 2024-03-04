@@ -63,6 +63,3 @@ buildNumber.properties
 .project
 api/.project
 omod/.project
-
-create_stored_procedures.sql
-liquibase_create_stored_procedures.sql
