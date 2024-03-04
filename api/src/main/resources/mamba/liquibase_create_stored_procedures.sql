@@ -4989,7 +4989,7 @@ CREATE TABLE mamba_fact_encounter_hiv_art_summary
     baseline_stage                              VARCHAR(255) NULL,
     baseline_cd4                                VARCHAR(255) NULL,
     baseline_pregnancy                          VARCHAR(255) NULL,
-    name_of_family_member                       VARCHAR(255) NULL,
+    name_of_family_member                       TEXT NULL,
     age_of_family_member                        VARCHAR(255) NULL,
     hiv_test                                    VARCHAR(255) NULL,
     hiv_test_facility                           TEXT NULL,
