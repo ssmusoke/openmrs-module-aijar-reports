@@ -1,6 +1,7 @@
 {
   "report_uuid": "8dafdc32-97b7-4f49-828e-475cd4f09669",
   "report_name": "TX CURR",
+  "report_alias": "TX",
   "report_fields": [
     {
       "indicator_name": "TX-CURR",

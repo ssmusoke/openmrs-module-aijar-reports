@@ -8,27 +8,27 @@ import java.util.Date;
 /**
  */
 public class DSDMModel {
-    private LocalDateTime dateOfEnrollment;
+    private Date dateOfEnrollment;
     private String progId;
 
-    public DSDMModel(LocalDateTime dateOfEnrollment) {
+    public DSDMModel(Date dateOfEnrollment) {
         this.dateOfEnrollment = dateOfEnrollment;
     }
 
     public String toString() {
-        return dateOfEnrollment.toLocalDate().atStartOfDay().toString();
+        return dateOfEnrollment.toString();
     }
 
-    public DSDMModel(LocalDateTime dateOfEnrollment, String progId) {
+    public DSDMModel(Date dateOfEnrollment, String progId) {
         this.dateOfEnrollment = dateOfEnrollment;
         this.progId = progId;
     }
 
-    public LocalDateTime getdateOfEnrollment() {
+    public Date getdateOfEnrollment() {
         return dateOfEnrollment;
     }
 
-    public void setdateOfEnrollment(LocalDateTime dateOfEnrollment) {
+    public void setdateOfEnrollment(Date dateOfEnrollment) {
         this.dateOfEnrollment = dateOfEnrollment;
     }
 
