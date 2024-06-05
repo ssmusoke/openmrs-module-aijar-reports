@@ -95,14 +95,7 @@ public class DataExportRestController {
 
                         File exportFile = DataExportUtil.getGeneratedFile(exportReportObject);
 
-
-                        return ResponseEntity.ok()
-                                .header(HttpHeaders.CONTENT_TYPE, "application/json")
-                                .header(HttpHeaders.CONTENT_DISPOSITION,
-                                        "attachment; filename="+reportCohort.getName())
-                                .body(exportFile);
-
-//                        return new ResponseEntity<Object>(exportReportObject, HttpStatus.OK);
+                     return new ResponseEntity<>(exportReportObject, HttpStatus.OK);
                     } else {
                         return new ResponseEntity<Object>(" No base cohort for this report", HttpStatus.INTERNAL_SERVER_ERROR);
                     }

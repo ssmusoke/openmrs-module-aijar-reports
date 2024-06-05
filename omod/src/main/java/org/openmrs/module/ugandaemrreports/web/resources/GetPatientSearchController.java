@@ -4,17 +4,23 @@ import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
 import org.openmrs.cohort.CohortDefinitionItemHolder;
 import org.openmrs.cohort.impl.PatientSearchCohortDefinitionProvider;
+import org.openmrs.module.reporting.dataset.DataSet;
+import org.openmrs.module.reporting.dataset.DataSetRow;
 import org.openmrs.module.reportingcompatibility.service.CohortService;
+import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
+import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.reporting.AbstractReportObject;
 import org.openmrs.reporting.PatientSearch;
+import org.openmrs.reporting.PatientSearchReportObject;
+import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * End point will handle dataSet evaluation passed
@@ -29,13 +35,32 @@ public class GetPatientSearchController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getAll() {
-        CohortService cs = Context.getService(CohortService.class);
-        List<CohortDefinitionItemHolder> cohortDefinitionItemHolders =  cs.getAllCohortDefinitions();
+        List<ReportObjectWrapper> reports = Context.getService(UgandaEMRReportsService.class).getPatientSearches("Patient Search");
 
-        System.out.println("cohort"+cohortDefinitionItemHolders.size());
-        return new ResponseEntity<Object>(cohortDefinitionItemHolders, HttpStatus.OK);
+        List<SimpleObject> objects = convertDataSetToSimpleObject(reports);
+        return new ResponseEntity<>(objects, HttpStatus.OK);
     }
 
+    public List<SimpleObject> convertDataSetToSimpleObject(List<ReportObjectWrapper> list) {
 
+
+        List<SimpleObject> dataList = new ArrayList<SimpleObject>();
+        for (ReportObjectWrapper p : list) {
+            String name= p.getName();
+            String uuid = p.getUuid();
+            int id =p.getId();
+            String description = p.getDescription();
+            SimpleObject details = new SimpleObject();
+
+            details.add("name",name);
+            details.add("uuid",uuid);
+            details.add("id",id);
+            details.add("description",description);
+
+            dataList.add(details);
+
+        }
+        return dataList;
+    }
 
 }
