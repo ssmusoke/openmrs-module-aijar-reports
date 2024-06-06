@@ -36,6 +36,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -93,9 +94,18 @@ public class DataExportRestController {
                         rs.saveReportObject(exportReportObject);
                         DataExportUtil.generateExport(exportReportObject, ReportingcompatibilityUtil.convert(baseCohort) , null);
 
-                        File exportFile = DataExportUtil.getGeneratedFile(exportReportObject);
+                        File file = DataExportUtil.getGeneratedFile(exportReportObject);
 
-                     return new ResponseEntity<>(exportReportObject, HttpStatus.OK);
+                        String s = new SimpleDateFormat("yyyyMMdd_Hm").format(new Date(file.lastModified()));
+                        String filename = exportReportObject.getName().replace(" ", "_") + "-" + s + ".xls";
+//
+
+                        return ResponseEntity.ok()
+                                .header(HttpHeaders.CONTENT_TYPE, "application/vnd.ms-excel")
+                                .header(HttpHeaders.PRAGMA, "no-cache")
+                                .header(HttpHeaders.CONTENT_DISPOSITION,
+                                        "attachment; filename="+ filename);
+
                     } else {
                         return new ResponseEntity<Object>(" No base cohort for this report", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
