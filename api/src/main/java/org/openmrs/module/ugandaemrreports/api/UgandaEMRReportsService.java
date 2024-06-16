@@ -5,6 +5,7 @@ import org.openmrs.api.OpenmrsService;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.openmrs.reporting.AbstractReportObject;
+import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.PatientSearchReportObject;
 import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,4 +100,6 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     void executeFlatteningScript();
 
     List<ReportObjectWrapper> getPatientSearches(String type);
+
+    PatientSearch getPatientSearchByUuid(String uuid);
 }

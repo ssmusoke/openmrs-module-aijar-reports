@@ -10,6 +10,7 @@ import org.openmrs.module.reportingcompatibility.service.CohortService;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
+import org.openmrs.report.ReportConstants;
 import org.openmrs.reporting.AbstractReportObject;
 import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.PatientSearchReportObject;
@@ -35,7 +36,7 @@ public class GetPatientSearchController {
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<Object> getAll() {
-        List<ReportObjectWrapper> reports = Context.getService(UgandaEMRReportsService.class).getPatientSearches("Patient Search");
+        List<ReportObjectWrapper> reports = Context.getService(UgandaEMRReportsService.class).getPatientSearches(ReportConstants.REPORT_OBJECT_TYPE_PATIENTSEARCH);
 
         List<SimpleObject> objects = convertDataSetToSimpleObject(reports);
         return new ResponseEntity<>(objects, HttpStatus.OK);

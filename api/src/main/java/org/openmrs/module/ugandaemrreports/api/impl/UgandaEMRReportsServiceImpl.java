@@ -9,6 +9,7 @@ import org.openmrs.module.ugandaemrreports.api.db.hibernate.HibernateUgandaEMRRe
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.openmrs.reporting.AbstractReportObject;
+import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.PatientSearchReportObject;
 import org.openmrs.reporting.ReportObjectWrapper;
 
@@ -90,4 +91,10 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	public List<ReportObjectWrapper> getPatientSearches(String type) {
 		return dao.getReportObjects(type);
 	}
+
+	@Override
+	public PatientSearch getPatientSearchByUuid(String uuid) {
+		return dao.getPatientSearchByUuid(uuid);
+	}
+
 }

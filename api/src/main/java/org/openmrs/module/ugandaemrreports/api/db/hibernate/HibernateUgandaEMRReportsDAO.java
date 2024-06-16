@@ -9,6 +9,10 @@ import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.ugandaemrreports.api.db.UgandaEMRReportsDAO;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
+import org.openmrs.report.ReportConstants;
+import org.openmrs.reporting.AbstractReportObject;
+import org.openmrs.reporting.PatientSearch;
+import org.openmrs.reporting.PatientSearchReportObject;
 import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -104,7 +108,21 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReportObjectWrapper.class);
 		criteria.add(Restrictions.eq("type", type));
 		criteria.add(Restrictions.eq("voided", false));
-		List<ReportObjectWrapper> results =(List<ReportObjectWrapper>) criteria.list();
-		return results;
+        return (List<ReportObjectWrapper>) criteria.list();
+	}
+
+	@Override
+	public PatientSearch getPatientSearchByUuid(String uuid) {
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(ReportObjectWrapper.class);
+		criteria.add(Restrictions.eq("type", ReportConstants.REPORT_OBJECT_TYPE_PATIENTSEARCH));
+		criteria.add(Restrictions.eq("uuid", uuid));
+		criteria.add(Restrictions.eq("voided", false));
+		ReportObjectWrapper wrapper =(ReportObjectWrapper) criteria.uniqueResult();
+		AbstractReportObject abstractReportObject = wrapper.getReportObject();
+		if (abstractReportObject.getReportObjectId() == null) {
+			abstractReportObject.setReportObjectId(wrapper.getReportObjectId());
+		}
+
+        return ((PatientSearchReportObject) abstractReportObject).getPatientSearch();
 	}
 }

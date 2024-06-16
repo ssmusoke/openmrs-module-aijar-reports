@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.api.db;
 
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.reporting.AbstractReportObject;
+import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.PatientSearchReportObject;
 import org.openmrs.reporting.ReportObjectWrapper;
 
@@ -15,5 +16,6 @@ public interface UgandaEMRReportsDAO {
     void executeFlatteningScript();
 
     List<ReportObjectWrapper> getReportObjects(String type);
-	
+    PatientSearch getPatientSearchByUuid(String uuid);
+
 }
