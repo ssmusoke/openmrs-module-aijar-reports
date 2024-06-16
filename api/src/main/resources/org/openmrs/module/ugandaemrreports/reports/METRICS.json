@@ -13,6 +13,8 @@
   "Clinician": #TX.clinician#,
   "Lab": #TX.lab#,
   "Pharmacy": #TX.pharmacy#,
+  "VL exchange send sample": #TX.vl1#,
+  "VL exchange receive": #TX.vl2#
   }
 ]
 }

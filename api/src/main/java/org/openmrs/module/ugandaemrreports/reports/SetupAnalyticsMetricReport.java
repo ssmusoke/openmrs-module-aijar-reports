@@ -155,6 +155,6 @@ public class SetupAnalyticsMetricReport extends AggregateReportDataExportManager
 
     @Override
     public String getVersion() {
-        return "0.4.6";
+        return "0.4.7";
     }
 }
