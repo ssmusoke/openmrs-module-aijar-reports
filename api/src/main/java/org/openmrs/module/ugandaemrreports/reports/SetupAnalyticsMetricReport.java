@@ -16,6 +16,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AggregateReportDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.TodayDateDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
@@ -36,7 +37,7 @@ import java.util.stream.Collectors;
  *  TX Current Report
  */
 @Component
-public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
+public class SetupAnalyticsMetricReport extends AggregateReportDataExportManager {
 
     @Autowired
     private DataFactory df;
@@ -118,13 +119,15 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
         rd.setName(getName());
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
-        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
+        AggregateReportDataSetDefinition dsd = new AggregateReportDataSetDefinition();
 
         dsd.setParameters(getParameters());
+        dsd.setReportDesign(getJsonReportDesign());
         rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(CommonDatasetLibrary.settings()));
         rd.addDataSetDefinition("date", Mapped.mapStraightThrough(getDateToday()));
         rd.addDataSetDefinition("H", Mapped.mapStraightThrough(sharedDataDefintion.healthFacilityName()));
+        rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
 
         return rd;
     }
@@ -152,6 +155,6 @@ public class SetupAnalyticsMetricReport extends UgandaEMRDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.4.3";
+        return "0.4.6";
     }
 }
