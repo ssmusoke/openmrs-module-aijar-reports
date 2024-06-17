@@ -25,12 +25,12 @@
     },
     {
       "indicator_name": "vl send",
-      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = 'f9b2fa5d-5d37-4fd9-b20a-a0cab664f520'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0 group by s.sync_task_type;",
+      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = 'f9b2fa5d-5d37-4fd9-b20a-a0cab664f520'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0;",
       "value_place_holder":"vl1"
     },
     {
       "indicator_name": "vl receive",
-      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = '3396dcf0-2106-4e73-9b90-c63978c3a8b4'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0 GROUP BY s.sync_task_type;",
+      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = '3396dcf0-2106-4e73-9b90-c63978c3a8b4'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0;",
       "value_place_holder":"vl2"
     }
   ]
