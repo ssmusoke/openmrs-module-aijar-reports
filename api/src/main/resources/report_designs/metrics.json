@@ -1,0 +1,37 @@
+{
+  "report_uuid": "dcd1f91a-04c8-4ae1-ac44-6abfdc91c98a",
+  "report_name": "METRICS",
+  "report_fields": [
+
+    {
+      "indicator_name": "Triage",
+      "sqlQuery": "SELECT 'triage',COUNT(e.encounter_id)\nFROM encounter e\n         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id\nWHERE et.uuid = '67a71486-1a54-468f-ac3e-7091a9a79584'\n  AND e.encounter_datetime >= ':startDate'\n  AND e.encounter_datetime <= ':endDate'\nAND e.voided = 0;",
+      "value_place_holder":"triage"
+    },
+    {
+      "indicator_name": "Clinician",
+      "sqlQuery": "SELECT 'clinician', COUNT(e.encounter_id)\nFROM encounter e\n         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id\nWHERE et.uuid IN ('8d5b27bc-c2cc-11de-8d13-0010c6dffd0f', '8d5b2be0-c2cc-11de-8d13-0010c6dffd0f',\n                  '334bf97e-28e2-4a27-8727-a5ce31c7cd66', '334bf97e-28e2-4a27-8727-a5ce31c7cd66')\n  AND e.encounter_datetime >= ':startDate'\n  AND e.encounter_datetime <= ':endDate'\n  AND e.voided = 0;",
+      "value_place_holder":"clinician"
+    },
+    {
+      "indicator_name": "Pharmacy",
+      "sqlQuery": "SELECT 'pharmacy', COUNT(e.encounter_id)\nFROM encounter e\n         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id\nWHERE et.uuid IN ('dbe038cd-cad5-439d-a761-a6d6d680219c')\n  AND e.encounter_datetime >= ':startDate'\n  AND e.encounter_datetime <= ':endDate'\n  AND e.voided = 0;",
+      "value_place_holder":"pharmacy"
+    },
+    {
+      "indicator_name": "Lab",
+      "sqlQuery": "SELECT 'lab', COUNT(e.encounter_id)\nFROM encounter e\n         INNER JOIN encounter_type et ON e.encounter_type = et.encounter_type_id\nWHERE et.uuid IN ('cbf01392-ca29-11e9-a32f-2a2ae2dbcce4')\n  AND e.encounter_datetime >= ':startDate'\n  AND e.encounter_datetime <= ':endDate'\n  AND e.voided = 0;",
+      "value_place_holder":"lab"
+    },
+    {
+      "indicator_name": "vl send",
+      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = 'f9b2fa5d-5d37-4fd9-b20a-a0cab664f520'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0;",
+      "value_place_holder":"vl1"
+    },
+    {
+      "indicator_name": "vl receive",
+      "sqlQuery": "SELECT 'vl', COUNT(s.status)\nFROM sync_task s\n         INNER JOIN sync_task_type st ON s.sync_task_type = st.sync_task_type_id\nWHERE st.uuid = '3396dcf0-2106-4e73-9b90-c63978c3a8b4'\n  AND s.status_code IN (200, 201)\n  AND s.date_created >=':startDate' and s.date_created <= ':endDate'\n  AND s.voided = 0;",
+      "value_place_holder":"vl2"
+    }
+  ]
+}
