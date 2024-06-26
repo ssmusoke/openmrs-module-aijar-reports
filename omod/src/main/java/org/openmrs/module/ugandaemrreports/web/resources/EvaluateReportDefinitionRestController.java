@@ -17,7 +17,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationUtil;
 import org.openmrs.module.reporting.evaluation.parameter.Mapped;
 import org.openmrs.module.reporting.evaluation.parameter.Parameter;
-import org.openmrs.module.reporting.evaluation.parameter.ParameterException;
 import org.openmrs.module.reporting.report.ReportData;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.ReportDesignResource;
@@ -142,16 +141,10 @@ public class EvaluateReportDefinitionRestController {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
 
-                    String report = createPayload(reportData, reportDesign, rendertype);
+                    JsonNode report = createPayload(reportData, reportDesign, rendertype);
 
-                    if (rendertype.equals("html")) {
-
-                        return ResponseEntity.status(HttpStatus.OK)
-                                .contentType(MediaType.TEXT_HTML).body(report);
-                    } else {
                         return ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON).body(report.toString());
-                    }
 
                 } else {
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -205,46 +198,31 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private String createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
-        String finalPayLoad = "";
+    private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
+        JsonNode payLoad = null;
         try {
 
-            File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "sendReports");
+            File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "/sendReports");
             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
             Writer pw = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
             TextTemplateRenderer textTemplateRenderer = new TextTemplateRenderer();
             ReportDesignResource reportDesignResource = textTemplateRenderer.getTemplate(reportDesign);
             String templateContents = new String(reportDesignResource.getContents(), StandardCharsets.UTF_8);
-            JsonNode htmlTemplate = null;
+
+            templateContents = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
+            String wholePayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
+
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(templateContents);
-            if (renderType.equals("html")) {
-                htmlTemplate = jsonNode.get(renderType);
+            payLoad = objectMapper.readTree(wholePayLoad);
 
-                templateContents = htmlTemplate.asText();
-                finalPayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
-            } else if (renderType.equals("json")) {
-                 templateContents = FileUtils.readFileToString(Helper.getReportDesignFile(rdUuid), "UTF-8");
-                ObjectMapper objectMapper1 = new ObjectMapper();
-                JsonNode jsonReportDesign = objectMapper1.readTree(templateContents);
-                String reportAlias = jsonReportDesign.path("report_alias").asText();
 
-                 templateContents = replaceQuotesInValuePlaceHolders(templateContents,reportAlias);
 
-                JsonNode jsonTemplate = jsonNode.get(renderType);
-                String metadataContents = jsonTemplate.toString();
-                String metaDataFinal = fillTemplateWithReportData(pw, metadataContents, reportData, reportDesign, fileOutputStream);
-
-                finalPayLoad = fillJsonReportDesign(pw, templateContents, reportData, reportDesign, fileOutputStream);
-                finalPayLoad = removeAttribute(finalPayLoad,"sqlQuery");
-                finalPayLoad = "{ \"metadata\": "+ metaDataFinal+ ","+ "\"report_data\": "+ finalPayLoad + "}";
-            }
             pw.close();
         } catch (Exception e) {
             e.fillInStackTrace();
         }
-        return finalPayLoad;
+        return payLoad;
     }
 
 
@@ -277,8 +255,6 @@ public class EvaluateReportDefinitionRestController {
         } catch (Throwable var18) {
             throw new RenderingException("Unable to render results due to: " + var18, var18);
         }
-
-
     }
 
     private String fillJsonReportDesign(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
@@ -324,22 +300,6 @@ public class EvaluateReportDefinitionRestController {
             index = input.indexOf("\"value_place_holder\": \"", endIndex);
         }
         return input;
-    }
-
-    public static String removeAttribute(String jsonString, String attribute) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode rootNode = objectMapper.readTree(jsonString);
-
-        if (rootNode.has("report_fields") && rootNode.get("report_fields").isArray()) {
-            JsonNode valuesArray = rootNode.get("report_fields");
-            for (JsonNode valueNode : valuesArray) {
-                if (valueNode.has(attribute)) {
-                    ((ObjectNode) valueNode).remove(attribute);
-                }
-            }
-        }
-
-        return objectMapper.writeValueAsString(rootNode);
     }
 
 
