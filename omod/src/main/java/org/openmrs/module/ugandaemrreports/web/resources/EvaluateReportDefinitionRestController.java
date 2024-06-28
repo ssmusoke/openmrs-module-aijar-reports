@@ -213,8 +213,27 @@ public class EvaluateReportDefinitionRestController {
             templateContents = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
             String wholePayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
 
+            wholePayLoad = removeQuotesFromValues(wholePayLoad);
             ObjectMapper objectMapper = new ObjectMapper();
             payLoad = objectMapper.readTree(wholePayLoad);
+
+            JsonNode dataValuesArray = payLoad.at("/json/dataValues");
+            if (dataValuesArray.isArray()) {
+                for (JsonNode node : dataValuesArray) {
+                    // Remove attributes code, dsdm, age, sex
+                    ((ObjectNode) node).remove("dataelementname");
+                    ((ObjectNode) node).remove("code");
+                    ((ObjectNode) node).remove("dsdm");
+                    ((ObjectNode) node).remove("age");
+                    ((ObjectNode) node).remove("sex");
+                    if (node.has("value")) {
+                        String valueStr = node.get("value").asText();
+                        int valueInt = Integer.parseInt(valueStr);
+                        ((ObjectNode) node).put("value", valueInt);
+                    }
+                }
+            }
+
 
 
 
@@ -257,49 +276,19 @@ public class EvaluateReportDefinitionRestController {
         }
     }
 
-    private String fillJsonReportDesign(Writer pw, String templateContents, ReportData reportData, ReportDesign reportDesign, FileOutputStream fileOutputStream) throws IOException, RenderingException {
+    public static String removeQuotesFromValues(String input) {
+        // Regular expression to match "value":"0" and similar patterns
+        Pattern pattern = Pattern.compile("\"value\":\"(\\d+)\"");
+        Matcher matcher = pattern.matcher(input);
 
-        try {
-            TextTemplateRenderer textTemplateRenderer = new TextTemplateRenderer();
-            Map<String, Object> replacements = textTemplateRenderer.getBaseReplacementData(reportData, reportDesign);
-            String templateEngineName = reportDesign.getPropertyValue("templateType", (String) null);
-            TemplateEngine engine = TemplateEngineManager.getTemplateEngineByName(templateEngineName);
-            if (engine != null) {
-                Map<String, Object> bindings = new HashMap();
-                bindings.put("reportData", reportData);
-                bindings.put("reportDesign", reportDesign);
-                bindings.put("data", replacements);
-                bindings.put("util", new ObjectUtil());
-                bindings.put("dateUtil", new DateUtil());
-                bindings.put("msg", new MessageUtil());
-                templateContents = engine.evaluate(templateContents, bindings);
-            }
-
-            templateContents = EvaluationUtil.evaluateExpression(templateContents, replacements, "\"#", "#\"").toString();
-            pw.write(templateContents.toString());
-            return templateContents;
-
-        } catch (RenderingException var17) {
-            throw var17;
-        } catch (Throwable var18) {
-            throw new RenderingException("Unable to render results due to: " + var18, var18);
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            // Replace "value":"0" with value:0
+            matcher.appendReplacement(result, "\"value\":" + matcher.group(1));
         }
-    }
+        matcher.appendTail(result);
 
-
-    public static String replaceQuotesInValuePlaceHolders(String input,String reportAlias) {
-        int index = input.indexOf("\"value_place_holder\": \"");
-        while (index != -1) {
-            int startIndex = index + "\"value_place_holder\": \"".length();
-            int endIndex = input.indexOf("\"", startIndex);
-            if (endIndex != -1) {
-                String valuePlaceHolder = input.substring(startIndex, endIndex);
-                String replacedValue = "#"+reportAlias+"." + valuePlaceHolder + "#";
-                input = input.substring(0, startIndex) + replacedValue + input.substring(endIndex);
-            }
-            index = input.indexOf("\"value_place_holder\": \"", endIndex);
-        }
-        return input;
+        return result.toString();
     }
 
 
