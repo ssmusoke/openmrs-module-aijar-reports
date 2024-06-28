@@ -1,10 +1,20 @@
-
+{"metadata": {
+"facility_id": "#S.dhis_uuid#",
+"facility_name": "#H.facilityName#",
+"emr_software": "UgandaEMR",
+"emr_version": "#aijar.version#",
+"start_date": "#parameter.startDate|YYYY-MM-dd#",
+"end_date": "#parameter.endDate|YYYY-MM-dd#",
+"date_run": "#date.today|YYYY-MM-dd#"
+},
+"dataentry": [
   {
-    "facility_id": "#S.dhis_uuid#",
-    "facility_name": "#H.facilityName#",
-    "emr_software": "UgandaEMR",
-    "emr_version": "#aijar.version#",
-    "start_date": "#parameter.startDate|YYYY-MM-dd#",
-    "end_date": "#parameter.endDate|YYYY-MM-dd#",
-    "date_run": "#date.today|YYYY-MM-dd#"
+  "Triage": #TX.triage#,
+  "Clinician": #TX.clinician#,
+  "Lab": #TX.lab#,
+  "Pharmacy": #TX.pharmacy#,
+  "VL exchange send sample": #TX.vl1#,
+  "VL exchange receive": #TX.vl2#
   }
+]
+}
