@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.openmrs.Concept;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.ugandaemrreports.reports.AggregateReportDataExportManager;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.ConceptMapper;
 
 import java.io.File;
@@ -154,5 +155,40 @@ public class Helper {
         JsonNode rootNode = objectMapper.readTree(file);
         JsonNode tableNameNode = rootNode.path("flat_table_name");
         return tableNameNode.asText();
+    }
+
+    public static File getReportDesignFile(String report_uuid) {
+
+        File folder = FileUtils.toFile(AggregateReportDataExportManager.class.getClassLoader().getResource("report_designs"));
+        if (folder.isDirectory()) {
+
+
+            File[] files = folder.listFiles();
+            File myFile = null;
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().endsWith(".json")) {
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+                        try {
+                            JsonNode fileObject = objectMapper.readTree(file);
+                            JsonNode encounterNode = fileObject.path("report_uuid");
+                            if (encounterNode.asText().equals(report_uuid)) {
+                                myFile = file;
+                                break;
+                            }
+                        } catch (IOException e) {
+                            System.err.println("Error reading JSON file: " + file.getName());
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+            return myFile;
+        } else {
+            return null;
+        }
     }
 }

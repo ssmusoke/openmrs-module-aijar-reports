@@ -3,6 +3,8 @@ package org.openmrs.module.ugandaemrreports.web.resources;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.util.Json;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openmrs.api.APIAuthenticationException;
 import org.openmrs.api.context.Context;
@@ -27,6 +29,7 @@ import org.openmrs.module.reporting.report.renderer.TextTemplateRenderer;
 import org.openmrs.module.reporting.report.renderer.template.TemplateEngine;
 import org.openmrs.module.reporting.report.renderer.template.TemplateEngineManager;
 import org.openmrs.module.reporting.report.service.ReportService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openmrs.module.webservices.rest.SimpleObject;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.util.OpenmrsUtil;
@@ -55,6 +58,8 @@ public class EvaluateReportDefinitionRestController {
     public static final String UGANDAEMRREPORTS = "/ugandaemrreports";
     public static final String SET = "/reportingDefinition";
 
+    public String rdUuid;
+
     @Autowired
     public GenericConversionService conversionService;
 
@@ -69,6 +74,7 @@ public class EvaluateReportDefinitionRestController {
                                 @RequestParam(required = true, value = "uuid") String reportDefinitionUuid,
                                 @RequestParam(required = false, value = "renderType") String rendertype) {
         try {
+            rdUuid = reportDefinitionUuid;
             if (!validateDateIsValidFormat(request.getParameter("endDate"))) {
                 SimpleObject message = new SimpleObject();
                 message.put("error", "given date " + request.getParameter("endDate") + "is not valid");
@@ -137,14 +143,8 @@ public class EvaluateReportDefinitionRestController {
 
                     JsonNode report = createPayload(reportData, reportDesign, rendertype);
 
-                    if (rendertype.equals("html")) {
-
-                        return ResponseEntity.status(HttpStatus.OK)
-                                .contentType(MediaType.TEXT_HTML).body(report.asText());
-                    } else {
                         return ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON).body(report.toString());
-                    }
 
                 } else {
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -163,25 +163,6 @@ public class EvaluateReportDefinitionRestController {
         } catch (Exception ex) {
             return false;
         }
-    }
-
-    public List<SimpleObject> getTraceReportData(DataSet d) {
-        Iterator iterator = d.iterator();
-
-        List<SimpleObject> dataList = new ArrayList<SimpleObject>();
-        while (iterator.hasNext()) {
-            DataSetRow r = (DataSetRow) iterator.next();
-            Map<String, Object> columns = r.getColumnValuesByKey();
-            Set<String> keys = columns.keySet();
-            SimpleObject details = new SimpleObject();
-
-            for (String key : keys) {
-                details.add(key, r.getColumnValue(key));
-            }
-            dataList.add(details);
-
-        }
-        return dataList;
     }
 
     private ReportDefinitionService getReportDefinitionService() {
@@ -218,11 +199,10 @@ public class EvaluateReportDefinitionRestController {
     }
 
     private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
-        HashMap<String, String> map = new HashMap<>();
         JsonNode payLoad = null;
         try {
 
-            File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "sendReports");
+            File file = new File(OpenmrsUtil.getApplicationDataDirectory() + "/sendReports");
             FileOutputStream fileOutputStream = new FileOutputStream(file);
 
             Writer pw = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
@@ -233,10 +213,29 @@ public class EvaluateReportDefinitionRestController {
             templateContents = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
             String wholePayLoad = fillTemplateWithReportData(pw, templateContents, reportData, reportDesign, fileOutputStream);
 
+            wholePayLoad = removeQuotesFromValues(wholePayLoad);
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(wholePayLoad);
+            payLoad = objectMapper.readTree(wholePayLoad);
 
-            payLoad = jsonNode.get(renderType);
+            JsonNode dataValuesArray = payLoad.at("/json/dataValues");
+            if (dataValuesArray.isArray()) {
+                for (JsonNode node : dataValuesArray) {
+                    // Remove attributes code, dsdm, age, sex
+                    ((ObjectNode) node).remove("dataelementname");
+                    ((ObjectNode) node).remove("code");
+                    ((ObjectNode) node).remove("dsdm");
+                    ((ObjectNode) node).remove("age");
+                    ((ObjectNode) node).remove("sex");
+                    if (node.has("value")) {
+                        String valueStr = node.get("value").asText();
+                        int valueInt = Integer.parseInt(valueStr);
+                        ((ObjectNode) node).put("value", valueInt);
+                    }
+                }
+            }
+
+
+
 
             pw.close();
         } catch (Exception e) {
@@ -277,25 +276,21 @@ public class EvaluateReportDefinitionRestController {
         }
     }
 
+    public static String removeQuotesFromValues(String input) {
+        // Regular expression to match "value":"0" and similar patterns
+        Pattern pattern = Pattern.compile("\"value\":\"(\\d+)\"");
+        Matcher matcher = pattern.matcher(input);
 
-    private ReportRequest makeExcelReportRequest(ReportDefinition rd, Map<String, Object> parameterValues) {
-        ReportRequest reportRequest = new ReportRequest();
-        reportRequest.setReportDefinition(new Mapped<ReportDefinition>(rd, parameterValues));
-        reportRequest.setStatus(ReportRequest.Status.REQUESTED);
-        List<ReportDesign> reportDesigns = reportService.getReportDesigns(rd, null, false);
-
-        ReportDesign reportDesign = reportDesigns.stream().filter(p -> "Excel".equals(p.getName())).findAny().orElse(null);
-        RenderingMode renderingMode = null;
-        if (reportDesign != null) {
-            String reportRendergingMode = EXCEL_REPORT_RENDERER_TYPE + "!" + reportDesign.getUuid();
-            renderingMode = new RenderingMode(reportRendergingMode);
-            if (!renderingMode.getRenderer().canRender(rd)) {
-                throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
-            }
-            reportRequest.setRenderingMode(renderingMode);
+        StringBuffer result = new StringBuffer();
+        while (matcher.find()) {
+            // Replace "value":"0" with value:0
+            matcher.appendReplacement(result, "\"value\":" + matcher.group(1));
         }
-        reportRequest = reportService.queueReport(reportRequest);
-        return reportRequest;
+        matcher.appendTail(result);
+
+        return result.toString();
     }
+
+
 
 }

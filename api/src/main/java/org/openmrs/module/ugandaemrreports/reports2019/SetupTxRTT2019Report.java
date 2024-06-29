@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.getUgandaEMRVersion;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+
 /**
  *  TX RTT
  */
@@ -96,6 +99,8 @@ public class SetupTxRTT2019Report extends AggregateReportDataExportManager {
 
         dsd.setParameters(getParameters());
         dsd.setReportDesign(getJsonReportDesign());
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
+        rd.addDataSetDefinition("S",Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
 
         return rd;
@@ -103,6 +108,6 @@ public class SetupTxRTT2019Report extends AggregateReportDataExportManager {
 
     @Override
     public String getVersion() {
-        return "0.1.0";
+        return "0.1.1";
     }
 }
