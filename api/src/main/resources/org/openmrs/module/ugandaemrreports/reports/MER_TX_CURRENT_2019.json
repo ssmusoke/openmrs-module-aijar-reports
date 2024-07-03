@@ -1,17 +1,551 @@
 {
   "json":{
-    "meta": {
-      "source": "UgandaEMR",
-      "versionId": "#aijar.version#"
-    },
-    "identifier": [{
-      "system": "UID",
-      "value": "#S.dhis_uuid#"
-    }],
-    "period": {
-      "start":"#parameter.startDate|yyyy-MM-dd#",
-      "end": "#parameter.endDate|yyyy-MM-dd#"
-    }
+    "dataSet": "C8MSAKMS6hB",
+    "completeDate": "#parameter.endDate|yyyy-MM-dd#",
+    "orgUnit": "#S.dhis_uuid#",
+    "attributeOptionCombo": "WLGCLDRNCKH",
+    "dataValues": [
+      {
+        "dataelement": "TX_CURR (N, <3 months of ARVs dispensed by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "w1CZHgjqUnq",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.14c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, <3 months of ARVs dispensed by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "w1CZHgjqUnq",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.14d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, <3 months of ARVs dispensed by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "WXLUaO0A1xS",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.15c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, <3 months of ARVs dispensed by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "WXLUaO0A1xS",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.15d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 3-5 months of ARVs dispensed to patient by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "m46Tf84cY1Z",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.16c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 3-5 months of ARVs dispensed to patient by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "m46Tf84cY1Z",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.16d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 3-5 months of ARVs dispensed to patient by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "vpF0WHE10oB",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.17c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 3-5 months of ARVs dispensed to patient by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "vpF0WHE10oB",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.17d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 6 or more months of ARVs dispensed to patient by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "gAdO1at3Q7H",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.18c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 6 or more months of ARVs dispensed to patient by <15yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "gAdO1at3Q7H",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.18d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 6 or more months of ARVs dispensed to patient by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "BkMrVu96am2",
+        "categoryOptionCombo": "zaMTg8au59u",
+        "value": "#TX.19c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, 6 or more months of ARVs dispensed to patient by 15+yrs ,Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "BkMrVu96am2",
+        "categoryOptionCombo": "NnulaCDLIRO",
+        "value": "#TX.19d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "<1 Year",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "Bwcy6qMQ8nP",
+        "value": "#TX.2a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "<1 Year",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "RZsT5cwQ56u",
+        "value": "#TX.2b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "1 - 4 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "r4Jsg4LDDme",
+        "value": "#TX.3a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "1 - 4 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "kJExlhZtCts",
+        "value": "#TX.3b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "10 - 14 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "XzNr8QkmFwV",
+        "value": "#TX.5a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "10 - 14 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "v6QwODvZL5J",
+        "value": "#TX.5b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "15 - 19 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "wK1d4w6MwxB",
+        "value": "#TX.6a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "15 - 19 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "ECheVrEa4n3",
+        "value": "#TX.6b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "20 - 24 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "f3XAmGFSKBx",
+        "value": "#TX.7a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "20 - 24 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "MimXj9OYtCb",
+        "value": "#TX.7b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "25 - 29 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "he5IV9VTFhA",
+        "value": "#TX.8a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "25 - 29 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "MwfENZRYIec",
+        "value": "#TX.8b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "30 - 34 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "TspJzhMOQUc",
+        "value": "#TX.9a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "30 - 34 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "FXx6BrT1VKV",
+        "value": "#TX.9b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "35 - 39 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "TOXOTQ6IJ5J",
+        "value": "#TX.10a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "35 - 39 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "SFCgxFZB0IJ",
+        "value": "#TX.10b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "40 - 44 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "R60cVFMhwji",
+        "value": "#TX.11a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "40 - 44 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "xPSc38MSqEL",
+        "value": "#TX.11b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "45 - 49 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "nxf7zbwpPpG",
+        "value": "#TX.12a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "45 - 49 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "CLWpB8MPpXS",
+        "value": "#TX.12b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "5 - 9 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "QRAEe5NdIJt",
+        "value": "#TX.4a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "5 - 9 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "RylCFD860o8",
+        "value": "#TX.4b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "50 - 54 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "voZAZ7o1Lpc",
+        "value": "#TX.13a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "50 - 54 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "Row2tT5BcTU",
+        "value": "#TX.13b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "55 - 59 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "g71Rl6vVutO",
+        "value": "#TX.14a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "55 - 59 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "yHax5mQob2C",
+        "value":  "#TX.14b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "60 - 64 Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "XAj53oUCTlN",
+        "value":  "#TX.15a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "60 - 64 Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "HRTsxAvboAu",
+        "value": "#TX.15b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "65+ Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "rFBWrq19oxy",
+        "value": "#TX.16a#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Sex) : Number of adults and children currently receiving ART",
+        "age": "65+ Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "tTuRVuYI9jF",
+        "categoryOptionCombo": "nNIBGY7Ee13",
+        "value": "#TX.16b#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving antiretroviral therapy (ART)",
+        "age": "<15 Years (<20 kg)",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "fiSyzcXuMY3",
+        "categoryOptionCombo": "bCFfKQC2qZj",
+        "value": "#TX.20c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving antiretroviral therapy (ART)",
+        "age": "<15 Years (<20 kg)",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "fiSyzcXuMY3",
+        "categoryOptionCombo": "aypXWX6yzLV",
+        "value": "#TX.20d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving antiretroviral therapy (ART)",
+        "age": "<15 Years (20+ kg)",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "fiSyzcXuMY3",
+        "categoryOptionCombo": "BfZ2yhNfZOW",
+        "value": "#TX.21c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving antiretroviral therapy (ART)",
+        "age": "<15 Years (20+ kg)",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "fiSyzcXuMY3",
+        "categoryOptionCombo": "Ot3OxjPpMPn",
+        "value": "#TX.21d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "<15 Years (<20 kg)",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "bCFfKQC2qZj",
+        "value":  "#TX.22c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "<15 Years (<20 kg)",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "aypXWX6yzLV",
+        "value": "#TX.22d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "<15 Years (20+ kg)",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "BfZ2yhNfZOW",
+        "value": "#TX.23c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "<15 Years (20+ kg)",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "Ot3OxjPpMPn",
+        "value": "#TX.23d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "15+ Years",
+        "sex": "Female",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "pJUYGkGr9NT",
+        "value": "#TX.24c#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Age/Weight/Sex) : Number of adults and children currently receiving ART on DTG Regimen",
+        "age": "15+ Years",
+        "sex": "Male",
+        "kp": "",
+        "total": "",
+        "dataElement": "TAAcbi12yc8",
+        "categoryOptionCombo": "XFMf6g5VHSf",
+        "value": "#TX.24d#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Key Population/Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "",
+        "kp": "People in prisons and other closed settings (PIPs)",
+        "total": "Total",
+        "dataElement": "TjoKOrzKfwk",
+        "categoryOptionCombo": "smlHzdADWxJ",
+        "value": "#TX.PIPS#"
+      },
+      {
+        "dataelement": "TX_CURR (N, Key Population/Sex) : Number of adults and children currently receiving ART",
+        "age": "",
+        "sex": "",
+        "kp": "People who inject Drugs (PWID)",
+        "total": "Total",
+        "dataElement": "TjoKOrzKfwk",
+        "categoryOptionCombo": "lv3Z5VF8jxg",
+        "value": "#TX.PWIDS#"
+      }
+    ]
   },
   "html": "<table><thead><tr><th></th><th colspan='4'>PIRS&nbsp;&nbsp;&nbsp;Data Collection Tool: MER 2.0 Indicator - TX_CURR (Based&nbsp;&nbsp;&nbsp;on MER 2.0 Indicator Reference Guide September 2023 v2.7) </th><th></th></tr></thead><tbody><tr><td>Indicator&nbsp;&nbsp;&nbsp;Code</td><td colspan='2'>Indicator&nbsp;&nbsp;&nbsp;Name &amp; Disaggregation's</td><td>Female</td><td>Male</td><td>Total</td></tr><tr><td rowspan='33'>TX_CURR</td><td colspan='2'>Numerator: Number of adults and children currently receiving&nbsp;&nbsp;&nbsp;antiretroviral therapy (ART) </td><td></td><td></td><td></td></tr><tr><td rowspan='12'>Number of adults and children currently&nbsp;&nbsp;&nbsp;receiving antiretroviral therapy (ART) by age and sex</td><td>&lt; 1 year</td><td>#TX.2a#</td><td>#TX.2b#</td><td></td></tr><tr><td>1-4 years</td><td>#TX.3a#</td><td>#TX.3b#</td><td></td></tr><tr><td>5- 9 years</td><td>#TX.4a#</td><td>#TX.4b#</td><td></td></tr><tr><td>10-14 years</td><td>#TX.5a#</td><td>#TX.5b#</td><td></td></tr><tr><td>15-19 years</td><td>#TX.6a#</td><td>#TX.6b#</td><td></td></tr><tr><td>20-24 years</td><td>#TX.7a#</td><td>#TX.7b#</td><td></td></tr><tr><td>25-29 years</td><td>#TX.8a#</td><td>#TX.8b#</td><td></td></tr><tr><td>30-34 years</td><td>#TX.9a#</td><td>#TX.9b#</td><td></td></tr><tr><td>35-39 years</td><td>#TX.10a#</td><td>#TX.10b#</td><td></td></tr><tr><td>40-44 years</td><td>#TX.11a#</td><td>#TX.11b#</td><td></td></tr><tr><td>45-49 years</td><td>#TX.12a#</td><td>#TX.12b#</td><td></td></tr><tr><td>50-54 years</td><td>#TX.13a#</td><td>#TX.13b#</td><td></td></tr><tr><td> </td><td>55-59 years</td><td>#TX.14a#</td><td>#TX.14b#</td><td></td></tr><tr><td> </td><td>60-64 years</td><td>#TX.15a#</td><td>#TX.15b#</td><td></td></tr><tr><td> </td><td>65+years</td><td>#TX.16a#</td><td>#TX.16b#</td><td></td></tr><tr><td rowspan='5'>Number of adults and children currently receiving&nbsp;&nbsp;&nbsp;antiretroviral therapy (ART) disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Key  Population<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(KP should be counted in only one KP group to avoid&nbsp;&nbsp;&nbsp;double-counting.)</td><td>People&nbsp;&nbsp;&nbsp;who inject Drugs (PWID)</td><td> </td><td> </td><td>#TX.PWIDS#</td></tr><tr><td>Men who have Sex with men (MSM)</td><td> </td><td> </td><td> </td></tr><tr><td>Transgender people (TG)</td><td> </td><td> </td><td> </td></tr><tr><td>Female Sex Workers (FSW)</td><td> </td><td> </td><td> </td></tr><tr><td>People in prisons and other enclosed settings&nbsp;&nbsp;&nbsp;(Incarcerated Population) </td><td> </td><td> </td><td>#TX.PIPS#</td></tr><tr><td rowspan='6'>Number of adults and children&nbsp;&nbsp;&nbsp;currently receiving antiretroviral therapy (ART) disaggregated by ARV&nbsp;&nbsp;&nbsp;Dispensing Quantity by Coarse Age/Sex </td><td>&lt;3&nbsp;&nbsp;&nbsp;months of ARVs dispensed by &lt;15yrs</td><td>#TX.14c#</td><td>#TX.14d#</td><td> </td></tr><tr><td>&lt;3 months of ARVs dispensed by 15+yrs</td><td>#TX.15c#</td><td>#TX.15d#</td><td> </td></tr><tr><td>3-5 months of ARVs dispensed to patient by&nbsp;&nbsp;&nbsp;&lt;15yrs</td><td>#TX.16c#</td><td>#TX.16d#</td><td> </td></tr><tr><td>3-5 months of ARVs dispensed to patient by&nbsp;&nbsp;&nbsp;15+yrs</td><td>#TX.17c#</td><td>#TX.17d#</td><td> </td></tr><tr><td>6 or more months of ARVs dispensed to patient&nbsp;&nbsp;&nbsp;by &lt;15yrs</td><td>#TX.18c#</td><td>#TX.18d#</td><td> </td></tr><tr><td>6 or more months of ARVs dispensed to patient&nbsp;&nbsp;&nbsp;by 15+yrs</td><td>#TX.19c#</td><td>#TX.19d#</td><td> </td></tr><tr><td>Focused population</td><td> </td><td> </td><td> </td><td> </td></tr><tr><td rowspan='2'>Number of adults and children&nbsp;&nbsp;&nbsp;currently receiving antiretroviral therapy (ART) disaggreggated by Age/weight</td><td>&lt;15yrs&nbsp;&nbsp;&nbsp;(&lt;20 kg)</td><td>#TX.20c#</td><td>#TX.20d#</td><td> </td></tr><tr><td>&lt;15yrs (20+ kg)</td><td>#TX.21c#</td><td>#TX.21d#</td><td> </td></tr><tr><td rowspan='3'>Number of adults and children&nbsp;&nbsp;&nbsp;currently receiving antiretroviral therapy (ART) on DTG based regimen&nbsp;&nbsp;&nbsp;disaggreggated by Age/weight</td><td>&lt;15yrs&nbsp;&nbsp;&nbsp;(&lt;20 kg)</td><td>#TX.22c#</td><td>#TX.22d#</td><td> </td></tr><tr><td>&lt;15yrs (20+ kg)</td><td>#TX.23c#</td><td>#TX.23d#</td><td> </td></tr><tr><td>15+yrs </td><td>#TX.24c#</td><td>#TX.24d#</td><td> </td></tr></tbody></table>"
 }

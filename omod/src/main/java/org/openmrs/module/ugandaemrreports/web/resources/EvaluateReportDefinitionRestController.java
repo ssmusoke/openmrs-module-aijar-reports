@@ -45,6 +45,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -142,6 +145,12 @@ public class EvaluateReportDefinitionRestController {
                     }
 
                     JsonNode report = createPayload(reportData, reportDesign, rendertype);
+                    ObjectNode objectNode = (ObjectNode)report.get("json");
+
+                    String period = getYearAndQuarter(request.getParameter("endDate"));
+                    // Add a new field to the JSON
+                    objectNode.put("period", period);
+
 
                         return ResponseEntity.status(HttpStatus.OK)
                                 .contentType(MediaType.APPLICATION_JSON).body(report.toString());
@@ -289,6 +298,30 @@ public class EvaluateReportDefinitionRestController {
         matcher.appendTail(result);
 
         return result.toString();
+    }
+
+    public static String getYearAndQuarter(String dateStr) {
+        try {
+            // Define the date format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            // Parse the date
+            LocalDate date = LocalDate.parse(dateStr, formatter);
+
+            // Get the year
+            int year = date.getYear();
+
+            // Determine the quarter
+            int month = date.getMonthValue();
+            int quarter = (month - 1) / 3 + 1;
+
+            // Return the result in the format "YYYYQX"
+            return year + "Q" + quarter;
+        } catch (DateTimeParseException e) {
+            // Handle invalid date format
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+            return null;
+        }
     }
 
 
