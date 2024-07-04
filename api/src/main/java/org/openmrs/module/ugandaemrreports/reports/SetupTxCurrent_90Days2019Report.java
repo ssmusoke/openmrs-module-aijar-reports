@@ -34,18 +34,6 @@ public class SetupTxCurrent_90Days2019Report extends AggregateReportDataExportMa
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
 
-    @Autowired
-    private HIVCohortDefinitionLibrary hivCohortDefinitionLibrary;
-
-    @Autowired
-    private CommonDimensionLibrary commonDimensionLibrary;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
-
-    @Autowired
-    private CommonCohortDefinitionLibrary cohortDefinitionLibrary;
-
     /**
      * @return the uuid for the report design for exporting to Excel
      */
@@ -127,6 +115,6 @@ public class SetupTxCurrent_90Days2019Report extends AggregateReportDataExportMa
 
     @Override
     public String getVersion() {
-        return "0.5.3";
+        return "0.5.4";
     }
 }
