@@ -46,6 +46,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -207,7 +208,7 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
+    public JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
         JsonNode payLoad = null;
         try {
 
@@ -322,6 +323,19 @@ public class EvaluateReportDefinitionRestController {
             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
             return null;
         }
+    }
+
+    public static String getYearAndQuarter(Date date) {
+        if (date == null) {
+            System.out.println("Date cannot be null.");
+            return null;
+        }
+
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int quarter = (month - 1) / 3 + 1;
+        return year + "Q" + quarter;
     }
 
 
