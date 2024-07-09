@@ -45,7 +45,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -143,17 +146,13 @@ public class EvaluateReportDefinitionRestController {
                     if (!renderingMode.getRenderer().canRender(rd)) {
                         throw new IllegalArgumentException("Unable to render Report with " + reportRendergingMode);
                     }
-
-                    JsonNode report = createPayload(reportData, reportDesign, rendertype);
-                    ObjectNode objectNode = (ObjectNode)report.get("json");
-
-                    String period = getYearAndQuarter(request.getParameter("endDate"));
-                    // Add a new field to the JSON
-                    objectNode.put("period", period);
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                    Date endDate = dateFormat.parse(request.getParameter("endDate"));
+                    String report =processFinalPayload(reportData,reportDesign,rendertype,endDate);
 
 
                         return ResponseEntity.status(HttpStatus.OK)
-                                .contentType(MediaType.APPLICATION_JSON).body(report.toString());
+                                .contentType(MediaType.APPLICATION_JSON).body(report);
 
                 } else {
                     return new ResponseEntity<String>("{'Error': 'No design to preview report'}", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -207,7 +206,7 @@ public class EvaluateReportDefinitionRestController {
         return dataList;
     }
 
-    private JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
+    public JsonNode createPayload(ReportData reportData, ReportDesign reportDesign, String renderType) {
         JsonNode payLoad = null;
         try {
 
@@ -322,6 +321,29 @@ public class EvaluateReportDefinitionRestController {
             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
             return null;
         }
+    }
+
+    public static String getYearAndQuarter(Date date) {
+        if (date == null) {
+            System.out.println("Date cannot be null.");
+            return null;
+        }
+
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int quarter = (month - 1) / 3 + 1;
+        return year + "Q" + quarter;
+    }
+
+    public String processFinalPayload(ReportData reportData, ReportDesign reportDesign, String rendertype,Date endDate){
+        JsonNode report = createPayload(reportData, reportDesign, rendertype);
+        ObjectNode objectNode = (ObjectNode)report.get("json");
+
+        String period = getYearAndQuarter(endDate);
+        // Add a new field to the JSON
+        objectNode.put("period", period);
+        return report.toString();
     }
 
 
