@@ -1,6 +1,7 @@
 {
   "report_uuid": "5b922f62-f844-4962-9465-61cf8f52f4b7",
   "report_name": "TX ML",
+  "report_alias": "TX",
   "report_fields": [
     {
       "indicator_name": "TX-ML dead",

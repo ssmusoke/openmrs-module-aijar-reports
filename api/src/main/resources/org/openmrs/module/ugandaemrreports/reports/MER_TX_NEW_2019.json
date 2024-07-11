@@ -1,3 +1,860 @@
 {
-    "json": {},
+    "json":{
+        "dataSet": "C8MSAKMS6hB",
+        "completeDate": "#parameter.endDate|yyyy-MM-dd#",
+        "orgUnit": "#S.dhis_uuid#",
+        "attributeOptionCombo": "WLGCLDRNCKH",
+        "dataValues": [
+            {
+                "dataelementname": "TX_NEW (N, Breast feeding at initiation of ART ,Sex) : Number of adults and children newly enrolled on ART",
+                "age": "",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "pzXUGem6IrU",
+                "categoryOptionCombo": "zaMTg8au59u",
+                "value": "#TX.BF#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "XzNr8QkmFwV",
+                "value": "#TX.5a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "v6QwODvZL5J",
+                "value": "#TX.5b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "wK1d4w6MwxB",
+                "value": "#TX.6a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "ECheVrEa4n3",
+                "value": "#TX.6b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "f3XAmGFSKBx",
+                "value": "#TX.7a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "MimXj9OYtCb",
+                "value": "#TX.7b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "he5IV9VTFhA",
+                "value": "#TX.8a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "MwfENZRYIec",
+                "value": "#TX.8b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "TspJzhMOQUc",
+                "value": "#TX.9a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "FXx6BrT1VKV",
+                "value": "#TX.9a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "TOXOTQ6IJ5J",
+                "value": "#TX.10a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "SFCgxFZB0IJ",
+                "value": "#TX.10b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "R60cVFMhwji",
+                "value": "#TX.11a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "xPSc38MSqEL",
+                "value": "#TX.11b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "nxf7zbwpPpG",
+                "value": "#TX.12a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "CLWpB8MPpXS",
+                "value": "#TX.12b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "QRAEe5NdIJt",
+                "value": "#TX.4a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "RylCFD860o8",
+                "value": "#TX.4b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "voZAZ7o1Lpc",
+                "value": "#TX.13a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "Row2tT5BcTU",
+                "value": "#TX.13b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "g71Rl6vVutO",
+                "value": "#TX.14a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "yHax5mQob2C",
+                "value": "#TX.14b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "XAj53oUCTlN",
+                "value": "#TX.15a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "HRTsxAvboAu",
+                "value": "#TX.15b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "rFBWrq19oxy",
+                "value": "#TX.16a#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4<200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "vFKv3q6fMuX",
+                "categoryOptionCombo": "nNIBGY7Ee13",
+                "value": "#TX.16b#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "XzNr8QkmFwV",
+                "value": "#TX.5c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "v6QwODvZL5J",
+                "value": "#TX.5d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "wK1d4w6MwxB",
+                "value": "#TX.6c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "ECheVrEa4n3",
+                "value": "#TX.6d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "f3XAmGFSKBx",
+                "value": "#TX.7c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "MimXj9OYtCb",
+                "value": "#TX.7d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "he5IV9VTFhA",
+                "value": "#TX.8c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "MwfENZRYIec",
+                "value": "#TX.8d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "TspJzhMOQUc",
+                "value": "#TX.9c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "FXx6BrT1VKV",
+                "value": "#TX.9d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "TOXOTQ6IJ5J",
+                "value": "#TX.10c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "SFCgxFZB0IJ",
+                "value": "#TX.10d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "R60cVFMhwji",
+                "value": "#TX.11c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "xPSc38MSqEL",
+                "value": "#TX.11d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "nxf7zbwpPpG",
+                "value": "#TX.12c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "CLWpB8MPpXS",
+                "value": "#TX.12d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "QRAEe5NdIJt",
+                "value": "#TX.4c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "RylCFD860o8",
+                "value": "#TX.4d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "voZAZ7o1Lpc",
+                "value": "#TX.13c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "Row2tT5BcTU",
+                "value": "#TX.13d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "g71Rl6vVutO",
+                "value": "#TX.14c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "yHax5mQob2C",
+                "value": "#TX.14d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "XAj53oUCTlN",
+                "value": "#TX.15c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "HRTsxAvboAu",
+                "value": "#TX.15d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "rFBWrq19oxy",
+                "value": "#TX.16c#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, CD4>=200, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "fjanERMO1wT",
+                "categoryOptionCombo": "nNIBGY7Ee13",
+                "value": "#TX.16d#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Key Population/Sex) : Number of adults and children newly enrolled on ART",
+                "age": "",
+                "sex": "",
+                "kp": "People in prisons and other closed settings (PIPs)",
+                "total": "Total",
+                "dataElement": "nJmCnBXueSU",
+                "categoryOptionCombo": "smlHzdADWxJ",
+                "value": "#TX.PIPS#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Key Population/Sex) : Number of adults and children newly enrolled on ART",
+                "age": "",
+                "sex": "",
+                "kp": "People who inject Drugs (PWID)",
+                "total": "Total",
+                "dataElement": "nJmCnBXueSU",
+                "categoryOptionCombo": "lv3Z5VF8jxg",
+                "value": "#TX.PWIDS#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "<1 Year",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "Bwcy6qMQ8nP",
+                "value": "#TX.PWIDS#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "<1 Year",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "RZsT5cwQ56u",
+                "value": "#TX.2f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "1 - 4 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "r4Jsg4LDDme",
+                "value": "#TX.3e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "1 - 4 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "kJExlhZtCts",
+                "value": "#TX.3f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "XzNr8QkmFwV",
+                "value": "#TX.5e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "10 - 14 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "v6QwODvZL5J",
+                "value": "#TX.5f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "wK1d4w6MwxB",
+                "value": "#TX.6e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "15 - 19 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "ECheVrEa4n3",
+                "value": "#TX.6f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "f3XAmGFSKBx",
+                "value": "#TX.7e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "20 - 24 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "MimXj9OYtCb",
+                "value": "#TX.7f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "he5IV9VTFhA",
+                "value": "#TX.8e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "25 - 29 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "MwfENZRYIec",
+                "value": "#TX.8f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "TspJzhMOQUc",
+                "value": "#TX.9e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "30 - 34 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "FXx6BrT1VKV",
+                "value": "#TX.9e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "TOXOTQ6IJ5J",
+                "value": "#TX.10e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "35 - 39 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "SFCgxFZB0IJ",
+                "value": "#TX.10f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "R60cVFMhwji",
+                "value": "#TX.11e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "40 - 44 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "xPSc38MSqEL",
+                "value": "#TX.11f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "nxf7zbwpPpG",
+                "value": "#TX.12e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "45 - 49 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "CLWpB8MPpXS",
+                "value": "#TX.12f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "QRAEe5NdIJt",
+                "value": "#TX.4e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "5 - 9 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "RylCFD860o8",
+                "value": "#TX.4f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "voZAZ7o1Lpc",
+                "value": "#TX.13e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "50 - 54 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "Row2tT5BcTU",
+                "value": "#TX.13f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "g71Rl6vVutO",
+                "value": "#TX.14e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "55 - 59 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "yHax5mQob2C",
+                "value": "#TX.14f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "XAj53oUCTlN",
+                "value": "#TX.15e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "60 - 64 Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "HRTsxAvboAu",
+                "value": "#TX.15f#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Female",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "rFBWrq19oxy",
+                "value": "#TX.16e#"
+            },
+            {
+                "dataelementname": "TX_NEW (N, Unknown CD4, Age/Sex) : Number of adults and children newly enrolled  on ART",
+                "age": "65+ Years",
+                "sex": "Male",
+                "kp": "",
+                "total": "",
+                "dataElement": "j8eOq2YTNkI",
+                "categoryOptionCombo": "nNIBGY7Ee13",
+                "value": "#TX.16f#"
+            }
+        ]
+    },
     "html": "<table><thead><tr><th></th><th colspan='5'>PIRS&nbsp;&nbsp;&nbsp;Data Collection Tool: MER 2.0 Indicator - TX_NEW (Based&nbsp;&nbsp;&nbsp;on MER 2 0 Indicator Reference Guide September 2023 v2.7)</th></tr></thead><tbody><tr><td>Indicator&nbsp;&nbsp;&nbsp;Code</td><td colspan='2'>Indicator&nbsp;&nbsp;&nbsp;Name &amp; Disaggregation's</td><td>Female</td><td>Male</td><td>Total</td></tr><tr><td rowspan='52'>TX_NEW</td><td colspan='2'>Numerator:&nbsp;&nbsp;&nbsp;Number of adults and children newly enrolled on antiretroviral therapy<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(ART)</td><td> </td><td> </td><td> </td></tr><tr><td rowspan='12'>Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by age and sex (finer Disaggregates); CD4&nbsp;&nbsp;&nbsp;&lt;200</td><td>&lt;&nbsp;&nbsp;&nbsp;1 year</td><td> </td><td> </td><td> </td></tr><tr><td>1- 4 years</td><td> </td><td> </td><td> </td></tr><tr><td>5- 9 years</td><td>#TX.4a#</td><td>#TX.4b#</td><td></td></tr><tr><td>10-14 years</td><td>#TX.5a#</td><td>#TX.5b#</td><td></td></tr><tr><td>15-19 years</td><td>#TX.6a#</td><td>#TX.6b#</td><td></td></tr><tr><td>20-24 years</td><td>#TX.7a#</td><td>#TX.7b#</td><td></td></tr><tr><td>25-29 years</td><td>#TX.8a#</td><td>#TX.8b#</td><td></td></tr><tr><td>30-34 years</td><td>#TX.9a#</td><td>#TX.9b#</td><td></td></tr><tr><td>35-39 years</td><td>#TX.10a#</td><td>#TX.10b#</td><td></td></tr><tr><td>40-44 years</td><td>#TX.11a#</td><td>#TX.11b#</td><td></td></tr><tr><td>45-49 years</td><td>#TX.12a#</td><td>#TX.12b#</td><td></td></tr><tr><td>50-54 years</td><td>#TX.13a#</td><td>#TX.13b#</td><td></td></tr><tr><td> </td><td>55-59&nbsp;&nbsp;&nbsp;years</td><td>#TX.14a#</td><td>#TX.14b#</td><td></td></tr><tr><td> </td><td>60-64years</td><td>#TX.15a#</td><td>#TX.15b#</td><td></td></tr><tr><td> </td><td>65+yrs</td><td>#TX.16a#</td><td>#TX.16b#</td><td></td></tr><tr><td rowspan='12'>Number of adults and children newly enrolled on ART&nbsp;&nbsp;&nbsp;disaggregated by age and sex (finer Disaggregates): CD4≥200</td><td>&lt;&nbsp;&nbsp;&nbsp;1 year</td><td> </td><td> </td><td> </td></tr><tr><td>1- 4 years</td><td> </td><td> </td><td> </td></tr><tr><td>5- 9 years</td><td>#TX.4c#</td><td>#TX.4d#</td><td></td></tr><tr><td>10-14 years</td><td>#TX.5c#</td><td>#TX.5d#</td><td></td></tr><tr><td>15-19 years</td><td>#TX.6c#</td><td>#TX.6d#</td><td></td></tr><tr><td>20-24 years</td><td>#TX.7c#</td><td>#TX.7d#</td><td></td></tr><tr><td>25-29 years</td><td>#TX.8c#</td><td>#TX.8d#</td><td></td></tr><tr><td>30-34 years</td><td>#TX.9c#</td><td>#TX.9d#</td><td></td></tr><tr><td>35-39 years</td><td>#TX.10c#</td><td>#TX.10d#</td><td></td></tr><tr><td>40-44 years</td><td>#TX.11c#</td><td>#TX.11d#</td><td></td></tr><tr><td>45-49 years</td><td>#TX.12c#</td><td>#TX.12d#</td><td></td></tr><tr><td>50-54 years</td><td>#TX.13c#</td><td>#TX.13d#</td><td></td></tr><tr><td> </td><td>55-59&nbsp;&nbsp;&nbsp;years</td><td>#TX.14c#</td><td>#TX.14d#</td><td></td></tr><tr><td> </td><td>60-64years</td><td>#TX.15c#</td><td>#TX.15d#</td><td></td></tr><tr><td> </td><td>65+yrs</td><td>#TX.16c#</td><td>#TX.16d#</td><td></td></tr><tr><td rowspan='12'>Number of adults and children newly enrolled on ART&nbsp;&nbsp;&nbsp;disaggregated by age and sex (finer Disaggregates):  Unknown CD4/Not Done</td><td>&lt;&nbsp;&nbsp;&nbsp;1 year</td><td>#TX.2e#</td><td>#TX.2f#</td><td></td></tr><tr><td>1- 4 years</td><td>#TX.3e#</td><td>#TX.3f#</td><td></td></tr><tr><td>5- 9 years</td><td>#TX.4e#</td><td>#TX.4f#</td><td></td></tr><tr><td>10-14 years</td><td>#TX.5e#</td><td>#TX.5f#</td><td></td></tr><tr><td>15-19 years</td><td>#TX.6e#</td><td>#TX.6f#</td><td></td></tr><tr><td>20-24 years</td><td>#TX.7e#</td><td>#TX.7f#</td><td></td></tr><tr><td>25-29 years</td><td>#TX.8e#</td><td>#TX.8f#</td><td></td></tr><tr><td>30-34 years</td><td>#TX.9e#</td><td>#TX.9f#</td><td></td></tr><tr><td>35-39 years</td><td>#TX.10e#</td><td>#TX.10f#</td><td></td></tr><tr><td>40-44 years</td><td>#TX.11e#</td><td>#TX.11f#</td><td></td></tr><tr><td>45-49 years</td><td>#TX.12e#</td><td>#TX.12f#</td><td></td></tr><tr><td>50-54 years</td><td>#TX.13e#</td><td>#TX.13f#</td><td></td></tr><tr><td> </td><td>55-59&nbsp;&nbsp;&nbsp;years</td><td>#TX.14e#</td><td>#TX.14f#</td><td></td></tr><tr><td> </td><td>60-64years</td><td>#TX.15e#</td><td>#TX.15f#</td><td></td></tr><tr><td> </td><td>65+yrs</td><td>#TX.16e#</td><td>#TX.16f#</td><td></td></tr><tr><td>Number of adults and children newly enrolled on ART&nbsp;&nbsp;&nbsp;disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Breastfeeding Status</td><td>Breast&nbsp;&nbsp;&nbsp;feeding at initiation of ART</td><td>#TX.BF#</td><td> </td><td> </td></tr><tr><td rowspan='5'>Number of adults and children newly enrolled on&nbsp;&nbsp;&nbsp;ART disaggregated by<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Key  Population<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(KP should be counted in only one KP group to avoid&nbsp;&nbsp;&nbsp;double-counting.)</td><td>People&nbsp;&nbsp;&nbsp;who inject Drugs (PWID)</td><td> </td><td> </td><td>#TX.PWIDS#</td></tr><tr><td>Men who have Sex with men (MSM)</td><td> </td><td> </td><td> </td></tr><tr><td>Transgender people (TG)</td><td> </td><td> </td><td> </td></tr><tr><td>Female Sex Workers (FSW)</td><td> </td><td> </td><td> </td></tr><tr><td>People in prisons and other enclosed settings&nbsp;&nbsp;&nbsp;(Incarcerated Population) </td><td> </td><td> </td><td>#TX.PIPS#</td></tr><tr><td></td><td>Focused&nbsp;&nbsp;&nbsp;population</td><td> </td><td> </td><td> </td><td> </td></tr></tbody></table>"}

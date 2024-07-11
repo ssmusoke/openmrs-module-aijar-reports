@@ -21,6 +21,7 @@ import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -55,7 +56,7 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
 
         String endDate = DateUtil.formatDate(def.getEndDate(), "yyyy-MM-dd");
 
-        String query = "Select pg.patient_id, p.name,pg.date_enrolled,pg.date_completed\n" +
+        String query = "Select pg.patient_id, p.name,DATE(pg.date_enrolled),pg.date_completed\n" +
                 "             from patient_program as pg\n" +
                 "             Inner join program p on p.program_id=pg.program_id\n" +
                 "where ((pg.date_completed > '"+endDate+"') OR date_completed IS NULL) and p.uuid in ('de5d54ae-c304-11e8-9ad0-529269fb1459',\n" +
@@ -73,7 +74,7 @@ public class DSDMModelDataDefinitionEvaluator implements PatientDataEvaluator {
         for (Object[] row : results) {
             Integer patientId = Integer.valueOf(String.valueOf(row[0]));
             String progId = String.valueOf(row[1]);
-            LocalDateTime obs_datetime = (LocalDateTime) row[2] ;
+            Date obs_datetime = (Date) row[2] ;
             if(obs_datetime!=null)
             {
                 c.addData(patientId, new DSDMModel(obs_datetime,progId));

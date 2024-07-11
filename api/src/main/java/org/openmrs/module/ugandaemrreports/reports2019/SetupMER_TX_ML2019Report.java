@@ -25,6 +25,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.getUgandaEMRVersion;
+import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.settings;
+
 /**
  *  TX_ML Report
  */
@@ -117,12 +120,15 @@ public class SetupMER_TX_ML2019Report extends AggregateReportDataExportManager {
         AggregateReportDataSetDefinition dsd = new AggregateReportDataSetDefinition();
         dsd.setReportDesign(getJsonReportDesign());
         dsd.setParameters(getParameters());
+
+        rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
+        rd.addDataSetDefinition("S",Mapped.mapStraightThrough(settings()));
         rd.addDataSetDefinition("TX", Mapped.mapStraightThrough(dsd));
 
         return rd;
     }
     @Override
     public String getVersion() {
-        return "3.2.8.6";
+        return "3.3";
     }
 }
