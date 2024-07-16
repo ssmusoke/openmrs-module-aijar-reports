@@ -8,6 +8,7 @@ import org.openmrs.module.reporting.evaluation.parameter.Parameter;
 import org.openmrs.module.reporting.indicator.CohortIndicator;
 import org.openmrs.module.reporting.report.ReportDesign;
 import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.ugandaemrreports.definition.dataset.definition.AggregateReportDataSetDefinition;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
 import org.openmrs.module.ugandaemrreports.library.*;
 import org.openmrs.module.ugandaemrreports.metadata.HIVMetadata;
@@ -29,31 +30,13 @@ import static org.openmrs.module.ugandaemrreports.library.CommonDatasetLibrary.s
  */
 @Component
 
-public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
+public class SetupMOH105Section4_2019Report extends AggregateReportDataExportManager {
 
     @Autowired
     private DataFactory df;
 
     @Autowired
     ARTClinicCohortDefinitionLibrary hivCohorts;
-
-    @Autowired
-    private BuiltInPatientDataLibrary builtInPatientData;
-
-    @Autowired
-    private HIVPatientDataLibrary hivPatientData;
-
-    @Autowired
-    private BasePatientDataLibrary basePatientData;
-
-    @Autowired
-    private HIVMetadata hivMetadata;
-
-    @Autowired
-    private CommonReportDimensionLibrary dimensionLibrary;
-
-    @Autowired
-    private Moh105IndicatorLibrary indicatorLibrary;
 
     private static final String PARAMS = "startDate=${startDate},endDate=${endDate}";
 
@@ -141,246 +124,19 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
         rd.setDescription(getDescription());
         rd.setParameters(getParameters());
 
+        AggregateReportDataSetDefinition dsd = new AggregateReportDataSetDefinition();
+        dsd.setName(getName());
+        dsd.setParameters(getParameters());
+        dsd.setReportDesign(getJsonReportDesign());
         rd.addDataSetDefinition("S", Mapped.mapStraightThrough(settings()));
-        rd.addDataSetDefinition("105", Mapped.mapStraightThrough(eid()));
+        rd.addDataSetDefinition("105", Mapped.mapStraightThrough(dsd));
         rd.addDataSetDefinition("P", Mapped.mapStraightThrough(period()));
         rd.addDataSetDefinition("aijar", Mapped.mapStraightThrough(getUgandaEMRVersion()));
         return rd;
 
     }
 
-    protected DataSetDefinition eid() {
-        CohortIndicatorDataSetDefinition dsd = new CohortIndicatorDataSetDefinition();
-        dsd.setParameters(getParameters());
-        dsd.addDimension("age", ReportUtils.map(dimensionLibrary.HTCAgeGroups(), "effectiveDate=${endDate}"));
-        dsd.addDimension("gender", ReportUtils.map(dimensionLibrary.gender()));
 
-        dsd.addParameter(new Parameter("startDate", "Start Date", Date.class));
-        dsd.addParameter(new Parameter("endDate", "End Date", Date.class));
-
-        /**
-         * Health Facility Testing Points
-         */
-        addRowWithColumns(dsd, "HT01A1","HT1A-Number of individuals with Ward as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWardHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01A2","HT1B-Number of individuals with Ward as  HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithWardHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01A3","HT1C-Number of individuals with Ward as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWardHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01B1","HT2A-Number of individuals with OPD as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOPDHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01B2","HT2B-Number of individuals with OPD as HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithOPDHCTEntryPointandnewlyPostive());
-        addRowWithColumns(dsd, "HT01B3","HT2C-Number of individuals with OPD as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOPDHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01C1","HT3A-Number of individuals with ART CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithART_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01C2","HT3B-Number of individuals with ART CLINIC as HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithART_CLINICHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01C3","HT3C-Number of individuals with ART CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithART_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01D1","HT4A-Number of individuals with TB CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithTB_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01D2","HT4B-Number of individuals with TB CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithTB_CLINICHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01D3","HT4C-Number of individuals with TB CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithTB_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01E1","HT5A-Number of individuals with NUTRITION UNIT CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01E2","HT5B-Number of individuals with NUTRITION UNIT CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandTestedPostive());
-        addRowWithColumns(dsd, "HT01E3","HT5C-Number of individuals with NUTRITION UNIT CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithNUTRITION_UNIT_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01F1","HT6A-Number of individuals with STI UNIT CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithSTI_UNIT_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01F2","HT6B-Number of individuals with STI UNIT CLINIC as HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithSTI_UNIT_CLINICHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01F3","HT6C-Number of individuals with STI UNIT CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithSTI_UNIT_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01G1","HT7A-Number of individuals with YCC CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithYCC_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01G2","HT7B-Number of individuals with YCC CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithYCC_CLINICHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01G3","HT7C-Number of individuals with YCC CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithYCC_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01H1","HT8A-Number of individuals with ANC CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithANC_CLINICHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01H2","HT8B-Number of individuals with ANC CLINIC as HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithANC_CLINICHCTEntryPointandNewlyPostive());
-        addRowWithColumns(dsd, "HT01H3","HT8C-Number of individuals with ANC CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithANC_CLINICHCTEntryPointandLinkedToCare());
-
-        addRowWithColumns(dsd, "HT01I1","HT9A-Number of individuals with MATERNITY CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithMaternityDeptAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01I2","HT9B-Number of individuals with MATERNITY CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithMaternityDeptAsHCTEntryPointandNewlyPositive());
-        addRowWithColumns(dsd, "HT01I3","HT9C-Number of individuals with MATERNITY CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithMaternityDeptAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT01J1","HT10A-Number of individuals with PNC CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithPNCAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01J2","HT10B-Number of individuals with PNC CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithPNCAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT01J3","HT10C-Number of individuals with PNC CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithPNCAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT01K1","HT11A-Number of individuals with Family Planning CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithFamilyPlanningAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01K2","HT11B-Number of individuals with Family Planning CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithFamilyPlanningAsHCTEntryPointandNewlyPositive());
-        addRowWithColumns(dsd, "HT01K3","HT11C-Number of individuals with Family Planning CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithFamilyPlanningAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT01L1","HT12A-Number of individuals with SMC CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithSMCAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01L2","HT12B-Number of individuals with SMC CLINIC as HTC Entry Point and Newly Positive", indicatorLibrary.individualsWithSMCAsHCTEntryPointandNewlyPositive());
-        addRowWithColumns(dsd, "HT01L3","HT12C-Number of individuals with SMC CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithSMCAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT01M1","HT13A-Number of individuals with EID CLINIC as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithEIDAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01M2","HT13B-Number of individuals with EID CLINIC as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithEIDAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT01M3","HT13C-Number of individuals with EID CLINIC as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithEIDAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT01N1","HT14A-Number of individuals with Other Facility Based Entry Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT01N2","HT14B-Number of individuals with Other Facility Based Entry Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT01N3","HT14C-Number of individuals with Other Facility Based Entry Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherFacilityBasedEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-        /**
-         * Community testing Points for HCT
-
-         */
-        addRowWithColumns(dsd, "HT02A1","HT15A-Number of individuals with Work Place  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT02A2","HT15B-Number of individuals with Work Place  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT02A3","HT15C-Number of individuals with Work Place  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithWorkPlaceEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT02B1","HT16A-Number of individuals with HBCT  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT02B2","HT16B-Number of individuals with HBCT  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandNewlyPositive());
-        addRowWithColumns(dsd, "HT02B3","HT16C-Number of individuals with HBCT  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithHBCTEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT02C1","HT17A-Number of individuals with DIC  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT02C2","HT17B-Number of individuals with DIC  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT02C3","HT17C-Number of individuals with DIC  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithDICEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT02D1","HT18A-Number of individuals with HotSpots  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT02D2","HT18B-Number of individuals with HotSpots  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT02D3","HT18C-Number of individuals with HotSpots  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithHotSpotsEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT02E1","HT19A-Number of individuals with Other Community testing Points  as  HTC Entry Point And Test for HIV", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedForHIV());
-        addRowWithColumns(dsd, "HT02E2","HT19B-Number of individuals with Other Community testing Points  as HTC Entry Point and tested Positive", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandTestedPositive());
-        addRowWithColumns(dsd, "HT02E3","HT19C-Number of individuals with Other Community testing Points  as  HTC Entry Point and Linked to Care", indicatorLibrary.individualsWithOtherCommunityestingPointsEntryPointsAsHCTEntryPointandLinkedtoCare());
-
-
-        /**
-         * Number of Individuals Tested, New HIV Positive, Linked to Care
-         */
-        addRowWithColumns(dsd, "HT03A1","HT20A-Total Number of Individual  who tested for HIV", indicatorLibrary.clientsTestedForHIV());
-        addRowWithColumns(dsd, "HT03A2","HT20B-Total Number of Individual  tested  positive ", indicatorLibrary.clientsNewlyPositive());
-        addRowWithColumns(dsd, "HT03A3","HT20C-Total Number of Individual linked to care  ", indicatorLibrary.clientsLinkedToCare());
-
-        /**
-         * Number of individuals by PITC Facility Approach
-         */
-        addRowWithColumns(dsd, "HT04A1","HT21A-Number of individuals by  PITC Health Facility Testing Approach and Tested For HIV", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndTestedForHIV());
-        addRowWithColumns(dsd, "HT04A2","HT21B-Number of individuals  by PITC Health Facility Testing Approach and Newly Positive  ", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndNewlyPositive());
-        addRowWithColumns(dsd, "HT04A3","HT21C-Number of individuals by PITC Health Facility Testing Approach and Linked to Care", indicatorLibrary.individualswithHealthFacilityAsPITCTestingApproachAndLinkedToCare());
-
-            /**
-             * Number of Individuals by PITC Community Approach
-             */
-        addRowWithColumns(dsd, "HT04B1","HT22A-Number of individuals by  PITC Community  Testing Approach ", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndTestedForHIV());
-        addRowWithColumns(dsd, "HT04B2","HT22B-Number of individuals  by PITC Community  Testing Approach ", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndTestedPositive());
-        addRowWithColumns(dsd, "HT04B3","HT22C-Number of individuals by PITC Community  Testing Approach", indicatorLibrary.individualswithCommunityAsPITCTestingApproachAndLinkedToCare());
-
-        /**
-         * Number of Individuals by CICT/VICT Approach
-         */
-        addRowWithColumns(dsd, "HT05A1","HT23A-Number of individuals by  CICT/VCT Facility Based  Testing Approach ", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndTestedForHIV());
-        addRowWithColumns(dsd, "HT05A2","HT23B-Number of individuals  by CICT/VCT Facility Based  Testing Approach ", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndTestedPositive());
-        addRowWithColumns(dsd, "HT05A3","HT23C-Number of individuals by CICT/VCT Facility Based  Testing Approach", indicatorLibrary.individualswithFacilityBasedCICTTestingApproachAndLinkedToCare());
-
-        addRowWithColumns(dsd, "HT05B1","HT24A-Number of individuals by  CICT/VCT  Community  Testing Approach ", indicatorLibrary.individualswithCommunityCICTTestingApproachAndTestedForHIV());
-        addRowWithColumns(dsd, "HT05B2","HT24B-Number of individuals  by CICT/VCT  Community  Testing Approach ", indicatorLibrary.individualswithCommunityCICTTestingApproachAndTestedPositive());
-        addRowWithColumns(dsd, "HT05B3","HT24C-Number of individuals by CICT/VCT  Community  Testing Approach", indicatorLibrary.individualswithCommunityCICTTestingApproachAndLinkedToCare());
-
-        /**
-         * NUmber of Individuals by special Category
-         */
-        addRowWithColumns(dsd, "HT18A1","HT25A-Number of Prisoners", indicatorLibrary.indivudualsCategorisedAsPrisonersandTestedForHIV());
-        addRowWithColumns(dsd, "HT18A2","HT25B-Number of Prisoners ", indicatorLibrary.indivudualsCategorisedAsPrisonersandNewlyPositive());
-        addRowWithColumns(dsd, "HT18A3","HT25C-Number of Prisoners", indicatorLibrary.indivudualsCategorisedAsPrisonersandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18B1","HT25A-Number of PWIDs", indicatorLibrary.indivudualsCategorisedAsPWIDsandTestedForHIV());
-        addRowWithColumns(dsd, "HT18B2","HT25B-Number of PWIDs ", indicatorLibrary.indivudualsCategorisedAsPWIDsandNewlyPositive());
-        addRowWithColumns(dsd, "HT18B3","HT25C-Number of PWIDs", indicatorLibrary.indivudualsCategorisedAsPWIDsandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18C1","HT27A-Number of Uniformed Men", indicatorLibrary.indivudualsCategorisedAsUniformedMenandTestedForHIV());
-        addRowWithColumns(dsd, "HT18C2","HT27B-Number of Uniformed Men ", indicatorLibrary.indivudualsCategorisedAsUniformedMenandNewlyPositive());
-        addRowWithColumns(dsd, "HT18C3","HT27C-Number of Uniformed Men", indicatorLibrary.indivudualsCategorisedAsUniformedMensandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18D1","HT28A-Number of Migrant Workers", indicatorLibrary.indivudualsCategorisedAsMigrantWorkersandTestedForHIV());
-        addRowWithColumns(dsd, "HT18D2","HT28B-Number of Migrant Workers ", indicatorLibrary.indivudualsCategorisedAsMigrantWorkersandTestedPositive());
-        addRowWithColumns(dsd, "HT18D3","HT28C-Number of Migrant Workers", indicatorLibrary.indivudualsCategorisedAsMigrantWorkerssandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18E1","HT29A-Number of Truckers", indicatorLibrary.indivudualsCategorisedAsTruckerDriversandTestedForHIV());
-        addRowWithColumns(dsd, "HT18E2","HT29B-Number of Truckers ", indicatorLibrary.indivudualsCategorisedAsTruckerDriversandTestedPositive());
-        addRowWithColumns(dsd, "HT18E3","HT29C-Number of Truckers", indicatorLibrary.indivudualsCategorisedAsTruckerDriverssandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18F1","HT30A-Number of Fisher Forks", indicatorLibrary.indivudualsCategorisedAsFisherFolksandTestedForHIV());
-        addRowWithColumns(dsd, "HT18F2","HT30B-Number of Fisher Forks ", indicatorLibrary.indivudualsCategorisedAsFisherFolksandTestedPositive());
-        addRowWithColumns(dsd, "HT18F3","HT30C-Number of Fisher Forks", indicatorLibrary.indivudualsCategorisedAsFisherFolkssandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18G1","HT31A-Number of Refugees", indicatorLibrary.indivudualsCategorisedAsRefugeesandTestedForHIV());
-        addRowWithColumns(dsd, "HT18G2","HT31B-Number of Refugees ", indicatorLibrary.indivudualsCategorisedAsRefugeesandTestedPositive());
-        addRowWithColumns(dsd, "HT18G3","HT31C-Number of Refugees", indicatorLibrary.indivudualsCategorisedAsRefugeessandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18H1","HT32A-Number of Pregnant Women", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandTestedForHIV());
-        addRowWithColumns(dsd, "HT18H2","HT32B-Number of Pregnant Women ", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandTestedPositive());
-        addRowWithColumns(dsd, "HT18H3","HT32C-Number of Pregnant Women", indicatorLibrary.indivudualsCategorisedAsPregnantWomenandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18I1","HT33A-Number of BreastFeeding Women", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandTestedForHIV());
-        addRowWithColumns(dsd, "HT18I2","HT33B-Number of BreastFeeding Women ", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandTestedPositive());
-        addRowWithColumns(dsd, "HT18I3","HT33C-Number of BreastFeeding Women", indicatorLibrary.indivudualsCategorisedAsBreastFeedingWomenandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18J1","HT34A-Number of AGYW", indicatorLibrary.indivudualsCategorisedAsAGYWandTestedForHIV());
-        addRowWithColumns(dsd, "HT18J2","HT34B-Number of AGYW ", indicatorLibrary.indivudualsCategorisedAsAGYWandTestedPositive());
-        addRowWithColumns(dsd, "HT18J3","HT34C-Number of AGYW", indicatorLibrary.indivudualsCategorisedAsAGYWandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18K1","HT35A-Number of PWDs", indicatorLibrary.indivudualsCategorisedAsPWDsandTestedForHIV());
-        addRowWithColumns(dsd, "HT18K2","HT35B-Number of PWDs ", indicatorLibrary.indivudualsCategorisedAsPWDsandTestedPositive());
-        addRowWithColumns(dsd, "HT18K3","HT35C-Number of PWDs", indicatorLibrary.indivudualsCategorisedAsPWDsandLinkedtoCare());
-
-        addRowWithColumns(dsd, "HT18L1","HT36A-Number of Others", indicatorLibrary.indivudualsCategorisedAsOthersandTestedForHIV());
-        addRowWithColumns(dsd, "HT18L2","HT36B-Number of Others ", indicatorLibrary.indivudualsCategorisedAsOthersandTestedPositive());
-        addRowWithColumns(dsd, "HT18L3","HT36C-Number of Others", indicatorLibrary.indivudualsCategorisedAsOthersandLinkedtoCare());
-
-
-        addRowWithColumns(dsd, "4.HT38A","HT38A-Total Number of Partners tested", indicatorLibrary.totalNumberofPartnersTested());
-        addRowWithColumns(dsd, "4.HT38B","HT38B-Total Number of Partners tested Positive ", indicatorLibrary.partnersTestedHIVPositive());
-
-
-
-        addRowWithColumns(dsd, "HT06","H3-Number of Individuals who received HIV test results", indicatorLibrary.individualsWhoReceivedHIVTestResults());
-        addRowWithColumns(dsd, "HT07","H5-Number of individuals tested for the first time", indicatorLibrary.individualsTestedForTheFirstTime());
-        addRowWithColumns(dsd, "HT08","H6-Number of Individuals who tested HIV positive", indicatorLibrary.individualsWhoTestedHivPositive());
-        addRowWithColumns(dsd, "HT09A","H14-Individuals With Long Term test Results", indicatorLibrary.individualswithLongTermTestsResults());
-        addRowWithColumns(dsd, "HT09B","H15-Individuals With Recent  test Results", indicatorLibrary.individualswithRecentTestsResults());
-        addRowWithColumns(dsd, "HT10","H10-HIV positive individuals with presumptive TB", indicatorLibrary.individualsWhoTestedHivPositiveAndWithPresumptiveTb());
-        addRowWithColumns(dsd, "HT11","H8-Number of Individuals tested more than ONCE in the last 12 months", indicatorLibrary.individualsTestedMoreThanTwiceInLast12Months());
-        addRowWithColumns(dsd, "HT12","H9-Number of individuals who were Counseled and Tested together as a Couple", indicatorLibrary.individualsCounseledAndTestedAsCouple());
-        addRowWithColumns(dsd, "HT13","H10-Number of individuals who were Tested and Received results together as a Couple", indicatorLibrary.individualsTestedAndReceivedResultsAsACouple());
-        addRowWithColumns(dsd, "HT14","H11-Number of couples with Concordant positive results", indicatorLibrary.couplesWithConcordantPositiveResults());
-        addRowWithColumns(dsd, "HT15","H12- Number of couples with Discordant results", indicatorLibrary.couplesWithDiscordantResults());
-        addRowWithColumns(dsd, "HT16","H13-Individuals counseled and tested for PEP", indicatorLibrary.individualsCounselledAndTestedForPep());
-        addRowWithColumns(dsd, "HT17","H13-Individuals counseled and tested As Special Category", indicatorLibrary.testedAsSpecialCategory());
-
-        return dsd;
-    }
-
-    public void addRowWithColumns(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator) {
-
-        addIndicator(dsd, key + "aM", label + " (Below 1 year) Male", cohortIndicator, "gender=M|age=Below1yr");
-        addIndicator(dsd, key + "aF", label + " (Below 1 year) Female", cohortIndicator, "gender=F|age=Below1yr");
-        addIndicator(dsd, key + "bM", label + " (Between 1 and 4 Years) Male", cohortIndicator, "gender=M|age=Between1And4yrs");
-        addIndicator(dsd, key + "bF", label + " (Between  1 and 4 Years) Female", cohortIndicator, "gender=F|age=Between1And4yrs");
-        addIndicator(dsd, key + "lM", label + " (Between 5 and 9 Years) Male", cohortIndicator, "gender=M|age=Between5And9yrs");
-        addIndicator(dsd, key + "lF", label + " (Between 5 and 9 Years) Female", cohortIndicator, "gender=F|age=Between5And9yrs");
-        addIndicator(dsd, key + "cM", label + " (Between 10 and 14 Years) Male", cohortIndicator, "gender=M|age=Between10And14yrs");
-        addIndicator(dsd, key + "cF", label + " (Between 10 and 14 Years) Female", cohortIndicator, "gender=F|age=Between10And14yrs");
-        addIndicator(dsd, key + "dM", label + " (Between 15 and 19 Years) Male", cohortIndicator, "gender=M|age=Between15And19yrs");
-        addIndicator(dsd, key + "dF", label + " (Between 15 and 19 Years) Female", cohortIndicator, "gender=F|age=Between15And19yrs");
-        addIndicator(dsd, key + "eM", label + " (Between 20 and 24 Years) Male", cohortIndicator, "gender=M|age=Between20And24yrs");
-        addIndicator(dsd, key + "eF", label + " (Between 20 and 24 Years) Female", cohortIndicator, "gender=F|age=Between20And24yrs");
-        addIndicator(dsd, key + "mM", label + " (Between 25 and 29 Years) Male", cohortIndicator, "gender=M|age=Between25And29yrs");
-        addIndicator(dsd, key + "mF", label + " (Between 25 and 29 Years) Female", cohortIndicator, "gender=F|age=Between25And29yrs");
-        addIndicator(dsd, key + "fM", label + " (Between 30 and 34 Years) Male", cohortIndicator, "gender=M|age=Between30And34yrs");
-        addIndicator(dsd, key + "fF", label + " (Between 30 and 34 Years) Female", cohortIndicator, "gender=F|age=Between30And34yrs");
-        addIndicator(dsd, key + "gM", label + " (Between 35 and 39 Years) Male", cohortIndicator, "gender=M|age=Between35And39yrs");
-        addIndicator(dsd, key + "gF", label + " (Between 35 and 39 Years) Female", cohortIndicator, "gender=F|age=Between35And39yrs");
-        addIndicator(dsd, key + "hM", label + " (Between 40 and 44 Years) Male", cohortIndicator, "gender=M|age=Between40And44yrs");
-        addIndicator(dsd, key + "hF", label + " (Between 40 and 44 Years) Female", cohortIndicator, "gender=F|age=Between40And44yrs");
-        addIndicator(dsd, key + "jM", label + " (Between 45 and 49 Years) Male", cohortIndicator, "gender=M|age=Between45And49yrs");
-        addIndicator(dsd, key + "jF", label + " (Between 45 and 49 Years) Female", cohortIndicator, "gender=F|age=Between45And49yrs");
-        addIndicator(dsd, key + "kM", label + " (>50) Male", cohortIndicator, "gender=M|age=GreaterThan50yrs");
-        addIndicator(dsd, key + "kF", label + " (>50) Female", cohortIndicator, "gender=F|age=GreaterThan50yrs");
-        addIndicator(dsd, key + "g", label + " (Total) ", cohortIndicator, "");
-    }
-
-    public void addIndicator(CohortIndicatorDataSetDefinition dsd, String key, String label, CohortIndicator cohortIndicator, String dimensionOptions) {
-        dsd.addColumn(key, label, ReportUtils.map(cohortIndicator, PARAMS), dimensionOptions);
-
-    }
 
     public static DataSetDefinition getUgandaEMRVersion(){
         EMRVersionDatasetDefinition dsd= new EMRVersionDatasetDefinition();
@@ -388,6 +144,6 @@ public class SetupMOH105Section4_2019Report extends UgandaEMRDataExportManager {
     }
     @Override
     public String getVersion() {
-        return "6.1.0";
+        return "6.1.4";
     }
 }
