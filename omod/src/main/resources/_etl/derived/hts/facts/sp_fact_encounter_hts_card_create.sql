@@ -4,7 +4,7 @@ CREATE TABLE mamba_fact_encounter_hts_card
     id                                    INT AUTO_INCREMENT,
     encounter_id                          INT NULL,
     client_id                             INT          NULL,
-    encounter_date                        DATE         NULL,
+    encounter_date                        DATETIME         NULL,
     family_member_accompanying_patient    VARCHAR(255) NULL,
     other_specified_family_member         VARCHAR(255) NULL,
     delivery_model                        VARCHAR(255) NULL,

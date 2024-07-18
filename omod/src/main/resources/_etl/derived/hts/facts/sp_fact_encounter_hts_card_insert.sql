@@ -1,6 +1,7 @@
 -- $BEGIN
 INSERT INTO mamba_fact_encounter_hts_card (encounter_id,
                                            client_id,
+                                           encounter_date,
                                            family_member_accompanying_patient, other_specified_family_member,
                                            delivery_model, counselling_approach, hct_entry_point,
                                            community_testing_point, other_community_testing, anc_visit_number,
@@ -21,6 +22,7 @@ INSERT INTO mamba_fact_encounter_hts_card (encounter_id,
                                            has_client_been_linked_to_care, name_of_location_transferred_to)
 SELECT encounter_id,
        client_id,
+       encounter_datetime,
        family_member_accompanying_patient,
        other_specified_family_member,
        delivery_model,
