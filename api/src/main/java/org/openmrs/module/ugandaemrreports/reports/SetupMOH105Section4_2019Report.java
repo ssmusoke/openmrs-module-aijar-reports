@@ -144,6 +144,6 @@ public class SetupMOH105Section4_2019Report extends AggregateReportDataExportMan
     }
     @Override
     public String getVersion() {
-        return "6.1.4";
+        return "6.1.7";
     }
 }
