@@ -2,6 +2,7 @@ package org.openmrs.module.ugandaemrreports.api;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.Cohort;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.openmrs.reporting.AbstractReportObject;
@@ -102,4 +103,6 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     List<ReportObjectWrapper> getPatientSearches(String type);
 
     PatientSearch getPatientSearchByUuid(String uuid);
+
+    Cohort getPatientCurrentlyInProgram(String programUuid);
 }

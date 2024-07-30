@@ -48,64 +48,41 @@ public class DataDefinitionRestController {
     @ResponseBody
     public Object evaluate(@RequestBody DataExportMapper payload, RequestContext requestContext) {
 
-        Cohort reportCohort = payload.getCohort();
+        Cohort cohort = payload.getCohort();
         List<Column> columnList = payload.getColumns();
 
         EvaluationContext context = new EvaluationContext();
         SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
         org.openmrs.Cohort baseCohort = new org.openmrs.Cohort();
-        if (reportCohort.getUuid() != null && !columnList.isEmpty()) {
+        if (cohort.getUuid() != null && !columnList.isEmpty()) {
             try {
-                ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
-                ReportDefinition rd = service.getDefinitionByUuid(reportCohort.getUuid());
+                baseCohort = Helper.getCohortMembers(cohort);
 
-                if (rd != null) {
-                    Mapped<? extends CohortDefinition> cd = rd.getBaseCohortDefinition();
+                if (!baseCohort.isEmpty()) {
 
-                    if (cd != null) {
-                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                    HashMap<String, List<Object[]>> columns = getColumnsData(columnList, baseCohort);
+                    for (Integer i : baseCohort.getMemberIds()) {
 
+                        DataSetRow row = new DataSetRow();
 
-                        List<Map<String, Object>> parameters = reportCohort.getParameters();
+                        PatientDataHelper pdh = new PatientDataHelper();
+                        for (String key : columns.keySet()) {
+                            Object obj = "";
+                            List<Object[]> objects = columns.get(key);
+                            if (!objects.isEmpty()) {
+                                for (Object[] object : objects) {
+                                    int patientId = (int) object[0];
 
-                        Map<String, Object> cohortParameters = getParameters(parameters);
-                        ReflectionUtil.setPropertyValue(cd, "startDate", cohortParameters.get("startDate"));
-                        ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
-
-                        context.setParameterValues(cohortParameters);
-
-                        baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
-
-
-                        HashMap<String, List<Object[]>> columns = getColumnsData(columnList, baseCohort);
-                        for (Integer i : baseCohort.getMemberIds()) {
-
-                            DataSetRow row = new DataSetRow();
-
-                            PatientDataHelper pdh = new PatientDataHelper();
-                            for (String key : columns.keySet()) {
-                                Object obj = "";
-                                List<Object[]> objects = columns.get(key);
-                                if(!objects.isEmpty()) {
-                                    for (Object[] object : objects) {
-                                        int patientId = (int) object[0];
-
-                                        if (patientId == i) {
-                                            obj = object[1];
-                                        }
+                                    if (patientId == i) {
+                                        obj = object[1];
                                     }
                                 }
-                                pdh.addCol(row, key, obj);
                             }
-                            dataSet.addRow(row);
-
+                            pdh.addCol(row, key, obj);
                         }
+                        dataSet.addRow(row);
 
-                    } else {
-                        return new ResponseEntity<Object>(" No base cohort for this report", HttpStatus.INTERNAL_SERVER_ERROR);
                     }
-
-
                 }
 
             } catch (EvaluationException e) {
@@ -119,23 +96,6 @@ public class DataDefinitionRestController {
 
     }
 
-    private Map<String, Object> getParameters(List<Map<String, Object>> list) {
-
-        Map<String, Object> parameterValues = new HashMap<String, Object>();
-        if (!list.isEmpty()) {
-            for (Map<String, Object> objectMap : list) {
-                Iterator<String> keys = objectMap.keySet().iterator();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    String mapValue = (String) objectMap.get(key);
-                    parameterValues.put(key, DateUtil.parseYmd(mapValue));
-                }
-            }
-        }
-
-        return parameterValues;
-    }
-
     private List<Object[]> getPersonNames(org.openmrs.Cohort cohort, String parameter, EvaluationContext context) {
         String query = " Select person_id, " + parameter + " from person_name where person_id in ( " + cohort.getCommaSeparatedPatientIds() + ") and voided =0 group by person_id";
         EvaluationService evaluationService = Context.getService(EvaluationService.class);
@@ -147,7 +107,7 @@ public class DataDefinitionRestController {
     }
 
     private List<Object[]> getIdentifiers(org.openmrs.Cohort cohort, String identifierUuid, EvaluationContext context) {
-        String query = " Select patient_id, identifier from patient_identifier pi inner join patient_identifier_type pit on pi.identifier_type = pit.patient_identifier_type_id where pit.uuid='" + identifierUuid + "' and patient_id in ( " + cohort.getCommaSeparatedPatientIds() + ")   group by patient_id ";
+        String query = " Select patient_id, identifier from patient_identifier pi inner join patient_identifier_type pit on pi.identifier_type = pit.patient_identifier_type_id where pit.uuid='" + identifierUuid + "' and patient_id in ( " + cohort.getCommaSeparatedPatientIds() + ") and pi.voided =0   group by patient_id ";
         EvaluationService evaluationService = Context.getService(EvaluationService.class);
         SqlQueryBuilder q = new SqlQueryBuilder();
         q.append(query);
