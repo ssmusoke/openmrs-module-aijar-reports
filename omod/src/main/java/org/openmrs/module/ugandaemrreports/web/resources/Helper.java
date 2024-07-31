@@ -181,22 +181,21 @@ public class Helper {
         return tableNameNode.asText();
     }
 
-    public static org.openmrs.Cohort getCohortMembers(Cohort cohort) throws EvaluationException {
-        EvaluationContext context = new EvaluationContext();
-        SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
-        org.openmrs.Cohort baseCohort = new org.openmrs.Cohort();
+    public static org.openmrs.cohort.Cohort getCohortMembers(Cohort cohort) throws EvaluationException {
+        org.openmrs.cohort.Cohort baseCohort = new org.openmrs.cohort.Cohort();
         String type = cohort.getType();
         String cohortUuid = cohort.getUuid();
         if (cohortUuid != null && type != null) {
             switch (type) {
                 case "Report Definition":
+                    EvaluationContext context = new EvaluationContext();
                     ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
                     ReportDefinition rd = service.getDefinitionByUuid(cohortUuid);
                     if (rd != null) {
                         Mapped<? extends CohortDefinition> cd = rd.getBaseCohortDefinition();
 
                         if (cd != null) {
-                            baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                            org.openmrs.Cohort baseCohort1;
                             List<Map<String, Object>> parameters = cohort.getParameters();
 
                             Map<String, Object> cohortParameters = getParameters(parameters);
@@ -205,22 +204,24 @@ public class Helper {
 
                             context.setParameterValues(cohortParameters);
 
-                            baseCohort = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                            baseCohort1 = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                            baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
                         }
                     }
                     break;
                 case "Patient Search":
                     PatientSearch patientSearch = Context.getService(UgandaEMRReportsService.class).getPatientSearchByUuid(cohortUuid);
                     PatientSearchCohortDefinitionProvider provider = new PatientSearchCohortDefinitionProvider();
-                    org.openmrs.cohort.Cohort cohort1 = provider.evaluate(patientSearch,null);
-                     baseCohort = new org.openmrs.Cohort(cohort1.getCommaSeparatedPatientIds());
+                     baseCohort = provider.evaluate(patientSearch,null);
                     break;
                 case "Program":
-                    baseCohort = Context.getService(UgandaEMRReportsService.class).getPatientCurrentlyInProgram(cohortUuid);
+                    org.openmrs.Cohort baseCohort1 = Context.getService(UgandaEMRReportsService.class).getPatientCurrentlyInProgram(cohortUuid);
+                    baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
                     break;
                 case "Cohort":
                     CohortService cohortService1 = Context.getCohortService();
-                    baseCohort = cohortService1.getCohortByUuid(cohortUuid);
+                     baseCohort1 = cohortService1.getCohortByUuid(cohortUuid);
+                    baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
                     break;
             }
 
