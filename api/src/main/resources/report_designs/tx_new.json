@@ -1,6 +1,7 @@
 {
   "report_uuid": "65fec0844-1970-43c5-bf77-b296415daa34",
   "report_name": "TX NEW",
+  "report_alias": "TX",
   "report_fields": [
     {
       "indicator_name": "TX-NEW cd < 200",

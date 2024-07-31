@@ -117,6 +117,6 @@ public class SetupTxCurrent_28Days2019Report extends AggregateReportDataExportMa
 
     @Override
     public String getVersion() {
-        return "1.0.5.3";
+        return "1.0.8";
     }
 }
