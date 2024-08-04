@@ -35,7 +35,13 @@ import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Helper {
 
@@ -243,5 +249,47 @@ public class Helper {
         }
 
         return parameterValues;
+    }
+
+    public static Map<Integer, Object> calculateAges(Map<Integer, Object> birthdates) {
+        Map<Integer, Object> ages = new HashMap<>();
+
+        for (Map.Entry<Integer, Object> entry : birthdates.entrySet()) {
+            Integer patientId = entry.getKey();
+            String birthdateStr = entry.getValue().toString();
+
+            try {
+                Date birthdate = parseDate(birthdateStr);
+                int age = getAge(birthdate);
+                ages.put(patientId, age);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ages;
+    }
+
+    public static Date parseDate(String dateStr) throws ParseException {
+        SimpleDateFormat[] dateFormats = new SimpleDateFormat[] {
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S"),
+                new SimpleDateFormat("yyyy-MM-dd")
+        };
+
+        for (SimpleDateFormat dateFormat : dateFormats) {
+            try {
+                return dateFormat.parse(dateStr);
+            } catch (ParseException e) {
+                // Continue to the next format
+            }
+        }
+
+        throw new ParseException("Unparseable date: " + dateStr, -1);
+    }
+
+    public static int getAge(Date birthdate) {
+        Date currentDate = new Date();
+        long timeDifference = currentDate.getTime() - birthdate.getTime();
+        return (int) (TimeUnit.MILLISECONDS.toDays(timeDifference) / 365);
     }
 }
