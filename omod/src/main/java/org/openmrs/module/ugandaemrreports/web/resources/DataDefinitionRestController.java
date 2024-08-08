@@ -306,9 +306,11 @@ public class DataDefinitionRestController {
         PatientDataHelper pdh = new PatientDataHelper();
         for (Column column : columnParameters) {
             String key = column.getLabel();
-            Object obj = "";
+            List<String> extras = column.getExtras();
+            Object columnValue = "";
             Object object = columns.get(key);
-            Column columnParameter = columnParameters.stream().filter(c -> c.getLabel().equals(key)).findFirst().orElse(null);
+            String finalKey = key;
+            Column columnParameter = columnParameters.stream().filter(c -> c.getLabel().equals(finalKey)).findFirst().orElse(null);
             assert columnParameter != null;
             int modifier = columnParameter.getModifier();
             if(Objects.equals(key, "Birthdate") || key.equals("Date of death")){
@@ -323,32 +325,46 @@ public class DataDefinitionRestController {
                         if(objectList.get(0) instanceof List){
 
                             for(int x = 0; x < modifier; x++){
+                                String modifierKey="";
+                                modifierKey =  x!=0 ?  finalKey + "_" + x  : finalKey ;
                                 if(objectList.size() > x) {
                                     List<Object> objectList1 = (List<Object>)objectList.get(x);
-                                    obj = objectList1.get(0);
-                                }
-                                if(x<1) {
-                                    attachToDataSetRow(key, obj, pdh, row);
-                                }else{
-                                    attachToDataSetRow(key + "_" + x, obj, pdh, row);
+                                    if(!objectList1.isEmpty()){
+                                        columnValue = objectList1.get(0);
+                                        attachToDataSetRow(key, columnValue, pdh, row);
+                                        if(extras!=null) {
+                                            for (int v = 0; v < extras.size(); v++) {
+                                                String extraValueColumnName = extras.get(v);
+                                                key = modifierKey + "_" + extraValueColumnName;
+//                                                skip object at index 0
+                                                if(v==0){
+                                                    continue;
+                                                }
+                                                columnValue = objectList1.get(v);
+                                                attachToDataSetRow(key, columnValue, pdh, row);
+
+                                            }
+                                        }
+                                    }
+
                                 }
                             }
 
                         }
                     }else {
-                        obj= patientObject;
+                        columnValue= patientObject;
                         if(modifier >1){
 
                             for(int x = 0; x < modifier; x++){
                                 if(x<1) {
-                                    attachToDataSetRow(key, obj, pdh, row);
+                                    attachToDataSetRow(key, columnValue, pdh, row);
                                 }else{
-                                    attachToDataSetRow(key + "_" + x, obj, pdh, row);
+                                    attachToDataSetRow(key + "_" + x, columnValue, pdh, row);
                                 }
 
                             }
                         }else {
-                            attachToDataSetRow(key, obj, pdh, row);
+                            attachToDataSetRow(key, columnValue, pdh, row);
                         }
                     }
 
@@ -359,10 +375,10 @@ public class DataDefinitionRestController {
                         int ptId = (int) object1[0];
 
                         if (ptId == patientId) {
-                            obj = object1[1];
+                            columnValue = object1[1];
                         }
                     }
-                    attachToDataSetRow(key, obj, pdh, row);
+                    attachToDataSetRow(key, columnValue, pdh, row);
                 } else {
                     System.out.println("The variable is neither a Map nor a String.");
                 }
