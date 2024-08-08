@@ -7,6 +7,8 @@ public class Cohort {
     private String clazz;
     private String uuid;
     private String name;
+
+    private String type;
     private String description;
     private List<Map<String, Object>> parameters;
 
@@ -49,4 +51,8 @@ public class Cohort {
     public void setParameters(List<Map<String, Object>> parameters) {
         this.parameters = parameters;
     }
+
+    public String getType() {return type;}
+
+    public void setType(String type) { this.type = type;}
 }
