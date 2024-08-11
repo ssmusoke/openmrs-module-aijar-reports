@@ -2,15 +2,18 @@ package org.openmrs.module.ugandaemrreports.api.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.openmrs.Cohort;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
-import org.openmrs.module.ugandaemrreports.api.db.UgandaEMRReportsDAO;
 import org.openmrs.module.ugandaemrreports.api.db.hibernate.HibernateUgandaEMRReportsDAO;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
-import org.springframework.stereotype.Repository;
+import org.openmrs.reporting.PatientSearch;
+import org.openmrs.reporting.ReportObjectWrapper;
 
+
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -83,4 +86,20 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	public void executeFlatteningScript() {
 		dao.executeFlatteningScript();
 	}
+
+	@Override
+	public List<ReportObjectWrapper> getPatientSearches(String type) {
+		return dao.getReportObjects(type);
+	}
+
+	@Override
+	public PatientSearch getPatientSearchByUuid(String uuid) {
+		return dao.getPatientSearchByUuid(uuid);
+	}
+
+	@Override
+	public Cohort getPatientCurrentlyInProgram(String programUuid) {
+		return dao.getPatientCurrentlyInPrograms(programUuid);
+	}
+
 }
