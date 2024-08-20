@@ -2,9 +2,13 @@ package org.openmrs.module.ugandaemrreports.api.db.hibernate;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Concept;
+import org.openmrs.Condition;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.Cohort;
@@ -19,7 +23,7 @@ import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -141,5 +145,89 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 		log.debug("query: " + sb);
 		Query query = sessionFactory.getCurrentSession().createSQLQuery(sb.toString());
 		return new Cohort(query.list());
+	}
+
+	@Override
+	public Map<Integer, String> getPatientsConditionsStatus(org.openmrs.cohort.Cohort patients, Concept codedCondition) {
+		Map<Integer, String> ret = new HashMap<Integer, String>();
+
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Condition.class);
+		criteria.setCacheMode(CacheMode.IGNORE);
+
+
+		// only restrict on patient ids if some were passed in
+		if (patients != null)
+			criteria.add(Restrictions.in("patient.personId", patients.getMemberIds()));
+
+
+		criteria.add(Expression.eq("condition.coded", codedCondition));
+		criteria.add(Expression.eq("voided", false));
+
+		criteria.addOrder(org.hibernate.criterion.Order.desc("onsetDate"));
+		long start = System.currentTimeMillis();
+		List<Condition> conditions = criteria.list();
+
+
+		log.debug("Took: " + (System.currentTimeMillis() - start) + " ms to run the patient/obs query");
+
+		// set up the return map
+		for (Condition c : conditions) {
+			int ptId = c.getPatient().getPatientId();
+
+			String status = c.getClinicalStatus().toString();
+			ret.put(ptId,status);
+		}
+
+
+		return ret;
+	}
+
+	@Override
+	public Set<Concept> getAllConditions() {
+		Set<Concept> ret = new HashSet<>();
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Condition.class);
+		criteria.setCacheMode(CacheMode.IGNORE);
+		criteria.add(Expression.eq("voided", false));
+
+
+		long start = System.currentTimeMillis();
+		List<Condition> conditions = criteria.list();
+		log.debug("Took: " + (System.currentTimeMillis() - start) + " ms to run the patient/obs query");
+
+		// set up the return map
+		for (Condition c : conditions) {
+			Concept concept = c.getCondition().getCoded();
+
+			if(concept !=null){
+				ret.add(concept);
+			}
+
+		}
+		return ret;
+	}
+
+
+	@Override
+	public Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit){
+		Map<Integer, Object> ret = new HashMap<Integer, Object>();
+		Query query = sessionFactory.getCurrentSession().createSQLQuery(
+				"select patient_id, start_date_time from patient_appointment where voided = false and patient_id in (:patientIds) order by start_date_time DESC ");
+
+		if (!patients.getMemberIds().isEmpty())
+			query.setParameterList("patientIds", patients.getMemberIds());
+		query.setCacheMode(CacheMode.IGNORE);
+
+		List<Object[]> temp = query.list();
+
+		long now = System.currentTimeMillis();
+		for (Object[] results : temp) {
+			Integer ptId = (Integer) results[0];
+			Object apptDate = results[1];
+
+			if (!ret.containsKey(ptId))
+				ret.put(ptId, apptDate);
+		}
+		return ret;
 	}
 }
