@@ -129,7 +129,20 @@ public class Helper {
         return concepts;
     }
 
-    private static List<ConceptMapper> convertConcepts(List<Concept> conceptList, String encounterTypeUuid) {
+    static List<ConceptMapper> convertConcepts(List<Concept> conceptList, String encounterTypeUuid) {
+        List<ConceptMapper> conceptMappers = new ArrayList<>();
+        for (Concept c : conceptList) {
+            ConceptMapper conceptMapper = new ConceptMapper();
+            conceptMapper.setConceptId(c.getConceptId().toString());
+            conceptMapper.setConceptName(c.getName().getName());
+            conceptMapper.setUuid(c.getUuid());
+            conceptMapper.setType(encounterTypeUuid);
+            conceptMappers.add(conceptMapper);
+        }
+        return conceptMappers;
+    }
+
+    static List<ConceptMapper> convertConcepts(Set<Concept> conceptList, String encounterTypeUuid) {
         List<ConceptMapper> conceptMappers = new ArrayList<>();
         for (Concept c : conceptList) {
             ConceptMapper conceptMapper = new ConceptMapper();

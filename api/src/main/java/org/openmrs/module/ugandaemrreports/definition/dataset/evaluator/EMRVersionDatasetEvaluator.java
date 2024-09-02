@@ -13,14 +13,11 @@
  */
 package org.openmrs.module.ugandaemrreports.definition.dataset.evaluator;
 
-import liquibase.util.StringUtils;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
 import org.openmrs.annotation.Handler;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.reporting.common.ObjectUtil;
 import org.openmrs.module.reporting.dataset.DataSet;
 import org.openmrs.module.reporting.dataset.DataSetColumn;
 import org.openmrs.module.reporting.dataset.DataSetRow;
@@ -30,10 +27,6 @@ import org.openmrs.module.reporting.dataset.definition.evaluator.DataSetEvaluato
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.ugandaemrreports.definition.dataset.definition.EMRVersionDatasetDefinition;
-import org.openmrs.module.ugandaemrreports.definition.dataset.definition.NameOfHealthUnitDatasetDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 @Handler(supports = EMRVersionDatasetDefinition.class)
 public class EMRVersionDatasetEvaluator implements DataSetEvaluator{

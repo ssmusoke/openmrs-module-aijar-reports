@@ -3,6 +3,7 @@ package org.openmrs.module.ugandaemrreports.api.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
+import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
@@ -13,8 +14,9 @@ import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.ReportObjectWrapper;
 
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * It is a default implementation of {@link UgandaEMRReportsService}.
@@ -100,6 +102,21 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	@Override
 	public Cohort getPatientCurrentlyInProgram(String programUuid) {
 		return dao.getPatientCurrentlyInPrograms(programUuid);
+	}
+
+	@Override
+	public Map<Integer, String> getPatientsConditionsStatus(org.openmrs.cohort.Cohort patients, Concept codedCondition) {
+		return dao.getPatientsConditionsStatus(patients, codedCondition);
+	}
+
+	@Override
+	public Set<Concept> getConditionsConcepts() {
+		return dao.getAllConditions();
+	}
+
+	@Override
+	public Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit){
+		return dao.getLatestPatientAppointmentsScheduled(patients,limit);
 	}
 
 }
