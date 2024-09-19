@@ -5,6 +5,9 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.Obs;
 import org.openmrs.api.db.hibernate.DbSession;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.Cohort;
@@ -19,7 +22,9 @@ import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  */
@@ -141,5 +146,18 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 		log.debug("query: " + sb);
 		Query query = sessionFactory.getCurrentSession().createSQLQuery(sb.toString());
 		return new Cohort(query.list());
+	}
+
+	@Override
+	public List<Integer> getObsConceptsFromEncounters(EncounterType encounterType) {
+		String hql = "SELECT DISTINCT o.concept.id " +
+				"FROM Obs o " +
+				"INNER JOIN o.encounter e " +
+				"INNER JOIN e.encounterType et " +
+				"WHERE et.uuid = :uuid";
+		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		query.setParameter("uuid", encounterType.getUuid());
+		List<Integer> conceptIds = query.list();
+		return conceptIds;
 	}
 }

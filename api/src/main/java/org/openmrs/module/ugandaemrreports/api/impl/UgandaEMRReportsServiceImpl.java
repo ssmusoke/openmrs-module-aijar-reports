@@ -3,8 +3,11 @@ package org.openmrs.module.ugandaemrreports.api.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Cohort;
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
+import org.openmrs.logic.op.In;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.module.ugandaemrreports.api.db.hibernate.HibernateUgandaEMRReportsDAO;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
@@ -13,8 +16,8 @@ import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.ReportObjectWrapper;
 
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * It is a default implementation of {@link UgandaEMRReportsService}.
@@ -100,6 +103,11 @@ public class UgandaEMRReportsServiceImpl extends BaseOpenmrsService implements U
 	@Override
 	public Cohort getPatientCurrentlyInProgram(String programUuid) {
 		return dao.getPatientCurrentlyInPrograms(programUuid);
+	}
+
+	@Override
+	public List<Integer> getObsConceptsFromEncounters(EncounterType encounterType) {
+        return dao.getObsConceptsFromEncounters(encounterType);
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.openmrs.module.ugandaemrreports.api;
 
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
 import org.openmrs.Cohort;
@@ -12,6 +14,7 @@ import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in
@@ -105,4 +108,6 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     PatientSearch getPatientSearchByUuid(String uuid);
 
     Cohort getPatientCurrentlyInProgram(String programUuid);
+
+    List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
 }

@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.Program;
+import org.openmrs.api.AdministrationService;
 import org.openmrs.api.CohortService;
 import org.openmrs.api.context.Context;
 import org.openmrs.cohort.CohortSearchHistory;
 import org.openmrs.cohort.impl.PatientSearchCohortDefinitionProvider;
+import org.openmrs.logic.op.In;
 import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
 import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
 import org.openmrs.module.reporting.common.DateUtil;
@@ -58,7 +61,9 @@ public class Helper {
             List<Concept> conceptList = getConcepts(conceptsUuids);
             conceptMapperList = convertConcepts(conceptList, encounterTypeUuid);
         }
-
+        if (conceptMapperList.isEmpty()) {
+            conceptMapperList.addAll(convertConcepts(getConceptsInObservations(encounterTypeUuid), encounterTypeUuid));
+        }
         return conceptMapperList;
     }
 
@@ -124,6 +129,15 @@ public class Helper {
         List<Concept> concepts = new ArrayList<>();
         for (String uuid : conceptUuids) {
             Concept concept = Context.getConceptService().getConceptByUuid(uuid);
+            concepts.add(concept);
+        }
+        return concepts;
+    }
+
+    private static List<Concept> getConceptsByIds(List<Integer> conceptIds) {
+        List<Concept> concepts = new ArrayList<>();
+        for (Integer id : conceptIds) {
+            Concept concept = Context.getConceptService().getConcept(id);
             concepts.add(concept);
         }
         return concepts;
@@ -291,5 +305,14 @@ public class Helper {
         Date currentDate = new Date();
         long timeDifference = currentDate.getTime() - birthdate.getTime();
         return (int) (TimeUnit.MILLISECONDS.toDays(timeDifference) / 365);
+    }
+
+    public static List<Concept> getConceptsInObservations(String encounterTypeUUid) {
+        EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(encounterTypeUUid);
+        UgandaEMRReportsService ugandaEMRReportsService = Context.getService(UgandaEMRReportsService.class);
+
+        List<Integer> conceptIds = ugandaEMRReportsService.getObsConceptsFromEncounters(encounterType);
+
+        return getConceptsByIds(conceptIds);
     }
 }

@@ -1,13 +1,17 @@
 package org.openmrs.module.ugandaemrreports.api.db;
 
+import org.openmrs.Concept;
+import org.openmrs.EncounterType;
 import org.openmrs.Program;
 import org.openmrs.Cohort;
+import org.openmrs.logic.op.In;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.reporting.PatientSearch;
 import org.openmrs.reporting.ReportObjectWrapper;
 
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Database methods for {@link UgandaEMRReportsService}.
@@ -20,4 +24,5 @@ public interface UgandaEMRReportsDAO {
 
     Cohort getPatientCurrentlyInPrograms(String uuid);
 
+    List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
 }
