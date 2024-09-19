@@ -1,6 +1,7 @@
 package org.openmrs.module.ugandaemrreports.api.db;
 
 import org.openmrs.Concept;
+import org.openmrs.Concept;
 import org.openmrs.EncounterType;
 import org.openmrs.Program;
 import org.openmrs.Cohort;
@@ -11,6 +12,8 @@ import org.openmrs.reporting.ReportObjectWrapper;
 
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Set;
 
 /**
@@ -25,4 +28,9 @@ public interface UgandaEMRReportsDAO {
     Cohort getPatientCurrentlyInPrograms(String uuid);
 
     List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
+    Map<Integer, String> getPatientsConditionsStatus(org.openmrs.cohort.Cohort patients, Concept codedCondition);
+
+    Set<Concept> getAllConditions();
+
+    Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit);
 }

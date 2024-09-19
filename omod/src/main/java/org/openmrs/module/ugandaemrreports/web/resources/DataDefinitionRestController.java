@@ -13,6 +13,7 @@ import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
 import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reportingcompatibility.service.ReportingCompatibilityService;
+import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.Column;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.DataExportMapper;
@@ -135,56 +136,63 @@ public class DataDefinitionRestController {
             String expression = column.getExpression();
             String type = column.getType();
             String column_label = column.getLabel();
+            switch (type) {
+                case "PatientIdentifier":
+                    Map<Integer, String> identifiers = getIdentifiers(baseCohort, expression);
+                    columns.put(column_label, identifiers);
+                    break;
+                case "PersonName":
+                    Map<Integer, Object> returnedNames = getPersonNames(baseCohort, expression);
+                    columns.put(column_label, returnedNames);
+                    break;
+                case "PersonAttribute":
+                    if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
+                        Map<Integer, Object> attributes = getConceptPersonAttributes(baseCohort, expression);
+                        columns.put(column_label, attributes);
+                    } else {
+                        Map<Integer, Object> attributes = getPersonAttributes(baseCohort, expression);
+                        columns.put(column_label, attributes);
 
-            if (isExpressionAConcept(expression)) {
-                try {
+                    }
+                    break;
+                case "Demographics":
+                    if (expression.equals("Age")) {
+                        Map<Integer, Object> birthdates = getAges(baseCohort);
 
-                    Map<Integer, List<List<Object>>> fields = getLatestObsData(column, baseCohort);
-                    columns.put(column_label, fields);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                switch (type) {
-                    case "PatientIdentifier":
-
-                        Map<Integer, String> identifiers = getIdentifiers(baseCohort, expression);
-                        columns.put(column_label, identifiers);
-
-                        break;
-                    case "PersonName":
-                        Map<Integer, Object> returnedNames = getPersonNames(baseCohort, expression);
-                        columns.put(column_label, returnedNames);
-                        break;
-                    case "PersonAttribute":
-                        if (Objects.equals(expression, "8d871f2a-c2cc-11de-8d13-0010c6dffd0f") || Objects.equals(expression, "dec484be-1c43-416a-9ad0-18bd9ef28929")) {
-                            Map<Integer, Object> attributes = getConceptPersonAttributes(baseCohort, expression);
-                            columns.put(column_label, attributes);
-                        } else {
-                            Map<Integer, Object> attributes = getPersonAttributes(baseCohort, expression);
-                            columns.put(column_label, attributes);
-
+                        Map<Integer, Object> ages = Helper.calculateAges(birthdates);
+                        columns.put(column_label, ages);
+                    } else {
+                        Map<Integer, Object> attributes = getPatientAttributes(baseCohort, "Person." + expression);
+                        columns.put(column_label, attributes);
+                    }
+                    break;
+                case "Address":
+                    Map<Integer, Object> addresses = getPatientAttributes(baseCohort, "PersonAddress." + expression);
+                    columns.put(column_label, addresses);
+                    break;
+                case "Appointment":
+                    Map<Integer, Object> appointments = Context.getService(UgandaEMRReportsService.class).getLatestPatientAppointmentsScheduled (baseCohort, 1);
+                    columns.put(column_label, appointments);
+                    break;
+                case "Condition":
+                    Concept codedCondition = Context.getConceptService().getConceptByUuid(expression);
+                    Map<Integer, String> conditionStatus = Context.getService(UgandaEMRReportsService.class).getPatientsConditionsStatus(baseCohort, codedCondition);
+                    columns.put(column_label, conditionStatus);
+                    break;
+                default:
+                    if (isExpressionAConcept(expression)) {
+                        try {
+                            Map<Integer, List<List<Object>>> fields = getLatestObsData(column, baseCohort);
+                            columns.put(column_label, fields);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        break;
-                    case "Demographics":
-                        if (expression.equals("Age")) {
-                            Map<Integer, Object> birthdates = getAges(baseCohort);
-
-                            Map<Integer, Object> ages = Helper.calculateAges(birthdates);
-                            columns.put(column_label, ages);
-                        } else {
-                            Map<Integer, Object> attributes = getPatientAttributes(baseCohort, "Person." + expression);
-                            columns.put(column_label, attributes);
-                        }
-                        break;
-                    case "Address":
-                        Map<Integer, Object> addresses = getPatientAttributes(baseCohort, "PersonAddress." + expression);
-                        columns.put(column_label, addresses);
-                        break;
-                }
+                    }
+                    break;
             }
-
         }
+
+
         return columns;
     }
 
@@ -308,17 +316,17 @@ public class DataDefinitionRestController {
             String key = column.getLabel();
             List<String> extras = column.getExtras();
             Object columnValue = "";
-            Object object = columns.get(key);
+            Object collectionObject = columns.get(key);
             String finalKey = key;
             Column columnParameter = columnParameters.stream().filter(c -> c.getLabel().equals(finalKey)).findFirst().orElse(null);
             assert columnParameter != null;
             int modifier = columnParameter.getModifier();
             if(Objects.equals(key, "Birthdate") || key.equals("Date of death")){
-                object =  convertDatesToStrings(object);
+                collectionObject =  convertDatesToStrings(collectionObject);
             }
-            if (object!=null) {
-                if (object instanceof Map) {
-                    Map<Integer, Object> map = (Map<Integer, Object>) object;
+            if (collectionObject!=null) {
+                if (collectionObject instanceof Map) {
+                    Map<Integer, Object> map = (Map<Integer, Object>) collectionObject;
                     Object patientObject = map.get(patientId);
                     if(patientObject instanceof  List){
                         List<Object> objectList = (List<Object>) patientObject;
@@ -336,7 +344,7 @@ public class DataDefinitionRestController {
                                             for (int v = 0; v < extras.size(); v++) {
                                                 String extraValueColumnName = extras.get(v);
                                                 key = modifierKey + "_" + extraValueColumnName;
-//                                                skip object at index 0
+//                                                skip collectionObject at index 0
                                                 if(v==0){
                                                     continue;
                                                 }
@@ -364,13 +372,13 @@ public class DataDefinitionRestController {
 
                             }
                         }else {
-                            attachToDataSetRow(key, columnValue, pdh, row);
+                            attachToDataSetRow(key, patientObject, pdh, row);
                         }
                     }
 
-                } else if (object instanceof List) {
+                } else if (collectionObject instanceof List) {
 
-                    List<Object[]> objects = (List<Object[]>)object;
+                    List<Object[]> objects = (List<Object[]>)collectionObject;
                     for (Object[] object1 : objects) {
                         int ptId = (int) object1[0];
 
