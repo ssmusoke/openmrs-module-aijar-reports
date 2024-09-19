@@ -8833,8 +8833,8 @@ SELECT cohort.client_id,
        advanced_disease,
        mfplfp.status                                                                           AS family_planning_status,
        mfplna.status                                                                           AS nutrition_assesment,
-       mfplfp.status                                                                           AS nutrition_support,
-       IF(mfplhbt.result='UNKNOWN','Not Tested',IF(mfplhbt.result='waiting for test results','Tested',mfplhbt.result))                                                                          AS hepatitis_b_test_qualitative,
+       mfplnsmfplns.status                                                                           AS nutrition_support,
+       IF(sub_art_summary.hepatitis_b_test_qualitative='UNKNOWN','INDETERMINATE',sub_art_summary.hepatitis_b_test_qualitative)                                                                          AS hepatitis_b_test_qualitative,
        syphilis_test_result_for_partner,
        cervical_cancer_screening,
        mfplts.status                                                                           AS tuberculosis_status,
@@ -8886,7 +8886,6 @@ FROM    mamba_fact_art_patients cohort
             LEFT JOIN mamba_fact_patients_latest_nutrition_assesment mfplna ON mfplna.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_nutrition_support mfplnsmfplns
                       ON mfplnsmfplns.client_id = cohort.client_id
-            LEFT JOIN mamba_fact_patients_latest_hepatitis_b_test mfplhbt ON mfplhbt.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_tb_status mfplts ON mfplts.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_tpt_status mfplts2 ON mfplts2.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_who_stage who_stage ON who_stage.client_id = cohort.client_id
@@ -8935,7 +8934,8 @@ FROM    mamba_fact_art_patients cohort
             LEFT JOIN (SELECT client_id,
                               baseline_cd4,
                               baseline_regimen_start_date,
-                              special_category
+                              special_category,
+                              hepatitis_b_test_qualitative
                        FROM mamba_fact_encounter_hiv_art_summary
                        GROUP BY client_id) sub_art_summary ON sub_art_summary.client_id = cohort.client_id
             LEFT JOIN (SELECT b.client_id, health_education_setting
