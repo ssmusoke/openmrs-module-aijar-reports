@@ -1,10 +1,7 @@
 package org.openmrs.module.ugandaemrreports.api.db;
 
+import org.openmrs.*;
 import org.openmrs.Concept;
-import org.openmrs.Concept;
-import org.openmrs.EncounterType;
-import org.openmrs.Program;
-import org.openmrs.Cohort;
 import org.openmrs.logic.op.In;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
 import org.openmrs.reporting.PatientSearch;
@@ -33,4 +30,10 @@ public interface UgandaEMRReportsDAO {
     Set<Concept> getAllConditions();
 
     Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit);
+
+    List<Object> getNonCodedOrderReasons(OrderType orderType);
+
+    List<Concept> getCodedOrderReasons(OrderType orderType);
+
+    Map<Integer, Map<String, Object>> getDrugOrderByIndication(org.openmrs.cohort.Cohort patients,String drugIndication,OrderType orderType);
 }

@@ -48,6 +48,7 @@ public class DataDefinitionRestController {
 
         EvaluationContext context = new EvaluationContext();
         SimpleDataSet dataSet = new SimpleDataSet(new PatientDataSetDefinition(), context);
+       List<LinkedHashMap> dataSet1 = new ArrayList<>();
         org.openmrs.cohort.Cohort baseCohort = new org.openmrs.cohort.Cohort();
         if (cohort.getUuid() != null && !columnList.isEmpty()) {
             try {
@@ -55,10 +56,11 @@ public class DataDefinitionRestController {
 
                 if (!baseCohort.isEmpty()) {
 
-                    HashMap<String, Object> columns = processColumnsData(columnList, baseCohort);
+                    LinkedHashMap<String, Object> columns = processColumnsData(columnList, baseCohort);
+
                     for (Integer i : baseCohort.getMemberIds()) {
-                        DataSetRow row = createPatientDataRow(i,columns,columnList);
-                        dataSet.addRow(row);
+                        LinkedHashMap<String,Object> row = createPatientDataRow(i,columns,columnList);
+                        dataSet1.add(row);
                     }
                 }
 
@@ -69,7 +71,7 @@ public class DataDefinitionRestController {
         }
         List<SimpleObject> traceReportData = new ArrayList<SimpleObject>();
         traceReportData.addAll(convertDataSetToSimpleObject(dataSet));
-        return new ResponseEntity<>(traceReportData, HttpStatus.OK);
+        return new ResponseEntity<>(dataSet1, HttpStatus.OK);
 
     }
 
@@ -130,8 +132,8 @@ public class DataDefinitionRestController {
         return  rcs.getPatientAttributes(cohort,attribute,false);
     }
 
-    private HashMap<String, Object> processColumnsData(List<Column> columnList, org.openmrs.cohort.Cohort baseCohort) {
-        HashMap<String, Object> columns = new HashMap<>();
+    private LinkedHashMap<String, Object> processColumnsData(List<Column> columnList, org.openmrs.cohort.Cohort baseCohort) {
+        LinkedHashMap<String, Object> columns = new LinkedHashMap<>();
         for (Column column : columnList) {
             String expression = column.getExpression();
             String type = column.getType();
@@ -178,6 +180,12 @@ public class DataDefinitionRestController {
                     Concept codedCondition = Context.getConceptService().getConceptByUuid(expression);
                     Map<Integer, String> conditionStatus = Context.getService(UgandaEMRReportsService.class).getPatientsConditionsStatus(baseCohort, codedCondition);
                     columns.put(column_label, conditionStatus);
+                    break;
+                case "Orders":
+                    OrderType ot = Context.getOrderService().getOrderTypeByUuid(expression);
+                    String indication = column_label;
+                    Map<Integer, Map<String, Object>> drugFields = Context.getService(UgandaEMRReportsService.class).getDrugOrderByIndicator(baseCohort,indication,ot);
+                    columns.put(column_label, drugFields);
                     break;
                 default:
                     if (isExpressionAConcept(expression)) {
@@ -308,9 +316,9 @@ public class DataDefinitionRestController {
         return patientIdObjectMap;
     }
 
-    public DataSetRow createPatientDataRow(Integer patientId,HashMap<String, Object> columns,List<Column> columnParameters){
+    public LinkedHashMap<String,Object> createPatientDataRow(Integer patientId,HashMap<String, Object> columns,List<Column> columnParameters){
         DataSetRow row = new DataSetRow();
-
+        LinkedHashMap<String,Object> patientRows = new LinkedHashMap<>();
         PatientDataHelper pdh = new PatientDataHelper();
         for (Column column : columnParameters) {
             String key = column.getLabel();
@@ -321,13 +329,14 @@ public class DataDefinitionRestController {
             Column columnParameter = columnParameters.stream().filter(c -> c.getLabel().equals(finalKey)).findFirst().orElse(null);
             assert columnParameter != null;
             int modifier = columnParameter.getModifier();
-            if(Objects.equals(key, "Birthdate") || key.equals("Date of death")){
+            if(key.equals("Birthdate") || key.equals("Date of death")){
                 collectionObject =  convertDatesToStrings(collectionObject);
             }
             if (collectionObject!=null) {
                 if (collectionObject instanceof Map) {
                     Map<Integer, Object> map = (Map<Integer, Object>) collectionObject;
                     Object patientObject = map.get(patientId);
+
                     if(patientObject instanceof  List){
                         List<Object> objectList = (List<Object>) patientObject;
                         if(objectList.get(0) instanceof List){
@@ -339,7 +348,7 @@ public class DataDefinitionRestController {
                                     List<Object> objectList1 = (List<Object>)objectList.get(x);
                                     if(!objectList1.isEmpty()){
                                         columnValue = objectList1.get(0);
-                                        attachToDataSetRow(key, columnValue, pdh, row);
+                                        attachToDataSetRow(key, columnValue, patientRows);
                                         if(extras!=null) {
                                             for (int v = 0; v < extras.size(); v++) {
                                                 String extraValueColumnName = extras.get(v);
@@ -349,7 +358,7 @@ public class DataDefinitionRestController {
                                                     continue;
                                                 }
                                                 columnValue = objectList1.get(v);
-                                                attachToDataSetRow(key, columnValue, pdh, row);
+                                                attachToDataSetRow(key, columnValue, patientRows);
 
                                             }
                                         }
@@ -359,20 +368,30 @@ public class DataDefinitionRestController {
                             }
 
                         }
-                    }else {
+                    }
+                    else if(patientObject instanceof Map){
+                        Map<String, Object> objectColumns = (Map<String, Object>) patientObject;
+
+
+                        for (Map.Entry<String, Object> entry :  objectColumns.entrySet()) {
+                            columnValue = entry.getValue();
+                            attachToDataSetRow(key+"_"+entry.getKey(), columnValue, patientRows);
+                        }
+                    }
+                    else {
                         columnValue= patientObject;
                         if(modifier >1){
 
                             for(int x = 0; x < modifier; x++){
                                 if(x<1) {
-                                    attachToDataSetRow(key, columnValue, pdh, row);
+                                    attachToDataSetRow(key, columnValue, patientRows);
                                 }else{
-                                    attachToDataSetRow(key + "_" + x, columnValue, pdh, row);
+                                    attachToDataSetRow(key + "_" + x, columnValue, patientRows);
                                 }
 
                             }
                         }else {
-                            attachToDataSetRow(key, patientObject, pdh, row);
+                            attachToDataSetRow(key, patientObject, patientRows);
                         }
                     }
 
@@ -386,7 +405,7 @@ public class DataDefinitionRestController {
                             columnValue = object1[1];
                         }
                     }
-                    attachToDataSetRow(key, columnValue, pdh, row);
+                    attachToDataSetRow(key, columnValue,patientRows);
                 } else {
                     System.out.println("The variable is neither a Map nor a String.");
                 }
@@ -394,11 +413,11 @@ public class DataDefinitionRestController {
             }
 
         }
-        return row;
+        return patientRows;
 
     }
 
-    private static void attachToDataSetRow(String key, Object obj, PatientDataHelper pdh, DataSetRow row) {
+    private static void attachToDataSetRow(String key, Object obj, Map<String,Object> map) {
         if(obj instanceof  Concept){
             Concept c = (Concept) obj;
             obj = c.getName().getName();
@@ -406,6 +425,6 @@ public class DataDefinitionRestController {
         {
             obj = String.valueOf(obj);
         }
-        pdh.addCol(row, key, obj);
+        map.put(key, obj);
     }
 }

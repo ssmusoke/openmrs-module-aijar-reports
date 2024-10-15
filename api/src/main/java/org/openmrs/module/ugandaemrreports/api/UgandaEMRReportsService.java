@@ -1,11 +1,9 @@
 package org.openmrs.module.ugandaemrreports.api;
 
+import org.openmrs.*;
 import org.openmrs.Concept;
-import org.openmrs.Concept;
-import org.openmrs.EncounterType;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.Cohort;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.openmrs.reporting.PatientSearch;
@@ -117,4 +115,10 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit);
 
     List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
+
+    List<Object> getNonCodedOrderReasons(OrderType orderType);
+
+    List<Concept> getCodedOrderReasons(OrderType orderType);
+
+    Map<Integer, Map<String, Object>> getDrugOrderByIndicator(org.openmrs.cohort.Cohort patients,String drugIndication,OrderType orderType);
 }
