@@ -27,6 +27,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
@@ -317,9 +319,7 @@ public class DataDefinitionRestController {
     }
 
     public LinkedHashMap<String,Object> createPatientDataRow(Integer patientId,HashMap<String, Object> columns,List<Column> columnParameters){
-        DataSetRow row = new DataSetRow();
         LinkedHashMap<String,Object> patientRows = new LinkedHashMap<>();
-        PatientDataHelper pdh = new PatientDataHelper();
         for (Column column : columnParameters) {
             String key = column.getLabel();
             List<String> extras = column.getExtras();
@@ -329,9 +329,7 @@ public class DataDefinitionRestController {
             Column columnParameter = columnParameters.stream().filter(c -> c.getLabel().equals(finalKey)).findFirst().orElse(null);
             assert columnParameter != null;
             int modifier = columnParameter.getModifier();
-            if(key.equals("Birthdate") || key.equals("Date of death")){
-                collectionObject =  convertDatesToStrings(collectionObject);
-            }
+
             if (collectionObject!=null) {
                 if (collectionObject instanceof Map) {
                     Map<Integer, Object> map = (Map<Integer, Object>) collectionObject;
@@ -391,7 +389,7 @@ public class DataDefinitionRestController {
 
                             }
                         }else {
-                            attachToDataSetRow(key, patientObject, patientRows);
+                            attachToDataSetRow(key, columnValue, patientRows);
                         }
                     }
 
@@ -421,9 +419,13 @@ public class DataDefinitionRestController {
         if(obj instanceof  Concept){
             Concept c = (Concept) obj;
             obj = c.getName().getName();
-        }else if (obj instanceof Date)
+        }else if (obj instanceof Timestamp)
         {
-            obj = String.valueOf(obj);
+            try {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                obj = dateFormat.format(obj);
+            }catch (Exception e){
+            }
         }
         map.put(key, obj);
     }
