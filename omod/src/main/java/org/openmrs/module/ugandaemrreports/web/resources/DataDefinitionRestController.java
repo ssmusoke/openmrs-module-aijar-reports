@@ -14,7 +14,6 @@ import org.openmrs.module.reporting.evaluation.EvaluationContext;
 import org.openmrs.module.reporting.evaluation.EvaluationException;
 import org.openmrs.module.reportingcompatibility.service.ReportingCompatibilityService;
 import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
-import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.Column;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.DataExportMapper;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.Cohort;
@@ -29,7 +28,14 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
+import java.util.Iterator;
 
 @Controller
 @RequestMapping(value = "/rest/" + RestConstants.VERSION_1 + DataDefinitionRestController.UGANDAEMRREPORTS + DataDefinitionRestController.DATA_DEFINITION)
@@ -75,22 +81,6 @@ public class DataDefinitionRestController {
         traceReportData.addAll(convertDataSetToSimpleObject(dataSet));
         return new ResponseEntity<>(dataSet1, HttpStatus.OK);
 
-    }
-
-    private Map<Integer, Object> convertDatesToStrings(Object object) {
-
-        Map<Integer, Object> newMap = new HashMap<>();
-        if (object instanceof Map) {
-            Map<Integer, Object> map = (Map<Integer, Object>) object;
-            for (Map.Entry<Integer,Object> entry : map.entrySet()) {
-                Integer key = entry.getKey();
-                Object objectValue = entry.getValue();
-                String stringValue = String.valueOf(objectValue);
-                map.put(key,stringValue);
-            }
-
-        }
-        return newMap;
     }
 
     private Map<Integer, Object> getPersonNames(org.openmrs.cohort.Cohort cohort, String parameter) {
@@ -330,85 +320,7 @@ public class DataDefinitionRestController {
             assert columnParameter != null;
             int modifier = columnParameter.getModifier();
 
-            if (collectionObject!=null) {
-                if (collectionObject instanceof Map) {
-                    Map<Integer, Object> map = (Map<Integer, Object>) collectionObject;
-                    Object patientObject = map.get(patientId);
-
-                    if(patientObject instanceof  List){
-                        List<Object> objectList = (List<Object>) patientObject;
-                        if(objectList.get(0) instanceof List){
-
-                            for(int x = 0; x < modifier; x++){
-                                String modifierKey="";
-                                modifierKey =  x!=0 ?  finalKey + "_" + x  : finalKey ;
-                                if(objectList.size() > x) {
-                                    List<Object> objectList1 = (List<Object>)objectList.get(x);
-                                    if(!objectList1.isEmpty()){
-                                        columnValue = objectList1.get(0);
-                                        attachToDataSetRow(key, columnValue, patientRows);
-                                        if(extras!=null) {
-                                            for (int v = 0; v < extras.size(); v++) {
-                                                String extraValueColumnName = extras.get(v);
-                                                key = modifierKey + "_" + extraValueColumnName;
-//                                                skip collectionObject at index 0
-                                                if(v==0){
-                                                    continue;
-                                                }
-                                                columnValue = objectList1.get(v);
-                                                attachToDataSetRow(key, columnValue, patientRows);
-
-                                            }
-                                        }
-                                    }
-
-                                }
-                            }
-
-                        }
-                    }
-                    else if(patientObject instanceof Map){
-                        Map<String, Object> objectColumns = (Map<String, Object>) patientObject;
-
-
-                        for (Map.Entry<String, Object> entry :  objectColumns.entrySet()) {
-                            columnValue = entry.getValue();
-                            attachToDataSetRow(key+"_"+entry.getKey(), columnValue, patientRows);
-                        }
-                    }
-                    else {
-                        columnValue= patientObject;
-                        if(modifier >1){
-
-                            for(int x = 0; x < modifier; x++){
-                                if(x<1) {
-                                    attachToDataSetRow(key, columnValue, patientRows);
-                                }else{
-                                    attachToDataSetRow(key + "_" + x, columnValue, patientRows);
-                                }
-
-                            }
-                        }else {
-                            attachToDataSetRow(key, columnValue, patientRows);
-                        }
-                    }
-
-                } else if (collectionObject instanceof List) {
-
-                    List<Object[]> objects = (List<Object[]>)collectionObject;
-                    for (Object[] object1 : objects) {
-                        int ptId = (int) object1[0];
-
-                        if (ptId == patientId) {
-                            columnValue = object1[1];
-                        }
-                    }
-                    attachToDataSetRow(key, columnValue,patientRows);
-                } else {
-                    System.out.println("The variable is neither a Map nor a String.");
-                }
-
-            }
+            processCollectionObject(collectionObject,  key,  patientId, modifier, finalKey,  extras, patientRows);
 
         }
         return patientRows;
@@ -429,4 +341,78 @@ public class DataDefinitionRestController {
         }
         map.put(key, obj);
     }
+
+    public void processCollectionObject(Object collectionObject, String key, int patientId, int modifier, String finalKey, List<String> extras, LinkedHashMap<String,Object> patientRows) {
+        if (collectionObject == null) return;
+
+        if (collectionObject instanceof Map) {
+            processMapObject((Map<Integer, Object>) collectionObject, key, patientId, modifier, finalKey, extras, patientRows);
+        } else if (collectionObject instanceof List) {
+            processListObject((List<Object[]>) collectionObject, key, patientId, patientRows);
+        } else {
+            System.out.println("The variable is neither a Map nor a List.");
+        }
+    }
+
+    private void processMapObject(Map<Integer, Object> map, String key, int patientId, int modifier, String finalKey, List<String> extras, LinkedHashMap<String,Object> patientRows) {
+        Object patientObject = map.get(patientId);
+
+        if (patientObject instanceof List) {
+            processPatientObjectAsList((List<Object>) patientObject, key, modifier, extras, patientRows);
+        } else if (patientObject instanceof Map) {
+            processPatientObjectAsMap((Map<String, Object>) patientObject, key, patientRows);
+        } else {
+            processSinglePatientObject(patientObject, key, modifier, patientRows);
+        }
+    }
+
+    private void processPatientObjectAsList(List<Object> objectList, String key, int modifier,  List<String> extras, LinkedHashMap<String,Object> patientRows) {
+        for (int x = 0; x < modifier; x++) {
+            String modifierKey = (x != 0) ? key + "_" + x : key;
+
+            if (objectList.size() > x) {
+                List<Object> objectList1 = (List<Object>) objectList.get(x);
+                if (!objectList1.isEmpty()) {
+                    attachDataFromList(objectList1,modifierKey, extras, patientRows);
+                }
+            }
+        }
+    }
+
+    private void attachDataFromList(List<Object> objectList1, String modifierKey, List<String> extras, LinkedHashMap<String,Object> patientRows) {
+        Object columnValue = objectList1.get(0);
+        attachToDataSetRow(modifierKey, columnValue, patientRows);
+
+        if (extras != null) {
+            for (int v = 1; v < extras.size(); v++) {
+                String extraValueColumnName = extras.get(v);
+                String newKey = modifierKey + "_" + extraValueColumnName;
+                Object extraColumnValue = objectList1.get(v);
+                attachToDataSetRow(newKey, extraColumnValue, patientRows);
+            }
+        }
+    }
+
+    private void processPatientObjectAsMap(Map<String, Object> objectColumns, String key, LinkedHashMap<String,Object> patientRows) {
+        for (Map.Entry<String, Object> entry : objectColumns.entrySet()) {
+            attachToDataSetRow(key + "_" + entry.getKey(), entry.getValue(), patientRows);
+        }
+    }
+
+    private void processSinglePatientObject(Object patientObject, String key, int modifier, LinkedHashMap<String,Object> patientRows) {
+        for (int x = 0; x < modifier; x++) {
+            String newKey = (x == 0) ? key : key + "_" + x;
+            attachToDataSetRow(newKey, patientObject, patientRows);
+        }
+    }
+
+    private void processListObject(List<Object[]> objects, String key, int patientId, LinkedHashMap<String,Object> patientRows) {
+        for (Object[] object : objects) {
+            int ptId = (int) object[0];
+            if (ptId == patientId) {
+                attachToDataSetRow(key, object[1], patientRows);
+            }
+        }
+    }
+
 }
