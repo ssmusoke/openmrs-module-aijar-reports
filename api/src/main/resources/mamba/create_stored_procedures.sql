@@ -8833,7 +8833,7 @@ SELECT cohort.client_id,
        advanced_disease,
        mfplfp.status                                                                           AS family_planning_status,
        mfplna.status                                                                           AS nutrition_assesment,
-       mfplnsmfplns.status                                                                           AS nutrition_support,
+       mfplnsmfplns.support                                                                           AS nutrition_support,
        IF(sub_art_summary.hepatitis_b_test_qualitative='UNKNOWN','INDETERMINATE',sub_art_summary.hepatitis_b_test_qualitative)                                                                          AS hepatitis_b_test_qualitative,
        syphilis_test_result_for_partner,
        cervical_cancer_screening,
@@ -8873,6 +8873,10 @@ SELECT cohort.client_id,
        sub_cervical_cancer_screening.encounter_date                                     AS cacx_date
 
 FROM    mamba_fact_art_patients cohort
+            LEFT JOIN (SELECT mf_to.client_id
+                       FROM mamba_fact_transfer_out mf_to
+                                LEFT JOIN mamba_fact_transfer_in mf_ti ON mf_to.client_id = mf_ti.client_id
+                       WHERE (transfer_out_date > transfer_in_date OR mf_ti.client_id IS NULL)) mfto  on mfto.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_marital_status mfpms ON mfpms.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_return_date mfplrd ON mfplrd.client_id = cohort.client_id
@@ -9072,7 +9076,8 @@ FROM    mamba_fact_art_patients cohort
                              WHERE hiv_vl_date IS NOT NULL
                              GROUP BY client_id) a
                             ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_hiv_vl_date
-                      ON sub_hiv_vl_date.client_id = cohort.client_id;
+                      ON sub_hiv_vl_date.client_id = cohort.client_id
+            WHERE mfto.client_id IS NULL;
 
 -- $END
 END //
