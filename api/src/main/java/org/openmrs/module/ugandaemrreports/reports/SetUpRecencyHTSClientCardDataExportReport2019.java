@@ -61,7 +61,7 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
 
     @Override
     public String getVersion() {
-        return "1.1.1";
+        return "1.1.2";
     }
 
     /**
@@ -135,8 +135,9 @@ public class SetUpRecencyHTSClientCardDataExportReport2019 extends UgandaEMRData
         dsd.addColumn("serial_number", sdd.definition("serialNo", getConcept("1646AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")), "onOrAfter=${startDate},onOrBefore=${endDate}", new ObsDataConverter());
         dsd.addColumn("visit_date", df.getHTSVisitDate(), (String) null, new DateConverter("yyyy-MM-dd"));
         dsd.addColumn("health_unit_name", df.getPreferredAddress("address4"), (String) null);
-        dsd.addColumn("health_unit_sub_county", df.getPreferredAddress("address3"), (String) null);
         dsd.addColumn("health_unit_district", df.getPreferredAddress("countyDistrict"), (String) null);
+        dsd.addColumn("health_unit_sub_county", df.getPreferredAddress("address3"), (String) null);
+        dsd.addColumn("health_unit_village", df.getPreferredAddress("address5"), (String) null);
         dsd.addColumn("sex", new GenderDataDefinition(), (String) null);
         dsd.addColumn("date_of_birth", new BirthdateDataDefinition(), (String) null, new BirthdateConverter("yyyy-MM-dd"));
         dsd.addColumn("marital_status", new PersonAttributeDataDefinition("MaritalStatus", maritalStatus), "", new PersonAttributeDataConverter());
