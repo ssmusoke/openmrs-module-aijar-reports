@@ -5,13 +5,46 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.openmrs.Concept;
+import org.openmrs.EncounterType;
+import org.openmrs.Patient;
+import org.openmrs.Program;
+import org.openmrs.api.AdministrationService;
+import org.openmrs.api.CohortService;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.ugandaemrreports.reports.AggregateReportDataExportManager;
+import org.openmrs.cohort.CohortSearchHistory;
+import org.openmrs.cohort.impl.PatientSearchCohortDefinitionProvider;
+import org.openmrs.logic.op.In;
+import org.openmrs.module.reporting.cohort.definition.CohortDefinition;
+import org.openmrs.module.reporting.cohort.definition.service.CohortDefinitionService;
+import org.openmrs.module.reporting.common.DateUtil;
+import org.openmrs.module.reporting.common.ReflectionUtil;
+import org.openmrs.module.reporting.dataset.DataSetRow;
+import org.openmrs.module.reporting.dataset.SimpleDataSet;
+import org.openmrs.module.reporting.dataset.definition.PatientDataSetDefinition;
+import org.openmrs.module.reporting.evaluation.EvaluationContext;
+import org.openmrs.module.reporting.evaluation.EvaluationException;
+import org.openmrs.module.reporting.evaluation.parameter.Mapped;
+import org.openmrs.module.reporting.report.definition.ReportDefinition;
+import org.openmrs.module.reporting.report.definition.service.ReportDefinitionService;
+import org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService;
+import org.openmrs.module.ugandaemrreports.common.PatientDataHelper;
+import org.openmrs.module.ugandaemrreports.web.resources.mapper.Cohort;
 import org.openmrs.module.ugandaemrreports.web.resources.mapper.ConceptMapper;
+import org.openmrs.reporting.PatientFilter;
+import org.openmrs.reporting.PatientSearch;
+import org.openmrs.util.ReportingcompatibilityUtil;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class Helper {
 
@@ -28,7 +61,9 @@ public class Helper {
             List<Concept> conceptList = getConcepts(conceptsUuids);
             conceptMapperList = convertConcepts(conceptList, encounterTypeUuid);
         }
-
+        if (conceptMapperList.isEmpty()) {
+            conceptMapperList.addAll(convertConcepts(getConceptsInObservations(encounterTypeUuid), encounterTypeUuid));
+        }
         return conceptMapperList;
     }
 
@@ -99,7 +134,16 @@ public class Helper {
         return concepts;
     }
 
-    private static List<ConceptMapper> convertConcepts(List<Concept> conceptList, String encounterTypeUuid) {
+    private static List<Concept> getConceptsByIds(List<Integer> conceptIds) {
+        List<Concept> concepts = new ArrayList<>();
+        for (Integer id : conceptIds) {
+            Concept concept = Context.getConceptService().getConcept(id);
+            concepts.add(concept);
+        }
+        return concepts;
+    }
+
+    static List<ConceptMapper> convertConcepts(List<Concept> conceptList, String encounterTypeUuid) {
         List<ConceptMapper> conceptMappers = new ArrayList<>();
         for (Concept c : conceptList) {
             ConceptMapper conceptMapper = new ConceptMapper();
@@ -157,38 +201,118 @@ public class Helper {
         return tableNameNode.asText();
     }
 
-    public static File getReportDesignFile(String report_uuid) {
+    public static org.openmrs.cohort.Cohort getCohortMembers(Cohort cohort) throws EvaluationException {
+        org.openmrs.cohort.Cohort baseCohort = new org.openmrs.cohort.Cohort();
+        String type = cohort.getType();
+        String cohortUuid = cohort.getUuid();
+        if (cohortUuid != null && type != null) {
+            switch (type) {
+                case "Report Definition":
+                    EvaluationContext context = new EvaluationContext();
+                    ReportDefinitionService service = Context.getService(ReportDefinitionService.class);
+                    ReportDefinition rd = service.getDefinitionByUuid(cohortUuid);
+                    if (rd != null) {
+                        Mapped<? extends CohortDefinition> cd = rd.getBaseCohortDefinition();
 
-        File folder = FileUtils.toFile(AggregateReportDataExportManager.class.getClassLoader().getResource("report_designs"));
-        if (folder.isDirectory()) {
+                        if (cd != null) {
+                            org.openmrs.Cohort baseCohort1;
+                            List<Map<String, Object>> parameters = cohort.getParameters();
 
+                            Map<String, Object> cohortParameters = getParameters(parameters);
+                            ReflectionUtil.setPropertyValue(cd, "startDate", cohortParameters.get("startDate"));
+                            ReflectionUtil.setPropertyValue(cd, "endDate", cohortParameters.get("endDate"));
 
-            File[] files = folder.listFiles();
-            File myFile = null;
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().endsWith(".json")) {
-                        ObjectMapper objectMapper = new ObjectMapper();
-                        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                            context.setParameterValues(cohortParameters);
 
-                        try {
-                            JsonNode fileObject = objectMapper.readTree(file);
-                            JsonNode encounterNode = fileObject.path("report_uuid");
-                            if (encounterNode.asText().equals(report_uuid)) {
-                                myFile = file;
-                                break;
-                            }
-                        } catch (IOException e) {
-                            System.err.println("Error reading JSON file: " + file.getName());
-                            e.printStackTrace();
+                            baseCohort1 = Context.getService(CohortDefinitionService.class).evaluate(cd, context);
+                            baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
                         }
                     }
-                }
+                    break;
+                case "Patient Search":
+                    PatientSearch patientSearch = Context.getService(UgandaEMRReportsService.class).getPatientSearchByUuid(cohortUuid);
+                    PatientSearchCohortDefinitionProvider provider = new PatientSearchCohortDefinitionProvider();
+                     baseCohort = provider.evaluate(patientSearch,null);
+                    break;
+                case "Program":
+                    org.openmrs.Cohort baseCohort1 = Context.getService(UgandaEMRReportsService.class).getPatientCurrentlyInProgram(cohortUuid);
+                    baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
+                    break;
+                case "Cohort":
+                    CohortService cohortService1 = Context.getCohortService();
+                     baseCohort1 = cohortService1.getCohortByUuid(cohortUuid);
+                    baseCohort = new org. openmrs. cohort. Cohort(baseCohort1.getCommaSeparatedPatientIds());
+                    break;
             }
 
-            return myFile;
-        } else {
-            return null;
         }
+        return baseCohort;
+    }
+    private static Map<String, Object> getParameters(List<Map<String, Object>> list) {
+
+        Map<String, Object> parameterValues = new HashMap<String, Object>();
+        if (!list.isEmpty()) {
+            for (Map<String, Object> objectMap : list) {
+                Iterator<String> keys = objectMap.keySet().iterator();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    String mapValue = (String) objectMap.get(key);
+                    parameterValues.put(key, DateUtil.parseYmd(mapValue));
+                }
+            }
+        }
+
+        return parameterValues;
+    }
+
+    public static Map<Integer, Object> calculateAges(Map<Integer, Object> birthdates) {
+        Map<Integer, Object> ages = new HashMap<>();
+
+        for (Map.Entry<Integer, Object> entry : birthdates.entrySet()) {
+            Integer patientId = entry.getKey();
+            String birthdateStr = entry.getValue().toString();
+
+            try {
+                Date birthdate = parseDate(birthdateStr);
+                int age = getAge(birthdate);
+                ages.put(patientId, age);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ages;
+    }
+
+    public static Date parseDate(String dateStr) throws ParseException {
+        SimpleDateFormat[] dateFormats = new SimpleDateFormat[] {
+                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S"),
+                new SimpleDateFormat("yyyy-MM-dd")
+        };
+
+        for (SimpleDateFormat dateFormat : dateFormats) {
+            try {
+                return dateFormat.parse(dateStr);
+            } catch (ParseException e) {
+                // Continue to the next format
+            }
+        }
+
+        throw new ParseException("Unparseable date: " + dateStr, -1);
+    }
+
+    public static int getAge(Date birthdate) {
+        Date currentDate = new Date();
+        long timeDifference = currentDate.getTime() - birthdate.getTime();
+        return (int) (TimeUnit.MILLISECONDS.toDays(timeDifference) / 365);
+    }
+
+    public static List<Concept> getConceptsInObservations(String encounterTypeUUid) {
+        EncounterType encounterType = Context.getEncounterService().getEncounterTypeByUuid(encounterTypeUUid);
+        UgandaEMRReportsService ugandaEMRReportsService = Context.getService(UgandaEMRReportsService.class);
+
+        List<Integer> conceptIds = ugandaEMRReportsService.getObsConceptsFromEncounters(encounterType);
+
+        return getConceptsByIds(conceptIds);
     }
 }
