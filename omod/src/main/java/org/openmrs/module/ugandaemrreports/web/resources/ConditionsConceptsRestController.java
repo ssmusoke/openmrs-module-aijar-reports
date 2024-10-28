@@ -23,6 +23,7 @@ import java.util.Set;
 
 import static org.openmrs.module.ugandaemrreports.web.resources.Helper.convertConcepts;
 
+
 /**
  * End point will handle dataSet evaluation passed
  */
@@ -40,9 +41,10 @@ public class ConditionsConceptsRestController {
             List<ConceptMapper>  conceptMapperList = new ArrayList<>();
 
             Set<Concept> conceptList  =  Context.getService(UgandaEMRReportsService.class).getConditionsConcepts();
-
+            List<Concept> conceptList1 = new ArrayList<>();
+            conceptList1.addAll(conceptList);
             if (!conceptList.isEmpty()) {
-                conceptMapperList = convertConcepts(conceptList, "Condition");
+                conceptMapperList = convertConcepts(conceptList1, "Condition");
             }
 
             return new ResponseEntity<Object>(conceptMapperList, HttpStatus.OK);

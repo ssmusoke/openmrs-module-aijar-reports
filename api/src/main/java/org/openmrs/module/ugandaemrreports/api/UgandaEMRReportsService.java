@@ -1,9 +1,9 @@
 package org.openmrs.module.ugandaemrreports.api;
 
+import org.openmrs.*;
 import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.Cohort;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
 import org.openmrs.reporting.PatientSearch;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Set;
 
 /**
@@ -112,4 +113,12 @@ public interface UgandaEMRReportsService extends OpenmrsService {
      Set<Concept> getConditionsConcepts();
 
     Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit);
+
+    List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
+
+    List<Object> getNonCodedOrderReasons(OrderType orderType);
+
+    List<Concept> getCodedOrderReasons(OrderType orderType);
+
+    Map<Integer, Map<String, Object>> getDrugOrderByIndicator(org.openmrs.cohort.Cohort patients,String drugIndication,OrderType orderType);
 }
