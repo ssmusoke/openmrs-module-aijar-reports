@@ -1,17 +1,19 @@
 package org.openmrs.module.ugandaemrreports.api;
 
+import org.openmrs.*;
+import org.openmrs.Concept;
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.Cohort;
 import org.openmrs.module.ugandaemrreports.model.Dashboard;
 import org.openmrs.module.ugandaemrreports.model.DashboardReportObject;
-import org.openmrs.reporting.AbstractReportObject;
 import org.openmrs.reporting.PatientSearch;
-import org.openmrs.reporting.PatientSearchReportObject;
 import org.openmrs.reporting.ReportObjectWrapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Set;
 
 /**
  * This service exposes module's core functionality. It is a Spring managed bean which is configured in
@@ -105,4 +107,18 @@ public interface UgandaEMRReportsService extends OpenmrsService {
     PatientSearch getPatientSearchByUuid(String uuid);
 
     Cohort getPatientCurrentlyInProgram(String programUuid);
+
+     Map<Integer, String> getPatientsConditionsStatus(org.openmrs.cohort.Cohort patients, Concept codedCondition);
+
+     Set<Concept> getConditionsConcepts();
+
+    Map<Integer,Object> getLatestPatientAppointmentsScheduled(org.openmrs.cohort.Cohort patients, int limit);
+
+    List<Integer> getObsConceptsFromEncounters(EncounterType encounterType);
+
+    List<Object> getNonCodedOrderReasons(OrderType orderType);
+
+    List<Concept> getCodedOrderReasons(OrderType orderType);
+
+    Map<Integer, Map<String, Object>> getDrugOrderByIndicator(org.openmrs.cohort.Cohort patients,String drugIndication,OrderType orderType);
 }
