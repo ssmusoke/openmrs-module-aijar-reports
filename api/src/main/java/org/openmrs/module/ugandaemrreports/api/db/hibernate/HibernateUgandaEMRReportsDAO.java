@@ -296,7 +296,7 @@ public class HibernateUgandaEMRReportsDAO implements UgandaEMRReportsDAO {
 			Object drug = rowArray[1];
 			row.put("drug", drug);
 			Object encounter_date = rowArray[2];
-			row.put("drug_date_ordered",encounter_date);
+			row.put("drug_date_ordered",String.valueOf(encounter_date));
 			Object dose = rowArray[3];
 			row.put("dose",dose);
 			Object quantity = rowArray[4];
