@@ -8955,8 +8955,8 @@ SELECT cohort.client_id,
        advanced_disease,
        mfplfp.status                                                                           AS family_planning_status,
        mfplna.status                                                                           AS nutrition_assesment,
-       mfplfp.status                                                                           AS nutrition_support,
-       IF(mfplhbt.result='UNKNOWN','Not Tested',IF(mfplhbt.result='waiting for test results','Tested',mfplhbt.result))                                                                          AS hepatitis_b_test_qualitative,
+       mfplnsmfplns.support                                                                           AS nutrition_support,
+       IF(sub_art_summary.hepatitis_b_test_qualitative='UNKNOWN','INDETERMINATE',sub_art_summary.hepatitis_b_test_qualitative)                                                                          AS hepatitis_b_test_qualitative,
        syphilis_test_result_for_partner,
        cervical_cancer_screening,
        mfplts.status                                                                           AS tuberculosis_status,
@@ -8995,6 +8995,10 @@ SELECT cohort.client_id,
        sub_cervical_cancer_screening.encounter_date                                     AS cacx_date
 
 FROM    mamba_fact_art_patients cohort
+            LEFT JOIN (SELECT mf_to.client_id
+                       FROM mamba_fact_transfer_out mf_to
+                                LEFT JOIN mamba_fact_transfer_in mf_ti ON mf_to.client_id = mf_ti.client_id
+                       WHERE (transfer_out_date > transfer_in_date OR mf_ti.client_id IS NULL)) mfto  on mfto.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_nationality mfpn ON mfpn.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_marital_status mfpms ON mfpms.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_return_date mfplrd ON mfplrd.client_id = cohort.client_id
@@ -9008,7 +9012,6 @@ FROM    mamba_fact_art_patients cohort
             LEFT JOIN mamba_fact_patients_latest_nutrition_assesment mfplna ON mfplna.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_nutrition_support mfplnsmfplns
                       ON mfplnsmfplns.client_id = cohort.client_id
-            LEFT JOIN mamba_fact_patients_latest_hepatitis_b_test mfplhbt ON mfplhbt.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_tb_status mfplts ON mfplts.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_tpt_status mfplts2 ON mfplts2.client_id = cohort.client_id
             LEFT JOIN mamba_fact_patients_latest_who_stage who_stage ON who_stage.client_id = cohort.client_id
@@ -9057,7 +9060,8 @@ FROM    mamba_fact_art_patients cohort
             LEFT JOIN (SELECT client_id,
                               baseline_cd4,
                               baseline_regimen_start_date,
-                              special_category
+                              special_category,
+                              hepatitis_b_test_qualitative
                        FROM mamba_fact_encounter_hiv_art_summary
                        GROUP BY client_id) sub_art_summary ON sub_art_summary.client_id = cohort.client_id
             LEFT JOIN (SELECT b.client_id, health_education_setting
@@ -9194,7 +9198,8 @@ FROM    mamba_fact_art_patients cohort
                              WHERE hiv_vl_date IS NOT NULL
                              GROUP BY client_id) a
                             ON a.client_id = b.client_id AND encounter_date = latest_encounter_date) sub_hiv_vl_date
-                      ON sub_hiv_vl_date.client_id = cohort.client_id;
+                      ON sub_hiv_vl_date.client_id = cohort.client_id
+            WHERE mfto.client_id IS NULL;
 
 -- $END
 END //

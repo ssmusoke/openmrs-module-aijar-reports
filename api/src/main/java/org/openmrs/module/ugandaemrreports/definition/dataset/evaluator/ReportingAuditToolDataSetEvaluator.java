@@ -182,7 +182,7 @@ public class ReportingAuditToolDataSetEvaluator implements DataSetEvaluator {
                 pdh.addCol(row, "date_dr_results_received", o[46]);
                 pdh.addCol(row, "decision", o[48]);
                 pdh.addCol(row, "pss", o[36]);
-                pdh.addCol(row, "ovc_screening", o[41]);
+                pdh.addCol(row, "ovc_screening", o[42]);
                 pdh.addCol(row, "nutrition_status", o[22]);
                 pdh.addCol(row, "family_planning_status", o[21]);
                 pdh.addCol(row, "cacx_screening", o[26]);
