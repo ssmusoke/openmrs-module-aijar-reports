@@ -38,6 +38,8 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          # Use HTTPS with GITHUB_TOKEN for authentication
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
 
       - name: Maven Release Prepare
         env:
@@ -58,5 +60,5 @@ jobs:
         run: |
           mvn --batch-mode release:perform \
             -DaltDeploymentRepository=openmrs-repo-modules::default::https://openmrs.jfrog.io/artifactory/modules/ \
-            -Dusername=ARTIFACTORY_USERNAME \
-            -Dpassword=ARTIFACTORY_PASSWORD
+            -Dusername=${{ secrets.ARTIFACTORY_USERNAME }} \
+            -Dpassword=${{ secrets.ARTIFACTORY_PASSWORD }}
