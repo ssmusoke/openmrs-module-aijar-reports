@@ -53,10 +53,10 @@ jobs:
       - name: Maven Release Perform
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          ARTIFACTORY_USERNAME: ${{ secrets.BINTRAY_USERNAME }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.BINTRAY_PASSWORD }}
+          ARTIFACTORY_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
+          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
         run: |
           mvn --batch-mode release:perform \
             -DaltDeploymentRepository=openmrs-repo-modules::default::https://openmrs.jfrog.io/artifactory/modules/ \
-            -Dusername=$BINTRAY_USERNAME \
-            -Dpassword=$BINTRAY_PASSWORD
+            -Dusername=ARTIFACTORY_USERNAME \
+            -Dpassword=ARTIFACTORY_PASSWORD
