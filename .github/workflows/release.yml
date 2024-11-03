@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write  # Ensure the action can push to the repository
+  repository-projects: write
 
 jobs:
   release:
