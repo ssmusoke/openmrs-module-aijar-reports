@@ -76,7 +76,6 @@ public class SetUpNonSuppressedClientsReport extends UgandaEMRDataExportManager 
 
     /**
      * Build the report design for the specified report, this allows a user to override the report design by adding properties and other metadata to the report design
-     * @SolemaBrothers
      * @param reportDefinition
      * @return The report design
      */
