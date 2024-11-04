@@ -11,10 +11,8 @@ on:
         required: true
 
 permissions:
-  contents: write  # Ensure the action can push to the repository
-  repository-projects: write
+  contents: write
   
-
 jobs:
   release:
     runs-on: ubuntu-latest
