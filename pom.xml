@@ -3,7 +3,7 @@
 
     <groupId>org.openmrs.module</groupId>
     <artifactId>ugandaemrreports</artifactId>
-    <version> 2.0.38-SNAPSHOT</version>
+    <version> 2.1.0</version>
     <packaging>pom</packaging>
     <name>UgandaEMR Reports Module</name>
     <description>Reports for the UgandaEMR distribution</description>
@@ -34,7 +34,7 @@
     </modules>
 
     <properties>
-        <openMRSVersion>2.6.3</openMRSVersion>
+        <openMRSVersion>2.3.1</openMRSVersion>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- module version defeinitions -->
@@ -49,7 +49,6 @@
         <serialization.xstreamVersion>0.2.10</serialization.xstreamVersion>
         <uiframeworkModuleVersion>3.6</uiframeworkModuleVersion>
         <webservices.restModuleVersion>2.28.0</webservices.restModuleVersion>
-        <reportingCompatibilityVersion>2.0.9</reportingCompatibilityVersion>
     </properties>
 
     <dependencyManagement>
@@ -193,12 +192,6 @@
                 <version>1.0.1</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.openmrs.module</groupId>
-                <artifactId>reportingcompatibility-api</artifactId>
-                <version>${reportingCompatibilityVersion}</version>
-                <scope>compile</scope>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -348,10 +341,10 @@
                                     <!-- add any other arguments below -->
                                     <argument>-b 1</argument>
 
-                                    <argument />
-                                    <argument />
-                                    <argument />
-                                    <argument />
+                                    <argument></argument>
+                                    <argument></argument>
+                                    <argument></argument>
+                                    <argument></argument>
                                 </arguments>
                             </configuration>
                         </execution>
@@ -362,7 +355,6 @@
                 <plugin>
                     <groupId>org.openmrs.maven.plugins</groupId>
                     <artifactId>maven-openmrs-plugin</artifactId>
-                    <version>1.0.1</version>
                     <extensions>true</extensions>
                     <executions>
                         <execution>
