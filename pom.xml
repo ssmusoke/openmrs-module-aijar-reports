@@ -409,14 +409,14 @@
 
     <distributionManagement>
         <repository>
-            <id>openmrs-repo-modules</id>
-            <name>OpenMRS Modules</name>
-            <url>https://openmrs.jfrog.io/artifactory/modules/</url>
+            <id>central</id>
+            <name>openmrs-releases</name>
+            <url>https://openmrs.jfrog.io/artifactory/modules</url>
         </repository>
         <snapshotRepository>
-            <id>openmrs-repo-snapshots</id>
-            <name>OpenMRS Snapshots</name>
-            <url>https://openmrs.jfrog.io/openmrs/snapshots</url>
+            <id>snapshots</id>
+            <name>openmrs-snapshots</name>
+            <url>https://openmrs.jfrog.io/artifactory/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
