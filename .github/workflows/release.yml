@@ -21,7 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history for full tag support
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up JDK 1.8
