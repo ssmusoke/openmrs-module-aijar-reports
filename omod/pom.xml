@@ -4,11 +4,11 @@
     <parent>
         <groupId>org.openmrs.module</groupId>
         <artifactId>ugandaemrreports</artifactId>
-        <version>2.1.2-SNAPSHOT</version>
+        <version>2.1.2</version>
     </parent>
 
     <artifactId>ugandaemrreports-omod</artifactId>
-  <version>2.1.2-SNAPSHOT</version>
+  <version>2.1.2</version>
     <name>UgandaEMR Reports Module OMOD</name>
     <description>OMOD project for UgandaEMR Reports</description>
 
