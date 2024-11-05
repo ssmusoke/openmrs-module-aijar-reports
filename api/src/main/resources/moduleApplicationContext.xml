@@ -9,34 +9,40 @@
 
 	<!-- Add here beans related to the API context -->
 	<context:component-scan base-package="org.openmrs.module.ugandaemrreports" />
-
-	<!-- Wraps UgandaEMRSyncService methods in DB transactions and OpenMRS interceptors,
-   which set audit info like dateCreated, changedBy, etc.-->
-	<bean id="ugandaemrreports.UgandaEMRSyncService"
-		  class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<bean class="org.openmrs.module.ugandaemrreports.api.impl.UgandaEMRReportsServiceImpl">
-				<property name="dao" ref="ugandaemrreports.HibernateUgandaEMRReportsDAO" />
-			</bean>
-		</property>
-		<property name="preInterceptors">
-			<ref bean="serviceInterceptors" />
-		</property>
-		<property name="transactionAttributeSource">
-			<ref bean="transactionAttributeSource" />
-		</property>
-	</bean>
-
-	<!-- Adds UgandaEMRSyncService to OpenMRS context so it can be accessed
-    calling Context.getService(UgandaEMRSyncService.class) -->
-	<bean parent="serviceContext">
+	<bean id="ugandaemrreports.reportService" parent="serviceContext">
 		<property name="moduleService">
-			<list>
-				<value>org.openmrs.module.ugandaemrreports.api.UgandaEMRReportsService</value>
-				<ref bean="ugandaemrreports.UgandaEMRSyncService" />
+			<list merge="true">
+				<value>org.openmrs.module.reportingcompatibility.service.ReportService</value>
+				<bean class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+					<property name="transactionManager"><ref bean="transactionManager"/></property>
+					<property name="target">
+						<bean class="org.openmrs.report.impl.ReportServiceImpl">
+							<property name="reportDAO">
+								<bean class="org.openmrs.report.db.hibernate.HibernateReportDAO">
+									<property name="sessionFactory"><ref bean="sessionFactory"/></property>
+								</bean>
+							</property>
+							<property name="renderers">
+								<map>
+									<entry>
+										<key><value>org.openmrs.report.impl.TsvReportRenderer</value></key>
+										<bean class="org.openmrs.report.impl.TsvReportRenderer"/>
+									</entry>
+									<entry>
+									<key><value>org.openmrs.report.impl.CsvReportRenderer</value></key>
+									<bean class="org.openmrs.report.impl.CsvReportRenderer"/>
+									</entry>
+								</map>
+							</property>
+						</bean>
+					</property>
+					<property name="preInterceptors">
+						<ref bean="serviceInterceptors" />
+					</property>
+					<property name="transactionAttributeSource">
+						<bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+					</property>
+				</bean>
 			</list>
 		</property>
 	</bean>
