@@ -129,6 +129,6 @@ public class SetupVLExchangeTransactionReport extends UgandaEMRDataExportManager
 
     @Override
     public String getVersion() {
-        return "0.1.3";
+        return "0.1.5";
     }
 }
