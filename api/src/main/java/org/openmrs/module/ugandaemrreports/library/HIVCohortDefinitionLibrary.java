@@ -772,4 +772,22 @@ public class HIVCohortDefinitionLibrary extends BaseDefinitionLibrary<CohortDefi
         return cohortDefinition;
     }
 
+    public CohortDefinition getPatientsWithVLOrdersInReportingPeriod() {
+        String query = "SELECT orders.patient_id\n" +
+                "FROM orders\n" +
+                "         INNER JOIN test_order ON (test_order.order_id = orders.order_id)\n" +
+                "WHERE accession_number IS NOT NULL\n" +
+                "  AND specimen_source IS NOT NULL\n" +
+                "  AND orders.instructions = 'REFER TO cphl'\n" +
+                "  AND orders.concept_id = 165412\n" +
+                "  AND orders.voided = 0\n" +
+                "  AND orders.date_activated >= ':startDate'\n" +
+                "  AND orders.date_activated <= ':endDate';";
+        SqlCohortDefinition cohort = new SqlCohortDefinition(query);
+        cohort.addParameter(new Parameter("startDate", "startDate", Date.class));
+        cohort.addParameter(new Parameter("endDate", "endDate", Date.class));
+
+        return cohort;
+    }
+
 }
