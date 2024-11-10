@@ -51,10 +51,6 @@ public class SetupVLExchangeTransactionReport extends UgandaEMRDataExportManager
     @Override
     public String getExcelDesignUuid() {return "3d7b99b4-51a6-498a-b2cb-99000ff82375";}
 
-    public String getCSVDesignUuid() {
-        return "175762b6-b8a6-4f80-bb66-52f538928a87";
-    }
-
     @Override
     public String getUuid() {
         return "1759f19f-a7a7-44c7-b584-b5bafe4c36e8";
@@ -83,7 +79,6 @@ public class SetupVLExchangeTransactionReport extends UgandaEMRDataExportManager
     public List<ReportDesign> constructReportDesigns(ReportDefinition reportDefinition) {
         List<ReportDesign> l = new ArrayList<ReportDesign>();
         l.add(buildReportDesign(reportDefinition));
-        l.add(buildCSVReportDesign(reportDefinition));
         return l;
     }
 
@@ -104,9 +99,6 @@ public class SetupVLExchangeTransactionReport extends UgandaEMRDataExportManager
         return rd;
     }
 
-    public ReportDesign buildCSVReportDesign(ReportDefinition reportDefinition) {
-        return createCSVDesign(getCSVDesignUuid(), reportDefinition);
-    }
 
     @Override
     public ReportDefinition constructReportDefinition() {
@@ -129,6 +121,6 @@ public class SetupVLExchangeTransactionReport extends UgandaEMRDataExportManager
 
     @Override
     public String getVersion() {
-        return "0.1.5";
+        return "0.1.6";
     }
 }
