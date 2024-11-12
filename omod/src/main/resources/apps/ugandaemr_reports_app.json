@@ -667,6 +667,15 @@
         "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
       },
       {
+        "id": "VL Exchange Transaction Report",
+        "extensionPointId": "org.openmrs.module.ugandaemr.integrationdataexports",
+        "type": "link",
+        "label": "VL Exchange Transaction Report",
+        "url": "reportingui/runReport.page?reportDefinition=1759f19f-a7a7-44c7-b584-b5bafe4c36e8",
+        "order":20,
+        "requiredPrivilege": "App: ugandaemrreports.recencyHTSClientCardDataExport"
+      },
+      {
         "id": "HMIS 105 Section 2",
         "extensionPointId": "org.openmrs.module.ugandaemr.reports.monthly",
         "type": "link",

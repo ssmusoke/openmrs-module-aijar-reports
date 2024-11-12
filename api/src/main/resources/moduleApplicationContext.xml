@@ -25,6 +25,10 @@
 							<property name="renderers">
 								<map>
 									<entry>
+										<key><value>org.openmrs.web.report.CohortReportWebRenderer</value></key>
+										<bean class="org.openmrs.web.report.CohortReportWebRenderer"/>
+									</entry>
+									<entry>
 										<key><value>org.openmrs.report.impl.TsvReportRenderer</value></key>
 										<bean class="org.openmrs.report.impl.TsvReportRenderer"/>
 									</entry>
